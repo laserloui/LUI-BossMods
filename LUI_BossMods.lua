@@ -242,12 +242,12 @@ function LUI_BossMods:CheckZone(tZone)
 	end 
 
 	if self.zone.continentId == tZone.continentId then
+		local match = false
 		if type(tZone.parentZoneId) == "number" then
 			if self.zone.parentZoneId ~= tZone.parentZoneId then 
 				return false
 			end 
 		elseif type(tZone.parentZoneId) == "table" then
-			local match = false 
 
 			for _,id in pairs(tZone.parentZoneId) do
 				if id == self.zone.parentZoneId then
