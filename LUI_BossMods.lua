@@ -1296,11 +1296,11 @@ function LUI_BossMods:ShowAura(sName,sSprite,sColor,nDuration,bShowDuration,fHan
 		self.wndAura:FindChild("Overlay"):SetBGColor("a0000000")
 		self.wndAura:FindChild("Overlay"):SetMax(100)
 		self.wndAura:FindChild("Overlay"):SetProgress(0.001)
-		self.wndAura:FindChild("Overlay"):SetProgress(99.999,(100/(tAura.nDuration)))
+		self.wndAura:FindChild("Overlay"):SetProgress(99.999,(100/(nDuration)))
 		self.wndAura:FindChild("Overlay"):Show(true,true)
 
 		self.wndAura:FindChild("Duration"):SetText()
-		self.wndAura:FindChild("Duration"):Show(tAura.bShowDuration or false,true)
+		self.wndAura:FindChild("Duration"):Show(bShowDuration or false,true)
 
 		self.runtime.aura = {
 			sName = sName,
