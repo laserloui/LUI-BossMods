@@ -816,7 +816,8 @@ function LUI_BossMods:CheckBuffs(nId)
 	end 
 
 	if self.runtime.units[nId] ~= nil and self.runtime.units[nId].bOnBuff then 
-		local tBuffs = self.runtime.units[nId].tUnit:GetBuffs()
+		local tUnit = self.runtime.units[nId].tUnit
+		local tBuffs = tUnit:GetBuffs()
 
 		-- Process Buffs
 		if tBuffs ~= nil and tBuffs.arBeneficial ~= nil then
