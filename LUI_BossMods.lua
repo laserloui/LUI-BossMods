@@ -242,12 +242,12 @@ function LUI_BossMods:CheckZone(tZone)
 	end 
 
 	if self.zone.continentId == tZone.continentId then
+		local match = false
 		if type(tZone.parentZoneId) == "number" then
 			if self.zone.parentZoneId ~= tZone.parentZoneId then 
 				return false
 			end 
 		elseif type(tZone.parentZoneId) == "table" then
-			local match = false 
 
 			for _,id in pairs(tZone.parentZoneId) do
 				if id == self.zone.parentZoneId then
@@ -816,7 +816,8 @@ function LUI_BossMods:CheckBuffs(nId)
 	end 
 
 	if self.runtime.units[nId] ~= nil and self.runtime.units[nId].bOnBuff then 
-		local tBuffs = self.runtime.units[nId].tUnit:GetBuffs()
+		local tUnit = self.runtime.units[nId].tUnit
+		local tBuffs = tUnit:GetBuffs()
 
 		-- Process Buffs
 		if tBuffs ~= nil and tBuffs.arBeneficial ~= nil then
@@ -1295,11 +1296,11 @@ function LUI_BossMods:ShowAura(sName,sSprite,sColor,nDuration,bShowDuration,fHan
 		self.wndAura:FindChild("Overlay"):SetBGColor("a0000000")
 		self.wndAura:FindChild("Overlay"):SetMax(100)
 		self.wndAura:FindChild("Overlay"):SetProgress(0.001)
-		self.wndAura:FindChild("Overlay"):SetProgress(99.999,(100/(tAura.nDuration)))
+		self.wndAura:FindChild("Overlay"):SetProgress(99.999,(100/(nDuration)))
 		self.wndAura:FindChild("Overlay"):Show(true,true)
 
 		self.wndAura:FindChild("Duration"):SetText()
-		self.wndAura:FindChild("Duration"):Show(tAura.bShowDuration or false,true)
+		self.wndAura:FindChild("Duration"):Show(bShowDuration or false,true)
 
 		self.runtime.aura = {
 			sName = sName,
