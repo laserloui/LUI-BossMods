@@ -87,6 +87,7 @@ globals = {
   "RecruitmentGuildTypeLib",
   "Residence",
   "RewardTrack",
+  "RequestReloadUI",
   "RewardTrackLib",
   "String_GetWeaselString",
   "ScientistScanBotProfile",
