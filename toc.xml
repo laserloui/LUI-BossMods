@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="Loui" APIVersion="13" Name="LUI_BossMods" Description="Kappa!" Version="1">
+    <!-- Libraries -->
+	<Script Name="Libs/GeminiColor/GeminiColor.lua"/>
+	<Script Name="Libs/GeminiLocale/GeminiLocale.lua"/>
+    <!-- Main -->
+    <Script Name="LUI_BossMods.lua"/>
+    <Form Name="LUI_BossMods.xml"/>
+    <!-- Encounters: Datascape -->
+    <Script Name="Encounters\DS\Daemons.lua"/>
+    <Script Name="Encounters\DS\Gloomclaw.lua"/>
+    <!-- Encounters: Initialization Core Y-83 -->
+    <!--<Script Name="Encounters\Y83\Augmentors.lua"/> -->
+    <!-- Encounters: Redmoon Terror -->
+    <Script Name="Encounters\RMT\Shredder.lua"/>
+    <Script Name="Encounters\RMT\Robomination.lua"/>
+    <Script Name="Encounters\RMT\Engineers.lua"/>
+    <!-- Settings -->
+    <Script Name="Settings\Settings.lua"/>
+</Addon>

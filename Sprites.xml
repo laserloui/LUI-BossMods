@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Sprites>
+    <Sprite Name="bg" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\bg.png" x0="0" x1="0" x2="0" x3="20" x4="80" x5="100" y0="0" y1="2" y2="16" y3="20" y4="34" y5="36" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="border" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\border.png" x0="0" x1="0" x2="0" x3="1" x4="99" x5="100" y0="0" y1="0" y2="0" y3="1" y4="99" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="logo" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\logo.png" x0="0" x1="0" x2="0" x3="0" x4="56" x5="56" y0="0" y1="0" y2="0" y3="0" y4="56" y5="56" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <AutoButton Name="button" Texture="LUI_BossMods\Sprites\button.png" x0="0" x1="0" x2="0" x3="15" x4="85" x5="100" y0="0" y1="0" y2="0" y3="15" y4="21" y5="36" Stretchy="1" StateBits="15" Direction="Down"/>
+    <Sprite Name="angry" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\angry.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="attention" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\attention.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="attention2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\attention2.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="bomb" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\bomb.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="boss" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\boss.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="boss2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\boss2.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="boss3" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\boss3.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="danger" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\danger.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="danger2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\danger2.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="danger3" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\danger3.png" x0="0" x1="0" x2="0" x3="0" x4="128" x5="128" y0="0" y1="0" y2="0" y3="0" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="flame" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\flame.png" x0="0" x1="0" x2="0" x3="0" x4="128" x5="128" y0="0" y1="0" y2="0" y3="0" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="lighting" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\lighting.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="meteor" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\meteor.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="run" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\run.png" x0="0" x1="0" x2="0" x3="0" x4="128" x5="128" y0="0" y1="0" y2="0" y3="0" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="run2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\run2.png" x0="0" x1="0" x2="0" x3="0" x4="128" x5="128" y0="0" y1="0" y2="0" y3="0" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="shield" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\shield.png" x0="0" x1="0" x2="0" x3="0" x4="128" x5="128" y0="0" y1="0" y2="0" y3="0" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="stop" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\stop.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="stop2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\stop2.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="stop3" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\stop3.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="target" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\target.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="target2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\target2.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="target3" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\target3.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="target4" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\target4.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="virus" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\virus.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+</Sprites>
