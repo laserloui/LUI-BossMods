@@ -19,6 +19,8 @@ local Locales = {
         -- Bar and messages
         ["Interrupt!"] = "Interrupt!",
         ["Next arms"] = "Next arms",
+		["Next crush"] = "Next crush",
+		["Midphase soon!"] = "Midphase soon!",
         ["Go to center!"] = "Go to center!",
         ["Lasers incoming!"] = "Lasers incoming!",
         ["CRUSH ON YOU!"] = "CRUSH ON YOU!",
@@ -121,7 +123,11 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if sName == self.L["Robomination"] then
         self.robomination = tUnit
         self.core:AddUnit(nId,sName,tUnit,true,nil,true)
+		self.core:AddTimer("Timer_Arms", self.L["Next arms"], 45, "orange")
+		self.core:AddTimer("Crush_Timer", self.L["Next crush"], 8, "red")
+		
     elseif sName == self.L["Cannon Arm"] then
+		self.core:AddTimer("Timer_Arms", self.L["Next arms"], 45, "orange")
         if self.config.LinesCannonArms.enable == true then
             self.core:DrawLineBetween(nId, tUnit, nil, self.config.LinesCannonArms.nWidth, self.config.LinesCannonArms.color)
         end
@@ -170,6 +176,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:ShowAlert("Crush_Alert", self.L["CRUSH ON %s!"]:format(sUnitName))
             self.core:DrawIcon("Crush_Icon", tData.tUnit, "LUI_BossMods:meteor", 60, 25, "ffff4500", nDuration, false)
         end
+		self.core:AddTimer("Crush_Timer", self.L["Next crush"], 17, "red")
     end
 end
 
@@ -180,9 +187,25 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     end
 end
 
+function Mod:OnHealthChanged(nId, nHealthPercent, sName, tUnit)
+    if sName == self.L["Robomination"] then
+	    if nPercent = 77 then				
+			mod:AddMsg("ROBP2", "Midphase soon!"	
+			self.core:ShowAlert("Warning_Midphase", self.L["Midphase soon!"])		
+		elseif nPercent = 52 then				
+			mod:AddMsg("ROBP2", "Midphase soon!"				
+		end
+	end
+end
+
 function Mod:OnDatachron(sMessage, sSender, sHandler)
     if sMessage == self.L["The Robomination sinks down into the trash"] then
         self.core:ShowAlert("Midphase_Alert", self.L["Go to center!"])
+		self.core:RemoveTimer("Timer_Hands")
+		self.core:RemoveTimer("Timer_Crush")
+    elseif sMessage == self.L["The Robomination erupts back into the fight!"] then
+		self.core:AddTimer("Timer_Arms", self.L["Next arms"], 45, "orange")
+		self.core:AddTimer("Crush_Timer", self.L["Next crush"], 8, "red")
     else
         local strPlayerLaserFocused = sMessage:match("The Robomination tries to incinerate (.*)")
         if strPlayerLaserFocused then
