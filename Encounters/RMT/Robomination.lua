@@ -240,3 +240,4 @@ end
 
 local ModInst = Mod:new()
 LUI_BossMods.modules[Encounter] = ModInst
+
