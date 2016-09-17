@@ -24,6 +24,10 @@ local Locales = {
         ["alert.crush_player"] = "CRUSH ON YOU!",
         ["alert.incineration"] = "INCINERATION LASER!",
         ["alert.incineration_player"] = "INCINERATION LASER ON YOU!",
+        -- Messages
+        ["message.next_arms"] = "Next arms",
+        ["message.next_crush"] = "Next crush",
+        ["message.midphase"] = "Midphase soon!",
         -- Datachron messages
         ["datachron.midphase_start"] = "The Robomination sinks down into the trash",
         ["datachron.midphase_end"] = "The Robomination erupts back into the fight!",
@@ -121,7 +125,11 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if sName == self.L["unit.boss"] then
         self.boss = tUnit
         self.core:AddUnit(nId,sName,tUnit,true,nil,true)
+        self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, "orange")
+ 		self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, "red")
     elseif sName == self.L["unit.cannon_arm"] then
+        self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, "orange")
+
         if self.config.LinesCannonArms.enable == true then
             self.core:DrawLineBetween(nId, tUnit, nil, self.config.LinesCannonArms.nWidth, self.config.LinesCannonArms.color)
         end
@@ -146,6 +154,18 @@ function Mod:OnUnitDestroyed(nId, tUnit, sName)
     end
 end
 
+function Mod:OnHealthChanged(nId, nHealthPercent, sName, tUnit)
+    if sName == self.L["unit.boss"] then
+        if nHealthPercent <= 77 and self.nMidphaseWarnings == 0 then
+            self.core:ShowAlert("Midphase", self.L["message.midphase"])
+            self.nMidphaseWarnings = 1
+        elseif nHealthPercent <= 52 and self.nMidphaseWarnings == 1 then
+            self.core:ShowAlert("Midphase", self.L["message.midphase"])
+            self.nMidphaseWarnings = 2
+        end
+    end
+ end
+
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if self.L["unit.boss"] == sName then
         if self.L["cast.noxious_belch"] == sCastName then
@@ -158,46 +178,53 @@ end
 
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if DEBUFF__THE_SKY_IS_FALLING == nSpellId then
+        self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, "red")
+
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAura("crush_aura", "LUI_BossMods:meteor", "ffff4500", nDuration)
-            self.core:ShowAlert("crush", self.L["alert.crush_player"])
+            self.core:ShowAura("Aura_Crush", "LUI_BossMods:meteor", "ffff4500", nDuration)
+            self.core:ShowAlert("Alert_Crush", self.L["alert.crush_player"])
             self.core:PlaySound("run-away")
         else
             if self.core:GetDistance(tData.tUnit) < 15 then
                 self.core:PlaySound("info")
             end
 
-            self.core:ShowAlert("crush", self.L["alert.crush"]:format(sUnitName))
-            self.core:DrawIcon("crush_icon", tData.tUnit, "LUI_BossMods:meteor", 60, 25, "ffff4500", nDuration, false)
+            self.core:ShowAlert("Alert_Crush", self.L["alert.crush"]:format(sUnitName))
+            self.core:DrawIcon("Icon_Crush", tData.tUnit, "LUI_BossMods:meteor", 60, 25, "ffff4500", nDuration, false)
         end
     end
 end
 
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if DEBUFF__THE_SKY_IS_FALLING == nSpellId then
-        self.core:HideAura("crush_aura")
-        self.core:RemoveIcon("crush_icon")
+        self.core:HideAura("Aura_Crush")
+        self.core:RemoveIcon("Icon_Crush")
     end
 end
 
 function Mod:OnDatachron(sMessage, sSender, sHandler)
     if sMessage == self.L["datachron.midphase_start"] then
-        self.core:ShowAlert("midphase_start", self.L["alert.center"])
+        self.core:ShowAlert("Midphase_Start", self.L["alert.center"])
+        self.core:RemoveTimer("Timer_Arms")
+ 		self.core:RemoveTimer("Timer_Crush")
+    elseif sMessage == self.L["datachron.midphase_end"] then
+        self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, "orange")
+ 		self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, "red")
     else
         local strPlayerLaserFocused = sMessage:match(self.L["datachron.incineration"])
         if strPlayerLaserFocused then
             local tFocusedUnit = GameLib.GetPlayerUnitByName(strPlayerLaserFocused)
 
             if tFocusedUnit:IsThePlayer() then
-                self.core:ShowAlert("incineration", self.L["alert.incineration_player"])
+                self.core:ShowAlert("Incineration", self.L["alert.incineration_player"])
             else
-                self.core:ShowAlert("incineration", self.L["alert.incineration"])
+                self.core:ShowAlert("Incineration", self.L["alert.incineration"])
             end
 
-            self.core:DrawIcon("incineration_icon", tFocusedUnit, "LUI_BossMods:angry", 60, 25, "ffadff2f", 10)
+            self.core:DrawIcon("Icon_Incineration", tFocusedUnit, "LUI_BossMods:angry", 60, 25, "ffadff2f", 10)
 
             if self.boss then
-                 self.core:DrawLineBetween("incineration_line", tFocusedUnit, self.boss, 14, "ffadff2f", 10)
+                 self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, 14, "ffadff2f", 10)
             end
         end
     end
@@ -209,6 +236,7 @@ end
 
 function Mod:OnEnable()
     self.run = true
+    self.nMidphaseWarnings = 0
 end
 
 function Mod:OnDisable()
