@@ -11,7 +11,7 @@ function Settings:new(o)
     setmetatable(o, self)
     self.__index = self
     self.bIsGlobal = false
-    self.soundFiles = {"None","alarm","alert","info","interrupt","run-away"}
+    self.soundFiles = {"None","alarm","alert","info","long","interrupt","run-away","beware","burn","destruction","inferno"}
     return o
 end
 
