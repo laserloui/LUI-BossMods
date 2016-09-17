@@ -16,6 +16,8 @@ local Locales = {
         ["Cooling Turbine"] = "Cooling Turbine",
         -- Buffs / Debuffs
         ["Atomic Attraction"] = "Atomic Attraction",
+		["Electroshock Vulnerability"] = "Electroshock Vulnerability",
+		["Discharged Plasma"] = "Discharged Plasma", --Not 100% sure about name
         -- Casts
         ["Electroshock"] = "Electroshock",
         ["Liquidate"] = "Liquidate",
