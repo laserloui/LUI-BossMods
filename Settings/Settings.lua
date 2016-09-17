@@ -265,12 +265,14 @@ function Settings:BuildRightPanel()
     end
 
     if self.current.encounter == "Minibosses" then
+        self.wndRight = Apollo.LoadForm(self.xmlDoc, "RightScroll", wndRightScroll, self)
+
         if self.current.modules then
             for _,strModule in pairs(self.current.modules) do
-                self.core.modules[strModule]:LoadSettings(wndRightScroll)
+                self.core.modules[strModule]:LoadSettings(self.wndRight)
             end
         end
-        self.wndRight = wndRightScroll
+
         self.wndRight:ArrangeChildrenVert()
     else
         self.wndRight = self.core.modules[self.current.encounter]:LoadSettings(wndRightScroll)
