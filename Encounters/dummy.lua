@@ -168,13 +168,13 @@ local Encounter = "name_of_encounter"     -- Name of Encounter Module (XML file 
 
 local Locales = {
     ["enUS"] = {                        -- Table of english locales
-        ["Dreadphage Ohmna"] = "Dreadphage Ohmna",
+        ["unit.boss"] = "Dreadphage Ohmna",
     },
     ["deDE"] = {                        -- Table of german locales
-        ["Dreadphage Ohmna"] = "Schreckensphage Ohmna",
+        ["unit.boss"] = "Schreckensphage Ohmna",
     },
     ["frFR"] = {                        -- Table of french locales
-        ["Dreadphage Ohmna"] = "Ohmna la Terriphage",
+        ["unit.boss"] = "Ohmna la Terriphage",
     },
 }
 
@@ -184,7 +184,7 @@ function Mod:new(o)
     self.__index = self
     self.instance = "Redmoon Terror"     -- Name of the Instance under which the module will show up in Option Panel
     self.displayName = "Shredder"        -- Name of the Encounter shown in the Option Panel
-    self.bIsMiniboss = false             -- Boolean whether or not module is for Miniboss 
+    self.bIsMiniboss = false             -- Boolean whether or not module is for Miniboss
     self.tTrigger = {
         sType = "ANY",
         tZones = {                        -- Zone in which module gets activated. Use GameLib.GetCurrentZoneMap() to retrieve current zone map.

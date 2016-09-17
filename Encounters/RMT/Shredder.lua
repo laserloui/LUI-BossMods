@@ -7,18 +7,18 @@ local Encounter = "Shredder"
 
 local Locales = {
     ["enUS"] = {
-        -- Unit names
-        ["Swabbie Ski'Li"] = "Swabbie Ski'Li",
-        ["Noxious Nabber"] = "Noxious Nabber",
-        ["Regor the Rancid"] = "Regor the Rancid", -- Mini Boss during Midphase
-        ["Sawblade"] = "Sawblade",
-        ["Circle Telegraph"] = "Hostile Invisible Unit for Fields (1.2 hit radius)",
+        -- Units
+        ["unit.boss"] = "Swabbie Ski'Li",
+        ["unit.noxious_nabber"] = "Noxious Nabber",
+        ["unit.regor_the_rancid"] = "Regor the Rancid", -- Miniboss during Midphase
+        ["unit.sawblade"] = "Sawblade",
+        ["unit.circle_telegraph"] = "Hostile Invisible Unit for Fields (1.2 hit radius)",
         -- Casts
-        ["Necrotic Lash"] = "Necrotic Lash", --Cast by Noxious Nabber (grab and disorient), interruptable
-        ["Deathwail"] = "Deathwail", --Miniboss knockdown, interruptable
-        ["Gravedigger"] = "Gravedigger", --Miniboss cast?
-        -- Messages
-        ["Interrupt!"] = "Interrupt!",
+        ["cast.necrotic_lash"] = "Necrotic Lash", --Cast by Noxious Nabber (grab and disorient), interruptable
+        ["cast.deathwail"] = "Deathwail", --Miniboss knockdown, interruptable
+        ["cast.gravedigger"] = "Gravedigger", --Miniboss cast?
+        -- Alerts
+        ["alert.interrupt"] = "Interrupt!",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -30,8 +30,8 @@ local ENTRANCELINE_A = Vector3.New(-1, DECK_Y_LOC, -830)
 local ENTRANCELINE_B = Vector3.New(-40, DECK_Y_LOC, -830)
 local CENTERLINE_A = Vector3.New(-1, DECK_Y_LOC, -882)
 local CENTERLINE_B = Vector3.New(-41, DECK_Y_LOC, -882)
-local SHREDDERLINE_A = Vector3.New(-1, DECK_Y_LOC, -980)
-local SHREDDERLINE_B = Vector3.New(-41, DECK_Y_LOC, -980)
+local EXITLINE_A = Vector3.New(-1, DECK_Y_LOC, -980)
+local EXITLINE_B = Vector3.New(-41, DECK_Y_LOC, -980)
 
 function Mod:new(o)
     o = o or {}
@@ -100,23 +100,23 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         return
     end
 
-    if sName == self.L["Swabbie Ski'Li"] and bInCombat == true then
+    if sName == self.L["unit.boss"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,true)
 
         if self.config.bDrawRoomLines == true then
-            self.core:DrawLineBetween("ShredderSawLine", SHREDDERLINE_A, SHREDDERLINE_B, 5, "xkcdBrightPurple")
+            self.core:DrawLineBetween("ExitLine", EXITLINE_A, EXITLINE_B, 5, "xkcdBrightPurple")
             self.core:DrawLineBetween("CenterLine", CENTERLINE_A, CENTERLINE_B, 5, "xkcdBrightPurple")
-            self.core:DrawLineBetween("EntranceSawLine", ENTRANCELINE_A, ENTRANCELINE_B, 5, "xkcdBrightPurple")
+            self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, 5, "xkcdBrightPurple")
         end
-    elseif sName == self.L["Noxious Nabber"] then
+    elseif sName == self.L["unit.noxious_nabber"] then
         self.core:AddUnit(nId,sName,tUnit,false,nil,true)
-    elseif sName == self.L["Regor the Rancid"] then
+    elseif sName == self.L["unit.regor_the_rancid"] then
         self.core:AddUnit(nId,sName,tUnit,false,nil,true)
-    elseif sName == self.L["Sawblade"] then
+    elseif sName == self.L["unit.sawblade"] then
         if self.config.bDrawSawLines == true then
             self.core:DrawLine(nId, tUnit, "xkcdBrightPurple", 15, 60, 0, 0)
         end
-    elseif sName == self.L["Circle Telegraph"] then
+    elseif sName == self.L["unit.circle_telegraph"] then
         if self.config.bDrawCircleTelegraphs == true then
             self.core:DrawPolygon(nId, tUnit, 6.7, 0, 7, "xkcdBloodOrange", 20)
         end
@@ -124,9 +124,9 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 end
 
 function Mod:OnUnitDestroyed(nId, tUnit, sName)
-    if sName == self.L["Sawblade"] then
+    if sName == self.L["unit.sawblade"] then
         self.core:RemoveLine(nId)
-    elseif sName == self.L["Circle Telegraph"] then
+    elseif sName == self.L["unit.circle_telegraph"] then
         self.core:RemovePolygon(nId)
     end
 end
@@ -155,11 +155,11 @@ end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if self.config.interrupt.enable == true then
-        if self.L["Noxious Nabber"] == sName then
-            if self.L["Necrotic Lash"] == sCastName then
+        if self.L["unit.noxious_nabber"] == sName then
+            if self.L["cast.necrotic_lash"] == sCastName then
                 if self.core:GetDistance(tCast.tUnit) < 30 then
                     if self.config.interrupt.alert == true then
-                        self.core:ShowAlert("INTERRUPT", self.L["Interrupt!"])
+                        self.core:ShowAlert(nId, self.L["alert.interrupt"])
                     end
 
                     if self.config.interrupt.sound == true then
@@ -171,10 +171,10 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
                     end
                 end
             end
-        elseif self.L["Regor the Rancid"] == sName then
-            if self.L["Deathwail"] == sCastName or self.L["Gravedigger"] == sCastName then
+        elseif self.L["unit.regor_the_rancid"] == sName then
+            if self.L["cast.deathwail"] == sCastName or self.L["cast.gravedigger"] == sCastName then
                 if self.config.interrupt.alert == true then
-                    self.core:ShowAlert("INTERRUPT", self.L["Interrupt!"])
+                    self.core:ShowAlert(nId, self.L["alert.interrupt"])
                 end
 
                 if self.config.interrupt.sound == true then

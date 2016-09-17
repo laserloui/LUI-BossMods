@@ -7,12 +7,12 @@ local Encounter = "Gloomclaw"
 
 local Locales = {
     ["enUS"] = {
-        -- Unit names
-        ["Gloomclaw"] = "Gloomclaw",
+        -- Units
+        ["unit.boss"] = "Gloomclaw",
         -- Casts
-        ["Rupture"] = "Rupture",
-        -- Messages
-        ["Interrupt Rupture!"] = "Interrupt Rupture!",
+        ["cast.rupture"] = "Rupture",
+        -- Alerts
+        ["alert.interrupt_rupture"] = "Interrupt Rupture!",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -83,14 +83,14 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         return
     end
 
-    if sName == self.L["Gloomclaw"] and bInCombat == true then
+    if sName == self.L["unit.boss"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,true,true,false,false,nil,self.config.healthColor)
     end
 end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if self.config.rupture.enable == true then
-        if sName == self.L["Gloomclaw"] and sCastName == self.L["Rupture"] then
+        if sName == self.L["unit.boss"] and sCastName == self.L["cast.rupture"] then
             if self.config.rupture.sound ~= "None" then
                 self.core:PlaySound(self.config.rupture.sound)
             end
@@ -100,7 +100,7 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
             end
 
             if self.config.rupture.alert ~= "None" then
-                self.core:ShowAlert("Rupture", self.L["Interrupt Rupture!"])
+                self.core:ShowAlert(sCastName, self.L["alert.interrupt_rupture"])
             end
         end
     end

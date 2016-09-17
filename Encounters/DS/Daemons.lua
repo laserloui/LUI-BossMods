@@ -7,17 +7,17 @@ local Encounter = "Daemons"
 
 local Locales = {
     ["enUS"] = {
-        -- Unit names
-        ["Binary System Daemon"] = "Binary System Daemon",
-        ["Null System Daemon"] = "Null System Daemon",
+        -- Units
+        ["unit.boss_north"] = "Binary System Daemon",
+        ["unit.boss_south"] = "Null System Daemon",
         -- Casts
-        ["Disconnect"] = "Disconnect",
-        ["Power Surge"] = "Power Surge",
-        -- Messages
-        ["Disconnect North"] = "Disconnect North",
-        ["Disconnect South"] = "Disconnect South",
-        ["Purge on you!"] = "Purge on you!",
-        ["Interrupt!"] = "Interrupt!",
+        ["cast.disconnect"] = "Disconnect",
+        ["cast.power_surge"] = "Power Surge",
+        -- Alerts
+        ["alert.disconnect_north"] = "Disconnect North!",
+        ["alert.disconnect_south"] = "Disconnect South!",
+        ["alert.purge_player"] = "Purge on you!",
+        ["alert.interrupt"] = "Interrupt!",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -104,43 +104,43 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         return
     end
 
-    if sName == self.L["Binary System Daemon"] and bInCombat == true then
+    if sName == self.L["unit.boss_north"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,true,true,false,false,"N",self.config.northColor)
-    elseif sName == self.L["Null System Daemon"] and bInCombat == true then
+    elseif sName == self.L["unit.boss_south"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,true,true,false,false,"S",self.config.southColor)
     end
 end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
-    if sCastName == self.L["Disconnect"] then
+    if sCastName == self.L["cast.disconnect"] then
         if self.config.disconnect.enable == true then
-            if sName == self.L["Binary System Daemon"] then
+            if sName == self.L["unit.boss_north"] then
                 if self.config.disconnect.sound ~= "None" then
                     self.core:PlaySound(self.config.disconnect.sound)
                 end
 
                 if self.config.disconnect.cast == true then
-                    self.core:ShowCast(tCast,self.L["Disconnect North"],self.config.disconnect.color)
+                    self.core:ShowCast(tCast,(sCastName.." North"),self.config.disconnect.color)
                 end
 
                 if self.config.disconnect.alert ~= "None" then
-                    self.core:ShowAlert("Disconnect", self.L["Disconnect North"].."!")
+                    self.core:ShowAlert(sName.."_disconnect", self.L["alert.disconnect_north"])
                 end
-            elseif sName == self.L["Null System Daemon"] then
+            elseif sName == self.L["unit.boss_south"] then
                 if self.config.disconnect.sound ~= "None" then
                     self.core:PlaySound(self.config.disconnect.sound)
                 end
 
                 if self.config.disconnect.cast == true then
-                    self.core:ShowCast(tCast,self.L["Disconnect South"],self.config.disconnect.color)
+                    self.core:ShowCast(tCast,(sCastName.." South"),self.config.disconnect.color)
                 end
 
                 if self.config.disconnect.alert ~= "None" then
-                    self.core:ShowAlert("Disconnect", self.L["Disconnect South"].."!")
+                    self.core:ShowAlert(sName.."_disconnect", self.L["alert.disconnect_south"])
                 end
             end
         end
-    elseif sCastName == self.L["Power Surge"] then
+    elseif sCastName == self.L["cast.power_surge"] then
         if self.config.powersurge.enable == true then
             if self.core:GetDistance(tCast.tUnit) < 25 then
                 if self.config.powersurge.cast == true then
@@ -152,7 +152,7 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
                 end
 
                 if self.config.powersurge.alert ~= "None" then
-                    self.core:ShowAlert("PowerSurge", self.L["Interrupt!"])
+                    self.core:ShowAlert(sName.."_power_surge", self.L["alert.interrupt"])
                 end
             end
         end
@@ -168,11 +168,11 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
                 end
 
                 if self.config.purge.alert ~= "None" then
-                    self.core:ShowAlert("Purge", self.L["Purge on you!"])
+                    self.core:ShowAlert(tostring(nId).."_purge", self.L["alert.purge_player"])
                 end
             end
 
-            self.core:DrawPolygon(nId, tData.tUnit, 6, 0, self.config.purge.thickness, self.config.purge.color, 20, nDuration)
+            self.core:DrawPolygon(tostring(nId).."_purge", tData.tUnit, 6, 0, self.config.purge.thickness, self.config.purge.color, 20, nDuration)
         end
     end
 end
@@ -180,7 +180,7 @@ end
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if DEBUFF__PURGE == nSpellId then
         if self.config.purge.enable == true then
-            self.core:RemovePolygon(nId)
+            self.core:RemovePolygon(tostring(nId).."_purge")
         end
     end
 end

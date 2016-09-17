@@ -7,8 +7,8 @@ local Encounter = "Maelstrom"
 
 local Locales = {
     ["enUS"] = {
-        -- Unit names
-        ["Maelstrom Authority"] = "Maelstrom Authority",
+        -- Units
+        ["unit.boss"] = "Maelstrom Authority",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -72,7 +72,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         return
     end
 
-    if sName == self.L["Maelstrom Authority"] and bInCombat == true then
+    if sName == self.L["unit.boss"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
     end
 end

@@ -8,7 +8,7 @@ local Encounter = "Tar_gresh"
 local Locales = {
     ["enUS"] = {
         -- Unit names
-        ["Grand Warmonger Tar'gresh"] = "Grand Warmonger Tar'gresh",
+        ["unit.boss"] = "Grand Warmonger Tar'gresh",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -73,7 +73,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         return
     end
 
-    if sName == self.L["Grand Warmonger Tar'gresh"] and bInCombat == true then
+    if sName == self.L["unit.boss"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
     end
 end

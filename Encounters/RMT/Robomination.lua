@@ -7,27 +7,27 @@ local Encounter = "Robomination"
 
 local Locales = {
     ["enUS"] = {
-        -- Unit names
-        ["Robomination"] = "Robomination",
-        ["Cannon Arm"] = "Cannon Arm",
-        ["Flailing Arm"] = "Flailing Arm",
-        ["Scanning Eye"] = "Scanning Eye",
+        -- Units
+        ["unit.boss"] = "Robomination",
+        ["unit.cannon_arm"] = "Cannon Arm",
+        ["unit.flailing_arm"] = "Flailing Arm",
+        ["unit.scanning_eye"] = "Scanning Eye",
         -- Casts
-        ["Noxious Belch"] = "Noxious Belch",
-        ["Incineration Laser"] = "Incineration Laser",
-        ["Cannon Fire"] = "Cannon Fire",
-        -- Bar and messages
-        ["Interrupt!"] = "Interrupt!",
-        ["Next arms"] = "Next arms",
-        ["Go to center!"] = "Go to center!",
-        ["Lasers incoming!"] = "Lasers incoming!",
-        ["CRUSH ON YOU!"] = "CRUSH ON YOU!",
-        ["CRUSH ON %s!"] = "CRUSH ON %s!",
-        ["INCINERATION LASER ON YOU!"] = "INCINERATION LASER ON YOU!",
-        ["INCINERATION LASER!"] = "INCINERATION LASER!",
+        ["cast.noxious_belch"] = "Noxious Belch",
+        ["cast.incineration_laser"] = "Incineration Laser",
+        ["cast.cannon_fire"] = "Cannon Fire",
+        -- Alerts
+        ["alert.interrupt"] = "Interrupt!",
+        ["alert.center"] = "Go to center!",
+        ["alert.lasers"] = "Lasers incoming!",
+        ["alert.crush"] = "CRUSH ON %s!",
+        ["alert.crush_player"] = "CRUSH ON YOU!",
+        ["alert.incineration"] = "INCINERATION LASER!",
+        ["alert.incineration_player"] = "INCINERATION LASER ON YOU!",
         -- Datachron messages
-        ["The Robomination sinks down into the trash"] = "The Robomination sinks down into the trash",
-        ["The Robomination erupts back into the fight!"] = "The Robomination erupts back into the fight!",
+        ["datachron.midphase_start"] = "The Robomination sinks down into the trash",
+        ["datachron.midphase_end"] = "The Robomination erupts back into the fight!",
+        ["datachron.incineration"] = "The Robomination tries to incinerate (.*)",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -118,18 +118,18 @@ function Mod:LoadSettings(wndParent)
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
-    if sName == self.L["Robomination"] then
-        self.robomination = tUnit
+    if sName == self.L["unit.boss"] then
+        self.boss = tUnit
         self.core:AddUnit(nId,sName,tUnit,true,nil,true)
-    elseif sName == self.L["Cannon Arm"] then
+    elseif sName == self.L["unit.cannon_arm"] then
         if self.config.LinesCannonArms.enable == true then
             self.core:DrawLineBetween(nId, tUnit, nil, self.config.LinesCannonArms.nWidth, self.config.LinesCannonArms.color)
         end
-    elseif sName == self.L["Flailing Arm"] then
+    elseif sName == self.L["unit.flailing_arm"] then
         if self.config.LinesFlailingArms.enable == true then
             self.core:DrawLineBetween(nId, tUnit, nil, self.config.LinesFlailingArms.nWidth, self.config.LinesFlailingArms.color)
         end
-    elseif sName == self.L["Scanning Eye"] then
+    elseif sName == self.L["unit.scanning_eye"] then
         if self.config.LinesScanningEye.enable == true then
             self.core:DrawLineBetween(nId, tUnit, nil, self.config.LinesScanningEye.nWidth, self.config.LinesScanningEye.color)
         end
@@ -137,20 +137,20 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 end
 
 function Mod:OnUnitDestroyed(nId, tUnit, sName)
-    if sName == self.L["Scanning Eye"] then
+    if sName == self.L["unit.scanning_eye"] then
         self.core:RemoveLineBetween(nId)
-    elseif sName == self.L["Cannon Arm"] then
+    elseif sName == self.L["unit.cannon_arm"] then
         self.core:RemoveLineBetween(nId)
-    elseif sName == self.L["Flailing Arm"] then
+    elseif sName == self.L["unit.flailing_arm"] then
         self.core:RemoveLineBetween(nId)
     end
 end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
-    if self.L["Robomination"] == sName then
-        if self.L["Noxious Belch"] == sCastName then
+    if self.L["unit.boss"] == sName then
+        if self.L["cast.noxious_belch"] == sCastName then
             if self.config.bLaserWarning == true then
-               self.core:ShowAlert("Lasers_Alert", self.L["Lasers incoming!"])
+               self.core:ShowAlert(sCastName, self.L["alert.lasers"])
             end
         end
     end
@@ -159,45 +159,45 @@ end
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if DEBUFF__THE_SKY_IS_FALLING == nSpellId then
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAura("Crush_Aura", "LUI_BossMods:meteor", "ffff4500", nDuration)
-            self.core:ShowAlert("Crush_Alert", self.L["CRUSH ON YOU!"])
+            self.core:ShowAura("crush_aura", "LUI_BossMods:meteor", "ffff4500", nDuration)
+            self.core:ShowAlert("crush", self.L["alert.crush_player"])
             self.core:PlaySound("run-away")
         else
             if self.core:GetDistance(tData.tUnit) < 15 then
                 self.core:PlaySound("info")
             end
 
-            self.core:ShowAlert("Crush_Alert", self.L["CRUSH ON %s!"]:format(sUnitName))
-            self.core:DrawIcon("Crush_Icon", tData.tUnit, "LUI_BossMods:meteor", 60, 25, "ffff4500", nDuration, false)
+            self.core:ShowAlert("crush", self.L["alert.crush"]:format(sUnitName))
+            self.core:DrawIcon("crush_icon", tData.tUnit, "LUI_BossMods:meteor", 60, 25, "ffff4500", nDuration, false)
         end
     end
 end
 
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if DEBUFF__THE_SKY_IS_FALLING == nSpellId then
-        self.core:HideAura("Crush_Aura")
-        self.core:RemoveIcon("Crush_Icon")
+        self.core:HideAura("crush_aura")
+        self.core:RemoveIcon("crush_icon")
     end
 end
 
 function Mod:OnDatachron(sMessage, sSender, sHandler)
-    if sMessage == self.L["The Robomination sinks down into the trash"] then
-        self.core:ShowAlert("Midphase_Alert", self.L["Go to center!"])
+    if sMessage == self.L["datachron.midphase_start"] then
+        self.core:ShowAlert("midphase_start", self.L["alert.center"])
     else
-        local strPlayerLaserFocused = sMessage:match("The Robomination tries to incinerate (.*)")
+        local strPlayerLaserFocused = sMessage:match(self.L["datachron.incineration"])
         if strPlayerLaserFocused then
             local tFocusedUnit = GameLib.GetPlayerUnitByName(strPlayerLaserFocused)
 
             if tFocusedUnit:IsThePlayer() then
-                self.core:ShowAlert("Incineration_Alert", self.L["INCINERATION LASER ON YOU!"])
+                self.core:ShowAlert("incineration", self.L["alert.incineration_player"])
             else
-                self.core:ShowAlert("Incineration_Alert", self.L["INCINERATION LASER!"])
+                self.core:ShowAlert("incineration", self.L["alert.incineration"])
             end
 
-            self.core:DrawIcon("Incineration_Icon", tFocusedUnit, "LUI_BossMods:angry", 60, 25, "ffadff2f", 10)
+            self.core:DrawIcon("incineration_icon", tFocusedUnit, "LUI_BossMods:angry", 60, 25, "ffadff2f", 10)
 
-            if self.robomination then
-                 self.core:DrawLineBetween("Incineration_Line", tFocusedUnit, self.robomination, 14, "ffadff2f", 10)
+            if self.boss then
+                 self.core:DrawLineBetween("incineration_line", tFocusedUnit, self.boss, 14, "ffadff2f", 10)
             end
         end
     end

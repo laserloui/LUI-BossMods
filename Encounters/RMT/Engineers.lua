@@ -7,22 +7,22 @@ local Encounter = "Engineers"
 
 local Locales = {
     ["enUS"] = {
-        -- Unit names
-        ["Head Engineer Orvulgh"] = "Head Engineer Orvulgh",
-        ["Chief Engineer Wilbargh"] = "Chief Engineer Wilbargh",
-        ["Fusion Core"] = "Fusion Core",
-        ["Lubricant Nozzle"] = "Lubricant Nozzle",
-        ["Spark Plug"] = "Spark Plug",
-        ["Cooling Turbine"] = "Cooling Turbine",
-        -- Buffs / Debuffs
-        ["Atomic Attraction"] = "Atomic Attraction",
+        -- Units
+        ["unit.boss_gun"] = "Head Engineer Orvulgh",
+        ["unit.boss_sword"] = "Chief Engineer Wilbargh",
+        ["unit.fusion_core"] = "Fusion Core",
+        ["unit.lubricant_nozzle"] = "Lubricant Nozzle",
+        ["unit.spark_plug"] = "Spark Plug",
+        ["unit.cooling_turbine"] = "Cooling Turbine",
+        -- Debuffs
+        ["debuff.atomic_attraction"] = "Atomic Attraction",
         -- Casts
-        ["Electroshock"] = "Electroshock",
-        ["Liquidate"] = "Liquidate",
-        -- Messages
-        ["Liquidate soon!"] = "Liquidate soon!",
-        ["Electroshock soon!"] = "Electroshock soon!",
-        ["STOP CLEAVING!"] = "STOP CLEAVING!",
+        ["cast.electroshock"] = "Electroshock",
+        ["cast.liquidate"] = "Liquidate",
+        -- Alerts
+        ["alert.liquidate"] = "Liquidate soon!",
+        ["alert.electroshock"] = "Electroshock soon!",
+        ["alert.cleave"] = "STOP CLEAVING!",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -90,28 +90,28 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         return
     end
 
-    if sName == self.L["Head Engineer Orvulgh"] and bInCombat == true then
+    if sName == self.L["unit.boss_gun"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,false,nil,true)
         self.core:DrawLine(nId, tUnit, "Red", 10, 17)
-    elseif sName == self.L["Chief Engineer Wilbargh"] and bInCombat == true then
+    elseif sName == self.L["unit.boss_sword"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,false,nil,true)
         self.core:DrawLine("CleaveA", tUnit, "Red", 7, 15, -50, 0, Vector3.New(2,0,-1.5))
         self.core:DrawLine("CleaveB", tUnit, "Red", 7, 15, 50, 0, Vector3.New(-2,0,-1.5))
-    elseif sName == self.L["Fusion Core"] or sName == self.L["Lubricant Nozzle"] or sName == self.L["Spark Plug"] or sName == self.L["Cooling Turbine"] then
+    elseif sName == self.L["unit.fusion_core"] or sName == self.L["unit.lubricant_nozzle"] or sName == self.L["unit.spark_plug"] or sName == self.L["unit.cooling_turbine"] then
         self.core:AddUnit(nId,sName,tUnit,true)
     end
 end
 
 function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
     if self.config.PillarHealth.enable == true then
-        if sName == self.L["Fusion Core"] or sName == self.L["Lubricant Nozzle"] or sName == self.L["Spark Plug"] or sName == self.L["Cooling Turbine"] then
+        if sName == self.L["unit.fusion_core"] or sName == self.L["unit.lubricant_nozzle"] or sName == self.L["unit.spark_plug"] or sName == self.L["unit.cooling_turbine"] then
             if nPercent < 20 then
                 if self.core:GetDistance(tUnit) < 30 then
                     if not self.warned or self.warned ~= sName then
                         if self.config.PillarHealth.sound == true then
                             self.core:PlaySound("alert")
                         end
-                        self.core:ShowAlert("BEWARE", self.L["STOP CLEAVING!"])
+                        self.core:ShowAlert("cleave", self.L["alert.cleave"])
                         self.warned = sName
                     end
                 end
@@ -121,22 +121,22 @@ function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
 end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
-    if sName == self.L["Head Engineer Orvulgh"] and sCastName == self.L["Electroshock"] then
-        self.core:AddTimer(sCastName, sCastName, 20, "afb0ff2f",Mod.OnElectroshock,tCast.tUnit)
-    elseif sName == self.L["Chief Engineer Wilbargh"] and sCastName == self.L["Liquidate"] then
-        self.core:AddTimer(sCastName, sCastName, 20, "aff900ff",Mod.OnLiquidate,tCast.tUnit)
+    if sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.electroshock"] then
+        self.core:AddTimer(sCastName, sCastName, 20, "afb0ff2f", Mod.OnElectroshock, tCast.tUnit)
+    elseif sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.liquidate"] then
+        self.core:AddTimer(sCastName, sCastName, 20, "aff900ff", Mod.OnLiquidate, tCast.tUnit)
     end
 end
 
 function Mod:OnLiquidate(tUnit)
     if tUnit and self.core:GetDistance(tUnit) < 30 then
-        self.core:ShowAlert("Liquidate", self.L["Liquidate soon!"])
+        self.core:ShowAlert("liquidate", self.L["alert.liquidate"])
     end
 end
 
 function Mod:OnElectroshock(tUnit)
     if tUnit and self.core:GetDistance(tUnit) < 30 then
-        self.core:ShowAlert("Electroshock", self.L["Electroshock soon!"])
+        self.core:ShowAlert("electroshock", self.L["alert.electroshock"])
     end
 end
 

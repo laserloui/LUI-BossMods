@@ -8,7 +8,7 @@ local Encounter = "Skeledroid"
 local Locales = {
     ["enUS"] = {
         -- Unit names
-        ["Hyper-Accelerated Skeledroid"] = "Hyper-Accelerated Skeledroid",
+        ["unit.boss"] = "Hyper-Accelerated Skeledroid",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -73,7 +73,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         return
     end
 
-    if sName == self.L["Hyper-Accelerated Skeledroid"] and bInCombat == true then
+    if sName == self.L["unit.boss"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
     end
 end
