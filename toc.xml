@@ -7,17 +7,46 @@
 	<Script Name="LUI_BossMods.lua"/>
 	<Form Name="LUI_BossMods.xml"/>
 	<!-- Encounters: Datascape -->
-	<Script Name="Encounters\DS\Daemons.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Earth_BioEnhancedBroodmother.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Earth_FullyOptimizedCanimid.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Earth_LogicGuidedRockslide.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Fire_GrandWarmongerTargresh.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Fire_WarmongerAgratha.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Fire_WarmongerChuna.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Fire_WarmongerTalarii.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Frost_FrostBoulderAvalanche.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Frost_FrostbringerWarlock.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Logic_AbstractAugmentationAlgorithm.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Logic_HyperAcceleratedSkeledroid.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Logic_AugmentedHeraldOfAvatus.lua"/>
+	<Script Name="Encounters\DS\Pairs\AileronHydroflux.lua"/>
+	<Script Name="Encounters\DS\Pairs\AileronMegalith.lua"/>
+	<Script Name="Encounters\DS\Pairs\AileronVisceralus.lua"/>
+	<Script Name="Encounters\DS\Pairs\MnemesisHydroflux.lua"/>
+	<Script Name="Encounters\DS\Pairs\MnemesisMegalith.lua"/>
+	<Script Name="Encounters\DS\Pairs\MnemesisVisceralus.lua"/>
+	<Script Name="Encounters\DS\Pairs\PyrobaneHydroflux.lua"/>
+	<Script Name="Encounters\DS\Pairs\PyrobaneMegalith.lua"/>
+	<Script Name="Encounters\DS\Pairs\PyrobaneVisceralus.lua"/>
+	<Script Name="Encounters\DS\SystemDaemons.lua"/>
+	<Script Name="Encounters\DS\LimboInfomatrix.lua"/>
+	<Script Name="Encounters\DS\VolatilityLattice.lua"/>
+	<Script Name="Encounters\DS\MaelstromAuthority.lua"/>
 	<Script Name="Encounters\DS\Gloomclaw.lua"/>
-	<Script Name="Encounters\DS\Maelstrom.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Skeledroid.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Tar_gresh.lua"/>
+	<Script Name="Encounters\DS\Avatus.lua"/>
 	<!-- Encounters: Initialization Core Y-83 -->
 	<!--<Script Name="Encounters\Y83\Augmentors.lua"/> -->
 	<!-- Encounters: Redmoon Terror -->
+	<Script Name="Encounters\RMT\Miniboss\ChiefWardenLockjaw.lua"/>
+	<Script Name="Encounters\RMT\Miniboss\AssistantTechnicianSkooty.lua"/>
+	<Script Name="Encounters\RMT\Miniboss\ChiefEnginerScrubberThrag.lua"/>
 	<Script Name="Encounters\RMT\Shredder.lua"/>
 	<Script Name="Encounters\RMT\Robomination.lua"/>
 	<Script Name="Encounters\RMT\Engineers.lua"/>
+	<Script Name="Encounters\RMT\Mordechai.lua"/>
+	<Script Name="Encounters\RMT\Octog.lua"/>
+	<Script Name="Encounters\RMT\Starmap.lua"/>
+	<Script Name="Encounters\RMT\Laveka.lua"/>
 	<!-- Settings -->
 	<Script Name="Settings\Settings.lua"/>
 </Addon>

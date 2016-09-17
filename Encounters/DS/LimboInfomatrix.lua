@@ -3,13 +3,10 @@ require "Apollo"
 
 local Mod = {}
 local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
-local Encounter = "Maelstrom"
+local Encounter = "LimboInfomatrix"
 
 local Locales = {
-    ["enUS"] = {
-        -- Units
-        ["unit.boss"] = "Maelstrom Authority",
-    },
+    ["enUS"] = {},
     ["deDE"] = {},
     ["frFR"] = {},
 }
@@ -19,19 +16,15 @@ function Mod:new(o)
     setmetatable(o, self)
     self.__index = self
     self.instance = "Datascape"
-    self.displayName = "Maelstrom Authority"
+    self.displayName = "Limbo Infomatrix"
     self.tTrigger = {
-        sType = "ANY",
         tZones = {
             [1] = {
                 continentId = 52,
                 parentZoneId = 98,
-                mapId = 120,
+                mapId = 114,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Maelstrom Authority"},
-        },
+        }
     }
     self.run = false
     self.runtime = {}
@@ -70,10 +63,6 @@ end
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if not self.run == true then
         return
-    end
-
-    if sName == self.L["unit.boss"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
     end
 end
 
