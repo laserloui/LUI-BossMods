@@ -11,6 +11,7 @@
 	<Script Name="Encounters\DS\Gloomclaw.lua"/>
 	<Script Name="Encounters\DS\Maelstrom.lua"/>
 	<Script Name="Encounters\DS\Miniboss\Skeledroid.lua"/>
+	<Script Name="Encounters\DS\Miniboss\Tar_gresh.lua"/>
 	<!-- Encounters: Initialization Core Y-83 -->
 	<!--<Script Name="Encounters\Y83\Augmentors.lua"/> -->
 	<!-- Encounters: Redmoon Terror -->
