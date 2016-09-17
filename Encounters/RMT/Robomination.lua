@@ -189,11 +189,11 @@ end
 
 function Mod:OnHealthChanged(nId, nHealthPercent, sName, tUnit)
     if sName == self.L["Robomination"] then
-	    if nPercent = 77 then				
-			mod:AddMsg("ROBP2", "Midphase soon!"	
+	    if nHealthPercent == 77 then				
+			mod:AddMsg("ROBP2", "Midphase soon!")
 			self.core:ShowAlert("Warning_Midphase", self.L["Midphase soon!"])		
-		elseif nPercent = 52 then				
-			mod:AddMsg("ROBP2", "Midphase soon!"				
+		elseif nHealthPercent == 52 then				
+			mod:AddMsg("ROBP2", "Midphase soon!")
 		end
 	end
 end
