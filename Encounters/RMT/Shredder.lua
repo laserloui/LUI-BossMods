@@ -14,11 +14,13 @@ local Locales = {
         ["Sawblade"] = "Sawblade",
         ["Circle Telegraph"] = "Hostile Invisible Unit for Fields (1.2 hit radius)",
         -- Casts
-        ["Necrotic Lash"] = "Necrotic Lash", --Cast by Noxious Nabber (grab and disorient), interruptable
-        ["Deathwail"] = "Deathwail", --Miniboss knockdown, interruptable
-        ["Gravedigger"] = "Gravedigger", --Miniboss cast?
+        ["Necrotic Lash"] = "Necrotic Lash", -- Cast by Noxious Nabber (grab and disorient), interruptable
+        ["Deathwail"] = "Deathwail", -- Miniboss knockdown, interruptable
+        ["Gravedigger"] = "Gravedigger", -- Miniboss cast
         -- Messages
         ["Interrupt!"] = "Interrupt!",
+		-- Datachron messages
+		["WARNING: THE SHREDDER IS STARTING!"] = "WARNING: THE SHREDDER IS STARTING!",
     },
     ["deDE"] = {},
     ["frFR"] = {},
