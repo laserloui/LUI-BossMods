@@ -184,6 +184,7 @@ function Mod:new(o)
     self.__index = self
     self.instance = "Redmoon Terror"     -- Name of the Instance under which the module will show up in Option Panel
     self.displayName = "Shredder"        -- Name of the Encounter shown in the Option Panel
+    self.bIsMiniboss = false             -- Boolean whether or not module is for Miniboss 
     self.tTrigger = {
         sType = "ANY",
         tZones = {                        -- Zone in which module gets activated. Use GameLib.GetCurrentZoneMap() to retrieve current zone map.
