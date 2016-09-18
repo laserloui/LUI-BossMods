@@ -48,7 +48,7 @@ function LUI_BossMods:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
-    self.bDebug = false
+    self.bDebug = true
     self.bIsRunning = false
     self.language = "enUS"
     self.runtime = {}
@@ -363,6 +363,22 @@ function LUI_BossMods:OnFrame()
 end
 
 function LUI_BossMods:OnUpdate()
+    if not self.isDone then
+        if not self.unitPlayer then
+            self.unitPlayer = GetPlayerUnit()
+        end
+
+        if self.unitPlayer then
+            self:AddUnit(4,"Unit 4",self.unitPlayer,true,false,false,false,nil,nil,4)
+            self:AddUnit(2,"Unit 2",self.unitPlayer,true,false,false,false,nil,nil,2)
+            self:AddUnit(5,"Unit 5",self.unitPlayer,true,false,false,false,nil,nil,5)
+            self:AddUnit(3,"Unit 3",self.unitPlayer,true,false,false,false,nil,nil,3)
+            self:AddUnit(6,"Unit 6",self.unitPlayer,true,false,false,false,nil,nil,6)
+            self:AddUnit(1,"Unit 1",self.unitPlayer,true,false,false,false,nil,nil,1)
+            self.isDone = true
+        end
+    end
+
     if not self.bIsRunning == true or not self.tCurrentEncounter then
         return
     end
@@ -713,7 +729,7 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuff,sMark,sColor)
+function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuff,sMark,sColor,nPriority)
     if not nId or not sName or not tUnit then
         return
     end
@@ -729,6 +745,7 @@ function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuf
             tUnit = tUnit,
             sMark = sMark or nil,
             sColor = sColor or nil,
+            nPriority = nPriority or 0,
             bShowUnit = bShowUnit or false,
             bOnCast = bOnCast or false,
             bOnBuff = bOnBuff or false,
@@ -750,7 +767,7 @@ function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuf
                 end
 
                 self.runtime.units[nId].wnd = self:StyleUnit(Apollo.LoadForm(self.xmlDoc, "Unit", self.wndUnits, self),self.runtime.units[nId])
-                self.wndUnits:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+                self:SortUnits()
             end
         end
     end
@@ -773,6 +790,41 @@ function LUI_BossMods:StyleUnit(wnd,tData)
     wnd:FindChild("HealthBar"):SetBGColor(tData.sColor or self.config.units.healthColor)
 
     return wnd
+end
+
+function LUI_BossMods:SortUnits()
+    if not self.runtime.units then
+        return
+    end
+
+    local tSorted = {}
+    local height = self.config.units.healthHeight + 15
+
+    for nId,timer in pairs(self.runtime.units) do
+        tSorted[#tSorted+1] = {
+            nId = nId,
+            nPriority = timer.nPriority or 0
+        }
+    end
+
+    table.sort(tSorted, function(a, b)
+        return a.nPriority < b.nPriority
+    end)
+
+    for i=1,#tSorted do
+        local tUnit = self.runtime.units[tSorted[i].nId]
+        local tOffsets = {0,(height * (i-1)),0,(height * i)}
+
+        if tUnit.nPosition then
+            if tUnit.nPosition ~= i then
+                tUnit.wnd:TransitionMove(WindowLocation.new({fPoints = {0,0,1,0}, nOffsets = tOffsets}), .25)
+            end
+        else
+            tUnit.wnd:SetAnchorOffsets(unpack(tOffsets))
+        end
+
+        tUnit.nPosition = i
+    end
 end
 
 function LUI_BossMods:UpdateUnit(tData)
@@ -1051,6 +1103,7 @@ function LUI_BossMods:AddTimer(sName,sText,nDuration,sColor,fHandler,tData)
     self.runtime.timer[sName].wnd:FindChild("Duration"):SetText(Apollo.FormatNumber(nDuration,1,true))
     self.runtime.timer[sName].wnd:FindChild("Progress"):SetBGColor(sColor or self.config.timer.barColor)
     self.runtime.timer[sName].wnd:FindChild("Progress"):SetAnchorPoints(0,0,1,1)
+    self.runtime.timer[sName].wnd:Show(false,true)
 end
 
 function LUI_BossMods:UpdateTimer(tTimer)
@@ -1676,7 +1729,7 @@ function LUI_BossMods:RemoveIcon(Key,bCallback)
     if not self.tDraws then
         return
     end
-    
+
     local tDraw = self.tDraws[Key]
 
     if tDraw then

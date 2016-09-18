@@ -24,6 +24,8 @@ local Locales = {
         -- Alerts
         ["alert.liquidate"] = "Liquidate!",
         ["alert.electroshock"] = "Electroshock!",
+        -- datachron
+        ["datachron.electroshock"] = "(.*) suffers from Electroshock",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -58,31 +60,37 @@ function Mod:new(o)
         enable = true,
         units = {
             gun = {
-                enable = false,
+                enable = true,
+                priority = 1,
                 name = "Head Engineer Orvulgh",
             },
             sword = {
-                enable = false,
+                enable = true,
+                priority = 2,
                 name = "Chief Engineer Wilbargh",
             },
             spark = {
                 enable = true,
+                priority = 3,
                 name = "Spark Plug",
                 color = "afb0ff2f",
             },
             fusion = {
                 enable = true,
+                priority = 4,
                 name = "Fusion Core",
                 color = "afb0ff2f",
             },
-            lubricant = {
-                enable = true,
-                name = "Lubricant Nozzle",
-                color = "ade91dfb",
-            },
             cooling = {
                 enable = true,
+                priority = 5,
                 name = "Cooling Turbine",
+                color = "ade91dfb",
+            },
+            lubricant = {
+                enable = true,
+                priority = 6,
+                name = "Lubricant Nozzle",
                 color = "ade91dfb",
             },
         },
@@ -106,6 +114,10 @@ function Mod:new(o)
             liquidate = {
                 enable = true,
                 color = "afb0ff2f",
+            },
+            vulnerability = {
+                enable = true,
+                color = "aaee94fd",
             },
         },
         alerts = {
@@ -168,13 +180,22 @@ function Mod:Init(parent)
     self.L = parent:GetLocale(Encounter,Locales)
 end
 
+function Mod:OnDatachron(sMessage, sSender, sHandler)
+    if self.config.timers.vulnerability.enable == true then
+        local strPlayer = sMessage:match(self.L["datachron.electroshock"])
+        if strPlayer then
+            self.core:AddTimer("ElectroshockTimer_"..strPlayer, strPlayer, 60, self.config.timers.vulnerability.color)
+        end
+    end
+end
+
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if not self.run == true then
         return
     end
 
     if sName == self.L["unit.boss_gun"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.gun.enable,true,false,false,nil,self.config.units.gun.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.gun.enable,true,false,false,nil,self.config.units.gun.color, self.config.units.gun.priority)
 
         if self.config.lines.gun.enable == true then
             self.core:DrawLine(nId, tUnit, self.config.lines.gun.color, self.config.lines.gun.thickness, 17)
@@ -184,7 +205,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
             self.core:AddTimer(self.L["cast.electroshock"], self.L["cast.electroshock"], 10, self.config.timers.electroshock.color, Mod.OnElectroshock, tUnit)
         end
     elseif sName == self.L["unit.boss_sword"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.sword.enable,true,false,false,nil,self.config.units.sword.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.sword.enable,true,false,false,nil,self.config.units.sword.color, self.config.units.sword.priority)
 
         if self.config.lines.sword.enable == true then
             self.core:DrawLine("CleaveA", tUnit, self.config.lines.sword.color, self.config.lines.sword.thickness, 15, -50, 0, Vector3.New(2,0,-1.5))
@@ -195,13 +216,13 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
             self.core:AddTimer(self.L["cast.liquidate"], self.L["cast.liquidate"], 10, self.config.timers.liquidate.color, Mod.OnLiquidate, tUnit)
         end
     elseif sName == self.L["unit.fusion_core"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion.enable,false,false,false,nil,self.config.units.fusion.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion.enable,false,false,false,nil,self.config.units.fusion.color, self.config.units.fusion.priority)
     elseif sName == self.L["unit.lubricant_nozzle"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.lubricant.enable,false,false,false,nil,self.config.units.lubricant.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.lubricant.enable,false,false,false,nil,self.config.units.lubricant.color, self.config.units.lubricant.priority)
     elseif sName == self.L["unit.spark_plug"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.spark.enable,false,false,false,nil,self.config.units.spark.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.spark.enable,false,false,false,nil,self.config.units.spark.color, self.config.units.spark.priority)
     elseif sName == self.L["unit.cooling_turbine"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.cooling.enable,false,false,false,nil,self.config.units.cooling.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.cooling.enable,false,false,false,nil,self.config.units.cooling.color, self.config.units.cooling.priority)
     end
 end
 
@@ -257,7 +278,7 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     end
 end
 
-function Mod:OnCastStart(nId, sCastName, tCast, sName)
+function Mod:OnCastEnd(nId, sCastName, tCast, sName)
     if sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.electroshock"] then
         if self.config.timers.electroshock.enable == true then
             self.core:AddTimer(sCastName, sCastName, 20, self.config.timers.electroshock.color, Mod.OnElectroshock, tCast.tUnit)
