@@ -17,18 +17,20 @@ local Locales = {
         -- Debuffs
         ["debuff.atomic_attraction"] = "Atomic Attraction",
         ["debuff.electroshock_vulnerability"] = "Electroshock Vulnerability",
- 		["debuff.discharged_plasma"] = "Discharged Plasma", -- Not 100% sure about name
+        ["debuff.discharged_plasma"] = "Discharged Plasma", -- Not 100% sure about name
         -- Casts
         ["cast.electroshock"] = "Electroshock",
         ["cast.liquidate"] = "Liquidate",
         -- Alerts
-        ["alert.liquidate"] = "Liquidate soon!",
-        ["alert.electroshock"] = "Electroshock soon!",
-        ["alert.cleave"] = "STOP CLEAVING!",
+        ["alert.liquidate"] = "Liquidate!",
+        ["alert.electroshock"] = "Electroshock!",
     },
     ["deDE"] = {},
     ["frFR"] = {},
 }
+
+local DEBUFF__ELECTROSHOCK_VULNERABILITY = 83798
+local DEBUFF_ATOMIC_ATTRACTION = 84052
 
 function Mod:new(o)
     o = o or {}
@@ -36,6 +38,7 @@ function Mod:new(o)
     self.__index = self
     self.instance = "Redmoon Terror"
     self.displayName = "Engineers"
+    self.bHasSettings = true
     self.tTrigger = {
         sType = "ANY",
         tZones = {
@@ -53,9 +56,106 @@ function Mod:new(o)
     self.runtime = {}
     self.config = {
         enable = true,
-        PillarHealth = {
-            enable = true,
-            sound = true,
+        units = {
+            gun = {
+                enable = false,
+                name = "Head Engineer Orvulgh",
+            },
+            sword = {
+                enable = false,
+                name = "Chief Engineer Wilbargh",
+            },
+            spark = {
+                enable = true,
+                name = "Spark Plug",
+                color = "afb0ff2f",
+            },
+            fusion = {
+                enable = true,
+                name = "Fusion Core",
+                color = "afb0ff2f",
+            },
+            lubricant = {
+                enable = true,
+                name = "Lubricant Nozzle",
+                color = "ade91dfb",
+            },
+            cooling = {
+                enable = true,
+                name = "Cooling Turbine",
+                color = "ade91dfb",
+            },
+        },
+        lines = {
+            gun = {
+                enable = true,
+                thickness = 10,
+                color = "ffff0000",
+            },
+            sword = {
+                enable = true,
+                thickness = 7,
+                color = "ffff0000",
+            },
+        },
+        timers = {
+            electroshock = {
+                enable = true,
+                color = "ade91dfb",
+            },
+            liquidate = {
+                enable = true,
+                color = "afb0ff2f",
+            },
+        },
+        alerts = {
+            pillar = {
+                enable = true,
+                duration = 5,
+            },
+            orb = {
+                enable = true,
+                color = "ffff4500",
+                duration = 5,
+            },
+            electroshock = {
+                enable = false,
+                duration = 5,
+            },
+            liquidate = {
+                enable = false,
+                duration = 5,
+            },
+        },
+        sounds = {
+            pillar = {
+                enable = true,
+                file = "alert",
+            },
+            orb = {
+                enable = true,
+                file = "alert",
+            },
+            electroshock = {
+                enable = false,
+            },
+            liquidate = {
+                enable = false,
+            },
+        },
+        icons = {
+            electroshock = {
+                enable = true,
+                sprite = "target2",
+                size = 60,
+                color = "ff40e0d0",
+            },
+            orb = {
+                enable = true,
+                sprite = "bomb",
+                size = 60,
+                color = "ffff4500",
+            },
         },
     }
     return o
@@ -66,25 +166,6 @@ function Mod:Init(parent)
 
     self.core = parent
     self.L = parent:GetLocale(Encounter,Locales)
-
-    local strPrefix = Apollo.GetAssetFolder()
-    local tToc = XmlDoc.CreateFromFile("toc.xml"):ToTable()
-    for k,v in ipairs(tToc) do
-        local strPath = string.match(v.Name, "(.*)[\\/]"..Encounter)
-        if strPath ~= nil and strPath ~= "" then
-            strPrefix = strPrefix .. "\\" .. strPath .. "\\"
-            break
-        end
-    end
-
-    self.xmlDoc = XmlDoc.CreateFromFile(strPrefix .. Encounter..".xml")
-    self.xmlDoc:RegisterCallback("OnDocLoaded", self)
-end
-
-function Mod:OnDocLoaded()
-    if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() then
-        return
-    end
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
@@ -93,27 +174,51 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss_gun"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,false,nil,true)
-        self.core:DrawLine(nId, tUnit, "Red", 10, 17)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.gun.enable,true,false,false,nil,self.config.units.gun.color)
+
+        if self.config.lines.gun.enable == true then
+            self.core:DrawLine(nId, tUnit, self.config.lines.gun.color, self.config.lines.gun.thickness, 17)
+        end
+
+        if self.config.timers.electroshock.enable == true then
+            self.core:AddTimer(self.L["cast.electroshock"], self.L["cast.electroshock"], 10, self.config.timers.electroshock.color, Mod.OnElectroshock, tUnit)
+        end
     elseif sName == self.L["unit.boss_sword"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,false,nil,true)
-        self.core:DrawLine("CleaveA", tUnit, "Red", 7, 15, -50, 0, Vector3.New(2,0,-1.5))
-        self.core:DrawLine("CleaveB", tUnit, "Red", 7, 15, 50, 0, Vector3.New(-2,0,-1.5))
-    elseif sName == self.L["unit.fusion_core"] or sName == self.L["unit.lubricant_nozzle"] or sName == self.L["unit.spark_plug"] or sName == self.L["unit.cooling_turbine"] then
-        self.core:AddUnit(nId,sName,tUnit,true)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.sword.enable,true,false,false,nil,self.config.units.sword.color)
+
+        if self.config.lines.sword.enable == true then
+            self.core:DrawLine("CleaveA", tUnit, self.config.lines.sword.color, self.config.lines.sword.thickness, 15, -50, 0, Vector3.New(2,0,-1.5))
+            self.core:DrawLine("CleaveB", tUnit, self.config.lines.sword.color, self.config.lines.sword.thickness, 15, 50, 0, Vector3.New(-2,0,-1.5))
+        end
+
+        if self.config.timers.liquidate.enable == true then
+            self.core:AddTimer(self.L["cast.liquidate"], self.L["cast.liquidate"], 10, self.config.timers.liquidate.color, Mod.OnLiquidate, tUnit)
+        end
+    elseif sName == self.L["unit.fusion_core"] then
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion.enable,false,false,false,nil,self.config.units.fusion.color)
+    elseif sName == self.L["unit.lubricant_nozzle"] then
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.lubricant.enable,false,false,false,nil,self.config.units.lubricant.color)
+    elseif sName == self.L["unit.spark_plug"] then
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.spark.enable,false,false,false,nil,self.config.units.spark.color)
+    elseif sName == self.L["unit.cooling_turbine"] then
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.cooling.enable,false,false,false,nil,self.config.units.cooling.color)
     end
 end
 
 function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
-    if self.config.PillarHealth.enable == true then
+    if self.config.alerts.pillar.enable == true or self.config.sounds.pillar == true then
         if sName == self.L["unit.fusion_core"] or sName == self.L["unit.lubricant_nozzle"] or sName == self.L["unit.spark_plug"] or sName == self.L["unit.cooling_turbine"] then
             if nPercent < 20 then
                 if self.core:GetDistance(tUnit) < 30 then
                     if not self.warned or self.warned ~= sName then
-                        if self.config.PillarHealth.sound == true then
-                            self.core:PlaySound("alert")
+                        if self.config.sounds.pillar.enable == true then
+                            self.core:PlaySound(self.config.sounds.pillar.file)
                         end
-                        self.core:ShowAlert("cleave", self.L["alert.cleave"])
+
+                        if self.config.alerts.pillar.enable == true then
+                            self.core:ShowAlert("Pillar", sName.." at 20%!",self.config.alerts.pillar.duration, self.config.alerts.pillar.color)
+                        end
+
                         self.warned = sName
                     end
                 end
@@ -122,36 +227,90 @@ function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
     end
 end
 
+function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
+    if nSpellId == DEBUFF__ELECTROSHOCK_VULNERABILITY then
+        if self.config.icons.electroshock.enable == true then
+            self.core:DrawIcon("Electroshock_"..tostring(nId), tData.tUnit, self.config.icons.electroshock.sprite, self.config.icons.electroshock.size, nil, self.config.icons.electroshock.color, nDuration)
+        end
+    elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
+        if self.config.icons.orb.enable == true then
+            self.core:DrawIcon("Orb_"..tostring(nId), tData.tUnit, self.config.icons.orb.sprite, self.config.icons.orb.size, nil, self.config.icons.orb.color, nDuration)
+        end
+
+        if self.config.alerts.orb.enable == true then
+            self.core:ShowAlert("Orb_"..tostring(nId), self.L["debuff.atomic_attraction"].." on "..sName, self.config.alerts.orb.duration, self.config.alerts.orb.color)
+        end
+
+        if self.config.sounds.orb.enable == true then
+            if tData.tUnit:IsThePlayer() then
+                self.core:PlaySound(self.config.sounds.orb.file)
+            end
+        end
+    end
+end
+
+function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
+    if nSpellId == DEBUFF__ELECTROSHOCK_VULNERABILITY then
+        self.core:RemoveIcon("Electroshock_"..tostring(nId))
+    elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
+        self.core:RemoveIcon("Orb_"..tostring(nId))
+    end
+end
+
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.electroshock"] then
-        self.core:AddTimer(sCastName, sCastName, 20, "afb0ff2f", Mod.OnElectroshock, tCast.tUnit)
+        if self.config.timers.electroshock.enable == true then
+            self.core:AddTimer(sCastName, sCastName, 20, self.config.timers.electroshock.color, Mod.OnElectroshock, tCast.tUnit)
+        end
     elseif sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.liquidate"] then
-        self.core:AddTimer(sCastName, sCastName, 20, "aff900ff", Mod.OnLiquidate, tCast.tUnit)
+        if self.config.timers.liquidate.enable == true then
+            self.core:AddTimer(sCastName, sCastName, 20, self.config.timers.liquidate.color, Mod.OnLiquidate, tCast.tUnit)
+        end
     end
 end
 
 function Mod:OnLiquidate(tUnit)
-    if tUnit and self.core:GetDistance(tUnit) < 30 then
-        self.core:ShowAlert("liquidate", self.L["alert.liquidate"])
+    if not tUnit then
+        return
+    end
+
+    local distance = self.core:GetDistance(tUnit)
+
+    if distance < 30 then
+        if self.config.alerts.liquidate.enable == true then
+            self.core:ShowAlert("liquidate", self.L["alert.liquidate"], self.config.alerts.liquidate.duration, self.config.alerts.liquidate.color)
+        end
+
+        if self.config.sounds.liquidate.enable == true then
+            self.core:PlaySound(self.config.sounds.liquidate.file)
+        end
     end
 end
 
 function Mod:OnElectroshock(tUnit)
-    if tUnit and self.core:GetDistance(tUnit) < 30 then
-        self.core:ShowAlert("electroshock", self.L["alert.electroshock"])
-    end
-end
-
-function Mod:LoadSettings(wndParent)
-    if not wndParent then
+    if not tUnit then
         return
     end
 
-    return Apollo.LoadForm(self.xmlDoc, "Settings", wndParent, self)
+    local distance = self.core:GetDistance(tUnit)
+
+    if distance < 30 then
+        if self.config.alerts.electroshock.enable == true then
+            self.core:ShowAlert("electroshock", self.L["alert.electroshock"], self.config.alerts.electroshock.duration, self.config.alerts.electroshock.color)
+        end
+
+        if self.config.sounds.electroshock.enable == true then
+            self.core:PlaySound(self.config.sounds.electroshock.file)
+        end
+    end
+end
+
+function Mod:IsRunning()
+    return self.run
 end
 
 function Mod:IsEnabled()
-    return self.run
+    return self.config.enable
 end
 
 function Mod:OnEnable()

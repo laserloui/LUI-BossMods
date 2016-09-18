@@ -235,10 +235,7 @@ function LUI_BossMods:OnChangeZone()
             mapId = zone.id,
         }
 
-        if self.bIsRunning == true then
-            self:SearchForEncounter()
-            Print("CHECK ENCOUNTER (ZONE CHANGE)")
-        end
+        self:SearchForEncounter()
     else
         Apollo.CreateTimer("CheckZoneTimer", 1, false)
     end
@@ -270,13 +267,17 @@ function LUI_BossMods:SearchForEncounter()
 
     for sName,tModule in pairs(self.modules) do
         if self:CheckZone(tModule) then
-            if self:CheckTrigger(tModule) then
-                self.tCurrentEncounter = tModule
+            if self.bIsRunning == false then
+                if self:CheckTrigger(tModule) then
+                    self.tCurrentEncounter = tModule
 
-                if self.tCurrentEncounter and not self.tCurrentEncounter:IsEnabled() then
-                    self:StartFight()
+                    if self.tCurrentEncounter and self.tCurrentEncounter:IsEnabled() and not self.tCurrentEncounter:IsRunning() then
+                        self:StartFight()
+                    end
+
+                    return
                 end
-
+            else
                 return
             end
         end
@@ -443,7 +444,6 @@ function LUI_BossMods:StartFight()
 end
 
 function LUI_BossMods:ResetFight()
-    Print("RESET FIGHT")
     self.bIsRunning = false
     self.wipeTimer:Stop()
 
@@ -461,6 +461,26 @@ function LUI_BossMods:ResetFight()
 
     self.runtime = {}
     self.wndOverlay:DestroyAllPixies()
+
+    if self.tDraws then
+        for key,draw in pairs(self.tDraws) do
+            if draw.sType then
+                if draw.sType == "Icon" then
+                    self:RemoveIcon(key,draw)
+                elseif draw.sType == "Pixie" then
+                    self:RemovePixie(key,draw)
+                elseif draw.sType == "Polygon" then
+                    self:RemovePolygon(key,draw)
+                elseif draw.sType == "Line" then
+                    self:RemoveLine(key,draw)
+                elseif draw.sType == "LineBetween" then
+                    self:RemoveLineBetween(key,draw)
+                end
+            end
+        end
+    end
+
+    self.tDraws = nil
 
     if self.wndUnits:IsShown() then
         self.wndUnits:DestroyChildren()
@@ -665,7 +685,9 @@ function LUI_BossMods:OnEnteredCombat(unit, bInCombat)
                     self.tSavedUnits[unit:GetName()][unit:GetId()] = unit
                 end
 
-                self:SearchForEncounter()
+                if bInCombat == true then
+                    self:SearchForEncounter()
+                end
             end
         end
     end
@@ -1492,6 +1514,10 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:PlaySound(sound)
+    if not sound or sound == "" then
+        return
+    end
+
     self:SetVolume()
 
     if type(sound) == "string" then
@@ -1517,7 +1543,7 @@ function LUI_BossMods:CheckVolume()
     if mute then
         Apollo.SetConsoleVariable("sound.mute", false)
         Apollo.SetConsoleVariable("sound.volumeMaster", 0.5)
-        Apollo.SetConsoleVariable("sound.volumeUI", 0)
+        Apollo.SetConsoleVariable("sound.volumeUI", 0.01)
         Apollo.SetConsoleVariable("sound.volumeMusic", 0)
         Apollo.SetConsoleVariable("sound.volumeSfx", 0)
         Apollo.SetConsoleVariable("sound.volumeAmbient", 0)
@@ -1566,7 +1592,7 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nHeight, sColor, nDuration, bShowOverlay, fHandler, tData)
+function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nHeightParam, sColor, nDuration, bShowOverlay, fHandler, tData)
     if not Key or not Origin then
         return
     end
@@ -1598,6 +1624,7 @@ function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nHeight, sColo
 
     local nSize = (nSpriteSize/2) or 30
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
+    local nHeight = nHeightParam or 40
 
     wnd:SetAnchorOffsets((nSize*-1),((nSize*-1)-nHeight),nSize,(nSize-nHeight))
     wnd:SetSprite(sSprite or "LUI_BossMods:attention")
@@ -1649,7 +1676,9 @@ function LUI_BossMods:RemoveIcon(Key,bCallback)
     if not self.tDraws then
         return
     end
+    
     local tDraw = self.tDraws[Key]
+
     if tDraw then
         if tDraw.wnd then
             tDraw.wnd:Show(false,true)
@@ -2691,6 +2720,25 @@ function LUI_BossMods:Copy(t)
     end
 
     return o
+end
+
+function LUI_BossMods:Sort(t, order)
+    local keys = {}
+    for k in pairs(t) do keys[#keys + 1] = k end
+
+    if order then
+		table.sort(keys, function(a,b) return order(t, a, b) end)
+    else
+		table.sort(keys)
+    end
+
+    local i = 0
+    return function()
+		i = i + 1
+		if keys[i] then
+			return keys[i], t[keys[i]]
+		end
+    end
 end
 
 function LUI_BossMods:Round(val, decimal)
