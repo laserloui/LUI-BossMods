@@ -175,6 +175,8 @@ function LUI_BossMods:OnDocLoaded()
     end
 
     Apollo.LoadSprites("Sprites.xml")
+    Apollo.RegisterSlashCommand("bossmod", "OnSlashCommand", self)
+    Apollo.RegisterSlashCommand("bossmods", "OnSlashCommand", self)
 
     self:GetLanguage()
 
@@ -2653,6 +2655,10 @@ end
 
 function LUI_BossMods:OnConfigure()
     self.settings:OnToggleMenu()
+end
+
+function LUI_BossMods:OnSlashCommand()
+	self.settings:OnToggleMenu()
 end
 
 function LUI_BossMods:OnInterfaceMenuListHasLoaded()
