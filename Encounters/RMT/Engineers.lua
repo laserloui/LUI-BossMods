@@ -26,6 +26,8 @@ local Locales = {
         ["alert.electroshock"] = "Electroshock!",
         -- datachron
         ["datachron.electroshock"] = "(.*) suffers from Electroshock",
+        -- labels
+        ["label.pillar"] = "20% Health Warning",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -62,97 +64,98 @@ function Mod:new(o)
             gun = {
                 enable = true,
                 priority = 1,
-                name = "Head Engineer Orvulgh",
+                label = "unit.boss_gun",
+                color = "afafafaf",
             },
             sword = {
                 enable = true,
                 priority = 2,
-                name = "Chief Engineer Wilbargh",
+                label = "unit.boss_sword",
+                color = "afafafaf",
             },
             spark = {
                 enable = true,
                 priority = 3,
-                name = "Spark Plug",
+                label = "unit.spark_plug",
                 color = "afb0ff2f",
             },
             fusion = {
                 enable = true,
                 priority = 4,
-                name = "Fusion Core",
+                label = "unit.fusion_core",
                 color = "afb0ff2f",
             },
             cooling = {
                 enable = true,
                 priority = 5,
-                name = "Cooling Turbine",
+                label = "unit.cooling_turbine",
                 color = "ade91dfb",
             },
             lubricant = {
                 enable = true,
                 priority = 6,
-                name = "Lubricant Nozzle",
+                label = "unit.lubricant_nozzle",
                 color = "ade91dfb",
-            },
-        },
-        lines = {
-            gun = {
-                enable = true,
-                thickness = 10,
-                color = "ffff0000",
-            },
-            sword = {
-                enable = true,
-                thickness = 7,
-                color = "ffff0000",
             },
         },
         timers = {
             electroshock = {
                 enable = true,
                 color = "ade91dfb",
+                label = "cast.electroshock",
             },
             liquidate = {
                 enable = true,
                 color = "afb0ff2f",
+                label = "cast.liquidate",
             },
             vulnerability = {
                 enable = true,
                 color = "aaee94fd",
+                label = "debuff.electroshock_vulnerability"
             },
         },
         alerts = {
             pillar = {
                 enable = true,
                 duration = 5,
+                label = "label.pillar",
             },
             orb = {
                 enable = true,
                 color = "ffff4500",
                 duration = 5,
+                label = "debuff.atomic_attraction",
             },
             electroshock = {
                 enable = false,
                 duration = 5,
+                label = "cast.electroshock"
             },
             liquidate = {
                 enable = false,
                 duration = 5,
+                label = "cast.liquidate"
             },
         },
         sounds = {
             pillar = {
                 enable = true,
                 file = "alert",
+                label = "label.pillar",
             },
             orb = {
                 enable = true,
                 file = "alert",
+                label = "debuff.atomic_attraction",
             },
             electroshock = {
                 enable = false,
+                label = "cast.electroshock"
             },
             liquidate = {
                 enable = false,
+                label = "cast.liquidate"
             },
         },
         icons = {
@@ -161,12 +164,28 @@ function Mod:new(o)
                 sprite = "target2",
                 size = 60,
                 color = "ff40e0d0",
+                label = "cast.electroshock"
             },
             orb = {
                 enable = true,
                 sprite = "bomb",
                 size = 60,
                 color = "ffff4500",
+                label = "debuff.atomic_attraction",
+            },
+        },
+        lines = {
+            gun = {
+                enable = true,
+                thickness = 10,
+                color = "ffff0000",
+                label = "unit.boss_gun",
+            },
+            sword = {
+                enable = true,
+                thickness = 7,
+                color = "ffff0000",
+                label = "unit.boss_sword",
             },
         },
     }

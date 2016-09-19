@@ -186,6 +186,7 @@ function Mod:new(o)
     self.instance = "Redmoon Terror"    -- Name of the Instance under which the module will show up in Option Panel
     self.displayName = "Shredder"       -- Name of the Encounter shown in the Option Panel
     self.groupName = nil                -- Name of the Group under which this Module will appear in Option Panel (e.g.: Minibosses)
+    self.bHasSettings = true            -- Do Settings for the Option Panel exist?
     self.tTrigger = {
         sType = "ANY",
         tZones = {                      -- Zones in which module gets activated. Use GameLib.GetCurrentZoneMap() to retrieve current zone map.
@@ -209,12 +210,14 @@ function Mod:new(o)
                 enable = true,          -- Show this unit in UnitFrame?
                 priority = 1,           -- Priority in UnitFrame and Option Panel (Top to Bottom)
                 color = "96adff2f",     -- Health Bar Color (Default: Global Setting)
+                label = "unit.a",       -- Text in Option Panel (Text or Locale Key)
             },
         },
         timers = {
             timerA = {
                 enable = true,          -- Enable/Disable timer
                 color = "ade91dfb",     -- Color (Default: Global Setting)
+                label = "timer.a",      -- Text in Option Panel (Text or Locale Key)
             },
         },
         alerts = {
@@ -222,12 +225,14 @@ function Mod:new(o)
                 enable = true,          -- Enable/Disable alert
                 color = "ffff4500",     -- Text Color (Default: Global Setting)
                 duration = 5,           -- Duration (Default: Global Setting)
+                label = "alert.a"       -- Text in Option Panel (Text or Locale Key)
             },
         },
         sounds = {
             soundA = {
                 enable = true,          -- Enable/Disable sound
                 file = "alert",         -- Sound File
+                label = "sound.a"       -- Text in Option Panel (Text or Locale Key)
             },
         },
         icons = {
@@ -236,6 +241,7 @@ function Mod:new(o)
                 sprite = "target2",     -- Icon Sprite
                 size = 20,              -- Icon Size (Default: Global Setting)
                 color = "ff40e0d0",     -- Icon Color (Default: Global Setting)
+                label = "icon.a"        -- Text in Option Panel (Text or Locale Key)
             },
         },
         lines = {
@@ -243,6 +249,7 @@ function Mod:new(o)
                 enable = true,          -- Enable/Disable line
                 color = "ffff0000",     -- Color (Default: Global Setting)
                 thickness = 10,         -- Thickness (Default: Global Setting)
+                label = "line.a"        -- Text in Option Panel (Text or Locale Key)
             },
         },
     }

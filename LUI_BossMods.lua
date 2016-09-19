@@ -48,7 +48,7 @@ function LUI_BossMods:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
-    self.bDebug = true
+    self.bDebug = false
     self.bIsRunning = false
     self.language = "enUS"
     self.runtime = {}
@@ -63,6 +63,15 @@ function LUI_BossMods:new(o)
                 right = 120,
                 bottom = 10
             },
+        },
+        icon = {
+            sprite = "attention",
+            color = "ff7fff00",
+            size = 60,
+        },
+        line = {
+            color = "ffff0000",
+            thickness = 10,
         },
         sound = {
             enable = true,
@@ -113,6 +122,7 @@ function LUI_BossMods:new(o)
             },
         },
         alerts = {
+            color = "ffff00ff",
             offsets = {
                 left = -300,
                 top = -260,
@@ -363,22 +373,6 @@ function LUI_BossMods:OnFrame()
 end
 
 function LUI_BossMods:OnUpdate()
-    if not self.isDone then
-        if not self.unitPlayer then
-            self.unitPlayer = GetPlayerUnit()
-        end
-
-        if self.unitPlayer then
-            self:AddUnit(4,"Unit 4",self.unitPlayer,true,false,false,false,nil,nil,4)
-            self:AddUnit(2,"Unit 2",self.unitPlayer,true,false,false,false,nil,nil,2)
-            self:AddUnit(5,"Unit 5",self.unitPlayer,true,false,false,false,nil,nil,5)
-            self:AddUnit(3,"Unit 3",self.unitPlayer,true,false,false,false,nil,nil,3)
-            self:AddUnit(6,"Unit 6",self.unitPlayer,true,false,false,false,nil,nil,6)
-            self:AddUnit(1,"Unit 1",self.unitPlayer,true,false,false,false,nil,nil,1)
-            self.isDone = true
-        end
-    end
-
     if not self.bIsRunning == true or not self.tCurrentEncounter then
         return
     end
@@ -800,10 +794,10 @@ function LUI_BossMods:SortUnits()
     local tSorted = {}
     local height = self.config.units.healthHeight + 15
 
-    for nId,timer in pairs(self.runtime.units) do
+    for nId,unit in pairs(self.runtime.units) do
         tSorted[#tSorted+1] = {
             nId = nId,
-            nPriority = timer.nPriority or 0
+            nPriority = unit.nPriority or 0
         }
     end
 
@@ -1526,7 +1520,7 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, sFont)
     self.runtime.alerts[sName].nDuration = nDuration or 5
     self.runtime.alerts[sName].wnd:SetText(sText or "")
     self.runtime.alerts[sName].wnd:SetFont(sFont or "CRB_FloaterLarge")
-    self.runtime.alerts[sName].wnd:SetTextColor(sColor or "ffff00ff")
+    self.runtime.alerts[sName].wnd:SetTextColor(sColor or self.config.alerts.color)
 
     self.wndAlerts:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
 
@@ -1645,7 +1639,7 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nHeightParam, sColor, nDuration, bShowOverlay, fHandler, tData)
+function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nSpriteHeight, sColor, nDuration, bShowOverlay, fHandler, tData)
     if not Key or not Origin then
         return
     end
@@ -1675,18 +1669,18 @@ function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nHeightParam, 
         self.tDraws[Key] = nil
     end
 
-    local nSize = (nSpriteSize/2) or 30
+    local nSize = (nSpriteSize/2) or self.config.icon.size
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
-    local nHeight = nHeightParam or 40
+    local nHeight = nSpriteHeight or 40
 
     wnd:SetAnchorOffsets((nSize*-1),((nSize*-1)-nHeight),nSize,(nSize-nHeight))
-    wnd:SetSprite(sSprite or "LUI_BossMods:attention")
-    wnd:SetBGColor(sColor or "ff7fff00")
+    wnd:SetSprite(sSprite or self.config.icon.sprite)
+    wnd:SetBGColor(sColor or self.config.icon.color)
     wnd:SetUnit(Origin)
 
     if nDuration ~= nil and nDuration > 0 then
         if bShowOverlay then
-            wnd:FindChild("Overlay"):SetFullSprite(sSprite or "LUI_BossMods:attention")
+            wnd:FindChild("Overlay"):SetFullSprite(sSprite or self.config.icon.sprite)
             wnd:FindChild("Overlay"):SetBarColor("a0000000")
             wnd:FindChild("Overlay"):SetBGColor("a0000000")
             wnd:FindChild("Overlay"):SetMax(100)
@@ -2103,8 +2097,8 @@ function LUI_BossMods:DrawLine(Key, Origin, sColor, nWidth, nLength, nRotation, 
     tDraw.nLength = nLength or 10
     tDraw.sType = "Line"
     tDraw.nDuration = nDuration or 0
-    tDraw.nWidth = nWidth or 4
-    tDraw.sColor = sColor or tDraw.sColor
+    tDraw.nWidth = nWidth or self.config.line.thickness
+    tDraw.sColor = sColor or self.config.line.color
     tDraw.nNumberOfDot = nNumberOfDot or 1
     tDraw.nPixieIdDot = tDraw.nPixieIdDot or {}
     tDraw.tVectorOffset = tVectorOffset or nil
@@ -2267,8 +2261,8 @@ function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, nWidth, sColor,
     tDraw.sType = "LineBetween"
     tDraw.nDuration = nDuration or 0
     tDraw.nTick = GetTickCount()
-    tDraw.nWidth = nWidth or 4.0
-    tDraw.sColor = sColor or tDraw.sColor
+    tDraw.nWidth = nWidth or self.config.line.thickness
+    tDraw.sColor = sColor or self.config.line.color
     tDraw.nNumberOfDot = nNumberOfDot or 1
     tDraw.nPixieIdDot = tDraw.nPixieIdDot or {}
     tDraw.fHandler = fHandler or nil

@@ -11,7 +11,7 @@ function Settings:new(o)
     setmetatable(o, self)
     self.__index = self
     self.bIsGlobal = false
-    self.soundFiles = {"None","alarm","alert","info","long","interrupt","run-away","beware","burn","destruction","inferno"}
+    self.soundFiles = {"alarm","alert","info","long","interrupt","run-away","beware","burn","destruction","inferno"}
     return o
 end
 
@@ -103,55 +103,37 @@ function Settings:BuildTree()
     local instances = {}
 
     for sName,mod in pairs(self.core.modules) do
-        if mod and mod.xmlDoc and mod.LoadSettings then
+        if mod and mod.bHasSettings then
             if not instances[mod.instance] then
                 instances[mod.instance] = {}
             end
 
-            instances[mod.instance][mod.displayName] = sName
+            if mod.groupName then
+                if not instances[mod.instance][mod.groupName] then
+                    instances[mod.instance][mod.groupName] = {}
+                end
+
+                instances[mod.instance][mod.groupName][mod.displayName] = sName
+            else
+                instances[mod.instance][mod.displayName] = sName
+            end
         end
     end
 
     for strInstance,tBosses in pairs(instances) do
         local wndInstanceGroup = Apollo.LoadForm(self.xmlDoc, "Navigation:Instance", wndLeftScroll, self)
         local wndInstanceContents = wndInstanceGroup:FindChild("GroupContents")
-        local wndMinibosses = nil
 
         for strEncounter,strModule in pairs(tBosses) do
-            if self.core.modules[strModule].bIsMiniboss then
-                if not wndMinibosses then
-                    local wndEncounterGroup = Apollo.LoadForm(self.xmlDoc, "Navigation:Encounter", wndInstanceContents, self)
-                    wndEncounterGroup:SetData("Minibosses")
+            local wndEncounterGroup = Apollo.LoadForm(self.xmlDoc, "Navigation:Encounter", wndInstanceContents, self)
+            wndEncounterGroup:SetData(strModule)
 
-                    local wndEncounterGroupBtn = wndEncounterGroup:FindChild("EncounterBtn")
-                    self:StyleButton(wndEncounterGroupBtn,"encounter")
+            local wndEncounterGroupBtn = wndEncounterGroup:FindChild("EncounterBtn")
+            self:StyleButton(wndEncounterGroupBtn,"encounter")
 
-                    wndEncounterGroupBtn:SetData({instance = strInstance, encounter = "Minibosses", btn = wndEncounterGroupBtn})
-                    wndEncounterGroupBtn:SetText("Minibosses")
-                    wndEncounterGroupBtn:ChangeArt("BK3:btnMetal_ExpandMenu_MedClean")
-
-                    wndMinibosses = wndEncounterGroupBtn
-                end
-
-                local data = wndMinibosses:GetData()
-
-                if not data.modules then
-                    data.modules = {}
-                end
-
-                table.insert(data.modules,strModule)
-                wndMinibosses:SetData(data)
-            else
-                local wndEncounterGroup = Apollo.LoadForm(self.xmlDoc, "Navigation:Encounter", wndInstanceContents, self)
-                wndEncounterGroup:SetData(strModule)
-
-                local wndEncounterGroupBtn = wndEncounterGroup:FindChild("EncounterBtn")
-                self:StyleButton(wndEncounterGroupBtn,"encounter")
-
-                wndEncounterGroupBtn:SetData({instance = strInstance, encounter = strModule, btn = wndEncounterGroupBtn})
-                wndEncounterGroupBtn:SetText(strEncounter)
-                wndEncounterGroupBtn:ChangeArt("BK3:btnMetal_ExpandMenu_MedClean")
-            end
+            wndEncounterGroupBtn:SetData({instance = strInstance, encounter = strModule, btn = wndEncounterGroupBtn})
+            wndEncounterGroupBtn:SetText(strEncounter)
+            wndEncounterGroupBtn:ChangeArt("BK3:btnMetal_ExpandMenu_MedClean")
         end
 
         local wndInstanceGroupBtn = wndInstanceGroup:FindChild("InstanceBtn")
@@ -257,31 +239,265 @@ function Settings:BuildRightPanel()
         return
     end
 
-    local wndRightScroll = self.wndSettings:FindChild("RightScroll"):FindChild("Container")
-    wndRightScroll:DestroyChildren()
-
     if self.wndRight then
-        self.wndRight:Destroy()
+        self.wndRight:DestroyChildren()
+    else
+        self.wndRight = self.wndSettings:FindChild("RightScroll"):FindChild("Container")
     end
 
-    if self.current.encounter == "Minibosses" then
-        self.wndRight = Apollo.LoadForm(self.xmlDoc, "RightScroll", wndRightScroll, self)
+    local module = self.core.modules[self.current.encounter]
+    local config = module.config
+    local L = module.L
 
-        if self.current.modules then
-            for _,strModule in pairs(self.current.modules) do
-                self.core.modules[strModule]:LoadSettings(self.wndRight)
-            end
+    if not config then
+        return
+    end
+
+    -- #########################################################################################################################################
+    -- # GENERAL
+    -- #########################################################################################################################################
+
+
+    -- #########################################################################################################################################
+    -- # UNITS
+    -- #########################################################################################################################################
+
+    if config.units ~= nil then
+        local wndUnits = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndUnits:FindChild("Label"):SetText("Units")
+        wndUnits:FindChild("Settings"):SetStyle("Picture",true)
+
+        local tSortedUnits = {}
+        local nHeight = 84
+
+        for nId,unit in pairs(config.units) do
+            tSortedUnits[#tSortedUnits+1] = {
+                nId = nId,
+                priority = unit.priority or 0
+            }
         end
 
-        self.wndRight:ArrangeChildrenVert()
-    else
-        self.wndRight = self.core.modules[self.current.encounter]:LoadSettings(wndRightScroll)
+        table.sort(tSortedUnits, function(a, b)
+            return a.priority < b.priority
+        end)
+
+        for i=1,#tSortedUnits do
+            local tUnit = config.units[tSortedUnits[i].nId]
+            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:UnitSetting", wndUnits:FindChild("Settings"), self)
+
+            -- Enable Checkbox
+            wnd:FindChild("Checkbox"):SetData({"units",tSortedUnits[i].nId,"enable"})
+            wnd:FindChild("Checkbox"):SetCheck(tUnit.enable or false)
+            wnd:FindChild("Checkbox"):SetText(L[tUnit.label] or tUnit.label)
+
+            -- Color
+            wnd:FindChild("Color"):SetData({"units",tSortedUnits[i].nId,"color"})
+            wnd:FindChild("ColorText"):SetText(tUnit.color or self.config.units.healthColor)
+            wnd:FindChild("BG"):SetBGColor(tUnit.color or self.config.units.healthColor)
+
+            nHeight = nHeight + wnd:GetHeight()
+        end
+
+        local wndItem = wndUnits:FindChild("Settings"):GetChildren()
+        wndItem[1]:SetAnchorOffsets(5,0,-5,63)
+        wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
+        wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+
+        wndUnits:FindChild("Settings"):ArrangeChildrenVert()
+        wndUnits:SetAnchorOffsets(0,0,0,nHeight)
     end
 
-    if self.wndRight then
-        self.wndRight:RecalculateContentExtents()
-        wndRightScroll:RecalculateContentExtents()
+    -- #########################################################################################################################################
+    -- # TIMERS
+    -- #########################################################################################################################################
+
+    if config.timers ~= nil then
+        local wndTimers = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndTimers:FindChild("Label"):SetText("Timers")
+        wndTimers:FindChild("Settings"):SetStyle("Picture",true)
+
+        local nHeight = 84
+
+        for id,timer in pairs(config.timers) do
+            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:TimerSetting", wndTimers:FindChild("Settings"), self)
+
+            -- Enable Checkbox
+            wnd:FindChild("Checkbox"):SetData({"timers",id,"enable"})
+            wnd:FindChild("Checkbox"):SetCheck(timer.enable or false)
+            wnd:FindChild("Checkbox"):SetText(L[timer.label] or timer.label)
+
+            -- Color
+            wnd:FindChild("Color"):SetData({"timers",id,"color"})
+            wnd:FindChild("ColorText"):SetText(timer.color or self.config.timer.barColor)
+            wnd:FindChild("BG"):SetBGColor(timer.color or self.config.timer.barColor)
+
+            nHeight = nHeight + wnd:GetHeight()
+        end
+
+        local wndItem = wndTimers:FindChild("Settings"):GetChildren()
+        wndItem[1]:SetAnchorOffsets(5,0,-5,63)
+        wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
+        wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+
+        wndTimers:FindChild("Settings"):ArrangeChildrenVert()
+        wndTimers:SetAnchorOffsets(0,0,0,nHeight)
     end
+
+    -- #########################################################################################################################################
+    -- # ALERTS
+    -- #########################################################################################################################################
+
+    if config.alerts ~= nil then
+        local wndAlerts = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndAlerts:FindChild("Label"):SetText("Alerts")
+        wndAlerts:FindChild("Settings"):SetStyle("Picture",true)
+
+        local nHeight = 84
+
+        for id,alert in pairs(config.alerts) do
+            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:AlertSetting", wndAlerts:FindChild("Settings"), self)
+
+            -- Enable Checkbox
+            wnd:FindChild("Checkbox"):SetData({"alerts",id,"enable"})
+            wnd:FindChild("Checkbox"):SetCheck(alert.enable or false)
+            wnd:FindChild("Checkbox"):SetText(L[alert.label] or alert.label)
+
+            -- Color
+            wnd:FindChild("Color"):SetData({"alerts",id,"color"})
+            wnd:FindChild("ColorText"):SetText(alert.color or self.config.alerts.color)
+            wnd:FindChild("BG"):SetBGColor(alert.color or self.config.alerts.color)
+
+            nHeight = nHeight + wnd:GetHeight()
+        end
+
+        local wndItem = wndAlerts:FindChild("Settings"):GetChildren()
+        wndItem[1]:SetAnchorOffsets(5,0,-5,63)
+        wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
+        wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+
+        wndAlerts:FindChild("Settings"):ArrangeChildrenVert()
+        wndAlerts:SetAnchorOffsets(0,0,0,nHeight)
+    end
+
+    -- #########################################################################################################################################
+    -- # SOUNDS
+    -- #########################################################################################################################################
+
+    if config.sounds ~= nil then
+        local wndSounds = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndSounds:FindChild("Label"):SetText("Sounds")
+        wndSounds:FindChild("Settings"):SetStyle("Picture",true)
+
+        local nHeight = 84
+
+        for id,sound in pairs(config.sounds) do
+            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:SoundSetting", wndSounds:FindChild("Settings"), self)
+
+            -- Enable Checkbox
+            wnd:FindChild("Checkbox"):SetData({"sounds",id,"enable"})
+            wnd:FindChild("Checkbox"):SetCheck(sound.enable or false)
+            wnd:FindChild("Checkbox"):SetText(L[sound.label] or sound.label)
+
+            -- Sound File
+            self:BuildSoundDropdown(wnd,{"sounds",id,"file"},sound.file)
+
+            nHeight = nHeight + wnd:GetHeight()
+        end
+
+        local wndItem = wndSounds:FindChild("Settings"):GetChildren()
+        wndItem[1]:SetAnchorOffsets(5,0,-5,63)
+        wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
+        wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+
+        wndSounds:FindChild("Settings"):ArrangeChildrenVert()
+        wndSounds:SetAnchorOffsets(0,0,0,nHeight)
+    end
+
+    -- #########################################################################################################################################
+    -- # ICONS
+    -- #########################################################################################################################################
+
+    if config.icons ~= nil then
+        local wndIcons = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndIcons:FindChild("Label"):SetText("Icons")
+
+        local nHeight = 75
+
+        for id,icon in pairs(config.icons) do
+            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:IconSetting", wndIcons:FindChild("Settings"), self)
+
+            -- Label
+            wnd:FindChild("Label"):SetText(L[icon.label] or icon.label)
+
+            -- Enable Checkbox
+            wnd:FindChild("Checkbox"):SetData({"icons",id,"enable"})
+            wnd:FindChild("Checkbox"):SetCheck(icon.enable or false)
+
+            -- Sprite
+            wnd:FindChild("SpriteText"):SetText(icon.sprite or self.config.icon.sprite)
+        	wnd:FindChild("SpriteText"):SetData({"icons",id,"sprite"})
+            wnd:FindChild("BrowseBtn"):Enable(false)
+
+            -- Color
+            wnd:FindChild("Color"):SetData({"icons",id,"color"})
+            wnd:FindChild("ColorText"):SetText(icon.color or self.config.icon.color)
+            wnd:FindChild("Color"):FindChild("BG"):SetBGColor(icon.color or self.config.icon.color)
+
+            -- Size
+            wnd:FindChild("Slider"):SetData({"icons",id,"size"})
+            wnd:FindChild("Slider"):SetValue(icon.size or self.config.icon.size)
+            wnd:FindChild("SliderText"):SetText(icon.size or self.config.icon.size)
+
+            nHeight = nHeight + wnd:GetHeight()
+        end
+
+        wndIcons:FindChild("Settings"):ArrangeChildrenVert()
+        wndIcons:SetAnchorOffsets(0,0,0,(nHeight-10))
+    end
+
+    -- #########################################################################################################################################
+    -- # LINES
+    -- #########################################################################################################################################
+
+    if config.lines ~= nil then
+        local wndLines = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndLines:FindChild("Label"):SetText("Lines")
+
+        local nHeight = 75
+
+        for id,line in pairs(config.lines) do
+            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:LineSetting", wndLines:FindChild("Settings"), self)
+
+            -- Label
+            wnd:FindChild("Label"):SetText(L[line.label] or line.label)
+
+            -- Enable Checkbox
+            wnd:FindChild("Checkbox"):SetData({"lines",id,"enable"})
+            wnd:FindChild("Checkbox"):SetCheck(line.enable or false)
+
+            -- Color
+            wnd:FindChild("Color"):SetData({"lines",id,"color"})
+            wnd:FindChild("ColorText"):SetText(line.color or self.config.line.color)
+            wnd:FindChild("Color"):FindChild("BG"):SetBGColor(line.color or self.config.line.color)
+
+            -- Thickness
+            wnd:FindChild("Slider"):SetData({"lines",id,"thickness"})
+            wnd:FindChild("Slider"):SetValue(line.thickness or self.config.line.thickness)
+            wnd:FindChild("SliderText"):SetText(line.thickness or self.config.line.thickness)
+
+            nHeight = nHeight + wnd:GetHeight()
+        end
+
+        wndLines:FindChild("Settings"):ArrangeChildrenVert()
+        wndLines:SetAnchorOffsets(0,0,0,(nHeight-10))
+    end
+
+    local wndContainer = self.wndRight:GetChildren()
+    wndContainer[#wndContainer]:FindChild("Frame"):SetAnchorOffsets(0,0,0,0)
+    wndContainer[#wndContainer]:SetAnchorOffsets(0,0,0,(wndContainer[#wndContainer]:GetHeight() - 10))
+
+    self.wndRight:ArrangeChildrenVert()
+    self.wndRight:RecalculateContentExtents()
 end
 
 function Settings:BuildGlobalSettings()
@@ -466,7 +682,7 @@ function Settings:BuildSoundDropdown(wnd,setting,value)
     end
 
     wnd:FindChild("Dropdown"):AttachWindow(wnd:FindChild("ChoiceContainer"))
-    wnd:FindChild("Dropdown"):SetText(value or "Choose")
+    wnd:FindChild("Dropdown"):SetText(value or "")
     wnd:FindChild("Dropdown"):SetData(setting)
     wnd:FindChild("ChoiceContainer"):SetAnchorOffsets(-19,-25,350,77 + (triggerCount * 30))
     wnd:FindChild("ChoiceContainer"):Show(false)
@@ -475,12 +691,7 @@ end
 function Settings:OnTextChange(wndHandler, wndControl)
     local setting = wndControl:GetData()
     local value = wndHandler:GetText()
-
-    if type(setting) == "string" then
-        self.config[setting] = value
-    elseif type(setting) == "table" then
-        self.config[setting[1]][setting[2]] = value
-    end
+    self:SetVar(setting,value)
 end
 
 function Settings:OnDropdownToggle(wndHandler, wndControl)
@@ -498,18 +709,9 @@ function Settings:OnSoundChoose(wndHandler, wndControl)
 
     dropdown:SetText(wndControl:GetText())
     wndControl:GetParent():Close()
+    self:SetVar(setting,value)
 
-    if self.current.encounter and self.core.modules[self.current.encounter] then
-        if type(setting) == "string" then
-            self.core.modules[self.current.encounter].config[setting] = value
-        elseif type(setting) == "table" then
-            if self.core.modules[self.current.encounter].config[setting[1]] ~= nil then
-                self.core.modules[self.current.encounter].config[setting[1]][setting[2]] = value
-            end
-        end
-    end
-
-    if value and value ~= "None" then
+    if value then
         self.core:PlaySound(value)
     end
 end
@@ -521,12 +723,7 @@ function Settings:OnDropdownChoose(wndHandler, wndControl)
 
     dropdown:SetText(wndControl:GetText())
     wndControl:GetParent():Close()
-
-    if type(setting) == "string" then
-        self.config[setting] = value
-    elseif type(setting) == "table" then
-        self.config[setting[1]][setting[2]] = value
-    end
+    self:SetVar(setting,value)
 end
 
 function Settings:OnSliderChange(wndHandler, wndControl)
@@ -538,23 +735,16 @@ function Settings:OnSliderChange(wndHandler, wndControl)
     end
 
     wndControl:GetParent():FindChild("SliderText"):SetText(value)
-
-    if type(setting) == "string" then
-        self.config[setting] = value
-    elseif type(setting) == "table" then
-        self.config[setting[1]][setting[2]] = value
-    end
+    self:SetVar(setting,value)
 end
 
 function Settings:OnCheckbox(wndHandler, wndControl)
     local setting = wndControl:GetData()
     local value = wndHandler:IsChecked()
 
-    if type(setting) == "string" then
-        self.config[setting] = value
-    elseif type(setting) == "table" then
-        self.config[setting[1]][setting[2]] = value
+    self:SetVar(setting,value)
 
+    if type(setting) == "table" then
         if setting[1] == "sound" and setting[2] == "force" then
             self:ToggleSettings(wndControl:GetParent():GetParent():FindChild("Container"),(self.config.sound.enable and self.config.sound.force) or false)
         elseif setting[1] == "sound" and setting[2] == "enable" then
@@ -571,12 +761,7 @@ end
 
 function Settings:OnBtnChooseColor(wndHandler, wndControl)
     local setting = wndControl:GetParent():GetData()
-
-    if type(setting) == "string" then
-        setting = self.config[setting]
-    elseif type(setting) == "table" then
-        setting = self.config[setting[1]][setting[2]]
-    end
+    setting = self:GetVar(setting)
 
     GeminiColor:ShowColorPicker(self, {
         callback = "OnColorPicker",
@@ -607,11 +792,7 @@ function Settings:OnColorPicker(wndHandler, wndControl)
     wndControl:GetParent():FindChild("BG"):SetBGColor(sColor)
     wndControl:GetParent():FindChild("ColorText"):SetText(sColor)
 
-    if type(setting) == "string" then
-        self.config[setting] = sColor
-    elseif type(setting) == "table" then
-        self.config[setting[1]][setting[2]] = sColor
-    end
+    self:SetVar(setting,sColor)
 end
 
 function Settings:ToggleSettings(wnd,state,bIsChild)
@@ -815,6 +996,98 @@ function Settings:OnWindowChanged(wndHandler, wndControl)
             right = nRight,
             bottom = nBottom,
         }
+    end
+end
+
+function Settings:GetVar(setting)
+    if not setting then
+        return
+    end
+
+    if self.bIsGlobal then
+        if type(setting) == "string" then
+            return self.config[setting]
+        elseif type(setting) == "table" then
+            if #setting == 3 then
+                if self.config[setting[1]] and self.config[setting[1]][setting[2]] then
+                    return self.config[setting[1]][setting[2]][setting[3]]
+                end
+            else
+                if self.config[setting[1]] then
+                    return self.config[setting[1]][setting[2]]
+                end
+            end
+        end
+    else
+        if not self.current or not self.current.encounter then
+            return
+        end
+
+        local config = self.core.modules[self.current.encounter].config
+
+        if not config then
+            return
+        end
+
+        if type(setting) == "string" then
+            return config[setting]
+        elseif type(setting) == "table" then
+            if #setting == 3 then
+                if config[setting[1]] and config[setting[1]][setting[2]] then
+                    return config[setting[1]][setting[2]][setting[3]]
+                end
+            else
+                if config[setting[1]] then
+                    return config[setting[1]][setting[2]]
+                end
+            end
+        end
+    end
+end
+
+function Settings:SetVar(setting,value)
+    if not setting then
+        return
+    end
+
+    if self.bIsGlobal then
+        if type(setting) == "string" then
+            self.config[setting] = value
+        elseif type(setting) == "table" then
+            if #setting == 3 then
+                if self.config[setting[1]] and self.config[setting[1]][setting[2]] then
+                    self.config[setting[1]][setting[2]][setting[3]] = value
+                end
+            else
+                if self.config[setting[1]] then
+                    self.config[setting[1]][setting[2]] = value
+                end
+            end
+        end
+    else
+        if not self.current or not self.current.encounter then
+            return
+        end
+
+        local config = self.core.modules[self.current.encounter].config
+
+        if not config then
+            return
+        end
+
+        if type(setting) == "string" then
+            config[setting] = value
+        elseif type(setting) == "table" then
+            if #setting == 3 then
+                if config[setting[1]] and config[setting[1]][setting[2]] then
+                    config[setting[1]][setting[2]][setting[3]] = value
+                end
+            else
+                if config[setting[1]] then
+                    config[setting[1]][setting[2]] = value
+                end
+            end
+        end
     end
 end
 
