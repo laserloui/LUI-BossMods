@@ -78,25 +78,6 @@ function Mod:Init(parent)
 
     self.core = parent
     self.L = parent:GetLocale(Encounter,Locales)
-
-    local strPrefix = Apollo.GetAssetFolder()
-    local tToc = XmlDoc.CreateFromFile("toc.xml"):ToTable()
-    for k,v in ipairs(tToc) do
-        local strPath = string.match(v.Name, "(.*)[\\/]"..Encounter)
-        if strPath ~= nil and strPath ~= "" then
-            strPrefix = strPrefix .. "\\" .. strPath .. "\\"
-            break
-        end
-    end
-
-    self.xmlDoc = XmlDoc.CreateFromFile(strPrefix .. Encounter..".xml")
-    self.xmlDoc:RegisterCallback("OnDocLoaded", self)
-end
-
-function Mod:OnDocLoaded()
-    if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() then
-        return
-    end
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
@@ -185,135 +166,12 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     end
 end
 
-function Mod:LoadSettings(wndParent)
-    if not wndParent then
-        return
-    end
-
-    local wnd = Apollo.LoadForm(self.xmlDoc, "Settings", wndParent, self)
-
-    -- Enable Checkbox
-    wnd:FindChild("GeneralGroup"):FindChild("EnableCheckbox"):SetData("enable")
-    wnd:FindChild("GeneralGroup"):FindChild("EnableCheckbox"):SetCheck(self.config.enable or false)
-
-    -- North Color
-    wnd:FindChild("GeneralGroup"):FindChild("NorthColorSetting"):FindChild("Color"):SetData("northColor")
-    wnd:FindChild("GeneralGroup"):FindChild("NorthColorSetting"):FindChild("ColorText"):SetText(self.config.northColor or self.core.config.units.healthColor)
-    wnd:FindChild("GeneralGroup"):FindChild("NorthColorSetting"):FindChild("BG"):SetBGColor(self.config.northColor or self.core.config.units.healthColor)
-
-    -- South Color
-    wnd:FindChild("GeneralGroup"):FindChild("SouthColorSetting"):FindChild("Color"):SetData("southColor")
-    wnd:FindChild("GeneralGroup"):FindChild("SouthColorSetting"):FindChild("ColorText"):SetText(self.config.southColor or self.core.config.units.healthColor)
-    wnd:FindChild("GeneralGroup"):FindChild("SouthColorSetting"):FindChild("BG"):SetBGColor(self.config.southColor or self.core.config.units.healthColor)
-
-    ---------------------
-
-    -- Disconnect Checkbox
-    wnd:FindChild("DisconnectGroup"):FindChild("EnableCheckbox"):SetData({"disconnect","enable"})
-    wnd:FindChild("DisconnectGroup"):FindChild("EnableCheckbox"):SetCheck(self.config.disconnect.enable or false)
-    self.core.settings:ToggleSettings(wnd:FindChild("DisconnectGroup"),self.config.disconnect.enable or false)
-
-    -- Disconnect Cast
-    wnd:FindChild("DisconnectGroup"):FindChild("CastCheckbox"):SetData({"disconnect","cast"})
-    wnd:FindChild("DisconnectGroup"):FindChild("CastCheckbox"):SetCheck(self.config.disconnect.cast or false)
-
-    -- Disconnect Alert
-    wnd:FindChild("DisconnectGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):AttachWindow(wnd:FindChild("DisconnectGroup"):FindChild("AlertSetting"):FindChild("ChoiceContainer"))
-    wnd:FindChild("DisconnectGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):FindChild("ChoiceContainer"):Show(false)
-    wnd:FindChild("DisconnectGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):SetText("Choose")
-    wnd:FindChild("DisconnectGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):SetData({"disconnect","alert"})
-
-    for _,button in pairs(wnd:FindChild("DisconnectGroup"):FindChild("AlertSetting"):FindChild("ChoiceContainer"):GetChildren()) do
-        if button:GetName() == self.config.disconnect.alert then
-            wnd:FindChild("DisconnectGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):SetText(button:GetText())
-            button:SetCheck(true)
-        else
-            button:SetCheck(false)
-        end
-    end
-
-    -- Disconnect Sound
-    self.core.settings:BuildSoundDropdown(wnd:FindChild("DisconnectGroup"):FindChild("SoundSetting"),{"disconnect","sound"},self.config.disconnect.sound)
-
-    -- Disconnect Color
-    wnd:FindChild("DisconnectGroup"):FindChild("ColorSetting"):FindChild("Color"):SetData({"disconnect","color"})
-    wnd:FindChild("DisconnectGroup"):FindChild("ColorSetting"):FindChild("ColorText"):SetText(self.config.disconnect.color or "")
-    wnd:FindChild("DisconnectGroup"):FindChild("ColorSetting"):FindChild("BG"):SetBGColor(self.config.disconnect.color)
-
-    ---------------------
-
-    -- Power Surge Checkbox
-    wnd:FindChild("SurgeGroup"):FindChild("EnableCheckbox"):SetData({"powersurge","enable"})
-    wnd:FindChild("SurgeGroup"):FindChild("EnableCheckbox"):SetCheck(self.config.powersurge.enable or false)
-    self.core.settings:ToggleSettings(wnd:FindChild("SurgeGroup"),self.config.powersurge.enable or false)
-
-    -- Power Surge Cast
-    wnd:FindChild("SurgeGroup"):FindChild("CastCheckbox"):SetData({"powersurge","cast"})
-    wnd:FindChild("SurgeGroup"):FindChild("CastCheckbox"):SetCheck(self.config.powersurge.cast or false)
-
-    -- Power Surge Alert
-    wnd:FindChild("SurgeGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):AttachWindow(wnd:FindChild("SurgeGroup"):FindChild("AlertSetting"):FindChild("ChoiceContainer"))
-    wnd:FindChild("SurgeGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):FindChild("ChoiceContainer"):Show(false)
-    wnd:FindChild("SurgeGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):SetText("Choose")
-    wnd:FindChild("SurgeGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):SetData({"powersurge","alert"})
-
-    for _,button in pairs(wnd:FindChild("SurgeGroup"):FindChild("AlertSetting"):FindChild("ChoiceContainer"):GetChildren()) do
-        if button:GetName() == self.config.powersurge.alert then
-            wnd:FindChild("SurgeGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):SetText(button:GetText())
-            button:SetCheck(true)
-        else
-            button:SetCheck(false)
-        end
-    end
-
-    -- Power Surge Sound
-    self.core.settings:BuildSoundDropdown(wnd:FindChild("SurgeGroup"):FindChild("SoundSetting"),{"powersurge","sound"},self.config.powersurge.sound)
-
-    -- Power Surge Color
-    wnd:FindChild("SurgeGroup"):FindChild("ColorSetting"):FindChild("Color"):SetData({"powersurge","color"})
-    wnd:FindChild("SurgeGroup"):FindChild("ColorSetting"):FindChild("ColorText"):SetText(self.config.powersurge.color or "")
-    wnd:FindChild("SurgeGroup"):FindChild("ColorSetting"):FindChild("BG"):SetBGColor(self.config.powersurge.color)
-
-    ---------------------
-
-    -- Purge Checkbox
-    wnd:FindChild("PurgeGroup"):FindChild("EnableCheckbox"):SetData({"purge","enable"})
-    wnd:FindChild("PurgeGroup"):FindChild("EnableCheckbox"):SetCheck(self.config.purge.enable or false)
-    self.core.settings:ToggleSettings(wnd:FindChild("PurgeGroup"),self.config.purge.enable or false)
-
-    -- Purge Alert
-    wnd:FindChild("PurgeGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):AttachWindow(wnd:FindChild("PurgeGroup"):FindChild("AlertSetting"):FindChild("ChoiceContainer"))
-    wnd:FindChild("PurgeGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):FindChild("ChoiceContainer"):Show(false)
-    wnd:FindChild("PurgeGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):SetText("Choose")
-    wnd:FindChild("PurgeGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):SetData({"purge","alert"})
-
-    for _,button in pairs(wnd:FindChild("PurgeGroup"):FindChild("AlertSetting"):FindChild("ChoiceContainer"):GetChildren()) do
-        if button:GetName() == self.config.purge.alert then
-            wnd:FindChild("PurgeGroup"):FindChild("AlertSetting"):FindChild("Dropdown"):SetText(button:GetText())
-            button:SetCheck(true)
-        else
-            button:SetCheck(false)
-        end
-    end
-
-    -- Purge Sound
-    self.core.settings:BuildSoundDropdown(wnd:FindChild("PurgeGroup"):FindChild("SoundSetting"),{"purge","sound"},self.config.purge.sound)
-
-    -- Purge Color
-    wnd:FindChild("PurgeGroup"):FindChild("ColorSetting"):FindChild("Color"):SetData({"purge","color"})
-    wnd:FindChild("PurgeGroup"):FindChild("ColorSetting"):FindChild("ColorText"):SetText(self.config.purge.color or "")
-    wnd:FindChild("PurgeGroup"):FindChild("ColorSetting"):FindChild("BG"):SetBGColor(self.config.purge.color)
-
-    -- Purge Thickness
-    wnd:FindChild("PurgeGroup"):FindChild("ThicknessSetting"):FindChild("Slider"):SetData({"purge","thickness"})
-    wnd:FindChild("PurgeGroup"):FindChild("ThicknessSetting"):FindChild("Slider"):SetValue(self.config.purge.thickness or 0)
-    wnd:FindChild("PurgeGroup"):FindChild("ThicknessSetting"):FindChild("SliderText"):SetText(self.config.purge.thickness or 0)
-
-    return wnd
+function Mod:IsRunning()
+    return self.run
 end
 
 function Mod:IsEnabled()
-    return self.run
+    return self.config.enable
 end
 
 function Mod:OnEnable()

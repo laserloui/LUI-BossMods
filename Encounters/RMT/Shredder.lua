@@ -76,25 +76,6 @@ function Mod:Init(parent)
 
     self.core = parent
     self.L = parent:GetLocale(Encounter,Locales)
-
-    local strPrefix = Apollo.GetAssetFolder()
-    local tToc = XmlDoc.CreateFromFile("toc.xml"):ToTable()
-    for k,v in ipairs(tToc) do
-        local strPath = string.match(v.Name, "(.*)[\\/]"..Encounter)
-        if strPath ~= nil and strPath ~= "" then
-            strPrefix = strPrefix .. "\\" .. strPath .. "\\"
-            break
-        end
-    end
-
-    self.xmlDoc = XmlDoc.CreateFromFile(strPrefix .. Encounter..".xml")
-    self.xmlDoc:RegisterCallback("OnDocLoaded", self)
-end
-
-function Mod:OnDocLoaded()
-    if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() then
-        return
-    end
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
@@ -191,16 +172,12 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     end
 end
 
-function Mod:LoadSettings(wndParent)
-    if not wndParent then
-        return
-    end
-
-    return Apollo.LoadForm(self.xmlDoc, "Settings", wndParent, self)
+function Mod:IsRunning()
+    return self.run
 end
 
 function Mod:IsEnabled()
-    return self.run
+    return self.config.enable
 end
 
 function Mod:OnEnable()

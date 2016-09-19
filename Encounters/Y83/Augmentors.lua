@@ -25,8 +25,8 @@ local Locales = {
 
 local sin, cos, rad = math.sin, math.cos, math.rad
 
-local DEBUFF_RADIATION_BATH = 71188
-local DEBUFF_STRAIN_INCUBATION = 49303
+-- local DEBUFF_RADIATION_BATH = 71188
+-- local DEBUFF_STRAIN_INCUBATION = 49303
 
 local Aug = {
 	[1] = Vector3.New(1268.16, -800.51, 830.32),
@@ -80,7 +80,7 @@ local Coords = {
 		[11] = {
 			["x"] = 1256.95,
 			["z"] = 823.64,
-		},	
+		},
 	},
 	[2] = {
 		[1] = {
@@ -179,21 +179,26 @@ local Coords = {
 function Mod:new(o)
     o = o or {}
     setmetatable(o, self)
-    self.__index = self 
+    self.__index = self
     self.instance = "Initialization Core Y-83"
     self.displayName = "Augmentors"
-    self.zone = {
-		--continentId = 91,
-		--parentZoneId = 0,
-		--mapId = 475,
-		continentId = 8,
-		parentZoneId = 0,
-		mapId = 78,
-	}
+	self.tTrigger = {
+        sType = "ANY",
+        tZones = {
+            [1] = {
+                continentId = 8,
+                parentZoneId = 0,
+                mapId = 78,
+            },
+        },
+        tNames = {
+            ["enUS"] = {"Prime Evolutionary Operant","Prime Phage Distributor","Organic Incinerator"},
+        },
+    }
 	self.run = false
 	self.runtime = {}
     self.config = {
-    	enable = true,
+    	enable = false,
     	interval = 10,
     	digitize = {
     		enable = true,
@@ -263,9 +268,6 @@ function Mod:new(o)
 	    		color = "ffff0000",
 	    	},
     	},
-    	timers = {
-
-    	},
 	}
     return o
 end
@@ -273,32 +275,8 @@ end
 function Mod:Init(parent)
 	Apollo.LinkAddon(parent, self)
 
-	self.core = parent 
-	self.L = parent:GetLocale(Encounter,Locales)
-
-	local strPrefix = Apollo.GetAssetFolder()
-	local tToc = XmlDoc.CreateFromFile("toc.xml"):ToTable()
-	for k,v in ipairs(tToc) do
-		local strPath = string.match(v.Name, "(.*)[\\/]Augmentors")
-		if strPath ~= nil and strPath ~= "" then
-			strPrefix = strPrefix .. "\\" .. strPath .. "\\"
-			break
-		end
-	end
-	
-	self.xmlDoc = XmlDoc.CreateFromFile(strPrefix .. "Augmentors.xml")
-	self.xmlDoc:RegisterCallback("OnDocLoaded", self)
-end
-
-function Mod:OnDocLoaded()
-	if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() then
-		return
-	end
-
-	self.wndOverlay = Apollo.LoadForm(self.xmlDoc, "Overlay", "InWorldHudStratum", self)
-    self.wndOverlay:Show(false,true)
-
-	self.unitPlayer = GameLib.GetPlayerUnit()
+	self.core = parent
+    self.L = parent:GetLocale(Encounter,Locales)
 end
 
 function Mod:OnNextFrame()
@@ -309,7 +287,7 @@ function Mod:OnNextFrame()
 	if not self.unitPlayer then
 		self.unitPlayer = GameLib.GetPlayerUnit()
 		return
-	end	
+	end
 
 	self.tick = Apollo.GetTickCount()
 
@@ -322,16 +300,16 @@ function Mod:OnNextFrame()
 
 		if not self.unitPlayer:IsInCombat() then
 		  	Apollo.RemoveEventHandler("NextFrame",self)
-			self.uIncinerator = nil 
+			self.uIncinerator = nil
 			return
 		end
-		
-		if self.uIncinerator and self.config.incinerator.enable == true then 
+
+		if self.uIncinerator and self.config.incinerator.enable == true then
 			self:DrawPixieLine()
-		end 
+		end
 
 		if self.config.digitize.enable == true then
-			self:DrawZoneLines()	
+			self:DrawZoneLines()
 		end
 	end
 end
@@ -340,7 +318,7 @@ function Mod:OnEnteredCombat(unit, bInCombat)
 	if not self.run == true then
 		return
 	end
-
+	--[[
 	if unit:GetName() == self.L["Organic Incinerator"] then
 		self.uIncinerator = unit
 		Apollo.RemoveEventHandler("NextFrame",self)
@@ -348,17 +326,19 @@ function Mod:OnEnteredCombat(unit, bInCombat)
 	elseif unit:GetName() == self.L["Prime Phage Distributor"] then
 		Apollo.RemoveEventHandler("NextFrame",self)
 		Apollo.RegisterEventHandler("NextFrame", "OnNextFrame", self)
-	end 
+	end
+	]]
 end
 
 function Mod:OnUnitCreated(unit)
 	if not self.run == true then
 		return
 	end
-
+	--[[
 	if unit:GetName() == self.L["Organic Incinerator"] then
 		self.uIncinerator = unit
 	end
+	]]
 end
 
 function Mod:DrawPixieLine()
@@ -368,10 +348,10 @@ function Mod:DrawPixieLine()
 
 	local tface = self.uIncinerator:GetFacing()
 
-	if tface == nil then 
-		return 
+	if tface == nil then
+		return
 	end
-	
+
 	local tpos = self.uIncinerator:GetPosition()
 	local tangle = math.atan2(tface.x, tface.z)
 	local tposV = Vector3.New(tpos.x,tpos.y+(self.config.height / 10),tpos.z)
@@ -392,7 +372,7 @@ function Mod:DrawLine(startV, endV, col, sizeMod)
 		bLine = true,
 		fWidth = sizeMod or self.config.thickness,
 		cr = col,
-		loc = { 
+		loc = {
 			fPoints = { 0, 0, 0, 0 },
 			nOffsets = { startPoint.x, startPoint.y, endPoint.x, endPoint.y }
 		}
@@ -405,130 +385,51 @@ function Mod:DrawZoneLines()
 	local dist = 999
 	local aug = 1
 	local yPos = -800.60
-	local tOffsets = {}
+	local tOffsets
 
 	for i =1,3 do
 		local len = ((Aug[i] - pvec):Length())
 		if len < dist then
 			aug = i
 			dist = len
-		end	
-	end	
+		end
+	end
 
 	self:DrawLine(Vector3.New(Coords[aug][1].x,yPos,Coords[aug][1].z), Vector3.New(Coords[aug][8].x,yPos,Coords[aug][8].z), "ffff0000", 2)
 
 	local pos2 = Vector3.New(Coords[aug][2].x,yPos,Coords[aug][2].z)
 	local pos7 = Vector3.New(Coords[aug][7].x,yPos,Coords[aug][7].z)
-	local pos4 = Vector3.New(Coords[aug][4].x,yPos,Coords[aug][4].z)
-	
+	-- local pos4 = Vector3.New(Coords[aug][4].x,yPos,Coords[aug][4].z)
+
 	tOffsets = Coords[aug][9]
 	self:DrawLine(Vector3.New(pos2.x,yPos,pos2.z), Vector3.New(tOffsets.x,yPos,tOffsets.z), "ff0000ff", 2)
 	self:DrawLine(Vector3.New(Coords[aug][3].x,yPos,Coords[aug][3].z), Vector3.New(tOffsets.x,yPos,tOffsets.z), "ff0000ff", 2)
-	
+
 	tOffsets = Coords[aug][11]
 	self:DrawLine(Vector3.New(pos7.x,yPos,pos7.z), Vector3.New(tOffsets.x,yPos,tOffsets.z), "ff00ff00", 2)
 	self:DrawLine(Vector3.New(Coords[aug][6].x,yPos,Coords[aug][6].z), Vector3.New(tOffsets.x,yPos,tOffsets.z), "ff00ff00", 2)
-	
+
 	tOffsets = Coords[aug][10]
 	self:DrawLine(Vector3.New(Coords[aug][4].x,yPos,Coords[aug][4].z), Vector3.New(tOffsets.x,yPos,tOffsets.z), "ffff8000", 2)
-	
+
 	tOffsets = Coords[aug][10]
 	self:DrawLine(Vector3.New(Coords[aug][5].x,yPos,Coords[aug][5].z), Vector3.New(tOffsets.x,yPos,tOffsets.z), "ffff8000", 2)
 end
 
-function Mod:LoadSettings(wndParent)
-	if not wndParent then
-		return 
-	end 
+function Mod:IsRunning()
+    return self.run
+end
 
-	local wnd = Apollo.LoadForm(self.xmlDoc, "Settings", wndParent, self)
-
-	-- Incinerator Checkbox
-	wnd:FindChild("IncineratorGroup"):FindChild("EnableCheckbox"):SetCheck(self.config.incinerator.enable)
-	wnd:FindChild("IncineratorGroup"):FindChild("EnableCheckbox"):SetData({"incinerator","enable"})
-
-	-- Incinerator Length
-	wnd:FindChild("IncineratorGroup"):FindChild("LengthSetting"):FindChild("SliderText"):SetText(self.config.incinerator.length or 0)
-	wnd:FindChild("IncineratorGroup"):FindChild("LengthSetting"):FindChild("Slider"):SetValue(self.config.incinerator.length or 0)
-	wnd:FindChild("IncineratorGroup"):FindChild("LengthSetting"):FindChild("Slider"):SetData({"incinerator","length"})
-
-	-- Incinerator Height
-	wnd:FindChild("IncineratorGroup"):FindChild("HeightSetting"):FindChild("SliderText"):SetText(self.config.incinerator.height or 0)
-	wnd:FindChild("IncineratorGroup"):FindChild("HeightSetting"):FindChild("Slider"):SetValue(self.config.incinerator.height or 0)
-	wnd:FindChild("IncineratorGroup"):FindChild("HeightSetting"):FindChild("Slider"):SetData({"incinerator","height"})
-
-	-- Incinerator Thickness
-	wnd:FindChild("IncineratorGroup"):FindChild("ThicknessSetting"):FindChild("SliderText"):SetText(self.config.incinerator.thickness or 0)
-	wnd:FindChild("IncineratorGroup"):FindChild("ThicknessSetting"):FindChild("Slider"):SetValue(self.config.incinerator.thickness or 0)
-	wnd:FindChild("IncineratorGroup"):FindChild("ThicknessSetting"):FindChild("Slider"):SetData({"incinerator","thickness"})
-
-	-- Incinerator Spacing
-	wnd:FindChild("IncineratorGroup"):FindChild("SpacingSetting"):FindChild("SliderText"):SetText(self.config.incinerator.spacing or 0)
-	wnd:FindChild("IncineratorGroup"):FindChild("SpacingSetting"):FindChild("Slider"):SetValue(self.config.incinerator.spacing or 0)
-	wnd:FindChild("IncineratorGroup"):FindChild("SpacingSetting"):FindChild("Slider"):SetData({"incinerator","spacing"})
-
-	-- Incinerator Offset
-	wnd:FindChild("IncineratorGroup"):FindChild("OffsetSetting"):FindChild("SliderText"):SetText(self.config.incinerator.offset or 0)
-	wnd:FindChild("IncineratorGroup"):FindChild("OffsetSetting"):FindChild("Slider"):SetValue(self.config.incinerator.offset or 0)
-	wnd:FindChild("IncineratorGroup"):FindChild("OffsetSetting"):FindChild("Slider"):SetData({"incinerator","offset"})
-
-	-- Incinerator Color
-	wnd:FindChild("IncineratorGroup"):FindChild("ColorSetting"):FindChild("ColorBtn"):SetData({"incinerator","color"})
-	wnd:FindChild("IncineratorGroup"):FindChild("ColorSetting"):FindChild("ColorBackground"):SetBGColor(self.config.incinerator.color)
-
-	-- Digitize Checkbox
-	wnd:FindChild("DigitizeGroup"):FindChild("EnableCheckbox"):SetCheck(self.config.digitize.enable)
-	wnd:FindChild("DigitizeGroup"):FindChild("EnableCheckbox"):SetData({"digitize","enable"})
-
-	-- Digitize Height
-	wnd:FindChild("DigitizeGroup"):FindChild("HeightSetting"):FindChild("SliderText"):SetText(self.config.digitize.height or 0)
-	wnd:FindChild("DigitizeGroup"):FindChild("HeightSetting"):FindChild("Slider"):SetValue(self.config.digitize.height or 0)
-	wnd:FindChild("DigitizeGroup"):FindChild("HeightSetting"):FindChild("Slider"):SetData({"digitize","height"})
-
-	-- Digitize Thickness
-	wnd:FindChild("DigitizeGroup"):FindChild("ThicknessSetting"):FindChild("SliderText"):SetText(self.config.digitize.thickness or 0)
-	wnd:FindChild("DigitizeGroup"):FindChild("ThicknessSetting"):FindChild("Slider"):SetValue(self.config.digitize.thickness or 0)
-	wnd:FindChild("DigitizeGroup"):FindChild("ThicknessSetting"):FindChild("Slider"):SetData({"digitize","thickness"})
-
-	-- Undermine Checkbox
-	wnd:FindChild("UndermineGroup"):FindChild("EnableCheckbox"):SetCheck(self.config.undermine.enable)
-	wnd:FindChild("UndermineGroup"):FindChild("EnableCheckbox"):SetData({"undermine","enable"})
-
-	-- Bath Checkbox
-	wnd:FindChild("BathGroup"):FindChild("EnableCheckbox"):SetCheck(self.config.bath.enable)
-	wnd:FindChild("BathGroup"):FindChild("EnableCheckbox"):SetData({"bath","enable"})
-
-	return wnd
-end 
-
-function Mod:RegisterEvents()
-	Apollo.RegisterEventHandler("UnitEnteredCombat", "OnEnteredCombat", self)
-	Apollo.RegisterEventHandler("UnitCreated", "OnUnitCreated", self)
-end 
-
-function Mod:RemoveEvents()
-	Apollo.RemoveEventHandler("UnitEnteredCombat")
-	Apollo.RemoveEventHandler("UnitCreated")
-end 
+function Mod:IsEnabled()
+    return self.config.enable
+end
 
 function Mod:OnEnable()
-	self:RemoveEvents()
-	self:RegisterEvents()
 	self.run = true
-
-	if self.wndOverlay then 
-		self.wndOverlay:Show(true,true)
-	end 
-end 
+end
 
 function Mod:OnDisable()
-	self:RemoveEvents()
 	self.run = false
-
-	if self.wndOverlay then 
-		self.wndOverlay:Show(false,true)
-		self.wndOverlay:DestroyAllPixies()
-	end
 end
 
 local ModInst = Mod:new()

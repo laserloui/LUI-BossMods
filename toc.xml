@@ -35,7 +35,7 @@
 	<Script Name="Encounters\DS\Gloomclaw.lua"/>
 	<Script Name="Encounters\DS\Avatus.lua"/>
 	<!-- Encounters: Initialization Core Y-83 -->
-	<!--<Script Name="Encounters\Y83\Augmentors.lua"/> -->
+	<Script Name="Encounters\Y83\Augmentors.lua"/>
 	<!-- Encounters: Redmoon Terror -->
 	<Script Name="Encounters\RMT\Miniboss\ChiefWardenLockjaw.lua"/>
 	<Script Name="Encounters\RMT\Miniboss\AssistantTechnicianSkooty.lua"/>

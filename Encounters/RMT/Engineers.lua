@@ -42,7 +42,6 @@ function Mod:new(o)
     self.__index = self
     self.instance = "Redmoon Terror"
     self.displayName = "Engineers"
-    self.bHasSettings = true
     self.tTrigger = {
         sType = "ANY",
         tZones = {

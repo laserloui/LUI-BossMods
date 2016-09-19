@@ -20,7 +20,7 @@ function Mod:new(o)
     self.__index = self
     self.instance = "Datascape"
     self.displayName = "Grand Warmonger Tar'gresh"
-    self.bIsMiniboss = true
+    self.groupName = "Minibosses"
     self.tTrigger = {
         sType = "ANY",
         tZones = {
@@ -59,8 +59,12 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 end
 
-function Mod:IsEnabled()
+function Mod:IsRunning()
     return self.run
+end
+
+function Mod:IsEnabled()
+    return self.config.enable
 end
 
 function Mod:OnEnable()
