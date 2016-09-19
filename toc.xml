@@ -6,6 +6,13 @@
 	<!-- Main -->
 	<Script Name="LUI_BossMods.lua"/>
 	<Form Name="LUI_BossMods.xml"/>
+	<!-- Encounters: Genetic Archives -->
+	<Script Name="Encounters\GA\ExperimentX89.lua"/>
+	<Script Name="Encounters\GA\Kuralak.lua"/>
+	<Script Name="Encounters\GA\Phagemaw.lua"/>
+	<Script Name="Encounters\GA\Prototypes.lua"/>
+	<Script Name="Encounters\GA\PhageCouncil.lua"/>
+	<Script Name="Encounters\GA\Ohmna.lua"/>
 	<!-- Encounters: Datascape -->
 	<Script Name="Encounters\DS\Miniboss\Earth_BioEnhancedBroodmother.lua"/>
 	<Script Name="Encounters\DS\Miniboss\Earth_FullyOptimizedCanimid.lua"/>
