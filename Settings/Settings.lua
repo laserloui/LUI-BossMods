@@ -124,17 +124,17 @@ function Settings:BuildTree()
         end
     end
 
-    for strInstance,tBosses in pairs(instances) do
+    for strInstance,tBosses in self.core:Sort(instances) do
         local wndInstance = Apollo.LoadForm(self.xmlDoc, "Navigation:Instance", wndLeftScroll, self)
         local wndInstanceContents = wndInstance:FindChild("GroupContents")
 
-        for strEncounter,strModule in pairs(tBosses) do
+        for strEncounter,strModule in self.core:Sort(tBosses) do
             local wndEncounter = Apollo.LoadForm(self.xmlDoc, "Navigation:Encounter", wndInstanceContents, self)
             local wndEncounterContents = wndEncounter:FindChild("GroupContents")
             wndEncounter:SetData(strModule)
 
             if type(strModule) == "table" then
-                for strMiniboss, strMiniModule in pairs(strModule) do
+                for strMiniboss, strMiniModule in self.core:Sort(strModule) do
     				local wndMiniboss = Apollo.LoadForm(self.xmlDoc, "Navigation:Miniboss", wndEncounterContents, self)
     				wndMiniboss:SetData(strMiniModule)
 
