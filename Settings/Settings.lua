@@ -282,6 +282,23 @@ function Settings:BuildRightPanel()
     -- # GENERAL
     -- #########################################################################################################################################
 
+    if config.enable ~= nil then
+        local wndGeneral = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndGeneral:FindChild("Label"):SetText("General")
+        wndGeneral:FindChild("Settings"):SetStyle("Picture",true)
+
+        local nHeight = 84
+        local wnd = Apollo.LoadForm(self.xmlDoc, "Items:GeneralSetting", wndGeneral:FindChild("Settings"), self)
+        nHeight = nHeight + wnd:GetHeight()
+
+        -- Enable Checkbox
+        wnd:FindChild("Checkbox"):SetData("enable")
+        wnd:FindChild("Checkbox"):SetCheck(config.enable or false)
+        wnd:FindChild("Checkbox"):SetText("Enable Boss Module")
+
+        wndGeneral:FindChild("Settings"):ArrangeChildrenVert()
+        wndGeneral:SetAnchorOffsets(0,0,0,nHeight)
+    end
 
     -- #########################################################################################################################################
     -- # UNITS
@@ -372,6 +389,45 @@ function Settings:BuildRightPanel()
 
         wndTimers:FindChild("Settings"):ArrangeChildrenVert()
         wndTimers:SetAnchorOffsets(0,0,0,nHeight)
+    end
+
+    -- #########################################################################################################################################
+    -- # CASTS
+    -- #########################################################################################################################################
+
+    if config.casts ~= nil then
+        local wndCasts = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndCasts:FindChild("Label"):SetText("Casts")
+        wndCasts:FindChild("Settings"):SetStyle("Picture",true)
+
+        local nHeight = 84
+
+        for id,cast in pairs(config.casts) do
+            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:CastSetting", wndCasts:FindChild("Settings"), self)
+
+            -- Enable Checkbox
+            wnd:FindChild("Checkbox"):SetData({"casts",id,"enable"})
+            wnd:FindChild("Checkbox"):SetCheck(cast.enable or false)
+            wnd:FindChild("Checkbox"):SetText(L[cast.label] or cast.label)
+
+            -- Color
+            wnd:FindChild("Color"):SetData({"casts",id,"color"})
+            wnd:FindChild("ColorText"):SetText(cast.color or self.config.castbar.barColor)
+            wnd:FindChild("BG"):SetBGColor(cast.color or self.config.castbar.barColor)
+
+            nHeight = nHeight + wnd:GetHeight()
+        end
+
+        local wndItem = wndCasts:FindChild("Settings"):GetChildren()
+
+        if #wndItem > 0 then
+            wndItem[1]:SetAnchorOffsets(5,0,-5,63)
+            wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
+            wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+        end
+
+        wndCasts:FindChild("Settings"):ArrangeChildrenVert()
+        wndCasts:SetAnchorOffsets(0,0,0,nHeight)
     end
 
     -- #########################################################################################################################################
@@ -876,14 +932,9 @@ end
 
 function Settings:OnDonationChanged(wndHandler, wndControl)
     local amount = self.wndSettings:FindChild("DonateForm"):FindChild("CashWindow"):GetAmount()
-    local recipient = "Loui NaN"
-
-    if GameLib.GetPlayerUnit():GetFaction() ~= 166 then
-        recipient = "Loui x"
-    end
 
     if amount > 0 then
-        self.wndSettings:FindChild("DonateForm"):FindChild("DonateSendBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.SendMail, recipient, "Jabbit", "LUI BossMods Donation", tostring(GameLib.GetPlayerUnit():GetName()) .. " donated something for you!", nil, MailSystemLib.MailDeliverySpeed_Instant, 0, self.wndSettings:FindChild("DonateForm"):FindChild("CashWindow"):GetCurrency())
+        self.wndSettings:FindChild("DonateForm"):FindChild("DonateSendBtn"):SetActionData(GameLib.CodeEnumConfirmButtonType.SendMail, "Loui NaN", "Jabbit", "LUI BossMods Donation", tostring(GameLib.GetPlayerUnit():GetName()) .. " donated something for you!", nil, MailSystemLib.MailDeliverySpeed_Instant, 0, self.wndSettings:FindChild("DonateForm"):FindChild("CashWindow"):GetCurrency())
         self.wndSettings:FindChild("DonateForm"):FindChild("DonateSendBtn"):Enable(true)
     else
         self.wndSettings:FindChild("DonateForm"):FindChild("DonateSendBtn"):Enable(false)

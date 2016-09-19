@@ -220,6 +220,13 @@ function Mod:new(o)
                 label = "timer.a",      -- Text in Option Panel (Text or Locale Key)
             },
         },
+        casts = {
+            castA = {
+                enable = true,          -- Enable/Disable cast
+                color = "ffb22222",     -- Color (Default: Global Setting)
+                label = "cast.a"       -- Text in Option Panel (Text or Locale Key)
+            },
+        },
         alerts = {
             alertA = {
                 enable = true,          -- Enable/Disable alert
