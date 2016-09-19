@@ -92,6 +92,10 @@ function Settings:OnLoad()
     self.nEncounterButtonHeight = wndMeasure:GetHeight()
     wndMeasure:Destroy()
 
+    wndMeasure = Apollo.LoadForm(self.xmlDoc, "Navigation:Miniboss", nil, self)
+    self.nMinibossButtonHeight = wndMeasure:GetHeight()
+    wndMeasure:Destroy()
+
     self:BuildTree()
     self:BuildGlobalSettings()
 end
@@ -103,7 +107,7 @@ function Settings:BuildTree()
     local instances = {}
 
     for sName,mod in pairs(self.core.modules) do
-        if mod and mod.bHasSettings then
+        if mod then
             if not instances[mod.instance] then
                 instances[mod.instance] = {}
             end
@@ -121,26 +125,48 @@ function Settings:BuildTree()
     end
 
     for strInstance,tBosses in pairs(instances) do
-        local wndInstanceGroup = Apollo.LoadForm(self.xmlDoc, "Navigation:Instance", wndLeftScroll, self)
-        local wndInstanceContents = wndInstanceGroup:FindChild("GroupContents")
+        local wndInstance = Apollo.LoadForm(self.xmlDoc, "Navigation:Instance", wndLeftScroll, self)
+        local wndInstanceContents = wndInstance:FindChild("GroupContents")
 
         for strEncounter,strModule in pairs(tBosses) do
-            local wndEncounterGroup = Apollo.LoadForm(self.xmlDoc, "Navigation:Encounter", wndInstanceContents, self)
-            wndEncounterGroup:SetData(strModule)
+            local wndEncounter = Apollo.LoadForm(self.xmlDoc, "Navigation:Encounter", wndInstanceContents, self)
+            local wndEncounterContents = wndEncounter:FindChild("GroupContents")
+            wndEncounter:SetData(strModule)
 
-            local wndEncounterGroupBtn = wndEncounterGroup:FindChild("EncounterBtn")
-            self:StyleButton(wndEncounterGroupBtn,"encounter")
+            if type(strModule) == "table" then
+                for strMiniboss, strMiniModule in pairs(strModule) do
+    				local wndMiniboss = Apollo.LoadForm(self.xmlDoc, "Navigation:Miniboss", wndEncounterContents, self)
+    				wndMiniboss:SetData(strMiniModule)
 
-            wndEncounterGroupBtn:SetData({instance = strInstance, encounter = strModule, btn = wndEncounterGroupBtn})
-            wndEncounterGroupBtn:SetText(strEncounter)
-            wndEncounterGroupBtn:ChangeArt("BK3:btnMetal_ExpandMenu_MedClean")
+                    local wndMinibossBtn = wndMiniboss:FindChild("MinibossBtn")
+                    wndMinibossBtn:SetData({instance = strInstance, encounter = strMiniModule, btn = wndMinibossBtn})
+                    wndMinibossBtn:SetText(strMiniboss)
+                end
+            end
+
+            local bEncounterHasChildren = #wndEncounterContents:GetChildren() > 0
+            wndEncounterContents:ArrangeChildrenVert(0)
+
+            local wndEncounterBtn = wndEncounter:FindChild("EncounterBtn")
+            wndEncounterBtn:SetText(strEncounter)
+
+            if bEncounterHasChildren == true then
+                wndEncounterBtn:RemoveEventHandler("ButtonCheck")
+                wndEncounterBtn:RemoveEventHandler("ButtonUncheck")
+                wndEncounterBtn:AddEventHandler("ButtonCheck", "OnInstanceBtn", self)
+                wndEncounterBtn:AddEventHandler("ButtonUncheck", "OnInstanceBtn", self)
+                wndEncounterBtn:ChangeArt("BK3:btnMetal_ExpandMenu_Med")
+                wndEncounterBtn:SetData(strEncounter)
+            else
+                wndEncounterBtn:ChangeArt("BK3:btnMetal_ExpandMenu_MedClean")
+                wndEncounterBtn:SetData({instance = strInstance, encounter = strModule, btn = wndEncounterBtn})
+            end
         end
 
-        local wndInstanceGroupBtn = wndInstanceGroup:FindChild("InstanceBtn")
-        wndInstanceGroupBtn:SetText(strInstance)
-        wndInstanceGroupBtn:SetData(strInstance)
+        local wndInstanceBtn = wndInstance:FindChild("InstanceBtn")
+        wndInstanceBtn:SetData(strInstance)
+        wndInstanceBtn:SetText(strInstance)
 
-        self:StyleButton(wndInstanceGroupBtn,"instance")
         wndInstanceContents:ArrangeChildrenVert(0)
     end
 
@@ -151,50 +177,47 @@ function Settings:ResizeTree()
     local wndLeftScroll = self.wndSettings:FindChild("LeftScroll")
     local nVScrollPos = wndLeftScroll:GetVScrollPos()
 
-    for mainKey,wndMainGroup in pairs(wndLeftScroll:GetChildren()) do
-        local wndMainContents = wndMainGroup:FindChild("GroupContents")
-        local wndMainButton = wndMainGroup:FindChild("InstanceBtn")
-        local nTopHeight = 0
+    for _,wndInstance in pairs(wndLeftScroll:GetChildren()) do
+        local wndInstanceContents = wndInstance:FindChild("GroupContents")
+        local wndInstanceBtn = wndInstance:FindChild("InstanceBtn")
+        local nInstanceHeight = 0
 
-        if wndMainButton:IsChecked() then
-            for key, wndTopGroup in pairs(wndMainContents:GetChildren()) do
-                nTopHeight = nTopHeight + 2 + self.nEncounterButtonHeight
+        if wndInstanceBtn:IsChecked() then
+            for _,wndEncounter in pairs(wndInstanceContents:GetChildren()) do
+                local wndEncounterContents = wndEncounter:FindChild("GroupContents")
+				local wndEncounterBtn = wndEncounter:FindChild("EncounterBtn")
+                local bEncounterHasChildren = #wndEncounterContents:GetChildren() > 0
+				local nEncounterHeight = 2
+
+                if bEncounterHasChildren and wndEncounterBtn:IsChecked() then
+                    for _,wndMiniboss in pairs(wndEncounterContents:GetChildren()) do
+                        nEncounterHeight = nEncounterHeight + self.nMinibossButtonHeight
+                    end
+                end
+
+                local nLeft, nTop, nRight = wndEncounter:GetAnchorOffsets()
+				wndEncounter:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nEncounterHeight + self.nEncounterButtonHeight)
+				wndEncounterContents:ArrangeChildrenVert(0)
+                wndEncounterContents:Show(wndEncounterBtn:IsChecked() and bEncounterHasChildren,true)
+
+                nInstanceHeight = nInstanceHeight + nEncounterHeight + self.nEncounterButtonHeight
             end
 
-            if nTopHeight > 0 then
-                nTopHeight = nTopHeight + 5
-            end
+            if nInstanceHeight > 0 then
+				nInstanceHeight = nInstanceHeight + 14
+			end
+
+			wndInstance:FindChild("Divider"):Show(nInstanceHeight > 0,true)
         end
 
-        local nLeft, nTop, nRight = wndMainGroup:GetAnchorOffsets()
-        wndMainGroup:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nTopHeight + self.nInstanceButtonHeight)
-        wndMainContents:ArrangeChildrenVert(0)
-        wndMainContents:Show(wndMainButton:IsChecked(),true)
+        local nLeft, nTop, nRight = wndInstance:GetAnchorOffsets()
+        wndInstance:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nInstanceHeight + self.nInstanceButtonHeight)
+        wndInstanceContents:ArrangeChildrenVert(0)
+        wndInstanceContents:Show(wndInstanceBtn:IsChecked(),true)
     end
 
     wndLeftScroll:ArrangeChildrenVert(0)
     wndLeftScroll:SetVScrollPos(nVScrollPos)
-end
-
-function Settings:StyleButton(button,sType)
-    if not button or not sType then
-        return
-    end
-
-    if sType == "instance" then
-        button:SetNormalTextColor("UI_BtnTextGoldListNormal")
-        button:SetPressedTextColor("UI_BtnTextGoldListPressed")
-        button:SetFlybyTextColor("UI_BtnTextGoldListFlyby")
-        button:SetPressedFlybyTextColor("UI_BtnTextGoldListPressedFlyby")
-        button:SetBGColor("ffffffff")
-        button:GetParent():SetBGColor("ffd7d7d7")
-    elseif sType == "encounter" then
-        button:SetNormalTextColor("UI_BtnTextGoldListNormal")
-        button:SetPressedTextColor("UI_BtnTextGoldListPressed")
-        button:SetFlybyTextColor("UI_BtnTextGoldListFlyby")
-        button:SetPressedFlybyTextColor("UI_BtnTextGoldListPressedFlyby")
-        button:SetBGColor("ffffffff")
-    end
 end
 
 function Settings:OnInstanceBtn(wndHandler, wndControl)
@@ -202,14 +225,11 @@ function Settings:OnInstanceBtn(wndHandler, wndControl)
         return
     end
 
-    if self.current and self.current.instance == wndControl:GetData() then
+    if self.current then
         self.current.btn:SetCheck(false)
         self.current = nil
-        self:ResizeTree()
-
-        self.wndSettings:FindChild("RightScroll"):FindChild("Container"):DestroyChildren()
-        self.wndSettings:FindChild("RightScroll"):FindChild("Container"):RecalculateContentExtents()
-        return
+        self.wndSettings:FindChild("RightScroll"):DestroyChildren()
+        self.wndSettings:FindChild("RightScroll"):RecalculateContentExtents()
     end
 
     self:ResizeTree()
@@ -242,10 +262,15 @@ function Settings:BuildRightPanel()
     if self.wndRight then
         self.wndRight:DestroyChildren()
     else
-        self.wndRight = self.wndSettings:FindChild("RightScroll"):FindChild("Container")
+        self.wndRight = self.wndSettings:FindChild("RightScroll")
     end
 
     local module = self.core.modules[self.current.encounter]
+
+    if not module then
+        return
+    end
+
     local config = module.config
     local L = module.L
 
@@ -299,9 +324,12 @@ function Settings:BuildRightPanel()
         end
 
         local wndItem = wndUnits:FindChild("Settings"):GetChildren()
-        wndItem[1]:SetAnchorOffsets(5,0,-5,63)
-        wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
-        wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+
+        if #wndItem > 0 then
+            wndItem[1]:SetAnchorOffsets(5,0,-5,63)
+            wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
+            wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+        end
 
         wndUnits:FindChild("Settings"):ArrangeChildrenVert()
         wndUnits:SetAnchorOffsets(0,0,0,nHeight)
@@ -335,9 +363,12 @@ function Settings:BuildRightPanel()
         end
 
         local wndItem = wndTimers:FindChild("Settings"):GetChildren()
-        wndItem[1]:SetAnchorOffsets(5,0,-5,63)
-        wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
-        wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+
+        if #wndItem > 0 then
+            wndItem[1]:SetAnchorOffsets(5,0,-5,63)
+            wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
+            wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+        end
 
         wndTimers:FindChild("Settings"):ArrangeChildrenVert()
         wndTimers:SetAnchorOffsets(0,0,0,nHeight)
@@ -371,9 +402,12 @@ function Settings:BuildRightPanel()
         end
 
         local wndItem = wndAlerts:FindChild("Settings"):GetChildren()
-        wndItem[1]:SetAnchorOffsets(5,0,-5,63)
-        wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
-        wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+
+        if #wndItem > 0 then
+            wndItem[1]:SetAnchorOffsets(5,0,-5,63)
+            wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
+            wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+        end
 
         wndAlerts:FindChild("Settings"):ArrangeChildrenVert()
         wndAlerts:SetAnchorOffsets(0,0,0,nHeight)
@@ -405,9 +439,12 @@ function Settings:BuildRightPanel()
         end
 
         local wndItem = wndSounds:FindChild("Settings"):GetChildren()
-        wndItem[1]:SetAnchorOffsets(5,0,-5,63)
-        wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
-        wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+
+        if #wndItem > 0 then
+            wndItem[1]:SetAnchorOffsets(5,0,-5,63)
+            wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
+            wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+        end
 
         wndSounds:FindChild("Settings"):ArrangeChildrenVert()
         wndSounds:SetAnchorOffsets(0,0,0,nHeight)
@@ -436,6 +473,10 @@ function Settings:BuildRightPanel()
             -- Sprite
             wnd:FindChild("SpriteText"):SetText(icon.sprite or self.config.icon.sprite)
         	wnd:FindChild("SpriteText"):SetData({"icons",id,"sprite"})
+
+            wnd:FindChild("SpriteText"):SetStyle("BlockOutIfDisabled",false)
+            wnd:FindChild("SpriteText"):SetOpacity(0.5)
+            wnd:FindChild("SpriteText"):Enable(false)
             wnd:FindChild("BrowseBtn"):Enable(false)
 
             -- Color
@@ -493,8 +534,11 @@ function Settings:BuildRightPanel()
     end
 
     local wndContainer = self.wndRight:GetChildren()
-    wndContainer[#wndContainer]:FindChild("Frame"):SetAnchorOffsets(0,0,0,0)
-    wndContainer[#wndContainer]:SetAnchorOffsets(0,0,0,(wndContainer[#wndContainer]:GetHeight() - 10))
+
+    if #wndContainer > 0 then
+        wndContainer[#wndContainer]:FindChild("Frame"):SetAnchorOffsets(0,0,0,0)
+        wndContainer[#wndContainer]:SetAnchorOffsets(0,0,0,(wndContainer[#wndContainer]:GetHeight() - 10))
+    end
 
     self.wndRight:ArrangeChildrenVert()
     self.wndRight:RecalculateContentExtents()
@@ -974,10 +1018,10 @@ function Settings:OnSettings(wndHandler, wndControl)
 
     self.wndSettings:FindChild("Global"):Show(value,true)
     self.wndSettings:FindChild("Main"):Show(not value,true)
+    self.wndSettings:FindChild("Navigation"):Show(not value,true)
 
     self.wndSettings:FindChild("BGHolo_Full"):Show(value,true)
-    self.wndSettings:FindChild("BGHolo_Left"):Show(not value,true)
-    self.wndSettings:FindChild("BGHolo_Right"):Show(not value,true)
+    self.wndSettings:FindChild("BGHolo"):Show(not value,true)
 
     self.bIsGlobal = value
 end

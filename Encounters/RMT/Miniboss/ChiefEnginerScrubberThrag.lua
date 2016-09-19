@@ -17,6 +17,7 @@ function Mod:new(o)
     self.__index = self
     self.instance = "Redmoon Terror"
     self.displayName = "Scrubber"
+    self.groupName = "Minibosses"
     self.tTrigger = {
         sType = "ANY",
         tZones = {
