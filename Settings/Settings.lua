@@ -553,6 +553,47 @@ function Settings:BuildRightPanel()
     end
 
     -- #########################################################################################################################################
+    -- # AURAS
+    -- #########################################################################################################################################
+
+    if config.auras ~= nil then
+        local wndAuras = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndAuras:FindChild("Label"):SetText("Auras")
+
+        local nHeight = 75
+
+        for id,aura in pairs(config.auras) do
+            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:AuraSetting", wndAuras:FindChild("Settings"), self)
+
+            -- Label
+            wnd:FindChild("Label"):SetText(L[aura.label] or aura.label)
+
+            -- Enable Checkbox
+            wnd:FindChild("Checkbox"):SetData({"auras",id,"enable"})
+            wnd:FindChild("Checkbox"):SetCheck(aura.enable or false)
+
+            -- Sprite
+            wnd:FindChild("SpriteText"):SetText(aura.sprite or self.config.aura.sprite)
+        	wnd:FindChild("SpriteText"):SetData({"auras",id,"sprite"})
+
+            wnd:FindChild("SpriteText"):SetStyle("BlockOutIfDisabled",false)
+            wnd:FindChild("SpriteText"):SetOpacity(0.5)
+            wnd:FindChild("SpriteText"):Enable(false)
+            wnd:FindChild("BrowseBtn"):Enable(false)
+
+            -- Color
+            wnd:FindChild("Color"):SetData({"auras",id,"color"})
+            wnd:FindChild("ColorText"):SetText(aura.color or self.config.aura.color)
+            wnd:FindChild("Color"):FindChild("BG"):SetBGColor(aura.color or self.config.aura.color)
+
+            nHeight = nHeight + wnd:GetHeight()
+        end
+
+        wndAuras:FindChild("Settings"):ArrangeChildrenVert()
+        wndAuras:SetAnchorOffsets(0,0,0,(nHeight-10))
+    end
+
+    -- #########################################################################################################################################
     -- # LINES
     -- #########################################################################################################################################
 

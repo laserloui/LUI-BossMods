@@ -251,6 +251,14 @@ function Mod:new(o)
                 label = "icon.a"        -- Text in Option Panel (Text or Locale Key)
             },
         },
+        auras = {
+            auraA = {
+                enable = true,          -- Enable/Disable icon
+                sprite = "bomb",        -- Icon Sprite
+                color = "ff40e0d0",     -- Icon Color (Default: Global Setting)
+                label = "aura.a"        -- Text in Option Panel (Text or Locale Key)
+            },
+        },
         lines = {
             lineA = {
                 enable = true,          -- Enable/Disable line

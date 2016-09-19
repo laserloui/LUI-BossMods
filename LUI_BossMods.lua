@@ -57,6 +57,8 @@ function LUI_BossMods:new(o)
         modules = {},
         interval = 100,
         aura = {
+            sprite = "attention",
+            color = "ff7fff00",
             offsets = {
                 left = -120,
                 top = -230,
@@ -1393,7 +1395,7 @@ function LUI_BossMods:ShowAura(sName,sSprite,sColor,nDuration,bShowDuration,fHan
     end
 
     if nDuration then
-        self.wndAura:FindChild("Overlay"):SetFullSprite(sSprite or "LUI_BossMods:attention")
+        self.wndAura:FindChild("Overlay"):SetFullSprite(sSprite or self.config.aura.sprite)
         self.wndAura:FindChild("Overlay"):SetBarColor("a0000000")
         self.wndAura:FindChild("Overlay"):SetBGColor("a0000000")
         self.wndAura:FindChild("Overlay"):SetMax(100)
@@ -1426,8 +1428,8 @@ function LUI_BossMods:ShowAura(sName,sSprite,sColor,nDuration,bShowDuration,fHan
         end
     end
 
-    self.wndAura:FindChild("Icon"):SetSprite(sSprite or "LUI_BossMods:attention")
-    self.wndAura:FindChild("Icon"):SetBGColor(sColor or "ff7fff00")
+    self.wndAura:FindChild("Icon"):SetSprite(sSprite or self.config.aura.sprite)
+    self.wndAura:FindChild("Icon"):SetBGColor(sColor or self.config.aura.color)
 
     if not self.wndAura:FindChild("Icon"):IsShown() then
         self.wndAura:FindChild("Icon"):Show(true,true)
