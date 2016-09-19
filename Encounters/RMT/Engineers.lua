@@ -111,7 +111,7 @@ function Mod:new(o)
             vulnerability = {
                 enable = true,
                 color = "aaee94fd",
-                label = "debuff.electroshock_vulnerability"
+                label = "debuff.electroshock_vulnerability",
             },
         },
         alerts = {
@@ -129,12 +129,12 @@ function Mod:new(o)
             electroshock = {
                 enable = false,
                 duration = 5,
-                label = "cast.electroshock"
+                label = "cast.electroshock",
             },
             liquidate = {
                 enable = false,
                 duration = 5,
-                label = "cast.liquidate"
+                label = "cast.liquidate",
             },
         },
         sounds = {
@@ -150,11 +150,11 @@ function Mod:new(o)
             },
             electroshock = {
                 enable = false,
-                label = "cast.electroshock"
+                label = "cast.electroshock",
             },
             liquidate = {
                 enable = false,
-                label = "cast.liquidate"
+                label = "cast.liquidate",
             },
         },
         icons = {
@@ -163,7 +163,7 @@ function Mod:new(o)
                 sprite = "target2",
                 size = 60,
                 color = "ff40e0d0",
-                label = "cast.electroshock"
+                label = "cast.electroshock",
             },
             orb = {
                 enable = true,

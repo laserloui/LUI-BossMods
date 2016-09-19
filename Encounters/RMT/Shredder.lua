@@ -18,9 +18,15 @@ local Locales = {
         ["cast.deathwail"] = "Deathwail", -- Miniboss knockdown, interruptable
         ["cast.gravedigger"] = "Gravedigger", -- Miniboss cast
         -- Alerts
+        ["alert.oozing_bile"] = "Oozing Bile - Stop Damage!",
         ["alert.interrupt"] = "Interrupt!",
+        -- Debuffs
+        ["debuff.oozing_bile"] = "Oozing Bile",
         -- Datachron
         ["datachron.shredder_start"] = "WARNING: THE SHREDDER IS STARTING!",
+        -- Labels
+        ["label.lines_room"] = "Room Dividers",
+        ["label.circle_telegraph"] = "Circle Telegraphs",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -58,15 +64,91 @@ function Mod:new(o)
     self.runtime = {}
     self.config = {
         enable = true,
-        bDrawRoomLines = true,
-        bDrawSawLines = true,
-        bDrawCircleTelegraphs = true,
-        bOozingBileWarning = true,
-        interrupt = {
-            enable = true,
-            sound = true,
-            cast = true,
-        }
+        units = {
+            boss = {
+                enable = true,
+                label = "unit.boss",
+            },
+            noxious_nabber = {
+                enable = true,
+                label = "unit.noxious_nabber",
+            },
+            regor_the_rancid = {
+                enable = true,
+                label = "unit.regor_the_rancid",
+            },
+        },
+        casts = {
+            necrotic_lash = {
+                enable = true,
+                color = "ff9932cc",
+                label = "cast.necrotic_lash",
+            },
+            regor_the_rancid = {
+                enable = true,
+                color = "ff9932cc",
+                label = "unit.regor_the_rancid",
+            },
+        },
+        auras = {
+            oozing_bile = {
+                enable = true,
+                sprite = "stop2",
+                color = "ffff0000",
+                label = "debuff.oozing_bile",
+            },
+        },
+        alerts = {
+            oozing_bile = {
+                enable = true,
+                label = "debuff.oozing_bile",
+            },
+            necrotic_lash = {
+                enable = true,
+                label = "cast.necrotic_lash",
+            },
+            regor_the_rancid = {
+                enable = true,
+                label = "unit.regor_the_rancid",
+            },
+        },
+        sounds = {
+            oozing_bile = {
+                enable = true,
+                file = "alert",
+                label = "debuff.oozing_bile",
+            },
+            necrotic_lash = {
+                enable = true,
+                file = "alert",
+                label = "cast.necrotic_lash",
+            },
+            regor_the_rancid = {
+                enable = true,
+                file = "alert",
+                label = "unit.regor_the_rancid",
+            },
+        },
+        lines = {
+            room = {
+                enable = true,
+                thickness = 5,
+                color = "ff9932cc",
+                label = "label.lines_room",
+            },
+            sawblade = {
+                enable = true,
+                thickness = 15,
+                color = "ff9932cc",
+                label = "unit.sawblade",
+            },
+            circle_telegraph = {
+                enable = true,
+                thickness = 7,
+                color = "ffff4500",
+                label = "label.circle_telegraph",
+            },
+        },
     }
     return o
 end
@@ -84,24 +166,24 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
 
-        if self.config.bDrawRoomLines == true then
-            self.core:DrawLineBetween("ExitLine", EXITLINE_A, EXITLINE_B, 5, "xkcdBrightPurple")
-            self.core:DrawLineBetween("CenterLine", CENTERLINE_A, CENTERLINE_B, 5, "xkcdBrightPurple")
-            self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, 5, "xkcdBrightPurple")
+        if self.config.lines.room.enable == true then
+            self.core:DrawLineBetween("ExitLine", EXITLINE_A, EXITLINE_B, self.config.lines.room.thickness, self.config.lines.room.color)
+            self.core:DrawLineBetween("CenterLine", CENTERLINE_A, CENTERLINE_B, self.config.lines.room.thickness, self.config.lines.room.color)
+            self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, self.config.lines.room.thickness, self.config.lines.room.color)
         end
     elseif sName == self.L["unit.noxious_nabber"] then
-        self.core:AddUnit(nId,sName,tUnit,false,nil,true)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.noxious_nabber.enable,true,false,false,nil,self.config.units.noxious_nabber.color, self.config.units.noxious_nabber.priority)
     elseif sName == self.L["unit.regor_the_rancid"] then
-        self.core:AddUnit(nId,sName,tUnit,false,nil,true)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.regor_the_rancid.enable,true,false,false,nil,self.config.units.regor_the_rancid.color, self.config.units.regor_the_rancid.priority)
     elseif sName == self.L["unit.sawblade"] then
-        if self.config.bDrawSawLines == true then
-            self.core:DrawLine(nId, tUnit, "xkcdBrightPurple", 15, 60, 0, 0)
+        if self.config.lines.sawblade.enable == true then
+            self.core:DrawLine(nId, tUnit, self.config.lines.sawblade.color, self.config.lines.sawblade.thickness, 60, 0, 0)
         end
     elseif sName == self.L["unit.circle_telegraph"] then
-        if self.config.bDrawCircleTelegraphs == true then
-            self.core:DrawPolygon(nId, tUnit, 6.7, 0, 7, "xkcdBloodOrange", 20)
+        if self.config.lines.circle_telegraph.enable == true then
+            self.core:DrawPolygon(nId, tUnit, 6.7, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
         end
     end
 end
@@ -115,11 +197,23 @@ function Mod:OnUnitDestroyed(nId, tUnit, sName)
 end
 
 function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
-    if self.config.bOozingBileWarning == true then
-        if DEBUFF__OOZING_BILE == nSpellId then
-            if tData.tUnit:IsThePlayer() then
-                if nStack >= 8 then
-                    self.core:ShowAura("OOZE","LUI_BossMods:stop2","ffff0000",nDuration)
+    if DEBUFF__OOZING_BILE == nSpellId then
+        if tData.tUnit:IsThePlayer() then
+            if nStack >= 8 then
+                if self.config.auras.oozing_bile.enable == true then
+                    self.core:ShowAura("OOZE",self.config.auras.oozing_bile.sprite,self.config.auras.oozing_bile.color,nDuration)
+                end
+
+                if not self.warned then
+                    if self.config.sounds.oozing_bile.enable == true then
+                        self.core:PlaySound(self.config.sounds.oozing_bile.file)
+                    end
+
+                    if self.config.alerts.oozing_bile.enable == true then
+                        self.core:ShowAlert("OOZE", self.L["alert.oozing_bile"], self.config.alerts.oozing_bile.duration, self.config.alerts.oozing_bile.color)
+                    end
+
+                    self.warned = true
                 end
             end
         end
@@ -127,46 +221,46 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
 end
 
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
-    if self.config.bOozingBileWarning == true then
-        if DEBUFF__OOZING_BILE == nSpellId then
-            if tData.tUnit:IsThePlayer() then
+    if DEBUFF__OOZING_BILE == nSpellId then
+        if tData.tUnit:IsThePlayer() then
+            if self.config.auras.oozing_bile.enable == true then
                 self.core:HideAura("OOZE")
             end
+
+            self.warned = nil
         end
     end
 end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
-    if self.config.interrupt.enable == true then
-        if self.L["unit.noxious_nabber"] == sName then
-            if self.L["cast.necrotic_lash"] == sCastName then
-                if self.core:GetDistance(tCast.tUnit) < 30 then
-                    if self.config.interrupt.alert == true then
-                        self.core:ShowAlert(nId, self.L["alert.interrupt"])
-                    end
+    if self.L["unit.noxious_nabber"] == sName then
+        if self.L["cast.necrotic_lash"] == sCastName then
+            if self.core:GetDistance(tCast.tUnit) < 30 then
+                if self.config.alerts.necrotic_lash.enable == true then
+                    self.core:ShowAlert("necrotic_lash_"..tostring(nId), self.L["alert.interrupt"], self.config.alerts.necrotic_lash.duration, self.config.alerts.necrotic_lash.color)
+                end
 
-                    if self.config.interrupt.sound == true then
-                        self.core:PlaySound("alert")
-                    end
+                if self.config.sounds.necrotic_lash.enable == true then
+                    self.core:PlaySound(self.config.sounds.necrotic_lash.file)
+                end
 
-                    if self.config.interrupt.cast == true then
-                        self.core:ShowCast(tCast)
-                    end
+                if self.config.casts.necrotic_lash.enable == true then
+                    self.core:ShowCast(tCast,sCastName,self.config.casts.necrotic_lash.color)
                 end
             end
-        elseif self.L["unit.regor_the_rancid"] == sName then
-            if self.L["cast.deathwail"] == sCastName or self.L["cast.gravedigger"] == sCastName then
-                if self.config.interrupt.alert == true then
-                    self.core:ShowAlert(nId, self.L["alert.interrupt"])
-                end
+        end
+    elseif self.L["unit.regor_the_rancid"] == sName then
+        if self.L["cast.deathwail"] == sCastName or self.L["cast.gravedigger"] == sCastName then
+            if self.config.alerts.regor_the_rancid.enable == true then
+                self.core:ShowAlert("gravedigger_"..tostring(nId), self.L["alert.interrupt"], self.config.alerts.regor_the_rancid.duration, self.config.alerts.regor_the_rancid.color)
+            end
 
-                if self.config.interrupt.sound == true then
-                    self.core:PlaySound("alert")
-                end
+            if self.config.sounds.regor_the_rancid.enable == true then
+                self.core:PlaySound(self.config.sounds.regor_the_rancid.file)
+            end
 
-                if self.config.interrupt.cast == true then
-                    self.core:ShowCast(tCast)
-                end
+            if self.config.casts.regor_the_rancid.enable == true then
+                self.core:ShowCast(tCast,sCastName,self.config.casts.regor_the_rancid.color)
             end
         end
     end
@@ -182,6 +276,7 @@ end
 
 function Mod:OnEnable()
     self.run = true
+    self.warned = nil
 end
 
 function Mod:OnDisable()

@@ -132,9 +132,9 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss_north"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.north.enable,true,false,false,"N",self.config.units.north.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.north.enable,true,false,false,"N",self.config.units.north.color, self.config.units.north.priority)
     elseif sName == self.L["unit.boss_south"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.north.enable,true,false,false,"S",self.config.units.south.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.north.enable,true,false,false,"S",self.config.units.south.color, self.config.units.south.priority)
     end
 end
 
