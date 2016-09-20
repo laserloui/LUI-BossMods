@@ -2659,7 +2659,7 @@ function LUI_BossMods:OnConfigure()
 end
 
 function LUI_BossMods:OnSlashCommand()
-	self.settings:OnToggleMenu()
+    self.settings:OnToggleMenu()
 end
 
 function LUI_BossMods:OnInterfaceMenuListHasLoaded()
@@ -2783,17 +2783,17 @@ function LUI_BossMods:Sort(t, order)
     for k in pairs(t) do keys[#keys + 1] = k end
 
     if order then
-		table.sort(keys, function(a,b) return order(t, a, b) end)
+        table.sort(keys, function(a,b) return order(t, a, b) end)
     else
-		table.sort(keys)
+        table.sort(keys)
     end
 
     local i = 0
     return function()
-		i = i + 1
-		if keys[i] then
-			return keys[i], t[keys[i]]
-		end
+        i = i + 1
+        if keys[i] then
+            return keys[i], t[keys[i]]
+        end
     end
 end
 

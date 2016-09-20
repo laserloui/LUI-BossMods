@@ -301,7 +301,7 @@ end
 function Mod:OnDatachron(sMessage, sSender, sHandler)
     if sMessage == self.L["datachron.midphase_start"] then
         self.core:RemoveTimer("Timer_Arms")
- 		self.core:RemoveTimer("Timer_Crush")
+         self.core:RemoveTimer("Timer_Crush")
     elseif sMessage == self.L["datachron.midphase_end"] then
         if self.config.timers.arms.enable == true then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)

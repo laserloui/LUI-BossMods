@@ -174,8 +174,8 @@ function Settings:BuildTree()
 
             if type(strModule) == "table" then
                 for strMiniboss, strMiniModule in self.core:Sort(strModule) do
-    				local wndMiniboss = Apollo.LoadForm(self.xmlDoc, "Navigation:Miniboss", wndEncounterContents, self)
-    				wndMiniboss:SetData(strMiniModule)
+                    local wndMiniboss = Apollo.LoadForm(self.xmlDoc, "Navigation:Miniboss", wndEncounterContents, self)
+                    wndMiniboss:SetData(strMiniModule)
 
                     local wndMinibossBtn = wndMiniboss:FindChild("MinibossBtn")
                     wndMinibossBtn:SetData({instance = strInstance, encounter = strMiniModule, btn = wndMinibossBtn})
@@ -224,9 +224,9 @@ function Settings:ResizeTree()
         if wndInstanceBtn:IsChecked() then
             for _,wndEncounter in pairs(wndInstanceContents:GetChildren()) do
                 local wndEncounterContents = wndEncounter:FindChild("GroupContents")
-				local wndEncounterBtn = wndEncounter:FindChild("EncounterBtn")
+                local wndEncounterBtn = wndEncounter:FindChild("EncounterBtn")
                 local bEncounterHasChildren = #wndEncounterContents:GetChildren() > 0
-				local nEncounterHeight = 2
+                local nEncounterHeight = 2
 
                 if bEncounterHasChildren and wndEncounterBtn:IsChecked() then
                     for _,wndMiniboss in pairs(wndEncounterContents:GetChildren()) do
@@ -235,18 +235,18 @@ function Settings:ResizeTree()
                 end
 
                 local nLeft, nTop, nRight = wndEncounter:GetAnchorOffsets()
-				wndEncounter:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nEncounterHeight + self.nEncounterButtonHeight)
-				wndEncounterContents:ArrangeChildrenVert(0)
+                wndEncounter:SetAnchorOffsets(nLeft, nTop, nRight, nTop + nEncounterHeight + self.nEncounterButtonHeight)
+                wndEncounterContents:ArrangeChildrenVert(0)
                 wndEncounterContents:Show(wndEncounterBtn:IsChecked() and bEncounterHasChildren,true)
 
                 nInstanceHeight = nInstanceHeight + nEncounterHeight + self.nEncounterButtonHeight
             end
 
             if nInstanceHeight > 0 then
-				nInstanceHeight = nInstanceHeight + 14
-			end
+                nInstanceHeight = nInstanceHeight + 14
+            end
 
-			wndInstance:FindChild("Divider"):Show(nInstanceHeight > 0,true)
+            wndInstance:FindChild("Divider"):Show(nInstanceHeight > 0,true)
         end
 
         local nLeft, nTop, nRight = wndInstance:GetAnchorOffsets()
@@ -567,7 +567,7 @@ function Settings:BuildRightPanel()
 
             -- Sprite
             wnd:FindChild("SpriteText"):SetText(icon.sprite or self.config.icon.sprite)
-        	wnd:FindChild("SpriteText"):SetData({"icons",id,"sprite"})
+            wnd:FindChild("SpriteText"):SetData({"icons",id,"sprite"})
             wnd:FindChild("BrowseBtn"):SetData({{"icons",id,"sprite"},wnd:FindChild("SpriteText")})
 
             -- Color
@@ -609,7 +609,7 @@ function Settings:BuildRightPanel()
 
             -- Sprite
             wnd:FindChild("SpriteText"):SetText(aura.sprite or self.config.aura.sprite)
-        	wnd:FindChild("SpriteText"):SetData({"auras",id,"sprite"})
+            wnd:FindChild("SpriteText"):SetData({"auras",id,"sprite"})
             wnd:FindChild("BrowseBtn"):SetData({{"auras",id,"sprite"},wnd:FindChild("SpriteText")})
 
             -- Color
@@ -784,19 +784,19 @@ function Settings:BuildGlobalSettings()
     local wndAlerts = self.wndSettings:FindChild("Global"):FindChild("Alerts")
 
     -- Font
-	wndAlerts:FindChild("FontDropdown"):AttachWindow(wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"))
-	wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"):Show(false)
-	wndAlerts:FindChild("FontDropdown"):SetText("Choose")
-	wndAlerts:FindChild("FontDropdown"):SetData({"alerts","font"})
+    wndAlerts:FindChild("FontDropdown"):AttachWindow(wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"))
+    wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"):Show(false)
+    wndAlerts:FindChild("FontDropdown"):SetText("Choose")
+    wndAlerts:FindChild("FontDropdown"):SetData({"alerts","font"})
 
-	for _,button in pairs(wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"):GetChildren()) do
-		if button:GetName() == self.config.alerts.font then
-			button:SetCheck(true)
+    for _,button in pairs(wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"):GetChildren()) do
+        if button:GetName() == self.config.alerts.font then
+            button:SetCheck(true)
             wndAlerts:FindChild("FontDropdown"):SetText(button:GetText())
-		else
-			button:SetCheck(false)
-		end
-	end
+        else
+            button:SetCheck(false)
+        end
+    end
 
     -- Text Color
     wndAlerts:FindChild("TextColorSetting"):FindChild("Color"):SetData({"alerts","color"})
@@ -978,12 +978,12 @@ function Settings:OnSaveSprite(wndHandler, wndControl)
     local setting = self.wndBrowse:GetData()[1]
     local wndText = self.wndBrowse:GetData()[2]
 
-   	if wndText then
-		wndText:SetText(strIcon)
-	end
+       if wndText then
+        wndText:SetText(strIcon)
+    end
 
-   	self:SetVar(setting,strIcon)
-	self.wndBrowse:Close()
+       self:SetVar(setting,strIcon)
+    self.wndBrowse:Close()
 end
 
 function Settings:OnBtnChooseColor(wndHandler, wndControl)
@@ -1090,41 +1090,41 @@ function Settings:OnToggleMenu()
 end
 
 function Settings:OnToggleBrowse(wndHandler, wndControl)
-	if self.wndBrowse then
+    if self.wndBrowse then
         if self.wndBrowse:IsShown() then
             self.wndBrowse:Close()
         else
             self.wndBrowse:SetData(wndControl:GetData())
             self.wndBrowse:Invoke()
         end
-	else
+    else
         self.wndBrowse = Apollo.LoadForm(self.xmlDoc, "BrowseForm", nil, self)
-		self.wndBrowse:SetData(wndControl:GetData())
+        self.wndBrowse:SetData(wndControl:GetData())
 
         local wndSpriteList = self.wndBrowse:FindChild("Container"):FindChild("Sprites")
 
-		for idx = 1, #self.tSprites do
-	        local wndSprite = Apollo.LoadForm(self.xmlDoc, "Items:SpriteItem", wndSpriteList, self)
-	        wndSprite:FindChild("Sprite"):SetSprite(self.tSprites[idx])
+        for idx = 1, #self.tSprites do
+            local wndSprite = Apollo.LoadForm(self.xmlDoc, "Items:SpriteItem", wndSpriteList, self)
+            wndSprite:FindChild("Sprite"):SetSprite(self.tSprites[idx])
             wndSprite:FindChild("Sprite"):SetBGColor("ffffffff")
             wndSprite:FindChild("SelectBtn"):SetData(self.tSprites[idx])
-		end
+        end
 
         -- LUI Media
-		if self.media then
-			local icons = self.media:Load("icons")
+        if self.media then
+            local icons = self.media:Load("icons")
 
             if icons then
                 for idx = 1, #icons do
-    		        local wndIcon = Apollo.LoadForm(self.xmlDoc, "Items:SpriteItem", wndSpriteList, self)
+                    local wndIcon = Apollo.LoadForm(self.xmlDoc, "Items:SpriteItem", wndSpriteList, self)
                     wndIcon:FindChild("Sprite"):SetSprite("LUI_Media:"..tostring(icons[idx]))
                     wndIcon:FindChild("SelectBtn"):SetData("LUI_Media:"..tostring(icons[idx]))
-    			end
+                end
             end
         end
 
         wndSpriteList:ArrangeChildrenTiles()
-	end
+    end
 end
 
 function Settings:OnResetBtn(wndHandler, wndControl)
