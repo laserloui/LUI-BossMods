@@ -35,6 +35,9 @@ function Mod:new(o)
                 mapId = 550,
             },
         },
+        tNames = {
+            ["enUS"] = {"Chief Warden Lockjaw"},
+        },
     }
     self.run = false
     self.runtime = {}
@@ -47,12 +50,6 @@ function Mod:new(o)
             },
         },
         lines = {
-            boss = {
-                enable = true,
-                thickness = 7,
-                color = "ffff0000",
-                label = "unit.boss",
-            },
             circle_telegraph = {
                 enable = true,
                 thickness = 7,
@@ -78,14 +75,9 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 
     if sName == self.L["unit.boss"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color)
-
-        if self.config.lines.boss.enable == true then
-            self.core:DrawLine("CleaveA", tUnit, self.config.lines.boss.color, self.config.lines.boss.thickness, 25, -20, 0, Vector3.New(1.5,0,0))
-            self.core:DrawLine("CleaveB", tUnit, self.config.lines.boss.color, self.config.lines.boss.thickness, 25, 20, 0, Vector3.New(-1.5,0,0))
-        end
     elseif sName == self.L["unit.circle_telegraph"] then
         if self.config.lines.circle_telegraph.enable == true then
-            self.core:DrawPolygon(nId, tUnit, 6.7, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
+            self.core:DrawPolygon(nId, tUnit, 6.5, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
         end
     end
 end
