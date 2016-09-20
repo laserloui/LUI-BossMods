@@ -41,6 +41,12 @@ function Mod:new(o)
     self.runtime = {}
     self.config = {
         enable = true,
+        units = {
+            boss = {
+                enable = true,
+                label = "unit.boss",
+            }
+        },
         rupture = {
             enable = true,
             cast = true,
@@ -65,7 +71,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true,true,false,false,nil,self.config.healthColor)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,true,false,false,nil,self.config.units.boss.color)
     end
 end
 

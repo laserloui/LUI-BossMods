@@ -39,6 +39,18 @@ function Mod:new(o)
     self.runtime = {}
     self.config = {
         enable = true,
+        units = {
+            boss_logic = {
+                enable = true,
+                label = "unit.boss_logic",
+                color = "afadff2f",
+            },
+            boss_water = {
+                enable = true,
+                label = "unit.boss_water",
+                color = "af1e90ff",
+            },
+        },
     }
     return o
 end
@@ -56,9 +68,9 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss_logic"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_logic.enable,false,false,false,nil,self.config.units.boss_logic.color)
     elseif sName == self.L["unit.boss_water"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_water.enable,false,false,false,nil,self.config.units.boss_water.color)
     end
 end
 

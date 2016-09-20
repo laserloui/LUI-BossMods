@@ -39,6 +39,18 @@ function Mod:new(o)
     self.runtime = {}
     self.config = {
         enable = true,
+        units = {
+            boss_air = {
+                enable = true,
+                label = "unit.boss_air",
+                color = "af00ffff",
+            },
+            boss_earth = {
+                enable = true,
+                label = "unit.boss_earth",
+                color = "afff932f",
+            },
+        },
     }
     return o
 end
@@ -56,9 +68,9 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss_air"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_air.enable,false,false,false,nil,self.config.units.boss_air.color)
     elseif sName == self.L["unit.boss_earth"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_earth.enable,false,false,false,nil,self.config.units.boss_earth.color)
     end
 end
 

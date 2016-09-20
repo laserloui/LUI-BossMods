@@ -224,7 +224,7 @@ function Mod:new(o)
             castA = {
                 enable = true,          -- Enable/Disable cast
                 color = "ffb22222",     -- Color (Default: Global Setting)
-                label = "cast.a"       -- Text in Option Panel (Text or Locale Key)
+                label = "cast.a"        -- Text in Option Panel (Text or Locale Key)
             },
         },
         alerts = {

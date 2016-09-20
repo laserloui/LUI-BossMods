@@ -3,10 +3,12 @@ require "Apollo"
 
 local Mod = {}
 local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
-local Encounter = "Scrubber"
+local Encounter = "ChiefEnginerScrubberThrag"
 
 local Locales = {
-    ["enUS"] = {},
+    ["enUS"] = {
+        ["unit.boss"] = "Chief Enginer Scrubber Thrag",
+    },
     ["deDE"] = {},
     ["frFR"] = {},
 }
@@ -16,7 +18,7 @@ function Mod:new(o)
     setmetatable(o, self)
     self.__index = self
     self.instance = "Redmoon Terror"
-    self.displayName = "Scrubber"
+    self.displayName = "Chief Enginer Scrubber Thrag"
     self.groupName = "Minibosses"
     self.tTrigger = {
         sType = "ANY",
@@ -24,17 +26,23 @@ function Mod:new(o)
             [1] = {
                 continentId = 104,
                 parentZoneId = 548,
-                mapId = 555,
+                mapId = 552,
             },
         },
         tNames = {
-            ["enUS"] = {"Scrubber"},
+            ["enUS"] = {"Chief Enginer Scrubber Thrag"},
         },
     }
     self.run = false
     self.runtime = {}
     self.config = {
         enable = true,
+        units = {
+            boss = {
+                enable = true,
+                label = "unit.boss",
+            }
+        }
     }
     return o
 end
@@ -49,6 +57,10 @@ end
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if not self.run == true then
         return
+    end
+
+    if sName == self.L["unit.boss"] and bInCombat == true then
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color)
     end
 end
 
