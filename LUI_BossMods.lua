@@ -185,8 +185,8 @@ function LUI_BossMods:OnDocLoaded()
     self:LoadModules()
     self:LoadSettings()
 
-    -- Check Volume Settings
-    self:CheckVolume()
+    self.CheckVolumeTimer = ApolloTimer.Create(3, false, "CheckVolume", self)
+    self.CheckVolumeTimer:Start()
 
     if self.tPreloadUnits ~= nil then
         self:CreateUnitsFromPreload()
@@ -474,9 +474,6 @@ function LUI_BossMods:ResetFight()
         self.tCurrentEncounter = nil
     end
 
-    self.runtime = {}
-    self.wndOverlay:DestroyAllPixies()
-
     if self.tDraws then
         for key,draw in pairs(self.tDraws) do
             if draw.sType then
@@ -494,8 +491,6 @@ function LUI_BossMods:ResetFight()
             end
         end
     end
-
-    self.tDraws = nil
 
     if self.wndUnits:IsShown() then
         self.wndUnits:DestroyChildren()
@@ -519,6 +514,10 @@ function LUI_BossMods:ResetFight()
         self.wndAlerts:DestroyChildren()
         self.wndAlerts:Show(false,true)
     end
+
+    self.tDraws = nil
+    self.runtime = {}
+    self.wndOverlay:DestroyAllPixies()
 end
 
 function LUI_BossMods:CheckForWipe()
@@ -656,6 +655,8 @@ end
 
 function LUI_BossMods:OnUnitDestroyed(unit)
     if self.bIsRunning == true then
+        self:RemoveUnit(unit:GetId())
+
         if self.tCurrentEncounter and self.tCurrentEncounter.OnUnitDestroyed then
             self.tCurrentEncounter:OnUnitDestroyed(unit:GetId(),unit,unit:GetName())
         end
@@ -832,10 +833,15 @@ function LUI_BossMods:UpdateUnit(tData)
     end
 
     -- Health
+    local bIsDead = tData.tUnit:IsDead()
     local nHealth = tData.tUnit:GetHealth() or 0
     local nHealthMax = tData.tUnit:GetMaxHealth() or 0
     local nHealthPercent = (nHealth * 100) / nHealthMax
     local nHealthProgress = nHealthPercent / 100
+
+    if bIsDead then
+        nHealthPercent = 0
+    end
 
     if nHealthProgress ~= (tData.runtime.health or 0) then
         if tData.wnd then
@@ -859,6 +865,10 @@ function LUI_BossMods:UpdateUnit(tData)
     local nAbsorbMax = tData.tUnit:GetAbsorptionMax() or 0
     local nAbsorbPercent = (nAbsorb * 100) / nAbsorbMax
     local nAbsorbProgress = nAbsorbPercent / 100
+
+    if bIsDead then
+        nAbsorbProgress = 0
+    end
 
     if nAbsorb > 0 then
         if not tData.wnd:FindChild("ShieldBar"):IsShown() then
@@ -886,6 +896,10 @@ function LUI_BossMods:UpdateUnit(tData)
         local nShieldPercent = (nShield * 100) / nShieldMax
         local nShieldProgress = nShieldPercent / 100
 
+        if bIsDead then
+            nShieldProgress = 0
+        end
+
         if nShield > 0 then
             if not tData.wnd:FindChild("ShieldBar"):IsShown() then
                 tData.wnd:FindChild("ShieldBar"):Show(true,true)
@@ -901,6 +915,22 @@ function LUI_BossMods:UpdateUnit(tData)
             end
         end
     end
+end
+
+function LUI_BossMods:RemoveUnit(nId)
+    if not nId then
+        return
+    end
+
+    if not self.runtime.units or not self.runtime.units[nId] then
+        return
+    end
+
+    if self.runtime.units[nId].wnd then
+        self.runtime.units[nId].wnd:Destroy()
+    end
+
+    self.runtime.units[nId] = nil
 end
 
 -- #########################################################################################################################################

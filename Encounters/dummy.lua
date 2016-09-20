@@ -19,6 +19,10 @@ require "Apollo"
         @param sColor           - Health Bar Color (ARGB String)
         @param nPriority        - Priority in UnitFrame and Option Panel (Top to Bottom)
 
+    Remove Unit(nId)
+        Removes the unit completely.
+        @param nId              - Unique ID of unit
+
     AddTimer(sName, sText, nDuration, sColor, fHandler, tData)
         Creates a timer bar
         @param sName            - Unique ID
