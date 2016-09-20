@@ -747,6 +747,32 @@ function Settings:BuildGlobalSettings()
     wndUnit:FindChild("ShieldWidthSetting"):FindChild("SliderText"):SetText(self.config.units.shieldWidth or 0)
 
     -- #########################################################################################################################################
+    -- # ALERTS
+    -- #########################################################################################################################################
+
+    local wndAlerts = self.wndSettings:FindChild("Global"):FindChild("Alerts")
+
+    -- Font
+	wndAlerts:FindChild("FontDropdown"):AttachWindow(wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"))
+	wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"):Show(false)
+	wndAlerts:FindChild("FontDropdown"):SetText("Choose")
+	wndAlerts:FindChild("FontDropdown"):SetData({"alerts","font"})
+
+	for _,button in pairs(wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"):GetChildren()) do
+		if button:GetName() == self.config.alerts.font then
+			button:SetCheck(true)
+            wndAlerts:FindChild("FontDropdown"):SetText(button:GetText())
+		else
+			button:SetCheck(false)
+		end
+	end
+
+    -- Text Color
+    wndAlerts:FindChild("TextColorSetting"):FindChild("Color"):SetData({"alerts","color"})
+    wndAlerts:FindChild("TextColorSetting"):FindChild("ColorText"):SetText(self.config.alerts.color or "")
+    wndAlerts:FindChild("TextColorSetting"):FindChild("BG"):SetBGColor(self.config.alerts.color)
+
+    -- #########################################################################################################################################
     -- # CASTBAR
     -- #########################################################################################################################################
 
@@ -768,7 +794,7 @@ function Settings:BuildGlobalSettings()
     wndCastbar:FindChild("TextColorSetting"):FindChild("BG"):SetBGColor(self.config.castbar.textColor)
 
     -- #########################################################################################################################################
-    -- # CASTBAR
+    -- # TIMER
     -- #########################################################################################################################################
 
     local wndTimer = self.wndSettings:FindChild("Global"):FindChild("Timer")

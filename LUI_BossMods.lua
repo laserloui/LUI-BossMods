@@ -125,6 +125,7 @@ function LUI_BossMods:new(o)
         },
         alerts = {
             color = "ffff00ff",
+            font = "CRB_FloaterLarge",
             offsets = {
                 left = -300,
                 top = -260,
@@ -1523,7 +1524,7 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, sFont)
     self.runtime.alerts[sName].nTick = GetTickCount()
     self.runtime.alerts[sName].nDuration = nDuration or 5
     self.runtime.alerts[sName].wnd:SetText(sText or "")
-    self.runtime.alerts[sName].wnd:SetFont(sFont or "CRB_FloaterLarge")
+    self.runtime.alerts[sName].wnd:SetFont(sFont or self.config.alerts.font)
     self.runtime.alerts[sName].wnd:SetTextColor(sColor or self.config.alerts.color)
 
     self.wndAlerts:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
