@@ -146,7 +146,7 @@ function LUI_BossMods:new(o)
 end
 
 function LUI_BossMods:Init()
-    Apollo.RegisterAddon(self, true, "LUI BossMods",nil)
+    Apollo.RegisterAddon(self, true, "LUI BossMods", {"LUI_Media"})
 end
 
 function LUI_BossMods:OnDependencyError(strDependency, strError)

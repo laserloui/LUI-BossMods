@@ -11,7 +11,44 @@ function Settings:new(o)
     setmetatable(o, self)
     self.__index = self
     self.bIsGlobal = false
-    self.soundFiles = {"alarm","alert","info","long","interrupt","run-away","beware","burn","destruction","inferno"}
+    self.tSounds = {
+        "alarm",
+        "alert",
+        "info",
+        "long",
+        "interrupt",
+        "run-away",
+        "beware",
+        "burn",
+        "destruction",
+        "inferno"
+    }
+    self.tSprites = {
+        "angry",
+        "attention",
+        "attention2",
+        "bomb",
+        "boss",
+        "boss2",
+        "boss3",
+        "danger",
+        "danger2",
+        "danger3",
+        "flame",
+        "lighting",
+        "meteor",
+        "run",
+        "run2",
+        "shield",
+        "stop",
+        "stop2",
+        "stop3",
+        "target",
+        "target2",
+        "target3",
+        "target4",
+        "virus",
+    }
     return o
 end
 
@@ -80,6 +117,8 @@ function Settings:OnLoad()
     self.wndSettings:FindChild("DonateSeperator"):Show(false,true)
     self.wndSettings:FindChild("DonateBtn"):Show((GameLib.GetRealmName() == "Jabbit"),true)
     self.wndSettings:FindChild("DonateForm"):FindChild("DonateSendBtn"):Enable(false)
+
+    self.media = Apollo.GetAddon("LUI_Media")
 
     -- Navigation
     self.current = nil
@@ -529,11 +568,7 @@ function Settings:BuildRightPanel()
             -- Sprite
             wnd:FindChild("SpriteText"):SetText(icon.sprite or self.config.icon.sprite)
         	wnd:FindChild("SpriteText"):SetData({"icons",id,"sprite"})
-
-            wnd:FindChild("SpriteText"):SetStyle("BlockOutIfDisabled",false)
-            wnd:FindChild("SpriteText"):SetOpacity(0.5)
-            wnd:FindChild("SpriteText"):Enable(false)
-            wnd:FindChild("BrowseBtn"):Enable(false)
+            wnd:FindChild("BrowseBtn"):SetData({{"icons",id,"sprite"},wnd:FindChild("SpriteText")})
 
             -- Color
             wnd:FindChild("Color"):SetData({"icons",id,"color"})
@@ -575,11 +610,7 @@ function Settings:BuildRightPanel()
             -- Sprite
             wnd:FindChild("SpriteText"):SetText(aura.sprite or self.config.aura.sprite)
         	wnd:FindChild("SpriteText"):SetData({"auras",id,"sprite"})
-
-            wnd:FindChild("SpriteText"):SetStyle("BlockOutIfDisabled",false)
-            wnd:FindChild("SpriteText"):SetOpacity(0.5)
-            wnd:FindChild("SpriteText"):Enable(false)
-            wnd:FindChild("BrowseBtn"):Enable(false)
+            wnd:FindChild("BrowseBtn"):SetData({{"auras",id,"sprite"},wnd:FindChild("SpriteText")})
 
             -- Color
             wnd:FindChild("Color"):SetData({"auras",id,"color"})
@@ -822,11 +853,11 @@ function Settings:BuildSoundDropdown(wnd,setting,value)
     end
 
     local currentTrigger = 0
-    local triggerCount = #self.soundFiles
+    local triggerCount = #self.tSounds
 
     wnd:FindChild("ChoiceContainer"):DestroyChildren()
 
-    for idx,fileName in ipairs(self.soundFiles) do
+    for idx,fileName in ipairs(self.tSounds) do
         currentTrigger = currentTrigger + 1
         local item = "Items:Dropdown:MidItem"
         local offset = 30 * (currentTrigger -1)
@@ -924,6 +955,35 @@ function Settings:OnCheckbox(wndHandler, wndControl)
             end
         end
     end
+end
+
+function Settings:OnSelectSprite(wndHandler, wndControl, eMouseButton)
+    if eMouseButton == GameLib.CodeEnumInputMouse.Right then
+         return false
+    end
+
+    if not self.wndBrowse then
+        return
+    end
+
+    self.wndBrowse:FindChild("ChooseBtn"):SetData(wndControl:GetData())
+end
+
+function Settings:OnSaveSprite(wndHandler, wndControl)
+    if not self.wndBrowse then
+        return
+    end
+
+    local strIcon = wndControl:GetData()
+    local setting = self.wndBrowse:GetData()[1]
+    local wndText = self.wndBrowse:GetData()[2]
+
+   	if wndText then
+		wndText:SetText(strIcon)
+	end
+
+   	self:SetVar(setting,strIcon)
+	self.wndBrowse:Close()
 end
 
 function Settings:OnBtnChooseColor(wndHandler, wndControl)
@@ -1027,6 +1087,44 @@ function Settings:OnToggleMenu()
     else
         self:OnLoad()
     end
+end
+
+function Settings:OnToggleBrowse(wndHandler, wndControl)
+	if self.wndBrowse then
+        if self.wndBrowse:IsShown() then
+            self.wndBrowse:Close()
+        else
+            self.wndBrowse:SetData(wndControl:GetData())
+            self.wndBrowse:Invoke()
+        end
+	else
+        self.wndBrowse = Apollo.LoadForm(self.xmlDoc, "BrowseForm", nil, self)
+		self.wndBrowse:SetData(wndControl:GetData())
+
+        local wndSpriteList = self.wndBrowse:FindChild("Container"):FindChild("Sprites")
+
+		for idx = 1, #self.tSprites do
+	        local wndSprite = Apollo.LoadForm(self.xmlDoc, "Items:SpriteItem", wndSpriteList, self)
+	        wndSprite:FindChild("Sprite"):SetSprite(self.tSprites[idx])
+            wndSprite:FindChild("Sprite"):SetBGColor("ffffffff")
+            wndSprite:FindChild("SelectBtn"):SetData(self.tSprites[idx])
+		end
+
+        -- LUI Media
+		if self.media then
+			local icons = self.media:Load("icons")
+
+            if icons then
+                for idx = 1, #icons do
+    		        local wndIcon = Apollo.LoadForm(self.xmlDoc, "Items:SpriteItem", wndSpriteList, self)
+                    wndIcon:FindChild("Sprite"):SetSprite("LUI_Media:"..tostring(icons[idx]))
+                    wndIcon:FindChild("SelectBtn"):SetData("LUI_Media:"..tostring(icons[idx]))
+    			end
+            end
+        end
+
+        wndSpriteList:ArrangeChildrenTiles()
+	end
 end
 
 function Settings:OnResetBtn(wndHandler, wndControl)
