@@ -76,6 +76,20 @@ function Mod:new(o)
             boss = {
                 enable = true,
                 label = "unit.boss",
+                color = "afb0ff2f",
+                priority = 3,
+            },
+            flailing_arm = {
+                enable = true,
+                label = "unit.flailing_arm",
+                color = "ade91dfb",
+                priority = 2,
+            },
+            cannon_arm = {
+                enable = true,
+                label = "unit.cannon_arm",
+                color = "ade91dfb",
+                priority = 1,
             },
         },
         timers = {
@@ -96,6 +110,18 @@ function Mod:new(o)
                 sprite = "run",
                 color = "ffff00ff",
                 label = "label.crush_player",
+            },
+        },
+        casts = {
+            noxious_belch = {
+                enable = true,
+                color = "afb0ff2f",
+                label = "cast.noxious_belch",
+            },
+            cannon_fire = {
+                enable = false,
+                color = "ade91dfb",
+                label = "unit.cannon_fire",
             },
         },
         alerts = {
@@ -121,6 +147,11 @@ function Mod:new(o)
             },
         },
         sounds = {
+            cannon_fire = {
+                enable = false,
+                file = "info",
+                label = "cast.cannon_fire",
+            },
             crush_player = {
                 enable = true,
                 file = "run-away",
@@ -193,7 +224,10 @@ end
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if sName == self.L["unit.boss"] then
         self.boss = tUnit
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,true,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
+
+        if self.config.units.boss.enable == true then
+            self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,true,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
+        end
 
         if self.config.timers.arms.enable == true then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
@@ -203,6 +237,10 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
             self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color)
         end
     elseif sName == self.L["unit.cannon_arm"] then
+        if self.config.units.cannon_arm.enable == true then
+            self.core:AddUnit(nId,sName,tUnit,self.config.units.cannon_arm.enable,true,false,false,nil,self.config.units.cannon_arm.color, self.config.units.cannon_arm.priority)
+        end
+
         if self.config.timers.arms.enable == true then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
         end
@@ -211,6 +249,10 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
             self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.cannon_arm.thickness, self.config.lines.cannon_arm.color)
         end
     elseif sName == self.L["unit.flailing_arm"] then
+        if self.config.units.flailing_arm.enable == true then
+            self.core:AddUnit(nId,sName,tUnit,self.config.units.flailing_arm.enable,true,false,false,nil,self.config.units.flailing_arm.color, self.config.units.flailing_arm.priority)
+        end
+
         if self.config.lines.flailing_arm.enable == true then
             self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.flailing_arm.thickness, self.config.lines.flailing_arm.color)
         end
@@ -246,11 +288,21 @@ function Mod:OnHealthChanged(nId, nHealthPercent, sName, tUnit)
  end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
-    if self.config.alerts.lasers.enable == true then
-        if self.L["unit.boss"] == sName then
-            if self.L["cast.noxious_belch"] == sCastName then
-                self.core:ShowAlert(sCastName,self.L["alert.lasers"],self.config.alerts.lasers.duration, self.config.alerts.lasers.color)
-            end
+    if self.L["unit.boss"] == sName and self.L["cast.noxious_belch"] == sCastName then
+        if self.config.casts.noxious_belch.enable == true then
+            self.core:ShowCast(tCast,sCastName,self.config.casts.noxious_belch.color)
+        end
+
+        if self.config.alerts.lasers.enable == true then
+            self.core:ShowAlert(sCastName,self.L["alert.lasers"],self.config.alerts.lasers.duration, self.config.alerts.lasers.color)
+        end
+    elseif self.L["unit.cannon_arm"] == sName and self.L["cast.cannon_fire"] == sCastName then
+        if self.config.casts.cannon_fire.enable == true then
+            self.core:ShowCast(tCast,sCastName,self.config.casts.cannon_fire.color)
+        end
+
+        if self.config.sounds.cannon_fire.enable == true then
+            self.core:PlaySound(self.config.sounds.cannon_fire.file)
         end
     end
 end
@@ -285,7 +337,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             end
 
             if self.config.icons.crush.enable == true then
-                self.core:DrawIcon("Icon_Crush_"..tostring(nId), tData.tUnit, self.config.icons.crush.sprite, self.config.icons.crush.size, nil, self.config.icons.crush.color, nDuration)
+                self.core:DrawIcon("Icon_Crush", tData.tUnit, self.config.icons.crush.sprite, self.config.icons.crush.size, nil, self.config.icons.crush.color, nDuration)
             end
         end
     end
@@ -294,14 +346,16 @@ end
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if DEBUFF__THE_SKY_IS_FALLING == nSpellId then
         self.core:HideAura("Aura_Crush")
-        self.core:RemoveIcon("Icon_Crush_"..tostring(nId))
+        self.core:RemoveIcon("Icon_Crush")
     end
 end
 
 function Mod:OnDatachron(sMessage, sSender, sHandler)
     if sMessage == self.L["datachron.midphase_start"] then
         self.core:RemoveTimer("Timer_Arms")
-         self.core:RemoveTimer("Timer_Crush")
+        self.core:RemoveTimer("Timer_Crush")
+        self.core:RemoveIcon("Icon_Crush")
+        self.core:HideAura("Aura_Crush")
     elseif sMessage == self.L["datachron.midphase_end"] then
         if self.config.timers.arms.enable == true then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
