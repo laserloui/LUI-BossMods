@@ -3,10 +3,18 @@ require "Apollo"
 
 local Mod = {}
 local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
-local Encounter = "Lockjaw"
+local Encounter = "ChiefWardenLockjaw"
 
 local Locales = {
-    ["enUS"] = {},
+    ["enUS"] = {
+        -- Units
+        ["unit.boss"] = "Chief Warden Lockjaw",
+        ["unit.circle_telegraph"] = "Hostile Invisible Unit for Fields (0 hit radius)",
+        -- Casts
+        ["cast.blaze_shackles"] = "Blaze Shackles",
+        -- Labels
+        ["label.circle_telegraph"] = "Circle Telegraphs",
+    },
     ["deDE"] = {},
     ["frFR"] = {},
 }
@@ -16,7 +24,7 @@ function Mod:new(o)
     setmetatable(o, self)
     self.__index = self
     self.instance = "Redmoon Terror"
-    self.displayName = "Lockjaw"
+    self.displayName = "Chief Warden Lockjaw"
     self.groupName = "Minibosses"
     self.tTrigger = {
         sType = "ANY",
@@ -24,17 +32,34 @@ function Mod:new(o)
             [1] = {
                 continentId = 104,
                 parentZoneId = 548,
-                mapId = 555,
+                mapId = 550,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Lockjaw"},
         },
     }
     self.run = false
     self.runtime = {}
     self.config = {
         enable = true,
+        units = {
+            boss = {
+                enable = true,
+                label = "unit.boss",
+            },
+        },
+        lines = {
+            boss = {
+                enable = true,
+                thickness = 7,
+                color = "ffff0000",
+                label = "unit.boss",
+            },
+            circle_telegraph = {
+                enable = true,
+                thickness = 7,
+                color = "ffff1493",
+                label = "label.circle_telegraph",
+            },
+        },
     }
     return o
 end
@@ -49,6 +74,25 @@ end
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if not self.run == true then
         return
+    end
+
+    if sName == self.L["unit.boss"] and bInCombat == true then
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color)
+
+        if self.config.lines.boss.enable == true then
+            self.core:DrawLine("CleaveA", tUnit, self.config.lines.boss.color, self.config.lines.boss.thickness, 25, -20, 0, Vector3.New(1.5,0,0))
+            self.core:DrawLine("CleaveB", tUnit, self.config.lines.boss.color, self.config.lines.boss.thickness, 25, 20, 0, Vector3.New(-1.5,0,0))
+        end
+    elseif sName == self.L["unit.circle_telegraph"] then
+        if self.config.lines.circle_telegraph.enable == true then
+            self.core:DrawPolygon(nId, tUnit, 6.7, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
+        end
+    end
+end
+
+function Mod:OnUnitDestroyed(nId, tUnit, sName)
+    if sName == self.L["unit.circle_telegraph"] then
+        self.core:RemovePolygon(nId)
     end
 end
 
