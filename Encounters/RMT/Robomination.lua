@@ -27,10 +27,12 @@ local Locales = {
         -- Messages
         ["message.next_arms"] = "Next arms",
         ["message.next_crush"] = "Next crush",
+        ["message.next_belch"] = "Next lasers",
+        ["message.next_incineration"] = "Next incineration",
         -- Datachron messages
-        ["datachron.midphase_start"] = "The Robomination sinks down into the trash",
+        ["datachron.midphase_start"] = "The Robomination sinks",
         ["datachron.midphase_end"] = "The Robomination erupts back into the fight!",
-        ["datachron.incineration"] = "The Robomination tries to incinerate (.*)",
+        ["datachron.incineration"] = "The Robomination tries to incinerate (.*)!",
         -- Labels
         ["label.arms"] = "Arms",
         ["label.crush"] = "Crush",
@@ -77,7 +79,7 @@ function Mod:new(o)
                 enable = true,
                 label = "unit.boss",
                 color = "afb0ff2f",
-                priority = 3,
+                priority = 1,
             },
             flailing_arm = {
                 enable = true,
@@ -89,7 +91,7 @@ function Mod:new(o)
                 enable = true,
                 label = "unit.cannon_arm",
                 color = "ade91dfb",
-                priority = 1,
+                priority = 3,
             },
         },
         timers = {
@@ -100,8 +102,18 @@ function Mod:new(o)
             },
             crush = {
                 enable = true,
-                color = "ade91dfb",
+                color = "afe91dfb",
                 label = "label.crush",
+            },
+            noxious_belch = {
+                enable = true,
+                color = "ad1dfbfb",
+                label = "cast.noxious_belch",
+            },
+            incineration = {
+                enable = true,
+                color = "afff4500",
+                label = "cast.incineration_laser",
             },
         },
         auras = {
@@ -121,7 +133,7 @@ function Mod:new(o)
             cannon_fire = {
                 enable = false,
                 color = "ade91dfb",
-                label = "unit.cannon_fire",
+                label = "cast.cannon_fire",
             },
         },
         alerts = {
@@ -188,24 +200,24 @@ function Mod:new(o)
             cannon_arm = {
                 enable = true,
                 thickness = 8,
-                color = "ffff4500",
+                color = "afff4500",
                 label = "unit.cannon_arm",
             },
             flailing_arm = {
                 enable = true,
                 thickness = 8,
-                color = "ff0084ff",
+                color = "af0084ff",
                 label = "unit.flailing_arm",
             },
             scanning_eye = {
                 enable = true,
                 thickness = 8,
-                color = "ff7fff00",
+                color = "af7fff00",
                 label = "unit.scanning_eye",
             },
             incineration = {
                 enable = true,
-                thickness = 14,
+                thickness = 12,
                 color = "ffff4500",
                 label = "cast.incineration_laser",
             },
@@ -222,26 +234,18 @@ function Mod:Init(parent)
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
-    if sName == self.L["unit.boss"] then
+    if sName == self.L["unit.boss"] and bInCombat == true then
         self.boss = tUnit
 
         if self.config.units.boss.enable == true then
             self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,true,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
-        end
-
-        if self.config.timers.arms.enable == true then
-            self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
-        end
-
-        if self.config.timers.crush.enable == true then
-            self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color)
         end
     elseif sName == self.L["unit.cannon_arm"] then
         if self.config.units.cannon_arm.enable == true then
             self.core:AddUnit(nId,sName,tUnit,self.config.units.cannon_arm.enable,true,false,false,nil,self.config.units.cannon_arm.color, self.config.units.cannon_arm.priority)
         end
 
-        if self.config.timers.arms.enable == true then
+        if not self.bIsMidPhase and self.config.timers.arms.enable == true then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
         end
 
@@ -291,6 +295,10 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if self.L["unit.boss"] == sName and self.L["cast.noxious_belch"] == sCastName then
         if self.config.casts.noxious_belch.enable == true then
             self.core:ShowCast(tCast,sCastName,self.config.casts.noxious_belch.color)
+        end
+
+        if self.config.timers.noxious_belch.enable == true then
+            self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 31, self.config.timers.noxious_belch.color)
         end
 
         if self.config.alerts.lasers.enable == true then
@@ -352,17 +360,30 @@ end
 
 function Mod:OnDatachron(sMessage, sSender, sHandler)
     if sMessage == self.L["datachron.midphase_start"] then
+        self.core:RemoveTimer("Timer_Belch")
         self.core:RemoveTimer("Timer_Arms")
         self.core:RemoveTimer("Timer_Crush")
+        self.core:RemoveTimer("Timer_Incineration")
         self.core:RemoveIcon("Icon_Crush")
         self.core:HideAura("Aura_Crush")
+        self.bIsMidPhase = true
     elseif sMessage == self.L["datachron.midphase_end"] then
+        self.bIsMidPhase = nil
+
         if self.config.timers.arms.enable == true then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
         end
 
         if self.config.timers.crush.enable == true then
             self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color)
+        end
+
+        if self.config.timers.noxious_belch.enable == true then
+            self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 14, self.config.timers.noxious_belch.color)
+        end
+
+        if self.config.timers.incineration.enable == true then
+            self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 20, self.config.timers.incineration.color)
         end
     else
         local strPlayerLaserFocused = sMessage:match(self.L["datachron.incineration"])
@@ -381,6 +402,10 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
                 if self.config.alerts.incineration.enable == true then
                     self.core:ShowAlert("Incineration", self.L["alert.incineration"]:format(tFocusedUnit:GetName()),self.config.alerts.incineration.duration, self.config.alerts.incineration.color)
                 end
+            end
+
+            if self.config.timers.incineration.enable == true then
+                self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 40, self.config.timers.incineration.color)
             end
 
             if self.config.icons.incineration.enable == true then
@@ -405,7 +430,20 @@ end
 function Mod:OnEnable()
     self.run = true
     self.boss = nil
+    self.bIsMidPhase = nil
     self.nMidphaseWarnings = 0
+
+    if self.config.timers.arms.enable == true then
+        self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
+    end
+
+    if self.config.timers.crush.enable == true then
+        self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color)
+    end
+
+    if self.config.timers.noxious_belch.enable == true then
+        self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 16, self.config.timers.noxious_belch.color)
+    end
 end
 
 function Mod:OnDisable()
