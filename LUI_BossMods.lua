@@ -1012,15 +1012,7 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:CheckBuffs(nId)
-    if not nId then
-        return
-    end
-
-    if not self.tCurrentEncounter then
-        return
-    end
-
-    if not self.runtime.units then
+    if not nId or not self.tCurrentEncounter or not self.runtime.unitsthen
         return
     end
 
@@ -1048,15 +1040,8 @@ function LUI_BossMods:CheckBuffs(nId)
 end
 
 function LUI_BossMods:OnBuffAdded(unit,spell)
-    if not unit or not spell then
-        return
-    end
-
-    if not self.tCurrentEncounter then
-        return
-    end
-
-    if not self.runtime.units then
+    if not unit or not spell or not self.tCurrentEncounter or not self.runtime.units
+    then
         return
     end
 
@@ -1101,15 +1086,7 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
 end
 
 function LUI_BossMods:OnBuffUpdated(unit,spell)
-    if not unit or not spell then
-        return
-    end
-
-    if not self.tCurrentEncounter then
-        return
-    end
-
-    if not self.runtime.units then
+    if not unit or not spell or not self.tCurrentEncounter or not self.runtime.units then
         return
     end
 
@@ -1154,15 +1131,7 @@ function LUI_BossMods:OnBuffUpdated(unit,spell)
 end
 
 function LUI_BossMods:OnBuffRemoved(unit,spell)
-    if not unit or not spell then
-        return
-    end
-
-    if not self.tCurrentEncounter then
-        return
-    end
-
-    if not self.runtime.units then
+    if not unit or not spell or not self.tCurrentEncounter or not self.runtime.units then
         return
     end
 
@@ -1248,11 +1217,7 @@ function LUI_BossMods:AddTimer(sName,sText,nDuration,sColor,fHandler,tData)
 end
 
 function LUI_BossMods:UpdateTimer(tTimer)
-    if not tTimer then
-        return
-    end
-
-    if not tTimer.nTick or not tTimer.nDuration then
+    if not tTimer or not tTimer.nTick or not tTimer.nDuration then
         return
     end
 
@@ -1269,11 +1234,7 @@ function LUI_BossMods:UpdateTimer(tTimer)
 end
 
 function LUI_BossMods:RemoveTimer(sName,bCallback)
-    if not sName then
-        return
-    end
-
-    if not self.runtime.timer or not self.runtime.timer[sName] then
+    if not sName or not self.runtime.timer or not self.runtime.timer[sName] then
         return
     end
 
@@ -1339,11 +1300,7 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:CheckCast(tData)
-    if not tData or not tData.tUnit then
-        return
-    end
-
-    if not self.tCurrentEncounter then
+    if not tData or not tData.tUnit or not self.tCurrentEncounter then
         return
     end
 
@@ -1591,11 +1548,7 @@ function LUI_BossMods:ShowAura(sName,sSprite,sColor,nDuration,bShowDuration,fHan
 end
 
 function LUI_BossMods:HideAura(sName,bCallback)
-    if not sName then
-        return
-    end
-
-    if not self.runtime.aura then
+    if not sName or not self.runtime.aura then
         return
     end
 
@@ -1612,11 +1565,7 @@ function LUI_BossMods:HideAura(sName,bCallback)
 end
 
 function LUI_BossMods:UpdateAura()
-    if not self.runtime.aura then
-        return
-    end
-
-    if not self.runtime.aura.nTick then
+    if not self.runtime.aura or not self.runtime.aura.nTick then
         return
     end
 
@@ -1701,11 +1650,7 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, sFont)
 end
 
 function LUI_BossMods:UpdateAlert(tAlert)
-    if not tAlert then
-        return
-    end
-
-    if not tAlert.nTick or not tAlert.nDuration then
+    if not tAlert or not tAlert.nTick or not tAlert.nDuration then
         return
     end
 
@@ -1807,15 +1752,7 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nSpriteHeight, sColor, nDuration, bShowOverlay, fHandler, tData)
-    if not Key or not Origin then
-        return
-    end
-
-    if not type(Origin) == "userdata" then
-        return
-    end
-
-    if not Origin:IsValid() then
+    if not Key or not Origin or not type(Origin) == "userdata" or not Origin:IsValid() then
         return
     end
 
