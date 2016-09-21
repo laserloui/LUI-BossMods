@@ -6,6 +6,13 @@
 	<!-- Main -->
 	<Script Name="LUI_BossMods.lua"/>
 	<Form Name="LUI_BossMods.xml"/>
+	<!-- Encounters: Genetic Archives -->
+	<Script Name="Encounters\GA\ExperimentX89.lua"/>
+	<Script Name="Encounters\GA\Kuralak.lua"/>
+	<Script Name="Encounters\GA\Phagemaw.lua"/>
+	<Script Name="Encounters\GA\Prototypes.lua"/>
+	<Script Name="Encounters\GA\PhageCouncil.lua"/>
+	<Script Name="Encounters\GA\Ohmna.lua"/>
 	<!-- Encounters: Datascape -->
 	<Script Name="Encounters\DS\Miniboss\Earth_BioEnhancedBroodmother.lua"/>
 	<Script Name="Encounters\DS\Miniboss\Earth_FullyOptimizedCanimid.lua"/>
@@ -35,7 +42,7 @@
 	<Script Name="Encounters\DS\Gloomclaw.lua"/>
 	<Script Name="Encounters\DS\Avatus.lua"/>
 	<!-- Encounters: Initialization Core Y-83 -->
-	<!--<Script Name="Encounters\Y83\Augmentors.lua"/> -->
+	<Script Name="Encounters\Y83\Augmentors.lua"/>
 	<!-- Encounters: Redmoon Terror -->
 	<Script Name="Encounters\RMT\Miniboss\ChiefWardenLockjaw.lua"/>
 	<Script Name="Encounters\RMT\Miniboss\AssistantTechnicianSkooty.lua"/>

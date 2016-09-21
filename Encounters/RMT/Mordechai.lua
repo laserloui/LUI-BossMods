@@ -3,13 +3,10 @@ require "Apollo"
 
 local Mod = {}
 local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
-local Encounter = "Avatus"
+local Encounter = "Mordechai"
 
 local Locales = {
-    ["enUS"] = {
-        -- Units
-        ["unit.boss"] = "Avatus",
-    },
+    ["enUS"] = {},
     ["deDE"] = {},
     ["frFR"] = {},
 }
@@ -18,19 +15,19 @@ function Mod:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
-    self.instance = "Datascape"
-    self.displayName = "Avatus"
+    self.instance = "Redmoon Terror"
+    self.displayName = "Mordechai"
     self.tTrigger = {
         sType = "ANY",
         tZones = {
             [1] = {
-                continentId = 52,
-                parentZoneId = 98,
-                mapId = 104,
+                continentId = 104,
+                parentZoneId = 548,
+                mapId = 555,
             },
         },
         tNames = {
-            ["enUS"] = {"Avatus"},
+            ["enUS"] = {"Mordechai"},
         },
     }
     self.run = false
@@ -46,49 +43,20 @@ function Mod:Init(parent)
 
     self.core = parent
     self.L = parent:GetLocale(Encounter,Locales)
-
-    local strPrefix = Apollo.GetAssetFolder()
-    local tToc = XmlDoc.CreateFromFile("toc.xml"):ToTable()
-    for k,v in ipairs(tToc) do
-        local strPath = string.match(v.Name, "(.*)[\\/]"..Encounter)
-        if strPath ~= nil and strPath ~= "" then
-            strPrefix = strPrefix .. "\\" .. strPath .. "\\"
-            break
-        end
-    end
-
-    self.xmlDoc = XmlDoc.CreateFromFile(strPrefix .. Encounter..".xml")
-    self.xmlDoc:RegisterCallback("OnDocLoaded", self)
-end
-
-function Mod:OnDocLoaded()
-    if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() then
-        return
-    end
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if not self.run == true then
         return
     end
-
-    if sName == self.L["unit.boss"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
-    end
 end
 
-function Mod:LoadSettings(wndParent)
-    if not wndParent then
-        return
-    end
-
-    local wnd = Apollo.LoadForm(self.xmlDoc, "Settings", wndParent, self)
-
-    return wnd
+function Mod:IsRunning()
+    return self.run
 end
 
 function Mod:IsEnabled()
-    return self.run
+    return self.config.enable
 end
 
 function Mod:OnEnable()

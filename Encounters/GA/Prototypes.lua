@@ -3,7 +3,7 @@ require "Apollo"
 
 local Mod = {}
 local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
-local Encounter = "Laveka"
+local Encounter = "Prototypes"
 
 local Locales = {
     ["enUS"] = {},
@@ -15,19 +15,19 @@ function Mod:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
-    self.instance = "Redmoon Terror"
-    self.displayName = "Laveka"
+    self.instance = "Genetic Archives"
+    self.displayName = "Phagetech Prototypes"
     self.tTrigger = {
         sType = "ANY",
         tZones = {
             [1] = {
-                continentId = 104,
-                parentZoneId = 548,
-                mapId = 555,
+                continentId = 67,
+                parentZoneId = 147,
+                mapId = 149,
             },
         },
         tNames = {
-            ["enUS"] = {"Laveka"},
+            ["enUS"] = {"Phagetech Commander", "Phagetech Augmentor", "Phagetech Protector", "Phagetech Fabricator"},
         },
     }
     self.run = false

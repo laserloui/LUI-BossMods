@@ -20,7 +20,7 @@ function Mod:new(o)
     self.__index = self
     self.instance = "Datascape"
     self.displayName = "Bio-Enhanced Broodmother"
-    self.bIsMiniboss = true
+    self.groupName = "Minibosses"
     self.tTrigger = {
         sType = "ANY",
         tZones = {
@@ -38,6 +38,12 @@ function Mod:new(o)
     self.runtime = {}
     self.config = {
         enable = true,
+        units = {
+            boss = {
+                enable = true,
+                label = "unit.boss",
+            },
+        },
     }
     return o
 end
@@ -55,12 +61,16 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color)
     end
 end
 
-function Mod:IsEnabled()
+function Mod:IsRunning()
     return self.run
+end
+
+function Mod:IsEnabled()
+    return self.config.enable
 end
 
 function Mod:OnEnable()

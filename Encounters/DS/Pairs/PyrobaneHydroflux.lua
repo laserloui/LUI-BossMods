@@ -21,6 +21,7 @@ function Mod:new(o)
     self.__index = self
     self.instance = "Datascape"
     self.displayName = "Pyrobane & Hydroflux"
+    self.groupName = "Elemental Pairs"
     self.tTrigger = {
         sType = "ANY",
         tZones = {
@@ -38,6 +39,18 @@ function Mod:new(o)
     self.runtime = {}
     self.config = {
         enable = true,
+        units = {
+            boss_fire = {
+                enable = true,
+                label = "unit.boss_fire",
+                color = "afff2f2f",
+            },
+            boss_water = {
+                enable = true,
+                label = "unit.boss_water",
+                color = "af1e90ff",
+            },
+        },
     }
     return o
 end
@@ -47,25 +60,6 @@ function Mod:Init(parent)
 
     self.core = parent
     self.L = parent:GetLocale(Encounter,Locales)
-
-    local strPrefix = Apollo.GetAssetFolder()
-    local tToc = XmlDoc.CreateFromFile("toc.xml"):ToTable()
-    for k,v in ipairs(tToc) do
-        local strPath = string.match(v.Name, "(.*)[\\/]"..Encounter)
-        if strPath ~= nil and strPath ~= "" then
-            strPrefix = strPrefix .. "\\" .. strPath .. "\\"
-            break
-        end
-    end
-
-    self.xmlDoc = XmlDoc.CreateFromFile(strPrefix .. Encounter..".xml")
-    self.xmlDoc:RegisterCallback("OnDocLoaded", self)
-end
-
-function Mod:OnDocLoaded()
-    if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() then
-        return
-    end
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
@@ -74,24 +68,18 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss_fire"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_fire.enable,false,false,false,nil,self.config.units.boss_fire.color)
     elseif sName == self.L["unit.boss_water"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,true,false,false,false,nil,self.config.healthColor)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_water.enable,false,false,false,nil,self.config.units.boss_water.color)
     end
 end
 
-function Mod:LoadSettings(wndParent)
-    if not wndParent then
-        return
-    end
-
-    local wnd = Apollo.LoadForm(self.xmlDoc, "Settings", wndParent, self)
-
-    return wnd
+function Mod:IsRunning()
+    return self.run
 end
 
 function Mod:IsEnabled()
-    return self.run
+    return self.config.enable
 end
 
 function Mod:OnEnable()
