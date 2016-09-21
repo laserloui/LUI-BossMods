@@ -372,23 +372,19 @@ function LUI_BossMods:OnFrame()
 
     if not self.nLastFrameCheck then
         self.nLastFrameCheck = tick
-    end
-
-    if (tick - self.nLastFrameCheck) > 20 then
+    elseif (tick - self.nLastFrameCheck) > 20 then
         if self.tDraws then
             for key,draw in pairs(self.tDraws) do
-                if draw.sType then
-                    if draw.sType == "Icon" then
-                        self:UpdateIcon(key,draw)
-                    elseif draw.sType == "Pixie" then
-                        self:UpdatePixie(key,draw)
-                    elseif draw.sType == "Polygon" then
-                        self:UpdatePolygon(key,draw)
-                    elseif draw.sType == "Line" then
-                        self:UpdateLine(key,draw)
-                    elseif draw.sType == "LineBetween" then
-                        self:UpdateLineBetween(key,draw)
-                    end
+                if draw.sType == "Icon" then
+                    self:UpdateIcon(key,draw)
+                elseif draw.sType == "Pixie" then
+                    self:UpdatePixie(key,draw)
+                elseif draw.sType == "Polygon" then
+                    self:UpdatePolygon(key,draw)
+                elseif draw.sType == "Line" then
+                    self:UpdateLine(key,draw)
+                elseif draw.sType == "LineBetween" then
+                    self:UpdateLineBetween(key,draw)
                 end
             end
         end
