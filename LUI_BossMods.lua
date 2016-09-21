@@ -791,24 +791,29 @@ function LUI_BossMods:StyleUnit(wnd,tData)
     end
 
     wnd:SetAnchorOffsets(0,0,0,(self.config.units.healthHeight + 15))
-    wnd:FindChild("ShieldBar"):SetAnchorOffsets(4,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
-    wnd:FindChild("CastBar"):SetAnchorOffsets(0,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
 
-    wnd:FindChild("Name"):SetText(tData.sName)
-    wnd:FindChild("Name"):SetTextColor(self.config.units.textColor)
+    local chieldShieldBar = wnd:FindChild("ShieldBar")
+    chieldShieldBar:SetAnchorOffsets(4,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
+    chieldShieldBar:FindChild("Progress"):SetBGColor(self.config.units.shieldColor)
+    chieldShieldBar:FindChild("Text"):SetTextColor(self.config.units.textColor)
+    chieldShieldBar:FindChild("Text"):Show(self.config.units.showText,true)
 
-    wnd:FindChild("Mark"):SetText(tData.sMark)
-    wnd:FindChild("Mark"):Show(tData.sMark ~= nil,true)
+    local chieldName = wnd:FindChild("Name")
+    chieldName:SetText(tData.sName)
+    chieldName:SetTextColor(self.config.units.textColor)
 
-    wnd:FindChild("HealthBar"):FindChild("Progress"):SetBGColor(tData.sColor or self.config.units.healthColor)
-    wnd:FindChild("HealthBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
+    local chieldMark = wnd:FindChild("Mark")
+    chieldMark:SetText(tData.sMark)
+    chieldMark:Show(tData.sMark ~= nil,true)
 
-    wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.castColor)
-    wnd:FindChild("CastBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
+    local chieldHealthBar = wnd:FindChild("HealthBar")
+    chieldHealthBar:FindChild("Progress"):SetBGColor(tData.sColor or self.config.units.healthColor)
+    chieldHealthBar:FindChild("Text"):SetTextColor(self.config.units.textColor)
 
-    wnd:FindChild("ShieldBar"):FindChild("Progress"):SetBGColor(self.config.units.shieldColor)
-    wnd:FindChild("ShieldBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
-    wnd:FindChild("ShieldBar"):FindChild("Text"):Show(self.config.units.showText,true)
+    local chieldCastBar = wnd:FindChild("CastBar")
+    chieldCastBar:FindChild("Progress"):SetBGColor(self.config.units.castColor)
+    chieldCastBar:FindChild("Text"):SetTextColor(self.config.units.textColor)
+    chieldCastBar:SetAnchorOffsets(0,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
 
     return wnd
 end
