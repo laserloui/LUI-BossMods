@@ -192,6 +192,10 @@ function LUI_BossMods:OnDocLoaded()
         self:CreateUnitsFromPreload()
     end
 
+    if self.bDebug == true then
+        self:OnInitDebug()
+    end
+
     -- Find System Chat Channel
     for idx, channelCurrent in ipairs(ChatSystemLib.GetChannels()) do
         if channelCurrent:GetName() == "System" then
@@ -621,11 +625,6 @@ function LUI_BossMods:OnPreloadUnitCreateTimer()
 
         self.tPreloadUnits = nil
         self.timerPreloadUnitCreateDelay = nil
-
-        if self.bDebug == true then
-            Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
-            Apollo.RegisterEventHandler("VarChange_FrameCount", "OnUpdate", self)
-        end
     end
 end
 
@@ -1203,12 +1202,7 @@ function LUI_BossMods:SortTimer()
         if not tTimer.wnd:IsShown() then
             tTimer.wnd:SetAnchorOffsets(unpack(tOffsets))
             tTimer.wnd:FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, 0, 1}}), tTimer.nRemaining or tTimer.nDuration)
-
-            if #tSorted > 1 then
-                tTimer.wnd:Show(true,false,.5)
-            else
-                tTimer.wnd:Show(true,true)
-            end
+            tTimer.wnd:Show(true,true)
         else
             if tTimer.nPosition ~= nil and tTimer.nPosition ~= i then
                 tTimer.wnd:TransitionMove(WindowLocation.new({fPoints = {0,1,1,1}, nOffsets = tOffsets}), .25)
@@ -1557,10 +1551,24 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, sFont)
     self.runtime.alerts[sName].wnd:SetFont(sFont or self.config.alerts.font)
     self.runtime.alerts[sName].wnd:SetTextColor(sColor or self.config.alerts.color)
 
-    self.wndAlerts:ArrangeChildrenVert(Window.CodeEnumArrangeOrigin.LeftOrTop)
+    local nHeight = self.wndAlerts:GetHeight()
+
+    for id,alert in pairs(self.runtime.alerts) do
+        if id ~= sName then
+            local _,offsetTop = alert.wnd:GetAnchorOffsets()
+            local tOffsets = {
+                0,
+                offsetTop + (nHeight * -1),
+                0,
+                offsetTop
+            }
+            alert.wnd:SetOpacity(0.5)
+            alert.wnd:TransitionMove(WindowLocation.new({fPoints = {0,0,1,0}, nOffsets = tOffsets}), .25)
+        end
+    end
 
     if not self.runtime.alerts[sName].wnd:IsShown() then
-        self.runtime.alerts[sName].wnd:Show(true,false,.25)
+        self.runtime.alerts[sName].wnd:Show(true,false,0.5)
     end
 
     if not self.wndAlerts:IsShown() then
@@ -2532,6 +2540,70 @@ end
 function TemplateDraw:SetMinLengthVisible(nMin)
     local mt = getmetatable(self)
     mt.__index.nMinLengthVisible = nMin
+end
+
+-- #########################################################################################################################################
+-- #########################################################################################################################################
+-- #
+-- # DEBUGGING
+-- #
+-- #########################################################################################################################################
+-- #########################################################################################################################################
+
+function LUI_BossMods:OnInitDebug()
+    --Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
+    --Apollo.RegisterEventHandler("VarChange_FrameCount", "OnUpdate", self)
+
+    self.wndDebug = Apollo.LoadForm(self.xmlDoc, "Debug", nil, self)
+    self.wndDebug:Show(true,true)
+
+    self.debugTimer = ApolloTimer.Create(0.05, true, "OnUpdateDebug", self)
+    self.debugTimer:Start()
+end
+
+function LUI_BossMods:OnShowDebug(wndHandler, wndControl)
+    self:AddTimer("electroshock", "electroshock", 10, "ade91dfb")
+    self:AddTimer("liquidate", "liquidate", 10, "afb0ff2f")
+end
+
+function LUI_BossMods:OnHideDebug(wndHandler, wndControl)
+    self:RemoveTimer("electroshock")
+    self:RemoveTimer("liquidate")
+    self.runtime.timer = nil
+end
+
+function LUI_BossMods:OnAddDebug()
+    --self:AddTimer(tostring(GetTickCount()), "test", 10, "afb0ff2f")
+    local tAlerts = {
+        "Watch Pillar Health!",
+        "Interrupt!",
+        "Midphase Soon",
+        "AGGRO!!",
+        "Electrocute incoming!!",
+    }
+
+    if not self.random then
+        math.randomseed(os.time())
+        self.random = true
+    end
+
+    self:ShowAlert("Alert_"..tostring(GetTickCount()), tAlerts[math.random(5)])
+end
+
+function LUI_BossMods:OnUpdateDebug()
+    --[[
+    if self.runtime.timer then
+        for _,timer in pairs(self.runtime.timer) do
+            self:UpdateTimer(timer)
+        end
+        self:SortTimer()
+    end
+    ]]
+    if self.runtime.alerts then
+        for _,alert in pairs(self.runtime.alerts) do
+            self:UpdateAlert(alert)
+        end
+    end
 end
 
 -- #########################################################################################################################################
