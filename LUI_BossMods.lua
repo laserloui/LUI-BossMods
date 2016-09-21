@@ -1148,11 +1148,11 @@ function LUI_BossMods:UpdateTimer(tTimer)
     local nElapsed = (nTick - tTimer.nTick) / 1000
     local nRemaining = tTimer.nDuration - nElapsed
 
-    if nElapsed >= tTimer.nDuration then
+    if tTimer.nRemaining and (nElapsed >= tTimer.nDuration) then
         self:RemoveTimer(tTimer.sName,true)
     else
-        self.runtime.timer[tTimer.sName].nRemaining = nRemaining
-        self.runtime.timer[tTimer.sName].wnd:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
+        tTimer.nRemaining = nRemaining
+        tTimer.wnd:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
     end
 end
 
@@ -1202,7 +1202,7 @@ function LUI_BossMods:SortTimer()
 
         if not tTimer.wnd:IsShown() then
             tTimer.wnd:SetAnchorOffsets(unpack(tOffsets))
-            tTimer.wnd:FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, 0, 1}}), tSorted[i].nRemaining)
+            tTimer.wnd:FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, 0, 1}}), tTimer.nRemaining or tTimer.nDuration)
 
             if #tSorted > 1 then
                 tTimer.wnd:Show(true,false,.5)

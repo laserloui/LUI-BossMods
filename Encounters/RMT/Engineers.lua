@@ -14,6 +14,7 @@ local Locales = {
         ["unit.lubricant_nozzle"] = "Lubricant Nozzle",
         ["unit.spark_plug"] = "Spark Plug",
         ["unit.cooling_turbine"] = "Cooling Turbine",
+        ["unit.circle_telegraph"] = "Hostile Invisible Unit for Fields (1.2 hit radius)",
         -- Debuffs
         ["debuff.atomic_attraction"] = "Atomic Attraction",
         ["debuff.electroshock_vulnerability"] = "Electroshock Vulnerability",
@@ -28,6 +29,7 @@ local Locales = {
         ["datachron.electroshock"] = "(.*) suffers from Electroshock",
         -- labels
         ["label.pillar"] = "20% Health Warning",
+        ["label.circle_telegraph"] = "Circle Telegraphs",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -35,6 +37,7 @@ local Locales = {
 
 local DEBUFF__ELECTROSHOCK_VULNERABILITY = 83798
 local DEBUFF_ATOMIC_ATTRACTION = 84052
+local BUFF_INSULATION = 83987
 
 function Mod:new(o)
     o = o or {}
@@ -113,6 +116,11 @@ function Mod:new(o)
                 color = "aaee94fd",
                 label = "debuff.electroshock_vulnerability",
             },
+            atomic_attraction = {
+                enable = true,
+                color = "afff4500",
+                label = "debuff.atomic_attraction",
+            },
         },
         alerts = {
             pillar = {
@@ -120,7 +128,7 @@ function Mod:new(o)
                 duration = 5,
                 label = "label.pillar",
             },
-            orb = {
+            atomic_attraction = {
                 enable = true,
                 color = "ffff4500",
                 duration = 5,
@@ -143,7 +151,7 @@ function Mod:new(o)
                 file = "alert",
                 label = "label.pillar",
             },
-            orb = {
+            atomic_attraction = {
                 enable = true,
                 file = "alert",
                 label = "debuff.atomic_attraction",
@@ -165,7 +173,7 @@ function Mod:new(o)
                 color = "ff40e0d0",
                 label = "cast.electroshock",
             },
-            orb = {
+            atomic_attraction = {
                 enable = true,
                 sprite = "bomb",
                 size = 60,
@@ -185,6 +193,12 @@ function Mod:new(o)
                 thickness = 7,
                 color = "ffff0000",
                 label = "unit.boss_sword",
+            },
+            circle_telegraph = {
+                enable = true,
+                thickness = 7,
+                color = "ffff4500",
+                label = "label.circle_telegraph",
             },
         },
     }
@@ -220,7 +234,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         end
 
         if self.config.timers.electroshock.enable == true then
-            self.core:AddTimer(self.L["cast.electroshock"], self.L["cast.electroshock"], 10, self.config.timers.electroshock.color, Mod.OnElectroshock, tUnit)
+            self.core:AddTimer("cast.electroshock", self.L["cast.electroshock"], 10, self.config.timers.electroshock.color, Mod.OnElectroshock, tUnit)
         end
     elseif sName == self.L["unit.boss_sword"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.sword.enable,true,false,false,nil,self.config.units.sword.color, self.config.units.sword.priority)
@@ -231,16 +245,20 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         end
 
         if self.config.timers.liquidate.enable == true then
-            self.core:AddTimer(self.L["cast.liquidate"], self.L["cast.liquidate"], 10, self.config.timers.liquidate.color, Mod.OnLiquidate, tUnit)
+            self.core:AddTimer("cast.liquidate", self.L["cast.liquidate"], 10, self.config.timers.liquidate.color, Mod.OnLiquidate, tUnit)
         end
     elseif sName == self.L["unit.fusion_core"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion.enable,false,false,false,nil,self.config.units.fusion.color, self.config.units.fusion.priority)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion.enable,false,true,false,nil,self.config.units.fusion.color, self.config.units.fusion.priority)
     elseif sName == self.L["unit.lubricant_nozzle"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.lubricant.enable,false,false,false,nil,self.config.units.lubricant.color, self.config.units.lubricant.priority)
     elseif sName == self.L["unit.spark_plug"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.spark.enable,false,false,false,nil,self.config.units.spark.color, self.config.units.spark.priority)
     elseif sName == self.L["unit.cooling_turbine"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.cooling.enable,false,false,false,nil,self.config.units.cooling.color, self.config.units.cooling.priority)
+    elseif sName == self.L["unit.circle_telegraph"] then
+        if self.config.lines.circle_telegraph.enable == true then
+            self.core:DrawPolygon(nId, tUnit, 6.3, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
+        end
     end
 end
 
@@ -272,17 +290,21 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:DrawIcon("Electroshock_"..tostring(nId), tData.tUnit, self.config.icons.electroshock.sprite, self.config.icons.electroshock.size, nil, self.config.icons.electroshock.color, nDuration)
         end
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
-        if self.config.icons.orb.enable == true then
-            self.core:DrawIcon("Orb_"..tostring(nId), tData.tUnit, self.config.icons.orb.sprite, self.config.icons.orb.size, nil, self.config.icons.orb.color, nDuration)
+        if self.config.icons.atomic_attraction.enable == true then
+            self.core:DrawIcon("Orb_"..tostring(nId), tData.tUnit, self.config.icons.atomic_attraction.sprite, self.config.icons.atomic_attraction.size, nil, self.config.icons.atomic_attraction.color, nDuration)
         end
 
-        if self.config.alerts.orb.enable == true then
-            self.core:ShowAlert("Orb_"..tostring(nId), self.L["debuff.atomic_attraction"].." on "..sName, self.config.alerts.orb.duration, self.config.alerts.orb.color)
+        if self.config.alerts.atomic_attraction.enable == true then
+            self.core:ShowAlert("Orb_"..tostring(nId), self.L["debuff.atomic_attraction"].." on "..sName, self.config.alerts.atomic_attraction.duration, self.config.alerts.atomic_attraction.color)
         end
 
-        if self.config.sounds.orb.enable == true then
+        if self.config.timers.atomic_attraction.enable == true then
+            self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction.color)
+        end
+
+        if self.config.sounds.atomic_attraction.enable == true then
             if tData.tUnit:IsThePlayer() then
-                self.core:PlaySound(self.config.sounds.orb.file)
+                self.core:PlaySound(self.config.sounds.atomic_attraction.file)
             end
         end
     end
@@ -293,17 +315,21 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
         self.core:RemoveIcon("Electroshock_"..tostring(nId))
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
         self.core:RemoveIcon("Orb_"..tostring(nId))
+    elseif nSpellId == BUFF_INSULATION and sUnitName == self.L["unit.fusion_core"] then
+        if self.config.timers.atomic_attraction.enable == true then
+            self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction.color)
+        end
     end
 end
 
 function Mod:OnCastEnd(nId, sCastName, tCast, sName)
     if sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.electroshock"] then
         if self.config.timers.electroshock.enable == true then
-            self.core:AddTimer(sCastName, sCastName, 20, self.config.timers.electroshock.color, Mod.OnElectroshock, tCast.tUnit)
+            self.core:AddTimer("cast.electroshock", sCastName, 20, self.config.timers.electroshock.color, Mod.OnElectroshock, tCast.tUnit)
         end
     elseif sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.liquidate"] then
         if self.config.timers.liquidate.enable == true then
-            self.core:AddTimer(sCastName, sCastName, 20, self.config.timers.liquidate.color, Mod.OnLiquidate, tCast.tUnit)
+            self.core:AddTimer("cast.liquidate", sCastName, 20, self.config.timers.liquidate.color, Mod.OnLiquidate, tCast.tUnit)
         end
     end
 end
