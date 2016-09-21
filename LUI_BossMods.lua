@@ -194,6 +194,13 @@ function LUI_BossMods:OnDocLoaded()
         self:CreateUnitsFromPreload()
     end
 
+<<<<<<< HEAD
+=======
+    if self.bDebug then
+        self:OnInitDebug()
+    end
+
+>>>>>>> Remove redundant '== true' comparisons
     -- Find System Chat Channel
     for idx, channelCurrent in ipairs(ChatSystemLib.GetChannels()) do
         if channelCurrent:GetName() == "System" then
@@ -308,7 +315,7 @@ function LUI_BossMods:SearchForEncounter()
         end
     end
 
-    if self.bIsRunning == true then
+    if self.bIsRunning then
         self:ResetFight()
     end
 
@@ -335,7 +342,7 @@ function LUI_BossMods:CheckTrigger(tModule)
         for _,sName in ipairs(tModule.tTrigger.tNames[self.language]) do
             if self.tSavedUnits[sName] then
                 for nId, unit in pairs(self.tSavedUnits[sName]) do
-                    if unit:IsInCombat() == true then
+                    if unit:IsInCombat() then
                         return true
                     end
                 end
@@ -394,7 +401,7 @@ function LUI_BossMods:OnFrame()
 end
 
 function LUI_BossMods:OnUpdate()
-    if not self.bIsRunning == true or not self.tCurrentEncounter then
+    if not self.bIsRunning or not self.tCurrentEncounter then
         return
     end
 
@@ -642,7 +649,7 @@ function LUI_BossMods:OnPreloadUnitCreateTimer()
 end
 
 function LUI_BossMods:OnUnitCreated(unit)
-    if self.bIsRunning == true  then
+    if self.bIsRunning then
         if self.tCurrentEncounter and self.tCurrentEncounter.OnUnitCreated then
             self.tCurrentEncounter:OnUnitCreated(unit:GetId(),unit,unit:GetName(),unit:IsInCombat())
         end
@@ -666,7 +673,7 @@ function LUI_BossMods:OnUnitCreated(unit)
 end
 
 function LUI_BossMods:OnUnitDestroyed(unit)
-    if self.bIsRunning == true then
+    if self.bIsRunning then
         self:RemoveUnit(unit:GetId())
 
         if self.tCurrentEncounter and self.tCurrentEncounter.OnUnitDestroyed then
@@ -681,7 +688,7 @@ end
 
 function LUI_BossMods:OnEnteredCombat(unit, bInCombat)
     if unit:IsThePlayer() then
-        if bInCombat == true then
+        if bInCombat then
             if self.bIsRunning == false then
                 self:SearchForEncounter()
             end
@@ -690,13 +697,13 @@ function LUI_BossMods:OnEnteredCombat(unit, bInCombat)
                 self.tCurrentEncounter:OnUnitCreated(unit:GetId(),unit,unit:GetName(),bInCombat)
             end
         else
-            if self.bIsRunning == true then
+            if self.bIsRunning then
                 self.wipeTimer:Start()
             end
         end
     else
         if not unit:IsInYourGroup() then
-            if self.bIsRunning == true then
+            if self.bIsRunning then
                 if self.tCurrentEncounter and self.tCurrentEncounter.OnUnitCreated then
                     self.tCurrentEncounter:OnUnitCreated(unit:GetId(),unit,unit:GetName(),bInCombat)
                 end
@@ -713,7 +720,7 @@ function LUI_BossMods:OnEnteredCombat(unit, bInCombat)
                     self.tSavedUnits[unit:GetName()][unit:GetId()] = unit
                 end
 
-                if bInCombat == true then
+                if bInCombat then
                     self:SearchForEncounter()
                 end
             end
@@ -764,11 +771,15 @@ function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuf
             bOnDebuff = bOnDebuff or false,
         }
 
+<<<<<<< HEAD
         if ((bOnBuff ~= nil and bOnBuff == true) or (bOnDebuff ~= nil and bOnDebuff == true)) then
+=======
+        if (bOnBuff ~= nil and bOnBuff) then
+>>>>>>> Remove redundant '== true' comparisons
             self:CheckBuffs(nId)
         end
 
-        if (bShowUnit ~= nil and bShowUnit == true) and self.config.units.enable == true then
+        if (bShowUnit ~= nil and bShowUnit) and self.config.units.enable then
             if tUnit:IsValid() then
                 if not self.wndUnits then
                     self:LoadWindows()
@@ -1049,7 +1060,7 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
     local nUnitId = unit:GetId()
 
     if self.runtime.units[nUnitId] ~= nil then
-        if (buff == true and self.runtime.units[nUnitId].bOnBuff == true) or (buff == false and self.runtime.units[nUnitId].bOnDebuff == true) then
+        if (buff and self.runtime.units[nUnitId].bOnBuff) or (buff == false and self.runtime.units[nUnitId].bOnDebuff) then
             local tData = {
                 nId = spell.splEffect:GetId(),
                 sName = spell.splEffect:GetName(),
@@ -1238,6 +1249,7 @@ function LUI_BossMods:RemoveTimer(sName,bCallback)
         return
     end
 
+<<<<<<< HEAD
     if bCallback ~= nil and bCallback == true then
         if self.runtime.timer[sName].fHandler then
             if self.tCurrentEncounter then
@@ -1245,6 +1257,11 @@ function LUI_BossMods:RemoveTimer(sName,bCallback)
             else
                 self.runtime.timer[sName].fHandler(self, self.runtime.timer[sName].tData)
             end
+=======
+    if bCallback ~= nil and bCallback then
+        if self.runtime.timer[sName].fHandler and self.tCurrentEncounter then
+            self.runtime.timer[sName].fHandler(self.tCurrentEncounter, self.runtime.timer[sName].tData)
+>>>>>>> Remove redundant '== true' comparisons
         end
     end
 
@@ -1318,7 +1335,7 @@ function LUI_BossMods:CheckCast(tData)
     if bCasting == false then
         bCasting = tData.tUnit:IsCasting()
 
-        if bCasting == true then
+        if bCasting then
             sName = tData.tUnit:GetCastName() or ""
             nElapsed = tData.tUnit:GetCastElapsed() / 1000
             nDuration = tData.tUnit:GetCastDuration() / 1000
@@ -1326,8 +1343,12 @@ function LUI_BossMods:CheckCast(tData)
         end
     end
 
+<<<<<<< HEAD
     if bCasting == true then
         local nTick = GetTickCount()
+=======
+    if bCasting then
+>>>>>>> Remove redundant '== true' comparisons
         sName = string.gsub(sName, NO_BREAK_SPACE, " ")
 
         if not tData.tCast and nDuration > nElapsed then
@@ -1553,7 +1574,7 @@ function LUI_BossMods:HideAura(sName,bCallback)
     end
 
     if self.runtime.aura.sName == sName then
-        if bCallback ~= nil and bCallback == true then
+        if bCallback ~= nil and bCallback then
             if self.runtime.aura.fHandler and self.tCurrentEncounter then
                 self.runtime.aura.fHandler(self.tCurrentEncounter, self.runtime.aura.tData)
             end
@@ -1685,7 +1706,7 @@ function LUI_BossMods:PlaySound(sound)
         Sound.Play(sound)
     end
 
-    if self.config.sound.force == true then
+    if self.config.sound.force then
         if self.VolumeTimer == nil then
             self.VolumeTimer = ApolloTimer.Create(3, false, "RestoreVolume", self)
             self.VolumeTimer:Start()
@@ -1722,7 +1743,7 @@ function LUI_BossMods:CheckVolume()
 end
 
 function LUI_BossMods:RestoreVolume()
-    if self.config.sound.force == true then
+    if self.config.sound.force then
         Apollo.SetConsoleVariable("sound.volumeMaster", self.tVolume.Master)
         Apollo.SetConsoleVariable("sound.volumeMusic", self.tVolume.Music)
         Apollo.SetConsoleVariable("sound.volumeUI", self.tVolume.Voice)
@@ -1733,7 +1754,7 @@ function LUI_BossMods:RestoreVolume()
 end
 
 function LUI_BossMods:SetVolume()
-    if self.config.sound.force == true then
+    if self.config.sound.force then
         Apollo.SetConsoleVariable("sound.volumeMaster", self.config.sound.volumeMaster)
         Apollo.SetConsoleVariable("sound.volumeMusic", self.config.sound.volumeMusic)
         Apollo.SetConsoleVariable("sound.volumeUI", self.config.sound.volumeUI)
@@ -1854,9 +1875,15 @@ function LUI_BossMods:RemoveIcon(Key,bCallback)
             self.tDraws[Key].wnd:Destroy()
         end
 
+<<<<<<< HEAD
         if bCallback ~= nil and bCallback == true then
             if self.tDraws[Key].fHandler and self.tCurrentEncounter then
                 self.tDraws[Key].fHandler(self.tCurrentEncounter, self.tDraws[Key].tData)
+=======
+        if bCallback ~= nil and bCallback then
+            if tDraw.fHandler and self.tCurrentEncounter then
+                tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
+>>>>>>> Remove redundant '== true' comparisons
             end
         end
 
@@ -2009,7 +2036,7 @@ function LUI_BossMods:RemovePixie(Key,bCallback)
             tDraw.nPixieId = nil
         end
 
-        if bCallback ~= nil and bCallback == true then
+        if bCallback ~= nil and bCallback then
             if tDraw.fHandler and self.tCurrentEncounter then
                 tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
             end
@@ -2189,7 +2216,7 @@ function LUI_BossMods:RemovePolygon(Key,bCallback)
             end
         end
 
-        if bCallback ~= nil and bCallback == true then
+        if bCallback ~= nil and bCallback then
             if tDraw.fHandler and self.tCurrentEncounter then
                 tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
             end
@@ -2374,7 +2401,7 @@ function LUI_BossMods:RemoveLine(Key,bCallback)
             tDraw.nPixieIdDot = {}
         end
 
-        if bCallback ~= nil and bCallback == true then
+        if bCallback ~= nil and bCallback then
             if tDraw.fHandler and self.tCurrentEncounter then
                 tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
             end
@@ -2592,7 +2619,7 @@ function LUI_BossMods:RemoveLineBetween(Key,bCallback)
             tDraw.nPixieIdDot = {}
         end
 
-        if bCallback ~= nil and bCallback == true then
+        if bCallback ~= nil and bCallback then
             if tDraw.fHandler and self.tCurrentEncounter then
                 tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
             end
@@ -2726,7 +2753,7 @@ function LUI_BossMods:LoadWindows()
         )
     end
 
-    if not self.wndUnits and self.config.units.enable == true then
+    if not self.wndUnits and self.config.units.enable then
         self.wndUnits = Apollo.LoadForm(self.xmlDoc, "Container", nil, self)
         self.wndUnits:SetSizingMinimum(200, 200)
         self.wndUnits:SetData("units")
