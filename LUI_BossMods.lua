@@ -125,7 +125,7 @@ function LUI_BossMods:new(o)
         },
         alerts = {
             color = "ffff00ff",
-            font = "CRB_FloaterLarge",
+            font = "CRB_Header20",
             offsets = {
                 left = -300,
                 top = -260,

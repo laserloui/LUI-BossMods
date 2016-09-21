@@ -784,19 +784,9 @@ function Settings:BuildGlobalSettings()
     local wndAlerts = self.wndSettings:FindChild("Global"):FindChild("Alerts")
 
     -- Font
-    wndAlerts:FindChild("FontDropdown"):AttachWindow(wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"))
-    wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"):Show(false)
-    wndAlerts:FindChild("FontDropdown"):SetText("Choose")
-    wndAlerts:FindChild("FontDropdown"):SetData({"alerts","font"})
-
-    for _,button in pairs(wndAlerts:FindChild("FontDropdown"):FindChild("ChoiceContainer"):GetChildren()) do
-        if button:GetName() == self.config.alerts.font then
-            button:SetCheck(true)
-            wndAlerts:FindChild("FontDropdown"):SetText(button:GetText())
-        else
-            button:SetCheck(false)
-        end
-    end
+    wndAlerts:FindChild("FontSetting"):FindChild("FontText"):SetText(self.config.alerts.font or "")
+    wndAlerts:FindChild("FontSetting"):FindChild("FontText"):SetData({"alerts","font"})
+    wndAlerts:FindChild("FontSetting"):FindChild("BrowseBtn"):SetData({{"alerts","font"},wndAlerts:FindChild("FontText")})
 
     -- Text Color
     wndAlerts:FindChild("TextColorSetting"):FindChild("Color"):SetData({"alerts","color"})
@@ -957,35 +947,6 @@ function Settings:OnCheckbox(wndHandler, wndControl)
     end
 end
 
-function Settings:OnSelectSprite(wndHandler, wndControl, eMouseButton)
-    if eMouseButton == GameLib.CodeEnumInputMouse.Right then
-         return false
-    end
-
-    if not self.wndBrowse then
-        return
-    end
-
-    self.wndBrowse:FindChild("ChooseBtn"):SetData(wndControl:GetData())
-end
-
-function Settings:OnSaveSprite(wndHandler, wndControl)
-    if not self.wndBrowse then
-        return
-    end
-
-    local strIcon = wndControl:GetData()
-    local setting = self.wndBrowse:GetData()[1]
-    local wndText = self.wndBrowse:GetData()[2]
-
-       if wndText then
-        wndText:SetText(strIcon)
-    end
-
-       self:SetVar(setting,strIcon)
-    self.wndBrowse:Close()
-end
-
 function Settings:OnBtnChooseColor(wndHandler, wndControl)
     local setting = wndControl:GetParent():GetData()
     setting = self:GetVar(setting)
@@ -1089,19 +1050,19 @@ function Settings:OnToggleMenu()
     end
 end
 
-function Settings:OnToggleBrowse(wndHandler, wndControl)
-    if self.wndBrowse then
-        if self.wndBrowse:IsShown() then
-            self.wndBrowse:Close()
+function Settings:OnToggleSprites(wndHandler, wndControl)
+    if self.wndSprites then
+        if self.wndSprites:IsShown() then
+            self.wndSprites:Close()
         else
-            self.wndBrowse:SetData(wndControl:GetData())
-            self.wndBrowse:Invoke()
+            self.wndSprites:SetData(wndControl:GetData())
+            self.wndSprites:Invoke()
         end
     else
-        self.wndBrowse = Apollo.LoadForm(self.xmlDoc, "BrowseForm", nil, self)
-        self.wndBrowse:SetData(wndControl:GetData())
+        self.wndSprites = Apollo.LoadForm(self.xmlDoc, "BrowseForm", nil, self)
+        self.wndSprites:SetData(wndControl:GetData())
 
-        local wndSpriteList = self.wndBrowse:FindChild("Container"):FindChild("Sprites")
+        local wndSpriteList = self.wndSprites:FindChild("Container"):FindChild("Sprites")
 
         for idx = 1, #self.tSprites do
             local wndSprite = Apollo.LoadForm(self.xmlDoc, "Items:SpriteItem", wndSpriteList, self)
@@ -1125,6 +1086,107 @@ function Settings:OnToggleBrowse(wndHandler, wndControl)
 
         wndSpriteList:ArrangeChildrenTiles()
     end
+end
+
+function Settings:OnSelectSprite(wndHandler, wndControl, eMouseButton)
+    if eMouseButton == GameLib.CodeEnumInputMouse.Right then
+         return false
+    end
+
+    if not self.wndSprites then
+        return
+    end
+
+    self.wndSprites:FindChild("ChooseBtn"):SetData(wndControl:GetData())
+end
+
+function Settings:OnSaveSprite(wndHandler, wndControl)
+    if not self.wndSprites then
+        return
+    end
+
+    local strIcon = wndControl:GetData()
+    local setting = self.wndSprites:GetData()[1]
+    local wndText = self.wndSprites:GetData()[2]
+
+    if not strIcon or not setting or not wndText then
+        return
+    end
+
+    if wndText then
+        wndText:SetText(strIcon)
+    end
+
+    self:SetVar(setting,strIcon)
+    self.wndSprites:Close()
+end
+
+function Settings:OnToggleFonts(wndHandler, wndControl)
+    if self.wndFonts then
+        if self.wndFonts:IsShown() then
+            self.wndFonts:Close()
+        else
+            self.wndFonts:SetData(wndControl:GetData())
+            self.wndFonts:Invoke()
+        end
+    else
+        self.wndFonts = Apollo.LoadForm(self.xmlDoc, "BrowseForm", nil, self)
+        self.wndFonts:FindChild("TitleText"):SetText("Fonts")
+        self.wndFonts:FindChild("ChooseBtn"):RemoveEventHandler("ButtonSignal")
+        self.wndFonts:FindChild("CloseButton"):RemoveEventHandler("ButtonSignal")
+        self.wndFonts:FindChild("ChooseBtn"):AddEventHandler("ButtonSignal", "OnSaveFont", self)
+        self.wndFonts:FindChild("CloseButton"):AddEventHandler("ButtonSignal", "OnToggleFonts", self)
+        self.wndFonts:SetData(wndControl:GetData())
+
+        local wndFontList = self.wndFonts:FindChild("Container"):FindChild("List")
+
+        for _, font in ipairs(Apollo.GetGameFonts()) do
+            if not string.match(font.name,"Alien") then
+                local wndFont = Apollo.LoadForm(self.xmlDoc, "Items:FontItem", wndFontList, self)
+                local nFontSize = font.size * 2
+
+                wndFont:SetAnchorOffsets(0,0,0,(nFontSize > 50 and nFontSize or 50))
+                wndFont:FindChild("SelectBtn"):SetText("This is a dummy message!")
+                wndFont:FindChild("SelectBtn"):SetFont(font.name)
+                wndFont:FindChild("SelectBtn"):SetData(font.name)
+            end
+        end
+
+        wndFontList:ArrangeChildrenVert()
+    end
+end
+
+function Settings:OnSelectFont(wndHandler, wndControl, eMouseButton)
+    if eMouseButton == GameLib.CodeEnumInputMouse.Right then
+         return false
+    end
+
+    if not self.wndFonts then
+        return
+    end
+
+    self.wndFonts:FindChild("ChooseBtn"):SetData(wndControl:GetData())
+end
+
+function Settings:OnSaveFont(wndHandler, wndControl)
+    if not self.wndFonts then
+        return
+    end
+
+    local strFont = wndControl:GetData()
+    local setting = self.wndFonts:GetData()[1]
+    local wndText = self.wndFonts:GetData()[2]
+
+    if not strFont or not setting or not wndText then
+        return
+    end
+
+    if wndText then
+        wndText:SetText(strFont)
+    end
+
+    self:SetVar(setting,strFont)
+    self.wndFonts:Close()
 end
 
 function Settings:OnResetBtn(wndHandler, wndControl)
