@@ -1012,7 +1012,7 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:CheckBuffs(nId)
-    if not nId or not self.tCurrentEncounter or not self.runtime.unitsthen
+    if not nId or not self.tCurrentEncounter or not self.runtime.unitsthen then
         return
     end
 
