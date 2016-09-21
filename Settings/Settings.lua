@@ -354,7 +354,7 @@ function Settings:BuildRightPanel()
         for nId,unit in pairs(config.units) do
             tSortedUnits[#tSortedUnits+1] = {
                 nId = nId,
-                priority = unit.priority or 0
+                priority = unit.priority or 99
             }
         end
 

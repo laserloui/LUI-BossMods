@@ -362,22 +362,32 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:OnFrame()
-    if self.tDraws then
-        for key,draw in pairs(self.tDraws) do
-            if draw.sType then
-                if draw.sType == "Icon" then
-                    self:UpdateIcon(key,draw)
-                elseif draw.sType == "Pixie" then
-                    self:UpdatePixie(key,draw)
-                elseif draw.sType == "Polygon" then
-                    self:UpdatePolygon(key,draw)
-                elseif draw.sType == "Line" then
-                    self:UpdateLine(key,draw)
-                elseif draw.sType == "LineBetween" then
-                    self:UpdateLineBetween(key,draw)
+    self.tick = GetTickCount()
+
+    if not self.lastCheck then
+        self.lastCheck = self.tick
+    end
+
+    if (self.tick - self.lastCheck) > 20 then
+        if self.tDraws then
+            for key,draw in pairs(self.tDraws) do
+                if draw.sType then
+                    if draw.sType == "Icon" then
+                        self:UpdateIcon(key,draw)
+                    elseif draw.sType == "Pixie" then
+                        self:UpdatePixie(key,draw)
+                    elseif draw.sType == "Polygon" then
+                        self:UpdatePolygon(key,draw)
+                    elseif draw.sType == "Line" then
+                        self:UpdateLine(key,draw)
+                    elseif draw.sType == "LineBetween" then
+                        self:UpdateLineBetween(key,draw)
+                    end
                 end
             end
         end
+
+        self.lastCheck = self.tick
     end
 end
 
@@ -744,7 +754,7 @@ function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuf
             tUnit = tUnit,
             sMark = sMark or nil,
             sColor = sColor or nil,
-            nPriority = nPriority or 0,
+            nPriority = nPriority or 99,
             bShowUnit = bShowUnit or false,
             bOnCast = bOnCast or false,
             bOnBuff = bOnBuff or false,
@@ -802,7 +812,7 @@ function LUI_BossMods:SortUnits()
     for nId,unit in pairs(self.runtime.units) do
         tSorted[#tSorted+1] = {
             nId = nId,
-            nPriority = unit.nPriority or 0
+            nPriority = unit.nPriority or 99
         }
     end
 
@@ -1241,7 +1251,6 @@ function LUI_BossMods:CheckCast(tData)
     if nDuration ~= nil and nDuration > 0 then
         bCasting = true
         nElapsed = 0
-        nDuration = nDuration * 1000
         sName = "MOO"
     end
 
@@ -1250,8 +1259,8 @@ function LUI_BossMods:CheckCast(tData)
 
         if bCasting == true then
             sName = tData.tUnit:GetCastName() or ""
-            nDuration = tData.tUnit:GetCastDuration()
-            nElapsed = tData.tUnit:GetCastElapsed()
+            nDuration = tData.tUnit:GetCastDuration() / 1000
+            nElapsed = tData.tUnit:GetCastElapsed() / 1000
             bCasting = tData.tUnit:IsCasting()
         end
     end
@@ -1347,7 +1356,7 @@ function LUI_BossMods:ShowCast(tCast,sName,sColor)
 
     self.runtime.cast = tCast
 
-    local nRemaining = (tCast.nDuration - tCast.nElapsed) / 1000
+    local nRemaining = (tCast.nDuration - tCast.nElapsed)
     local nElapsed = (tCast.nElapsed * 100) / tCast.nDuration
     local nProgress = nElapsed / 100
     local fPoint = 1
@@ -1387,7 +1396,7 @@ function LUI_BossMods:UpdateCast()
     local nTick = GetTickCount()
     local nTotal = (tCast.nDuration - tCast.nElapsed)
     local nElapsed = (nTick - tCast.nTick)
-    local nRemaining = (nTotal - nElapsed) / 1000
+    local nRemaining = (nTotal - nElapsed)
 
     if nElapsed > nTotal then
         self:HideCast()
@@ -2021,19 +2030,27 @@ function LUI_BossMods:UpdatePolygon(Key,tDraw)
         if tDraw.tOriginUnit:IsValid() then
             local tOriginVector = NewVector3(tDraw.tOriginUnit:GetPosition())
             local tFacingVector = NewVector3(tDraw.tOriginUnit:GetFacing())
-            local tRefVector = tFacingVector * tDraw.nRadius
-            tVectors = {}
 
-            for i = 1, tDraw.nSide do
-                local nRad = math.rad(360 * i / tDraw.nSide + tDraw.nRotation)
-                local nCos = math.cos(nRad)
-                local nSin = math.sin(nRad)
-                local CornerRotate = {
-                    x = NewVector3({ nCos, 0, -nSin }),
-                    y = NewVector3({ 0, 1, 0 }),
-                    z = NewVector3({ nSin, 0, nCos }),
-                }
-                tVectors[i] = tOriginVector + self:Rotation(tRefVector, CornerRotate)
+            if tOriginVector ~= tDraw.tOriginVector or tFacingVector ~= tDraw.tFacingVector then
+                local tRefVector = tFacingVector * tDraw.nRadius
+
+                for i = 1, tDraw.nSide do
+                    local nRad = math.rad(360 * i / tDraw.nSide + tDraw.nRotation)
+                    local nCos = math.cos(nRad)
+                    local nSin = math.sin(nRad)
+                    local CornerRotate = {
+                        x = NewVector3({ nCos, 0, -nSin }),
+                        y = NewVector3({ 0, 1, 0 }),
+                        z = NewVector3({ nSin, 0, nCos }),
+                    }
+                    tDraw.tVectors[i] = tOriginVector + self:Rotation(tRefVector, CornerRotate)
+                end
+
+                tDraw.tOriginVector = tOriginVector
+                tDraw.tFacingVector = tFacingVector
+                tVectors = tDraw.tVectors
+            else
+                tVectors = tDraw.tVectors
             end
         end
     else
@@ -2225,29 +2242,40 @@ function LUI_BossMods:UpdateLine(Key,tDraw)
             local tOriginVector = NewVector3(tDraw.tOriginUnit:GetPosition())
             local tFacingVector = NewVector3(tDraw.tOriginUnit:GetFacing())
 
-            local tVectorA = tFacingVector * (tDraw.nOffset)
-            local tVectorB = tFacingVector * (tDraw.nLength + tDraw.nOffset)
+            if tOriginVector ~= tDraw.tOriginVector or tFacingVector ~= tDraw.tFacingVector then
+                local tVectorA = tFacingVector * (tDraw.nOffset)
+                local tVectorB = tFacingVector * (tDraw.nLength + tDraw.nOffset)
 
-            tVectorA = self:Rotation(tVectorA, tDraw.RotationMatrix)
-            tVectorB = self:Rotation(tVectorB, tDraw.RotationMatrix)
+                tVectorA = self:Rotation(tVectorA, tDraw.RotationMatrix)
+                tVectorB = self:Rotation(tVectorB, tDraw.RotationMatrix)
 
-            tVectorFrom = tOriginVector + tVectorA
-            tVectorTo = tOriginVector + tVectorB
+                tDraw.tVectorFrom = tOriginVector + tVectorA
+                tDraw.tVectorTo = tOriginVector + tVectorB
 
-            if tDraw.tVectorOffset then
-                local nRad = -math.atan2(tFacingVector.x, tFacingVector.z)
-                local nCos = math.cos(nRad)
-                local nSin = math.sin(nRad)
-                local RotationMatrix = {
-                    x = NewVector3({ nCos, 0, -nSin }),
-                    y = NewVector3({ 0, 1, 0 }),
-                    z = NewVector3({ nSin, 0, nCos }),
-                }
+                if tDraw.tVectorOffset then
+                    local nRad = -math.atan2(tFacingVector.x, tFacingVector.z)
+                    local nCos = math.cos(nRad)
+                    local nSin = math.sin(nRad)
+                    local RotationMatrix = {
+                        x = NewVector3({ nCos, 0, -nSin }),
+                        y = NewVector3({ 0, 1, 0 }),
+                        z = NewVector3({ nSin, 0, nCos }),
+                    }
 
-                local tVectorC = self:Rotation(tDraw.tVectorOffset, RotationMatrix)
+                    local tVectorC = self:Rotation(tDraw.tVectorOffset, RotationMatrix)
 
-                tVectorFrom = tVectorFrom + tVectorC
-                tVectorTo = tVectorTo + tVectorC
+                    tDraw.tVectorFrom = tDraw.tVectorFrom + tVectorC
+                    tDraw.tVectorTo = tDraw.tVectorTo + tVectorC
+                end
+
+                tDraw.tOriginVector = tOriginVector
+                tDraw.tFacingVector = tFacingVector
+
+                tVectorTo = tDraw.tVectorTo
+                tVectorFrom = tDraw.tVectorFrom
+            else
+                tVectorTo = tDraw.tVectorTo
+                tVectorFrom = tDraw.tVectorFrom
             end
         end
     else
@@ -2554,57 +2582,19 @@ function LUI_BossMods:OnInitDebug()
     --Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
     --Apollo.RegisterEventHandler("VarChange_FrameCount", "OnUpdate", self)
 
+    --[[
     self.wndDebug = Apollo.LoadForm(self.xmlDoc, "Debug", nil, self)
     self.wndDebug:Show(true,true)
 
     self.debugTimer = ApolloTimer.Create(0.05, true, "OnUpdateDebug", self)
     self.debugTimer:Start()
-end
-
-function LUI_BossMods:OnShowDebug(wndHandler, wndControl)
-    self:AddTimer("electroshock", "electroshock", 10, "ade91dfb")
-    self:AddTimer("liquidate", "liquidate", 10, "afb0ff2f")
-end
-
-function LUI_BossMods:OnHideDebug(wndHandler, wndControl)
-    self:RemoveTimer("electroshock")
-    self:RemoveTimer("liquidate")
-    self.runtime.timer = nil
-end
-
-function LUI_BossMods:OnAddDebug()
-    --self:AddTimer(tostring(GetTickCount()), "test", 10, "afb0ff2f")
-    local tAlerts = {
-        "Watch Pillar Health!",
-        "Interrupt!",
-        "Midphase Soon",
-        "AGGRO!!",
-        "Electrocute incoming!!",
-    }
-
-    if not self.random then
-        math.randomseed(os.time())
-        self.random = true
-    end
-
-    self:ShowAlert("Alert_"..tostring(GetTickCount()), tAlerts[math.random(5)])
-end
-
-function LUI_BossMods:OnUpdateDebug()
-    --[[
-    if self.runtime.timer then
-        for _,timer in pairs(self.runtime.timer) do
-            self:UpdateTimer(timer)
-        end
-        self:SortTimer()
-    end
     ]]
-    if self.runtime.alerts then
-        for _,alert in pairs(self.runtime.alerts) do
-            self:UpdateAlert(alert)
-        end
-    end
 end
+
+function LUI_BossMods:OnShowDebug() return end
+function LUI_BossMods:OnHideDebug() return end
+function LUI_BossMods:OnAddDebug() return end
+function LUI_BossMods:OnUpdateDebug() return end
 
 -- #########################################################################################################################################
 -- #########################################################################################################################################
