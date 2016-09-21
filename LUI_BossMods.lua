@@ -194,13 +194,6 @@ function LUI_BossMods:OnDocLoaded()
         self:CreateUnitsFromPreload()
     end
 
-<<<<<<< HEAD
-=======
-    if self.bDebug then
-        self:OnInitDebug()
-    end
-
->>>>>>> Remove redundant '== true' comparisons
     -- Find System Chat Channel
     for idx, channelCurrent in ipairs(ChatSystemLib.GetChannels()) do
         if channelCurrent:GetName() == "System" then
@@ -299,7 +292,7 @@ function LUI_BossMods:SearchForEncounter()
 
     for sName,tModule in pairs(self.modules) do
         if self:CheckZone(tModule) then
-            if self.bIsRunning == false then
+            if not self.bIsRunning then
                 if self:CheckTrigger(tModule) and self.unitPlayer:IsInCombat() then
                     self.tCurrentEncounter = tModule
 
@@ -355,7 +348,7 @@ function LUI_BossMods:CheckTrigger(tModule)
                 return false
             else
                 for nId, unit in pairs(self.tSavedUnits[sName]) do
-                    if unit:IsInCombat() == false then
+                    if not unit:IsInCombat() then
                         return false
                     end
                 end
@@ -545,7 +538,7 @@ function LUI_BossMods:ResetFight()
 end
 
 function LUI_BossMods:CheckForWipe()
-    if self.bIsRunning == false then
+    if not self.bIsRunning then
         self.wipeTimer:Stop()
     end
 
@@ -689,7 +682,7 @@ end
 function LUI_BossMods:OnEnteredCombat(unit, bInCombat)
     if unit:IsThePlayer() then
         if bInCombat then
-            if self.bIsRunning == false then
+            if not self.bIsRunning then
                 self:SearchForEncounter()
             end
 
@@ -771,11 +764,7 @@ function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuf
             bOnDebuff = bOnDebuff or false,
         }
 
-<<<<<<< HEAD
-        if ((bOnBuff ~= nil and bOnBuff == true) or (bOnDebuff ~= nil and bOnDebuff == true)) then
-=======
-        if (bOnBuff ~= nil and bOnBuff) then
->>>>>>> Remove redundant '== true' comparisons
+        if (bOnBuff ~= nil and bOnBuff) or (bOnDebuff ~= nil and bOnDebuff) then
             self:CheckBuffs(nId)
         end
 
@@ -1060,7 +1049,7 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
     local nUnitId = unit:GetId()
 
     if self.runtime.units[nUnitId] ~= nil then
-        if (buff and self.runtime.units[nUnitId].bOnBuff) or (buff == false and self.runtime.units[nUnitId].bOnDebuff) then
+        if (buff and self.runtime.units[nUnitId].bOnBuff) or (not buff and self.runtime.units[nUnitId].bOnDebuff) then
             local tData = {
                 nId = spell.splEffect:GetId(),
                 sName = spell.splEffect:GetName(),
@@ -1077,7 +1066,7 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
                 self.tCurrentEncounter:OnBuffAdded(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
             end
         end
-    elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and buff == false then
+    elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and not buff then
         local tData = {
             nId = spell.splEffect:GetId(),
             sName = spell.splEffect:GetName(),
@@ -1249,19 +1238,13 @@ function LUI_BossMods:RemoveTimer(sName,bCallback)
         return
     end
 
-<<<<<<< HEAD
-    if bCallback ~= nil and bCallback == true then
+    if bCallback ~= nil and bCallback then
         if self.runtime.timer[sName].fHandler then
             if self.tCurrentEncounter then
                 self.runtime.timer[sName].fHandler(self.tCurrentEncounter, self.runtime.timer[sName].tData)
             else
                 self.runtime.timer[sName].fHandler(self, self.runtime.timer[sName].tData)
             end
-=======
-    if bCallback ~= nil and bCallback then
-        if self.runtime.timer[sName].fHandler and self.tCurrentEncounter then
-            self.runtime.timer[sName].fHandler(self.tCurrentEncounter, self.runtime.timer[sName].tData)
->>>>>>> Remove redundant '== true' comparisons
         end
     end
 
@@ -1343,12 +1326,8 @@ function LUI_BossMods:CheckCast(tData)
         end
     end
 
-<<<<<<< HEAD
-    if bCasting == true then
-        local nTick = GetTickCount()
-=======
     if bCasting then
->>>>>>> Remove redundant '== true' comparisons
+        local nTick = GetTickCount()
         sName = string.gsub(sName, NO_BREAK_SPACE, " ")
 
         if not tData.tCast and nDuration > nElapsed then
@@ -1875,15 +1854,9 @@ function LUI_BossMods:RemoveIcon(Key,bCallback)
             self.tDraws[Key].wnd:Destroy()
         end
 
-<<<<<<< HEAD
-        if bCallback ~= nil and bCallback == true then
+        if bCallback ~= nil and bCallback then
             if self.tDraws[Key].fHandler and self.tCurrentEncounter then
                 self.tDraws[Key].fHandler(self.tCurrentEncounter, self.tDraws[Key].tData)
-=======
-        if bCallback ~= nil and bCallback then
-            if tDraw.fHandler and self.tCurrentEncounter then
-                tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
->>>>>>> Remove redundant '== true' comparisons
             end
         end
 
