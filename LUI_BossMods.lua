@@ -362,13 +362,13 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:OnFrame()
-    self.tick = GetTickCount()
+    local tick = GetTickCount()
 
-    if not self.lastCheck then
-        self.lastCheck = self.tick
+    if not self.nLastFrameCheck then
+        self.nLastFrameCheck = tick
     end
 
-    if (self.tick - self.lastCheck) > 20 then
+    if (tick - self.nLastFrameCheck) > 20 then
         if self.tDraws then
             for key,draw in pairs(self.tDraws) do
                 if draw.sType then
@@ -387,7 +387,7 @@ function LUI_BossMods:OnFrame()
             end
         end
 
-        self.lastCheck = self.tick
+        self.nLastFrameCheck = tick
     end
 end
 
@@ -396,13 +396,13 @@ function LUI_BossMods:OnUpdate()
         return
     end
 
-    self.tick = GetTickCount()
+    local tick = GetTickCount()
 
-    if not self.lastCheck then
-        self.lastCheck = self.tick
+    if not self.nLastCheck then
+        self.nLastCheck = tick
     end
 
-    if (self.tick - self.lastCheck) > self.config.interval then
+    if (tick - self.nLastCheck) > self.config.interval then
         if self.runtime.units then
             for _,tUnit in pairs(self.runtime.units) do
                 if not tUnit.runtime then
@@ -440,7 +440,7 @@ function LUI_BossMods:OnUpdate()
             end
         end
 
-        self.lastCheck = self.tick
+        self.nLastCheck = tick
     end
 end
 
@@ -2579,10 +2579,10 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:OnInitDebug()
-    --Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
-    --Apollo.RegisterEventHandler("VarChange_FrameCount", "OnUpdate", self)
-
     --[[
+    Apollo.RegisterEventHandler("VarChange_FrameCount", "OnUpdate", self)
+    Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
+
     self.wndDebug = Apollo.LoadForm(self.xmlDoc, "Debug", nil, self)
     self.wndDebug:Show(true,true)
 
