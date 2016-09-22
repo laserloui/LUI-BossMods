@@ -23,8 +23,6 @@ local Locales = {
         ["alert.interrupt"] = "Interrupt!",
         -- Debuffs
         ["debuff.oozing_bile"] = "Oozing Bile",
-        -- Datachron
-        ["datachron.shredder_start"] = "WARNING: THE SHREDDER IS STARTING!",
         -- Labels
         ["label.lines_room"] = "Room Dividers",
         ["label.circle_telegraph"] = "Circle Telegraphs",
@@ -251,7 +249,7 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
             end
 
             if nStack >= 10 then
-    			ChatSystemLib.Command("/p I hit " .. nStack .. " stacks because I'm a complete moron.")
+                ChatSystemLib.Command("/p I hit " .. nStack .. " stacks because I'm a complete moron.")
             end
         end
     end
