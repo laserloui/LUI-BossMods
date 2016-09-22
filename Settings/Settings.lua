@@ -1148,7 +1148,7 @@ function Settings:OnToggleFonts(wndHandler, wndControl)
                 wndFont:SetAnchorOffsets(0,0,0,(nFontSize > 50 and nFontSize or 50))
                 wndFont:FindChild("SelectBtn"):SetText("This is a dummy message!")
                 wndFont:FindChild("SelectBtn"):SetFont(font.name)
-                wndFont:FindChild("SelectBtn"):SetData(font.name)
+                wndFont:FindChild("SelectBtn"):SetData({sFont = font.name, nSize = font.size})
             end
         end
 
@@ -1173,19 +1173,21 @@ function Settings:OnSaveFont(wndHandler, wndControl)
         return
     end
 
-    local strFont = wndControl:GetData()
+    local tData = wndControl:GetData()
     local setting = self.wndFonts:GetData()[1]
     local wndText = self.wndFonts:GetData()[2]
 
-    if not strFont or not setting or not wndText then
+    if not tData or not setting or not wndText then
         return
     end
 
     if wndText then
-        wndText:SetText(strFont)
+        wndText:SetText(tData.sFont)
     end
 
-    self:SetVar(setting,strFont)
+    self:SetVar(setting,tData.sFont)
+    self:SetVar({"alerts","size"},tData.nSize)
+
     self.wndFonts:Close()
 end
 
@@ -1271,7 +1273,6 @@ function Settings:OnLock(state)
 
     if self.core.wndAlerts then
         self.core.wndAlerts:SetStyle("Moveable", state)
-        self.core.wndAlerts:SetStyle("Sizable", state)
         self.core.wndAlerts:SetStyle("Picture", state)
         self.core.wndAlerts:SetStyle("IgnoreMouse", not state)
         self.core.wndAlerts:SetText(state == true and "ALERTS" or "")
@@ -1282,8 +1283,10 @@ function Settings:OnLock(state)
     end
 
     if state == true then
-        self.wndLock = Apollo.LoadForm(self.xmlDoc, "Lock", nil, self)
-        self.wndLock:Show(true,true)
+        if not self.wndLock then
+            self.wndLock = Apollo.LoadForm(self.xmlDoc, "Lock", nil, self)
+            self.wndLock:Show(true,true)
+        end
     else
         if self.wndLock then
             self.wndLock:Destroy()
