@@ -240,6 +240,18 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         if self.config.units.boss.enable == true then
             self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,true,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
         end
+
+        if self.config.timers.arms.enable == true then
+            self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
+        end
+
+        if self.config.timers.crush.enable == true then
+            self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color)
+        end
+
+        if self.config.timers.noxious_belch.enable == true then
+            self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 16, self.config.timers.noxious_belch.color)
+        end
     elseif sName == self.L["unit.cannon_arm"] then
         if self.config.units.cannon_arm.enable == true then
             self.core:AddUnit(nId,sName,tUnit,self.config.units.cannon_arm.enable,true,false,false,nil,self.config.units.cannon_arm.color, self.config.units.cannon_arm.priority)
@@ -359,7 +371,7 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
 end
 
 function Mod:OnDatachron(sMessage, sSender, sHandler)
-    if sMessage == self.L["datachron.midphase_start"] then
+    if sMessage:match(self.L["datachron.midphase_start"]) then
         self.core:RemoveTimer("Timer_Belch")
         self.core:RemoveTimer("Timer_Arms")
         self.core:RemoveTimer("Timer_Crush")
@@ -367,7 +379,7 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
         self.core:RemoveIcon("Icon_Crush")
         self.core:HideAura("Aura_Crush")
         self.bIsMidPhase = true
-    elseif sMessage == self.L["datachron.midphase_end"] then
+    elseif sMessage:match(self.L["datachron.midphase_end"]) then
         self.bIsMidPhase = nil
 
         if self.config.timers.arms.enable == true then
@@ -432,18 +444,6 @@ function Mod:OnEnable()
     self.boss = nil
     self.bIsMidPhase = nil
     self.nMidphaseWarnings = 0
-
-    if self.config.timers.arms.enable == true then
-        self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
-    end
-
-    if self.config.timers.crush.enable == true then
-        self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color)
-    end
-
-    if self.config.timers.noxious_belch.enable == true then
-        self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 16, self.config.timers.noxious_belch.color)
-    end
 end
 
 function Mod:OnDisable()
