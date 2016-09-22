@@ -126,6 +126,7 @@ function LUI_BossMods:new(o)
         alerts = {
             color = "ffff00ff",
             font = "CRB_Header20",
+            size = 20,
             offsets = {
                 left = -300,
                 top = -260,
@@ -1556,13 +1557,13 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, sFont)
         }
     end
 
+    local nHeight = self.config.alerts.size * 2
     self.runtime.alerts[sName].nTick = GetTickCount()
     self.runtime.alerts[sName].nDuration = nDuration or 5
     self.runtime.alerts[sName].wnd:SetText(sText or "")
     self.runtime.alerts[sName].wnd:SetFont(sFont or self.config.alerts.font)
     self.runtime.alerts[sName].wnd:SetTextColor(sColor or self.config.alerts.color)
-
-    local nHeight = self.wndAlerts:GetHeight()
+    self.runtime.alerts[sName].wnd:SetAnchorOffsets(0,0,0,nHeight)
 
     for id,alert in pairs(self.runtime.alerts) do
         if id ~= sName then
@@ -1573,7 +1574,7 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, sFont)
                 0,
                 offsetTop
             }
-            alert.wnd:SetOpacity(0.5)
+            alert.wnd:SetOpacity(0.65)
             alert.wnd:TransitionMove(WindowLocation.new({fPoints = {0,0,1,0}, nOffsets = tOffsets}), .25)
         end
     end
@@ -2590,22 +2591,41 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:OnInitDebug()
-    --[[
-    Apollo.RegisterEventHandler("VarChange_FrameCount", "OnUpdate", self)
-    Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
+    --Apollo.RegisterEventHandler("VarChange_FrameCount", "OnUpdate", self)
+    --Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
 
     self.wndDebug = Apollo.LoadForm(self.xmlDoc, "Debug", nil, self)
     self.wndDebug:Show(true,true)
 
     self.debugTimer = ApolloTimer.Create(0.05, true, "OnUpdateDebug", self)
     self.debugTimer:Start()
-    ]]
+
+    math.randomseed(os.time())
 end
 
 function LUI_BossMods:OnShowDebug() return end
 function LUI_BossMods:OnHideDebug() return end
-function LUI_BossMods:OnAddDebug() return end
-function LUI_BossMods:OnUpdateDebug() return end
+function LUI_BossMods:OnAddDebug()
+    local tAlerts = {
+        "Go to Sword!",
+        "Interrupt!",
+        "Boss is leaving Fusion Core",
+        "Fusion Core at 20% Health!",
+        "Orb on Loui NaN",
+        "Electroshock soon!",
+    }
+
+    local id = math.random(6)
+    self:ShowAlert(tostring(id), tAlerts[id])
+end
+
+function LUI_BossMods:OnUpdateDebug()
+    if self.runtime.alerts then
+        for _,alert in pairs(self.runtime.alerts) do
+            self:UpdateAlert(alert)
+        end
+    end
+end
 
 -- #########################################################################################################################################
 -- #########################################################################################################################################
