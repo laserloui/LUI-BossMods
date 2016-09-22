@@ -1270,7 +1270,7 @@ function LUI_BossMods:CheckCast(tData)
 
         if not tData.tCast then
             -- New cast
-                tData.tCast = {
+            tData.tCast = {
                 bCasting = true,
                 sName = sName,
                 nDuration = nDuration,
@@ -1306,18 +1306,20 @@ function LUI_BossMods:CheckCast(tData)
                     self.tCurrentEncounter:OnCastStart(tData.nId, sName, tData.tCast, tData.sName, (nDuration-nElapsed))
                 end
             else
-                if nTick >= (tData.tCast.nTick + tData.tCast.nDuration) then
-                    -- End of cast
-                    if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
-                        self.tCurrentEncounter:OnCastEnd(tData.nId, sName, tData.tCast, tData.sName)
-                    end
+                if nTick >= (tData.tCast.nTick + (tData.tCast.nDuration * 1000)) then
+                    if not tData.tCast.bIsDone then
+                        -- End of cast
+                        if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
+                            self.tCurrentEncounter:OnCastEnd(tData.nId, sName, tData.tCast, tData.sName)
+                        end
 
-                    tData.tCast = nil
+                        tData.tCast.bIsDone = true
 
-                    if self.runtime.cast then
-                        if self.runtime.cast.sName == sName and self.runtime.cast.nUnitId == tData.nId then
-                            self.runtime.cast = nil
-                            self.wndCastbar:Show(false,true)
+                        if self.runtime.cast then
+                            if self.runtime.cast.sName == sName and self.runtime.cast.nUnitId == tData.nId then
+                                self.runtime.cast = nil
+                                self.wndCastbar:Show(false,true)
+                            end
                         end
                     end
                 end
@@ -1744,6 +1746,7 @@ function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nSpriteHeight,
         self.tDraws[Key] = {
             nTick = GetTickCount(),
             nDuration = nDuration,
+            tOrigin = Origin,
             sType = "Icon",
             fHandler = fHandler,
             tData = tData,
@@ -1752,6 +1755,7 @@ function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nSpriteHeight,
     else
         self.tDraws[Key] = {
             wnd = wnd,
+            tOrigin = Origin,
             fHandler = fHandler,
             tData = tData
         }
@@ -1765,6 +1769,13 @@ function LUI_BossMods:UpdateIcon(Key,tDraw)
         local nElapsed = (nTick - tDraw.nTick) / 1000
 
         if nElapsed > nTotal then
+            self:RemoveIcon(Key,true)
+            return
+        end
+    end
+
+    if tDraw.tOrigin and type(tDraw.tOrigin) == "userdata" then
+        if tDraw.tOrigin:IsDead() then
             self:RemoveIcon(Key,true)
             return
         end

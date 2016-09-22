@@ -128,7 +128,7 @@ function Mod:new(o)
                 label = "cast.liquidate",
             },
             vulnerability = {
-                enable = true,
+                enable = false,
                 color = "aaee94fd",
                 label = "debuff.electroshock_vulnerability",
             },
@@ -141,43 +141,43 @@ function Mod:new(o)
         alerts = {
             pillar = {
                 enable = true,
-                duration = 5,
+                duration = 3,
                 label = "label.pillar",
             },
             atomic_attraction = {
                 enable = true,
                 color = "ffff4500",
-                duration = 5,
+                duration = 3,
                 label = "debuff.atomic_attraction",
             },
             electroshock = {
                 enable = false,
-                duration = 5,
+                duration = 3,
                 label = "cast.electroshock",
             },
             liquidate = {
                 enable = false,
-                duration = 5,
+                duration = 3,
                 label = "cast.liquidate",
             },
             vulnerability = {
                 enable = true,
-                duration = 5,
+                duration = 3,
                 label = "debuff.electroshock_vulnerability",
             },
             sword_jump = {
                 enable = true,
-                duration = 5,
+                duration = 3,
                 label = "label.sword_jump",
             },
             gun_jump = {
                 enable = false,
-                duration = 5,
+                duration = 3,
                 label = "label.gun_jump",
             },
             gun_return = {
                 enable = true,
-                duration = 5,
+                duration = 3,
                 label = "label.gun_return",
             },
         },
@@ -389,7 +389,6 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
             if self.config.alerts.sword_jump.enable == true then
                 self.core:ShowAlert("sword_jump", self.L["alert.sword_jump"] .. self.L[sCurrentPlatform], self.config.alerts.sword_jump.duration, self.config.alerts.sword_jump.color)
             end
-
             if self.config.sounds.sword_jump.enable == true then
                 self.core:PlaySound(self.config.sounds.sword_jump.file)
             end
@@ -400,7 +399,6 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
             if self.config.alerts.gun_jump.enable == true then
                 self.core:ShowAlert("gun_jump", self.L["alert.gun_jump"] .. self.L[sCurrentPlatform], self.config.alerts.gun_jump.duration, self.config.alerts.gun_jump.color)
             end
-
             if self.config.sounds.gun_jump.enable == true then
                 self.core:PlaySound(self.config.sounds.gun_jump.file)
             end
