@@ -18,18 +18,28 @@ local Locales = {
         -- Debuffs
         ["debuff.atomic_attraction"] = "Atomic Attraction",
         ["debuff.electroshock_vulnerability"] = "Electroshock Vulnerability",
-        ["debuff.discharged_plasma"] = "Discharged Plasma", -- Not 100% sure about name
         -- Casts
         ["cast.electroshock"] = "Electroshock",
         ["cast.liquidate"] = "Liquidate",
+        ["cast.rocket_jump"] = "Rocket Jump",
         -- Alerts
         ["alert.liquidate"] = "Liquidate!",
         ["alert.electroshock"] = "Electroshock!",
+        ["alert.atomic_attraction"] = "Orb on ",
+        ["alert.vulnerability"] = " swap to SWORD!",
+        ["alert.vulnerability_player"] = "SWAP TO SWORD!",
+        ["alert.sword_jump"] = "Sword is leaving ",
+        ["alert.gun_jump"] = "Gun is leaving ",
+        ["alert.gun_return"] = "RETURN TO GUN!",
+        ["alert.pillar"] = " at 20%!",
         -- datachron
         ["datachron.electroshock"] = "(.*) suffers from Electroshock",
         -- labels
         ["label.pillar"] = "20% Health Warning",
         ["label.circle_telegraph"] = "Circle Telegraphs",
+        ["label.sword_jump"] = "Sword Rocket Jump",
+        ["label.gun_jump"] = "Gun Rocket Jump",
+        ["label.gun_return"] = "Return to Gun Reminder",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -38,6 +48,12 @@ local Locales = {
 local DEBUFF__ELECTROSHOCK_VULNERABILITY = 83798
 local DEBUFF_ATOMIC_ATTRACTION = 84052
 local BUFF_INSULATION = 83987
+local PLATFORM_BOUNDING_BOXES = {
+    ["unit.cooling_turbine"] = { x_min = 249.19, x_max = 374.71, z_min = -893.52, z_max = -768.06 },
+    ["unit.spark_plug"] = { x_min = 374.71, x_max = 500.23, z_min = -893.52, z_max = -768.06 },
+    ["unit.lubricant_nozzle"] = { x_min = 374.71, x_max = 500.23, z_min = -1018.96, z_max = -893.52 },
+    ["unit.fusion_core"] = { x_min = 249.19, x_max = 374.71, z_min = -1018.96, z_max = -893.52 }
+}
 
 function Mod:new(o)
     o = o or {}
@@ -144,6 +160,26 @@ function Mod:new(o)
                 duration = 5,
                 label = "cast.liquidate",
             },
+            vulnerability = {
+                enable = true,
+                duration = 5,
+                label = "debuff.electroshock_vulnerability",
+            },
+            sword_jump = {
+                enable = true,
+                duration = 5,
+                label = "label.sword_jump",
+            },
+            gun_jump = {
+                enable = false,
+                duration = 5,
+                label = "label.gun_jump",
+            },
+            gun_return = {
+                enable = true,
+                duration = 5,
+                label = "label.gun_return",
+            },
         },
         sounds = {
             pillar = {
@@ -164,14 +200,24 @@ function Mod:new(o)
                 enable = false,
                 label = "cast.liquidate",
             },
+            sword_jump = {
+                enable = true,
+                file = "info",
+                label = "label.sword_jump",
+            },
+            gun_jump = {
+                enable = true,
+                file = "info",
+                label = "label.gun_jump",
+            },
         },
         icons = {
-            electroshock = {
+            vulnerability = {
                 enable = true,
                 sprite = "target2",
                 size = 60,
                 color = "ff40e0d0",
-                label = "cast.electroshock",
+                label = "debuff.electroshock_vulnerability",
             },
             atomic_attraction = {
                 enable = true,
@@ -273,7 +319,7 @@ function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
                         end
 
                         if self.config.alerts.pillar.enable == true then
-                            self.core:ShowAlert("Pillar", sName.." at 20%!",self.config.alerts.pillar.duration, self.config.alerts.pillar.color)
+                            self.core:ShowAlert("Pillar", sName..self.L["alert.pillar"],self.config.alerts.pillar.duration, self.config.alerts.pillar.color)
                         end
 
                         self.warned = sName
@@ -286,8 +332,16 @@ end
 
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if nSpellId == DEBUFF__ELECTROSHOCK_VULNERABILITY then
-        if self.config.icons.electroshock.enable == true then
-            self.core:DrawIcon("Electroshock_"..tostring(nId), tData.tUnit, self.config.icons.electroshock.sprite, self.config.icons.electroshock.size, nil, self.config.icons.electroshock.color, nDuration)
+        if self.config.icons.vulnerability.enable == true then
+            self.core:DrawIcon("Electroshock_"..tostring(nId), tData.tUnit, self.config.icons.vulnerability.sprite, self.config.icons.vulnerability.size, nil, self.config.icons.vulnerability.color, nDuration)
+        end
+
+        if self.config.alerts.vulnerability.enable == true then
+            if tData.tUnit:IsThePlayer() then
+                self.core:ShowAlert("Vulnerability_"..tostring(nId), self.L["alert.vulnerability_player"],self.config.alerts.vulnerability.duration, self.config.alerts.vulnerability.color)
+            else
+                self.core:ShowAlert("Vulnerability_"..tostring(nId), sUnitName..self.L["alert.vulnerability"],self.config.alerts.vulnerability.duration, self.config.alerts.vulnerability.color)
+            end
         end
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
         if self.config.icons.atomic_attraction.enable == true then
@@ -295,7 +349,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         end
 
         if self.config.alerts.atomic_attraction.enable == true then
-            self.core:ShowAlert("Orb_"..tostring(nId), self.L["debuff.atomic_attraction"].." on "..sName, self.config.alerts.atomic_attraction.duration, self.config.alerts.atomic_attraction.color)
+            self.core:ShowAlert("Orb_"..tostring(nId), self.L["alert.atomic_attraction"]..sName, self.config.alerts.atomic_attraction.duration, self.config.alerts.atomic_attraction.color)
         end
 
         if self.config.timers.atomic_attraction.enable == true then
@@ -313,11 +367,43 @@ end
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if nSpellId == DEBUFF__ELECTROSHOCK_VULNERABILITY then
         self.core:RemoveIcon("Electroshock_"..tostring(nId))
+
+        if self.config.alerts.gun_return.enable == true then
+            if tData.tUnit:IsThePlayer() then
+                self.core:ShowAlert("GunReturn_"..tostring(nId), self.L["alert.gun_return"],self.config.alerts.gun_return.duration, self.config.alerts.gun_return.color)
+            end
+        end
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
         self.core:RemoveIcon("Orb_"..tostring(nId))
     elseif nSpellId == BUFF_INSULATION and sUnitName == self.L["unit.fusion_core"] then
         if self.config.timers.atomic_attraction.enable == true then
             self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction.color)
+        end
+    end
+end
+
+function Mod:OnCastStart(nId, sCastName, tCast, sName)
+    if sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.rocket_jump"] then
+        local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
+        if sCurrentPlatform then
+            if self.config.alerts.sword_jump.enable == true then
+                self.core:ShowAlert("sword_jump", self.L["alert.sword_jump"] .. self.L[sCurrentPlatform], self.config.alerts.sword_jump.duration, self.config.alerts.sword_jump.color)
+            end
+
+            if self.config.sounds.sword_jump.enable == true then
+                self.core:PlaySound(self.config.sounds.sword_jump.file)
+            end
+        end
+    elseif sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.rocket_jump"] then
+        local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
+        if sCurrentPlatform then
+            if self.config.alerts.gun_jump.enable == true then
+                self.core:ShowAlert("gun_jump", self.L["alert.gun_jump"] .. self.L[sCurrentPlatform], self.config.alerts.gun_jump.duration, self.config.alerts.gun_jump.color)
+            end
+
+            if self.config.sounds.gun_jump.enable == true then
+                self.core:PlaySound(self.config.sounds.gun_jump.file)
+            end
         end
     end
 end
@@ -368,6 +454,17 @@ function Mod:OnElectroshock(tUnit)
             self.core:PlaySound(self.config.sounds.electroshock.file)
         end
     end
+end
+
+function Mod:GetPlatform(tUnit)
+    local loc = tUnit:GetPosition()
+    if not loc then return nil end
+    for k,v in pairs(PLATFORM_BOUNDING_BOXES) do
+        if v.x_min <= loc.x and loc.x <= v.x_max and v.z_min <= loc.z and loc.z <= v.z_max then
+            return k
+        end
+    end
+    return nil
 end
 
 function Mod:IsRunning()
