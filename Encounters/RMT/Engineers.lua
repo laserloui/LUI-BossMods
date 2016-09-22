@@ -46,7 +46,7 @@ local Locales = {
 }
 
 local DEBUFF__ELECTROSHOCK_VULNERABILITY = 83798
-local DEBUFF_ATOMIC_ATTRACTION = 84052
+local DEBUFF_ATOMIC_ATTRACTION = 84053
 local BUFF_INSULATION = 83987
 local PLATFORM_BOUNDING_BOXES = {
     ["unit.cooling_turbine"] = { x_min = 249.19, x_max = 374.71, z_min = -893.52, z_max = -768.06 },
@@ -171,7 +171,7 @@ function Mod:new(o)
                 label = "label.sword_jump",
             },
             gun_jump = {
-                enable = false,
+                enable = true,
                 duration = 3,
                 label = "label.gun_jump",
             },
@@ -189,7 +189,7 @@ function Mod:new(o)
             },
             atomic_attraction = {
                 enable = true,
-                file = "alert",
+                file = "run-away",
                 label = "debuff.atomic_attraction",
             },
             electroshock = {
@@ -345,11 +345,11 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         end
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
         if self.config.icons.atomic_attraction.enable == true then
-            self.core:DrawIcon("Orb_"..tostring(nId), tData.tUnit, self.config.icons.atomic_attraction.sprite, self.config.icons.atomic_attraction.size, nil, self.config.icons.atomic_attraction.color, nDuration)
+            self.core:DrawIcon("atomic_attraction_"..tostring(nId), tData.tUnit, self.config.icons.atomic_attraction.sprite, self.config.icons.atomic_attraction.size, nil, self.config.icons.atomic_attraction.color, nDuration)
         end
 
         if self.config.alerts.atomic_attraction.enable == true then
-            self.core:ShowAlert("Orb_"..tostring(nId), self.L["alert.atomic_attraction"]..sName, self.config.alerts.atomic_attraction.duration, self.config.alerts.atomic_attraction.color)
+            self.core:ShowAlert("atomic_attraction_"..tostring(nId), self.L["alert.atomic_attraction"]..sName, self.config.alerts.atomic_attraction.duration, self.config.alerts.atomic_attraction.color)
         end
 
         if self.config.timers.atomic_attraction.enable == true then
@@ -374,7 +374,7 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
             end
         end
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
-        self.core:RemoveIcon("Orb_"..tostring(nId))
+        self.core:RemoveIcon("atomic_attraction_"..tostring(nId))
     elseif nSpellId == BUFF_INSULATION and sUnitName == self.L["unit.fusion_core"] then
         if self.config.timers.atomic_attraction.enable == true then
             self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction.color)
