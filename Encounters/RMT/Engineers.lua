@@ -36,6 +36,7 @@ local Locales = {
         ["datachron.electroshock"] = "(.*) suffers from Electroshock",
         -- labels
         ["label.pillar"] = "20% Health Warning",
+        ["label.pillar_health"] = "Pillar Health",
         ["label.circle_telegraph"] = "Circle Telegraphs",
         ["label.sword_jump"] = "Sword Rocket Jump",
         ["label.gun_jump"] = "Gun Rocket Jump",
@@ -226,6 +227,13 @@ function Mod:new(o)
                 color = "ffff4500",
                 label = "debuff.atomic_attraction",
             },
+            pillar = {
+                enable = true,
+                size = false,
+                sprite = false,
+                color = false,
+                label = "label.pillar_health",
+            },
         },
         lines = {
             gun = {
@@ -295,12 +303,16 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         end
     elseif sName == self.L["unit.fusion_core"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion.enable,false,true,false,nil,self.config.units.fusion.color, self.config.units.fusion.priority)
+        self.core:DrawIcon(nId, tUnit, "", 300, -275)
     elseif sName == self.L["unit.lubricant_nozzle"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.lubricant.enable,false,false,false,nil,self.config.units.lubricant.color, self.config.units.lubricant.priority)
+        self.core:DrawIcon(nId, tUnit, "", 300, -275)
     elseif sName == self.L["unit.spark_plug"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.spark.enable,false,false,false,nil,self.config.units.spark.color, self.config.units.spark.priority)
+        self.core:DrawIcon(nId, tUnit, "", 300, -275)
     elseif sName == self.L["unit.cooling_turbine"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.cooling.enable,false,false,false,nil,self.config.units.cooling.color, self.config.units.cooling.priority)
+        self.core:DrawIcon(nId, tUnit, "", 300, -275)
     elseif sName == self.L["unit.circle_telegraph"] then
         if self.config.lines.circle_telegraph.enable == true then
             self.core:DrawPolygon(nId, tUnit, 6.3, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
@@ -311,6 +323,23 @@ end
 function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
     if self.config.alerts.pillar.enable == true or self.config.sounds.pillar == true then
         if sName == self.L["unit.fusion_core"] or sName == self.L["unit.lubricant_nozzle"] or sName == self.L["unit.spark_plug"] or sName == self.L["unit.cooling_turbine"] then
+            local tIcon = self.core:GetDraw(nId)
+
+            if tIcon and tIcon.wnd then
+                tIcon.wnd:SetText(string.format("%.0f%%", nPercent))
+                tIcon.wnd:SetFont("Subtitle")
+
+                if nPercent > 20 then
+                    tIcon.wnd:SetTextColor("ffadff2f")
+                else
+                    if nPercent > 15 then
+                        tIcon.wnd:SetTextColor("ffff8c00")
+                    else
+                        tIcon.wnd:SetTextColor("ffff0000")
+                    end
+                end
+            end
+
             if nPercent < 20 then
                 if self.core:GetDistance(tUnit) < 30 then
                     if not self.warned or self.warned ~= sName then
