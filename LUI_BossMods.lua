@@ -280,6 +280,10 @@ function LUI_BossMods:SearchForEncounter()
         return
     end
 
+    if not self.unitPlayer then
+        self.unitPlayer = GetPlayerUnit()
+    end
+
     for sName,tModule in pairs(self.modules) do
         if self:CheckZone(tModule) then
             if self.bIsRunning == false then
@@ -1719,12 +1723,12 @@ function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nSpriteHeight,
 
     local nSize = (nSpriteSize/2) or self.config.icon.size
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
-    local nHeight = nSpriteHeight or 40
+    local nHeight = (nSpriteHeight ~= nil) and nSpriteHeight or 40
 
-    wnd:SetAnchorOffsets((nSize*-1),((nSize*-1)-nHeight),nSize,(nSize-nHeight))
+    wnd:SetAnchorOffsets((nSize*-1),(nSize*-1),nSize,nSize)
     wnd:SetSprite(sSprite or self.config.icon.sprite)
     wnd:SetBGColor(sColor or self.config.icon.color)
-    wnd:SetUnit(Origin)
+    wnd:SetUnit(Origin,nHeight)
 
     if nDuration ~= nil and nDuration > 0 then
         if bShowOverlay then
@@ -1748,15 +1752,26 @@ function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nSpriteHeight,
         }
     else
         self.tDraws[Key] = {
-            wnd = wnd,
             tOrigin = Origin,
+            sType = "Icon",
             fHandler = fHandler,
-            tData = tData
+            tData = tData,
+            wnd = wnd,
         }
     end
 end
 
 function LUI_BossMods:UpdateIcon(Key,tDraw)
+    if tDraw.wnd:IsOnScreen() then
+        if not tDraw.wnd:IsShown() then
+            tDraw.wnd:Show(true,true)
+        end
+    else
+        if tDraw.wnd:IsShown() then
+            tDraw.wnd:Show(true,true)
+        end
+    end
+
     if tDraw.nDuration ~= nil and tDraw.nDuration > 0 then
         local nTick = GetTickCount()
         local nTotal = tDraw.nDuration
@@ -2535,6 +2550,14 @@ function LUI_BossMods:RemoveLineBetween(Key,bCallback)
 
         self.tDraws[Key] = nil
     end
+end
+
+function LUI_BossMods:GetDraw(Key)
+    if not self.tDraws then
+        return
+    end
+
+    return self.tDraws[Key]
 end
 
 -- #########################################################################################################################################

@@ -160,6 +160,10 @@ require "Apollo"
         @param Key              - Unique ID
         @param bCallback        - Perform Callback (boolean)
 
+    GetDraw(Key)
+        Returns Icon/Pixie/Polygon/Line/LineBetween
+        @param Key              - Unique ID
+
     GetDistance(FromOrigin, ToOrigin)
         Compute the distance between two origins.
         @param FromOrigin       - Unit Object / UnitId or Coordinates
@@ -206,7 +210,7 @@ function Mod:new(o)
     }
     self.run = false
     self.runtime = {}
-    self.config = {                     -- Table of settings for this module
+    self.config = {                     -- Table of settings for this module (Value "false" will disable certain settings in option panel)
         enable = true,                  -- Enable/Disable Boss Module
         interval = 100,                 -- Update Interval for OnFrame Function
         units = {                       -- List of all units used in this module
