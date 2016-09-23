@@ -48,7 +48,6 @@ function LUI_BossMods:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
-    self.bDebug = false
     self.bIsRunning = false
     self.language = "enUS"
     self.runtime = {}
@@ -193,10 +192,6 @@ function LUI_BossMods:OnDocLoaded()
         self:CreateUnitsFromPreload()
     end
 
-    if self.bDebug == true then
-        self:OnInitDebug()
-    end
-
     -- Find System Chat Channel
     for idx, channelCurrent in ipairs(ChatSystemLib.GetChannels()) do
         if channelCurrent:GetName() == "System" then
@@ -271,7 +266,7 @@ function LUI_BossMods:CheckZone(tModule)
     end
 
     for _,tZone in ipairs(tModule.tTrigger.tZones) do
-        if tZone.continentId == self.zone.continentId and tZone.parentZoneId == self.zone.parentZoneId and tZone.mapId == self.zone.mapId then
+        if tZone.continentId == self.zone.continentId and (tZone.parentZoneId == self.zone.parentZoneId or tZone.parentZoneId == 0) and (tZone.mapId == self.zone.mapId or tZone.mapId == 0) then
             return true
         end
     end
@@ -288,7 +283,7 @@ function LUI_BossMods:SearchForEncounter()
     for sName,tModule in pairs(self.modules) do
         if self:CheckZone(tModule) then
             if self.bIsRunning == false then
-                if self:CheckTrigger(tModule) then
+                if self:CheckTrigger(tModule) and self.unitPlayer:IsInCombat() then
                     self.tCurrentEncounter = tModule
 
                     if self.tCurrentEncounter and self.tCurrentEncounter:IsEnabled() and not self.tCurrentEncounter:IsRunning() then
@@ -316,10 +311,6 @@ end
 function LUI_BossMods:CheckTrigger(tModule)
     if not tModule then
         return false
-    end
-
-    if not tModule.tTrigger or not self.tSavedUnits then
-        return true
     end
 
     if not tModule.tTrigger.tNames or not tModule.tTrigger.tNames[self.language] then
@@ -1241,13 +1232,10 @@ function LUI_BossMods:CheckCast(tData)
         return
     end
 
-    local bCasting
     local sName
     local nElapsed
-    local nDuration
-    local nTick = GetTickCount()
-
-    nDuration = tData.tUnit:GetCCStateTimeRemaining(Unit.CodeEnumCCState.Vulnerability)
+    local bCasting = false
+    local nDuration = tData.tUnit:GetCCStateTimeRemaining(Unit.CodeEnumCCState.Vulnerability)
 
     if nDuration ~= nil and nDuration > 0 then
         bCasting = true
@@ -1255,24 +1243,24 @@ function LUI_BossMods:CheckCast(tData)
         sName = "MOO"
     end
 
-    if not bCasting then
+    if bCasting == false then
         bCasting = tData.tUnit:IsCasting()
 
         if bCasting == true then
             sName = tData.tUnit:GetCastName() or ""
-            nDuration = tData.tUnit:GetCastDuration() / 1000
             nElapsed = tData.tUnit:GetCastElapsed() / 1000
+            nDuration = tData.tUnit:GetCastDuration() / 1000
             bCasting = tData.tUnit:IsCasting()
         end
     end
 
     if bCasting == true then
+        local nTick = GetTickCount()
         sName = string.gsub(sName, NO_BREAK_SPACE, " ")
 
-        if not tData.tCast then
+        if not tData.tCast and nDuration > nElapsed then
             -- New cast
             tData.tCast = {
-                bCasting = true,
                 sName = sName,
                 nDuration = nDuration,
                 nElapsed = nElapsed,
@@ -1283,8 +1271,10 @@ function LUI_BossMods:CheckCast(tData)
             }
 
             if self.tCurrentEncounter and self.tCurrentEncounter.OnCastStart then
-                self.tCurrentEncounter:OnCastStart(tData.nId, sName, tData.tCast, tData.sName, (nDuration-nElapsed))
+                self.tCurrentEncounter:OnCastStart(tData.nId, sName, tData.tCast, tData.sName, nDuration)
             end
+
+            return
         elseif tData.tCast then
             if sName ~= tData.tCast.sName or nElapsed < tData.tCast.nElapsed then
                 -- New cast just after a previous one.
@@ -1293,7 +1283,6 @@ function LUI_BossMods:CheckCast(tData)
                 end
 
                 tData.tCast = {
-                    bCasting = true,
                     sName = sName,
                     nDuration = nDuration,
                     nElapsed = nElapsed,
@@ -1304,25 +1293,30 @@ function LUI_BossMods:CheckCast(tData)
                 }
 
                 if self.tCurrentEncounter and self.tCurrentEncounter.OnCastStart then
-                    self.tCurrentEncounter:OnCastStart(tData.nId, sName, tData.tCast, tData.sName, (nDuration-nElapsed))
+                    self.tCurrentEncounter:OnCastStart(tData.nId, sName, tData.tCast, tData.sName, nDuration)
                 end
+
+                return
             else
-                if nTick >= (tData.tCast.nTick + (tData.tCast.nDuration * 1000)) then
-                    if not tData.tCast.bIsDone then
-                        -- End of cast
-                        if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
-                            self.tCurrentEncounter:OnCastEnd(tData.nId, sName, tData.tCast, tData.sName)
-                        end
+                if nTick > (tData.tCast.nTick + (tData.tCast.nDuration * 1000)) then
+                    -- End of cast
+                    if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
+                        self.tCurrentEncounter:OnCastEnd(tData.nId, sName, tData.tCast, tData.sName)
+                    end
 
-                        tData.tCast.bIsDone = true
-
-                        if self.runtime.cast then
-                            if self.runtime.cast.sName == sName and self.runtime.cast.nUnitId == tData.nId then
-                                self.runtime.cast = nil
-                                self.wndCastbar:Show(false,true)
-                            end
+                    if self.runtime.cast then
+                        if self.runtime.cast.sName == sName and self.runtime.cast.nUnitId == tData.nId then
+                            self.runtime.cast = nil
+                            self.wndCastbar:Show(false,true)
                         end
                     end
+
+                    tData.tCast = nil
+                    return
+                else
+                    -- Cast Running
+                    tData.tCast.nElapsed = nElapsed
+                    return
                 end
             end
         end
@@ -1340,6 +1334,8 @@ function LUI_BossMods:CheckCast(tData)
             end
 
             tData.tCast = nil
+
+            return
         end
     end
 end
@@ -1396,12 +1392,9 @@ function LUI_BossMods:UpdateCast()
     end
 
     local tCast = self.runtime.cast
-    local nTick = GetTickCount()
-    local nTotal = (tCast.nDuration - tCast.nElapsed)
-    local nElapsed = (nTick - tCast.nTick)
-    local nRemaining = (nTotal - nElapsed)
+    local nRemaining = (tCast.nDuration - tCast.nElapsed)
 
-    if nElapsed > nTotal then
+    if tCast.nElapsed > tCast.nDuration then
         self:HideCast()
     else
         self.wndCastbar:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
@@ -2580,51 +2573,6 @@ end
 function TemplateDraw:SetMinLengthVisible(nMin)
     local mt = getmetatable(self)
     mt.__index.nMinLengthVisible = nMin
-end
-
--- #########################################################################################################################################
--- #########################################################################################################################################
--- #
--- # DEBUGGING
--- #
--- #########################################################################################################################################
--- #########################################################################################################################################
-
-function LUI_BossMods:OnInitDebug()
-    --Apollo.RegisterEventHandler("VarChange_FrameCount", "OnUpdate", self)
-    --Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
-
-    self.wndDebug = Apollo.LoadForm(self.xmlDoc, "Debug", nil, self)
-    self.wndDebug:Show(true,true)
-
-    self.debugTimer = ApolloTimer.Create(0.05, true, "OnUpdateDebug", self)
-    self.debugTimer:Start()
-
-    math.randomseed(os.time())
-end
-
-function LUI_BossMods:OnShowDebug() return end
-function LUI_BossMods:OnHideDebug() return end
-function LUI_BossMods:OnAddDebug()
-    local tAlerts = {
-        "Go to Sword!",
-        "Interrupt!",
-        "Boss is leaving Fusion Core",
-        "Fusion Core at 20% Health!",
-        "Orb on Loui NaN",
-        "Electroshock soon!",
-    }
-
-    local id = math.random(6)
-    self:ShowAlert(tostring(id), tAlerts[id])
-end
-
-function LUI_BossMods:OnUpdateDebug()
-    if self.runtime.alerts then
-        for _,alert in pairs(self.runtime.alerts) do
-            self:UpdateAlert(alert)
-        end
-    end
 end
 
 -- #########################################################################################################################################
