@@ -331,9 +331,9 @@ function Settings:BuildRightPanel()
         nHeight = nHeight + wnd:GetHeight()
 
         -- Enable Checkbox
-        wnd:FindChild("Checkbox"):SetData("enable")
-        wnd:FindChild("Checkbox"):SetCheck(config.enable or false)
-        wnd:FindChild("Checkbox"):SetText("Enable Boss Module")
+        wnd:FindChild("EnableCheckbox"):SetData("enable")
+        wnd:FindChild("EnableCheckbox"):SetCheck(config.enable or false)
+        wnd:FindChild("EnableCheckbox"):SetText("Enable Boss Module")
 
         wndGeneral:FindChild("Settings"):ArrangeChildrenVert()
         wndGeneral:SetAnchorOffsets(0,0,0,nHeight)
@@ -366,15 +366,16 @@ function Settings:BuildRightPanel()
             local tUnit = config.units[tSortedUnits[i].nId]
             local wnd = Apollo.LoadForm(self.xmlDoc, "Items:UnitSetting", wndUnits:FindChild("Settings"), self)
 
-            -- Enable Checkbox
-            wnd:FindChild("Checkbox"):SetData({"units",tSortedUnits[i].nId,"enable"})
-            wnd:FindChild("Checkbox"):SetCheck(tUnit.enable or false)
-            wnd:FindChild("Checkbox"):SetText(L[tUnit.label] or tUnit.label)
-
             -- Color
             wnd:FindChild("Color"):SetData({"units",tSortedUnits[i].nId,"color"})
             wnd:FindChild("ColorText"):SetText(tUnit.color or self.config.units.healthColor)
             wnd:FindChild("BG"):SetBGColor(tUnit.color or self.config.units.healthColor)
+
+            -- Enable Checkbox
+            wnd:FindChild("EnableCheckbox"):SetData({"units",tSortedUnits[i].nId,"enable"})
+            wnd:FindChild("EnableCheckbox"):SetCheck(tUnit.enable or false)
+            wnd:FindChild("EnableCheckbox"):SetText(L[tUnit.label] or tUnit.label)
+            self:ToggleSettings(wnd,tUnit.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
         end
@@ -405,15 +406,16 @@ function Settings:BuildRightPanel()
         for id,timer in pairs(config.timers) do
             local wnd = Apollo.LoadForm(self.xmlDoc, "Items:TimerSetting", wndTimers:FindChild("Settings"), self)
 
-            -- Enable Checkbox
-            wnd:FindChild("Checkbox"):SetData({"timers",id,"enable"})
-            wnd:FindChild("Checkbox"):SetCheck(timer.enable or false)
-            wnd:FindChild("Checkbox"):SetText(L[timer.label] or timer.label)
-
             -- Color
             wnd:FindChild("Color"):SetData({"timers",id,"color"})
             wnd:FindChild("ColorText"):SetText(timer.color or self.config.timer.barColor)
             wnd:FindChild("BG"):SetBGColor(timer.color or self.config.timer.barColor)
+
+            -- Enable Checkbox
+            wnd:FindChild("EnableCheckbox"):SetData({"timers",id,"enable"})
+            wnd:FindChild("EnableCheckbox"):SetCheck(timer.enable or false)
+            wnd:FindChild("EnableCheckbox"):SetText(L[timer.label] or timer.label)
+            self:ToggleSettings(wnd,timer.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
         end
@@ -444,15 +446,16 @@ function Settings:BuildRightPanel()
         for id,cast in pairs(config.casts) do
             local wnd = Apollo.LoadForm(self.xmlDoc, "Items:CastSetting", wndCasts:FindChild("Settings"), self)
 
-            -- Enable Checkbox
-            wnd:FindChild("Checkbox"):SetData({"casts",id,"enable"})
-            wnd:FindChild("Checkbox"):SetCheck(cast.enable or false)
-            wnd:FindChild("Checkbox"):SetText(L[cast.label] or cast.label)
-
             -- Color
             wnd:FindChild("Color"):SetData({"casts",id,"color"})
             wnd:FindChild("ColorText"):SetText(cast.color or self.config.castbar.barColor)
             wnd:FindChild("BG"):SetBGColor(cast.color or self.config.castbar.barColor)
+
+            -- Enable Checkbox
+            wnd:FindChild("EnableCheckbox"):SetData({"casts",id,"enable"})
+            wnd:FindChild("EnableCheckbox"):SetCheck(cast.enable or false)
+            wnd:FindChild("EnableCheckbox"):SetText(L[cast.label] or cast.label)
+            self:ToggleSettings(wnd,cast.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
         end
@@ -483,15 +486,16 @@ function Settings:BuildRightPanel()
         for id,alert in pairs(config.alerts) do
             local wnd = Apollo.LoadForm(self.xmlDoc, "Items:AlertSetting", wndAlerts:FindChild("Settings"), self)
 
-            -- Enable Checkbox
-            wnd:FindChild("Checkbox"):SetData({"alerts",id,"enable"})
-            wnd:FindChild("Checkbox"):SetCheck(alert.enable or false)
-            wnd:FindChild("Checkbox"):SetText(L[alert.label] or alert.label)
-
             -- Color
             wnd:FindChild("Color"):SetData({"alerts",id,"color"})
             wnd:FindChild("ColorText"):SetText(alert.color or self.config.alerts.color)
             wnd:FindChild("BG"):SetBGColor(alert.color or self.config.alerts.color)
+
+            -- Enable Checkbox
+            wnd:FindChild("EnableCheckbox"):SetData({"alerts",id,"enable"})
+            wnd:FindChild("EnableCheckbox"):SetCheck(alert.enable or false)
+            wnd:FindChild("EnableCheckbox"):SetText(L[alert.label] or alert.label)
+            self:ToggleSettings(wnd,alert.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
         end
@@ -522,13 +526,14 @@ function Settings:BuildRightPanel()
         for id,sound in pairs(config.sounds) do
             local wnd = Apollo.LoadForm(self.xmlDoc, "Items:SoundSetting", wndSounds:FindChild("Settings"), self)
 
-            -- Enable Checkbox
-            wnd:FindChild("Checkbox"):SetData({"sounds",id,"enable"})
-            wnd:FindChild("Checkbox"):SetCheck(sound.enable or false)
-            wnd:FindChild("Checkbox"):SetText(L[sound.label] or sound.label)
-
             -- Sound File
             self:BuildSoundDropdown(wnd,{"sounds",id,"file"},sound.file)
+
+            -- Enable Checkbox
+            wnd:FindChild("EnableCheckbox"):SetData({"sounds",id,"enable"})
+            wnd:FindChild("EnableCheckbox"):SetCheck(sound.enable or false)
+            wnd:FindChild("EnableCheckbox"):SetText(L[sound.label] or sound.label)
+            self:ToggleSettings(wnd,sound.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
         end
@@ -561,24 +566,40 @@ function Settings:BuildRightPanel()
             -- Label
             wnd:FindChild("Label"):SetText(L[icon.label] or icon.label)
 
-            -- Enable Checkbox
-            wnd:FindChild("Checkbox"):SetData({"icons",id,"enable"})
-            wnd:FindChild("Checkbox"):SetCheck(icon.enable or false)
-
             -- Sprite
-            wnd:FindChild("SpriteText"):SetText(icon.sprite or self.config.icon.sprite)
-            wnd:FindChild("SpriteText"):SetData({"icons",id,"sprite"})
-            wnd:FindChild("BrowseBtn"):SetData({{"icons",id,"sprite"},wnd:FindChild("SpriteText")})
+            if icon.sprite ~= false then
+                wnd:FindChild("SpriteText"):SetText((icon.sprite ~= nil) and icon.sprite or self.config.icon.sprite)
+                wnd:FindChild("SpriteText"):SetData({"icons",id,"sprite"})
+                wnd:FindChild("BrowseBtn"):SetData({{"icons",id,"sprite"},wnd:FindChild("SpriteText")})
+            else
+                wnd:FindChild("SpriteSetting"):SetData("ignore")
+                self:ToggleSettings(wnd:FindChild("SpriteSetting"),false)
+            end
 
             -- Color
-            wnd:FindChild("Color"):SetData({"icons",id,"color"})
-            wnd:FindChild("ColorText"):SetText(icon.color or self.config.icon.color)
-            wnd:FindChild("Color"):FindChild("BG"):SetBGColor(icon.color or self.config.icon.color)
+            if icon.color ~= false then
+                wnd:FindChild("Color"):SetData({"icons",id,"color"})
+                wnd:FindChild("ColorText"):SetText(icon.color or self.config.icon.color)
+                wnd:FindChild("Color"):FindChild("BG"):SetBGColor(icon.color or self.config.icon.color)
+            else
+                wnd:FindChild("ColorSetting"):SetData("ignore")
+                self:ToggleSettings(wnd:FindChild("ColorSetting"),false)
+            end
 
             -- Size
-            wnd:FindChild("Slider"):SetData({"icons",id,"size"})
-            wnd:FindChild("Slider"):SetValue(icon.size or self.config.icon.size)
-            wnd:FindChild("SliderText"):SetText(icon.size or self.config.icon.size)
+            if icon.color ~= false then
+                wnd:FindChild("Slider"):SetData({"icons",id,"size"})
+                wnd:FindChild("Slider"):SetValue(icon.size or self.config.icon.size)
+                wnd:FindChild("SliderText"):SetText(icon.size or self.config.icon.size)
+            else
+                wnd:FindChild("SizeSetting"):SetData("ignore")
+                self:ToggleSettings(wnd:FindChild("SizeSetting"),false)
+            end
+
+            -- Enable Checkbox
+            wnd:FindChild("EnableCheckbox"):SetData({"icons",id,"enable"})
+            wnd:FindChild("EnableCheckbox"):SetCheck(icon.enable or false)
+            self:ToggleSettings(wnd,icon.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
         end
@@ -603,19 +624,30 @@ function Settings:BuildRightPanel()
             -- Label
             wnd:FindChild("Label"):SetText(L[aura.label] or aura.label)
 
-            -- Enable Checkbox
-            wnd:FindChild("Checkbox"):SetData({"auras",id,"enable"})
-            wnd:FindChild("Checkbox"):SetCheck(aura.enable or false)
-
             -- Sprite
-            wnd:FindChild("SpriteText"):SetText(aura.sprite or self.config.aura.sprite)
-            wnd:FindChild("SpriteText"):SetData({"auras",id,"sprite"})
-            wnd:FindChild("BrowseBtn"):SetData({{"auras",id,"sprite"},wnd:FindChild("SpriteText")})
+            if aura.sprite ~= false then
+                wnd:FindChild("SpriteText"):SetText(aura.sprite or self.config.aura.sprite)
+                wnd:FindChild("SpriteText"):SetData({"auras",id,"sprite"})
+                wnd:FindChild("BrowseBtn"):SetData({{"auras",id,"sprite"},wnd:FindChild("SpriteText")})
+            else
+                wnd:FindChild("SpriteSetting"):SetData("ignore")
+                self:ToggleSettings(wnd:FindChild("SpriteSetting"),false)
+            end
 
             -- Color
-            wnd:FindChild("Color"):SetData({"auras",id,"color"})
-            wnd:FindChild("ColorText"):SetText(aura.color or self.config.aura.color)
-            wnd:FindChild("Color"):FindChild("BG"):SetBGColor(aura.color or self.config.aura.color)
+            if aura.color ~= false then
+                wnd:FindChild("Color"):SetData({"auras",id,"color"})
+                wnd:FindChild("ColorText"):SetText(aura.color or self.config.aura.color)
+                wnd:FindChild("Color"):FindChild("BG"):SetBGColor(aura.color or self.config.aura.color)
+            else
+                wnd:FindChild("ColorSetting"):SetData("ignore")
+                self:ToggleSettings(wnd:FindChild("ColorSetting"),false)
+            end
+
+            -- Enable Checkbox
+            wnd:FindChild("EnableCheckbox"):SetData({"auras",id,"enable"})
+            wnd:FindChild("EnableCheckbox"):SetCheck(aura.enable or false)
+            self:ToggleSettings(wnd,aura.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
         end
@@ -640,19 +672,30 @@ function Settings:BuildRightPanel()
             -- Label
             wnd:FindChild("Label"):SetText(L[line.label] or line.label)
 
-            -- Enable Checkbox
-            wnd:FindChild("Checkbox"):SetData({"lines",id,"enable"})
-            wnd:FindChild("Checkbox"):SetCheck(line.enable or false)
-
             -- Color
-            wnd:FindChild("Color"):SetData({"lines",id,"color"})
-            wnd:FindChild("ColorText"):SetText(line.color or self.config.line.color)
-            wnd:FindChild("Color"):FindChild("BG"):SetBGColor(line.color or self.config.line.color)
+            if line.color ~= false then
+                wnd:FindChild("Color"):SetData({"lines",id,"color"})
+                wnd:FindChild("ColorText"):SetText(line.color or self.config.line.color)
+                wnd:FindChild("Color"):FindChild("BG"):SetBGColor(line.color or self.config.line.color)
+            else
+                wnd:FindChild("ColorSetting"):SetData("ignore")
+                self:ToggleSettings(wnd:FindChild("ColorSetting"),false)
+            end
 
             -- Thickness
-            wnd:FindChild("Slider"):SetData({"lines",id,"thickness"})
-            wnd:FindChild("Slider"):SetValue(line.thickness or self.config.line.thickness)
-            wnd:FindChild("SliderText"):SetText(line.thickness or self.config.line.thickness)
+            if line.thickness ~= false then
+                wnd:FindChild("Slider"):SetData({"lines",id,"thickness"})
+                wnd:FindChild("Slider"):SetValue(line.thickness or self.config.line.thickness)
+                wnd:FindChild("SliderText"):SetText(line.thickness or self.config.line.thickness)
+            else
+                wnd:FindChild("ThicknessSetting"):SetData("ignore")
+                self:ToggleSettings(wnd:FindChild("ThicknessSetting"),false)
+            end
+
+            -- Enable Checkbox
+            wnd:FindChild("EnableCheckbox"):SetData({"lines",id,"enable"})
+            wnd:FindChild("EnableCheckbox"):SetCheck(line.enable or false)
+            self:ToggleSettings(wnd,line.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
         end
@@ -987,10 +1030,15 @@ function Settings:ToggleSettings(wnd,state,bIsChild)
     local enable = (state ~= nil and state == true) and true or false
     local opacity = enable == true and 1 or 0.5
 
+    if bIsChild and wnd:GetData() == "ignore" then
+		return
+	end
+
     if bIsChild and
         wnd:GetName() ~= "Frame" and
         wnd:GetName() ~= "Config" and
         wnd:GetName() ~= "Container" and
+        wnd:GetName() ~= "Wrapper" and
         wnd:GetName() ~= "EnableCheckbox"
     then
         wnd:Enable(state)
