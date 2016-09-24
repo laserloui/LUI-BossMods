@@ -800,6 +800,16 @@ function Settings:BuildGlobalSettings()
     wndUnit:FindChild("AbsorbColorSetting"):FindChild("ColorText"):SetText(self.config.units.absorbColor or "")
     wndUnit:FindChild("AbsorbColorSetting"):FindChild("BG"):SetBGColor(self.config.units.absorbColor)
 
+    -- Cast Color
+    wndUnit:FindChild("CastColorSetting"):FindChild("Color"):SetData({"units","castColor"})
+    wndUnit:FindChild("CastColorSetting"):FindChild("ColorText"):SetText(self.config.units.castColor or "")
+    wndUnit:FindChild("CastColorSetting"):FindChild("BG"):SetBGColor(self.config.units.castColor)
+
+    -- MOO Color
+    wndUnit:FindChild("MooColorSetting"):FindChild("Color"):SetData({"units","mooColor"})
+    wndUnit:FindChild("MooColorSetting"):FindChild("ColorText"):SetText(self.config.units.mooColor or "")
+    wndUnit:FindChild("MooColorSetting"):FindChild("BG"):SetBGColor(self.config.units.mooColor)
+
     -- Text Color
     wndUnit:FindChild("TextColorSetting"):FindChild("Color"):SetData({"units","textColor"})
     wndUnit:FindChild("TextColorSetting"):FindChild("ColorText"):SetText(self.config.units.textColor or "")

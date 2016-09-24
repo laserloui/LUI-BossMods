@@ -111,6 +111,8 @@ function LUI_BossMods:new(o)
             healthHeight = 32,
             shieldHeight = 10,
             shieldWidth = 40,
+            castColor = "96ff00ff",
+            mooColor = "ff9400d3",
             healthColor = "96adff2f",
             shieldColor = "9600ffff",
             absorbColor = "96ffd700",
@@ -319,6 +321,10 @@ function LUI_BossMods:CheckTrigger(tModule)
 
     if not tModule.tTrigger.tNames or not tModule.tTrigger.tNames[self.language] then
         return true
+    end
+
+    if not self.tSavedUnits then
+        return false
     end
 
     if tModule.tTrigger.sType == "ANY" then
@@ -793,6 +799,10 @@ function LUI_BossMods:StyleUnit(wnd,tData)
     wnd:FindChild("Mark"):Show(tData.sMark ~= nil,true)
     wnd:FindChild("HealthText"):SetTextColor(self.config.units.textColor)
     wnd:FindChild("HealthBar"):SetBGColor(tData.sColor or self.config.units.healthColor)
+    wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.castColor)
+    wnd:FindChild("CastBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
+    wnd:FindChild("ShieldBar"):FindChild("Progress"):SetBGColor(self.config.units.shieldColor)
+    wnd:FindChild("ShieldBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
 
     return wnd
 end
@@ -837,6 +847,44 @@ function LUI_BossMods:UpdateUnit(tData)
         return
     end
 
+    if not tData.wnd then
+        return
+    end
+
+    -- Cast
+    if tData.tCast then
+        if not tData.tCast.bIsRunning then
+            local nRemaining = (tData.tCast.nDuration - tData.tCast.nElapsed)
+            local nElapsed = (tData.tCast.nElapsed * 100) / tData.tCast.nDuration
+            local nProgress = nElapsed / 100
+            local fPoint = 1
+
+            if tData.tCast.sName == "MOO" then
+                fPoint = 0
+                nProgress = 1 - nProgress
+                tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.mooColor)
+                tData.wnd:FindChild("CastBar"):FindChild("Percent"):SetText()
+            else
+                tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.castColor)
+                tData.wnd:FindChild("CastBar"):FindChild("Percent"):SetText(string.format("%.0f%%", nElapsed))
+            end
+
+            tData.wnd:FindChild("CastBar"):FindChild("Text"):SetText(tData.tCast.sName)
+            tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetAnchorPoints(0, 0, nProgress, 1)
+            tData.wnd:FindChild("CastBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, fPoint, 1}}), nRemaining)
+            tData.wnd:FindChild("CastBar"):Show(true,true)
+
+            tData.tCast.bIsRunning = true
+        else
+            if tData.tCast.sName ~= "MOO" then
+                local nElapsed = (tData.tCast.nElapsed * 100) / tData.tCast.nDuration
+                tData.wnd:FindChild("CastBar"):FindChild("Percent"):SetText(string.format("%.0f%%", nElapsed))
+            end
+        end
+    else
+        tData.wnd:FindChild("CastBar"):Show(false,true)
+    end
+
     -- Health
     local bIsDead = tData.tUnit:IsDead()
     local nHealth = tData.tUnit:GetHealth() or 0
@@ -861,10 +909,6 @@ function LUI_BossMods:UpdateUnit(tData)
         end
     end
 
-    if not tData.wnd then
-        return
-    end
-
     -- Absorb
     local nAbsorb = tData.tUnit:GetAbsorptionValue() or 0
     local nAbsorbMax = tData.tUnit:GetAbsorptionMax() or 0
@@ -887,6 +931,7 @@ function LUI_BossMods:UpdateUnit(tData)
 
         if nAbsorbProgress ~= (tData.runtime.shield or 0) then
             tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nAbsorbProgress, 1}}), .075)
+            tData.wnd:FindChild("ShieldBar"):FindChild("Text"):SetText(self:HelperFormatBigNumber(nAbsorb))
             tData.runtime.shield = nAbsorbProgress
         end
     else
@@ -912,6 +957,7 @@ function LUI_BossMods:UpdateUnit(tData)
 
             if nShieldProgress ~= (tData.runtime.shield or 0) then
                 tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nShieldProgress, 1}}), .075)
+                tData.wnd:FindChild("ShieldBar"):FindChild("Text"):SetText(self:HelperFormatBigNumber(nShield))
                 tData.runtime.shield = nShieldProgress
             end
         else
@@ -1368,8 +1414,11 @@ function LUI_BossMods:ShowCast(tCast,sName,sColor)
         fPoint = 0
         nProgress = 1 - nProgress
         self.wndCastbar:FindChild("Progress"):SetBGColor(self.config.castbar.mooColor)
+        self.wndCastbar:FindChild("Duration"):SetText()
     else
         self.wndCastbar:FindChild("Progress"):SetBGColor(sColor or self.config.castbar.barColor)
+        self.wndCastbar:FindChild("Duration"):SetTextColor(self.config.castbar.textColor)
+        self.wndCastbar:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
     end
 
     local sCastName = sName
@@ -1380,8 +1429,6 @@ function LUI_BossMods:ShowCast(tCast,sName,sColor)
 
     self.wndCastbar:FindChild("Name"):SetTextColor(self.config.castbar.textColor)
     self.wndCastbar:FindChild("Name"):SetText(sCastName)
-    self.wndCastbar:FindChild("Duration"):SetTextColor(self.config.castbar.textColor)
-    self.wndCastbar:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
     self.wndCastbar:FindChild("Progress"):SetAnchorPoints(0, 0, nProgress, 1)
     self.wndCastbar:FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, fPoint, 1}}), nRemaining)
 end
@@ -1401,7 +1448,9 @@ function LUI_BossMods:UpdateCast()
     if tCast.nElapsed > tCast.nDuration then
         self:HideCast()
     else
-        self.wndCastbar:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
+        if tCast.sName == "MOO" then
+            self.wndCastbar:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
+        end
     end
 end
 
@@ -2848,6 +2897,34 @@ function LUI_BossMods:InsertDefaults(t,defaults)
     end
 
     return t
+end
+
+function LUI_BossMods:HelperFormatBigNumber(nArg)
+    local strResult
+    if nArg < 1000 then
+        strResult = tostring(nArg)
+    elseif nArg < 1000000 then
+        if math.floor(nArg%1000/100) == 0 then
+            strResult = String_GetWeaselString("$1ck", math.floor(nArg / 1000))
+        else
+            strResult = String_GetWeaselString("$1f1k", nArg / 1000)
+        end
+    elseif nArg < 1000000000 then
+        if math.floor(nArg%1000000/100000) == 0 then
+            strResult = String_GetWeaselString("$1cm", math.floor(nArg / 1000000))
+        else
+            strResult = String_GetWeaselString("$1f1m", nArg / 1000000)
+        end
+    elseif nArg < 1000000000000 then
+        if math.floor(nArg%1000000/100000) == 0 then
+            strResult = String_GetWeaselString("$1cb", math.floor(nArg / 1000000))
+        else
+            strResult = String_GetWeaselString("$1f1b", nArg / 1000000)
+        end
+    else
+        strResult = tostring(nArg)
+    end
+    return strResult
 end
 
 function LUI_BossMods:Rotation(tVector, tMatrixTeta)
