@@ -27,7 +27,27 @@ local Locales = {
         ["label.lines_room"] = "Room Dividers",
         ["label.circle_telegraph"] = "Circle Telegraphs",
     },
-    ["deDE"] = {},
+    ["deDE"] = {
+		-- Units
+        ["unit.boss"] = "Swabbie Ski'Li",
+        ["unit.noxious_nabber"] = "Noxious Nabber",
+        ["unit.regor_the_rancid"] = "Regor the Rancid", -- Miniboss during Midphase
+        ["unit.braugh_the_bloodied"] = "Braugh the Bloodied", -- Miniboss during Midphase --NOT SEEN YET, confim please
+        ["unit.sawblade"] = "Sägeblatt",
+        ["unit.circle_telegraph"] = "Feindselige unsichtbare Einheit für Felder (Trefferradius 1.2)",
+        -- Casts
+        ["cast.necrotic_lash"] = "Nekrotisches Peitschen", -- Cast by Noxious Nabber (grab and disorient), interruptable
+        ["cast.deathwail"] = "Totenklage", -- Miniboss knockdown, interruptable
+        ["cast.gravedigger"] = "Gravedigger", -- Miniboss cast
+        -- Alerts
+        ["alert.oozing_bile"] = "Oozing Bile - Stop Damage!",
+        ["alert.interrupt"] = "Interrupt!",
+        -- Debuffs
+        ["debuff.oozing_bile"] = "Oozing Bile",
+        -- Labels
+        ["label.lines_room"] = "Raum Einteilungen",
+        ["label.circle_telegraph"] = "Kreis Telegraphen",
+	},
     ["frFR"] = {},
 }
 
