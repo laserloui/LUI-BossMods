@@ -451,6 +451,7 @@ function LUI_BossMods:StartFight()
         return
     end
 
+    self:OnBreakEnd()
     self.bIsRunning = true
     self.tCurrentEncounter:OnEnable()
     self:ProcessSavedUnits()
@@ -760,10 +761,10 @@ function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuf
             bShowUnit = bShowUnit or false,
             bOnCast = bOnCast or false,
             bOnBuff = bOnBuff or false,
-            bOnDebuff = bOnDebuff or false
+            bOnDebuff = bOnDebuff or false,
         }
 
-        if (bOnBuff ~= nil and bOnBuff == true) then
+        if ((bOnBuff ~= nil and bOnBuff == true) or (bOnDebuff ~= nil and bOnDebuff == true)) then
             self:CheckBuffs(nId)
         end
 
@@ -1005,20 +1006,24 @@ function LUI_BossMods:CheckBuffs(nId)
         return
     end
 
-    if self.runtime.units[nId] ~= nil and self.runtime.units[nId].bOnBuff then
+    if self.runtime.units[nId] ~= nil and (self.runtime.units[nId].bOnBuff == true or self.runtime.units[nId].bOnDebuff == true) then
         local tBuffs = self.runtime.units[nId].tUnit:GetBuffs()
 
         -- Process Buffs
-        if tBuffs ~= nil and tBuffs.arBeneficial ~= nil then
-            for i=1, #tBuffs.arBeneficial do
-                self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arBeneficial[i])
+        if self.runtime.units[nId].bOnBuff == true then
+            if tBuffs ~= nil and tBuffs.arBeneficial ~= nil then
+                for i=1, #tBuffs.arBeneficial do
+                    self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arBeneficial[i])
+                end
             end
         end
 
         -- Process Debuffs
-        if tBuffs ~= nil and tBuffs.arHarmful ~= nil then
-            for i=1, #tBuffs.arHarmful do
-                self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arHarmful[i])
+        if self.runtime.units[nId].bOnDebuff == true then
+            if tBuffs ~= nil and tBuffs.arHarmful ~= nil then
+                for i=1, #tBuffs.arHarmful do
+                    self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arHarmful[i])
+                end
             end
         end
     end
@@ -1037,19 +1042,18 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
         return
     end
 
-    local nId = unit:GetId()
+    local buff = spell.splEffect:IsBeneficial()
+    local nUnitId = unit:GetId()
 
-    if self.runtime.units[nId] ~= nil  then
-        local buff = spell.splEffect:IsBeneficial() or false
-
-        if (buff == true and self.runtime.units[nId].bOnBuff) or (buff == false and self.runtime.units[unit:GetId()].bOnDebuff) then
+    if self.runtime.units[nUnitId] ~= nil then
+        if (buff == true and self.runtime.units[nUnitId].bOnBuff == true) or (buff == false and self.runtime.units[nUnitId].bOnDebuff == true) then
             local tData = {
                 nId = spell.splEffect:GetId(),
                 sName = spell.splEffect:GetName(),
                 nDuration = spell.fTimeRemaining,
                 nTick = GetTickCount(),
                 nCount = spell.nCount,
-                nUnitId = unit:GetId(),
+                nUnitId = nUnitId,
                 sUnitName = unit:GetName(),
                 tUnit = unit,
                 tSpell = spell,
@@ -1059,14 +1063,14 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
                 self.tCurrentEncounter:OnBuffAdded(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
             end
         end
-    elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and spell.splEffect:IsBeneficial() == false then
+    elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and buff == false then
         local tData = {
             nId = spell.splEffect:GetId(),
             sName = spell.splEffect:GetName(),
             nDuration = spell.fTimeRemaining,
             nTick = GetTickCount(),
             nCount = spell.nCount,
-            nUnitId = unit:GetId(),
+            nUnitId = nUnitId,
             sUnitName = unit:GetName(),
             tUnit = unit,
             tSpell = spell,
@@ -1091,14 +1095,35 @@ function LUI_BossMods:OnBuffUpdated(unit,spell)
         return
     end
 
-    if self.runtime.units[unit:GetId()] ~= nil and self.runtime.units[unit:GetId()].bOnBuff then
+    local buff = spell.splEffect:IsBeneficial()
+    local nUnitId = unit:GetId()
+
+    if self.runtime.units[nUnitId] ~= nil then
+        if (buff == true and self.runtime.units[nUnitId].bOnBuff == true) or (buff == false and self.runtime.units[nUnitId].bOnDebuff == true) then
+            local tData = {
+                nId = spell.splEffect:GetId(),
+                sName = spell.splEffect:GetName(),
+                nDuration = spell.fTimeRemaining,
+                nTick = GetTickCount(),
+                nCount = spell.nCount,
+                nUnitId = nUnitId,
+                sUnitName = unit:GetName(),
+                tUnit = unit,
+                tSpell = spell,
+            }
+
+            if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffUpdated then
+                self.tCurrentEncounter:OnBuffUpdated(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
+            end
+        end
+    elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and buff == false then
         local tData = {
             nId = spell.splEffect:GetId(),
             sName = spell.splEffect:GetName(),
             nDuration = spell.fTimeRemaining,
             nTick = GetTickCount(),
             nCount = spell.nCount,
-            nUnitId = unit:GetId(),
+            nUnitId = nUnitId,
             sUnitName = unit:GetName(),
             tUnit = unit,
             tSpell = spell,
@@ -1123,11 +1148,29 @@ function LUI_BossMods:OnBuffRemoved(unit,spell)
         return
     end
 
-    if self.runtime.units[unit:GetId()] ~= nil and self.runtime.units[unit:GetId()].bOnBuff then
+    local buff = spell.splEffect:IsBeneficial()
+    local nUnitId = unit:GetId()
+
+    if self.runtime.units[nUnitId] ~= nil then
+        if (buff == true and self.runtime.units[nUnitId].bOnBuff == true) or (buff == false and self.runtime.units[nUnitId].bOnDebuff == true) then
+            local tData = {
+                nId = spell.splEffect:GetId(),
+                sName = spell.splEffect:GetName(),
+                nUnitId = nUnitId,
+                sUnitName = unit:GetName(),
+                tUnit = unit,
+                tSpell = spell,
+            }
+
+            if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffRemoved then
+                self.tCurrentEncounter:OnBuffRemoved(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName)
+            end
+        end
+    elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and buff == false then
         local tData = {
             nId = spell.splEffect:GetId(),
             sName = spell.splEffect:GetName(),
-            nUnitId = unit:GetId(),
+            nUnitId = nUnitId,
             sUnitName = unit:GetName(),
             tUnit = unit,
             tSpell = spell,
@@ -1620,8 +1663,9 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, sFont)
                 0,
                 offsetTop
             }
-            alert.wnd:SetOpacity(0.65)
-            alert.wnd:TransitionMove(WindowLocation.new({fPoints = {0,0,1,0}, nOffsets = tOffsets}), .25)
+            --alert.wnd:SetOpacity(0.65)
+            --alert.wnd:TransitionMove(WindowLocation.new({fPoints = {0,0,1,0}, nOffsets = tOffsets}), .25)
+            alert.wnd:SetAnchorOffsets(unpack(tOffsets))
         end
     end
 
@@ -1845,17 +1889,15 @@ function LUI_BossMods:RemoveIcon(Key,bCallback)
         return
     end
 
-    local tDraw = self.tDraws[Key]
-
-    if tDraw then
-        if tDraw.wnd then
-            tDraw.wnd:Show(false,true)
-            tDraw.wnd:Destroy()
+    if self.tDraws[Key] then
+        if self.tDraws[Key].wnd then
+            self.tDraws[Key].wnd:Show(false,true)
+            self.tDraws[Key].wnd:Destroy()
         end
 
         if bCallback ~= nil and bCallback == true then
-            if tDraw.fHandler and self.tCurrentEncounter then
-                tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
+            if self.tDraws[Key].fHandler and self.tCurrentEncounter then
+                self.tDraws[Key].fHandler(self.tCurrentEncounter, self.tDraws[Key].tData)
             end
         end
 
@@ -2801,8 +2843,51 @@ function LUI_BossMods:OnConfigure()
     self.settings:OnToggleMenu()
 end
 
-function LUI_BossMods:OnSlashCommand()
-    self.settings:OnToggleMenu()
+function LUI_BossMods:OnSlashCommand(cmd, args)
+    local tArgc = {}
+
+    for sWord in string.gmatch(args, "[^%s]+") do
+        table.insert(tArgc, sWord)
+    end
+
+    local strName, nDuration
+
+    if #tArgc >= 1 then
+        strName = tArgc[1] == "break" and tArgc[1] or nil
+        nDuration = tonumber(tArgc[2]) ~= nil and tonumber(tArgc[2]) or nil
+    end
+
+    if strName and nDuration then
+    	self:AddTimer("break", "Break", nDuration)
+
+        if not self.breakTimer then
+            self.breakTimer = ApolloTimer.Create(0.1, true, "OnBreakTimer", self)
+            self.breakTimer:Start()
+        end
+	else
+	    self.settings:OnToggleMenu()
+    end
+end
+
+function LUI_BossMods:OnBreakTimer()
+    if self.runtime.timer and self.runtime.timer["break"] then
+        self:UpdateTimer("break")
+        self:SortTimer()
+        Print("Update")
+    else
+        Print("Remove")
+        if self.breakTimer then
+            self.breakTimer:Stop()
+        end
+
+        self.breakTimer = nil
+    end
+end
+
+function LUI_BossMods:OnBreakEnd()
+    if self.runtime.timer and self.runtime.timer["break"] then
+        self:RemoveTimer("break")
+    end
 end
 
 function LUI_BossMods:OnInterfaceMenuListHasLoaded()
