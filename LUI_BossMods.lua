@@ -1315,7 +1315,7 @@ function LUI_BossMods:CheckCast(tData)
         sName = "MOO"
     end
 
-    if bCasting == false then
+    if not bCasting then
         bCasting = tData.tUnit:IsCasting()
 
         if bCasting then
