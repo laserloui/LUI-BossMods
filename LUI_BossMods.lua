@@ -290,25 +290,23 @@ function LUI_BossMods:SearchForEncounter()
         self.unitPlayer = GetPlayerUnit()
     end
 
-    for sName,tModule in pairs(self.modules) do
-        if self:CheckZone(tModule) then
-            if not self.bIsRunning then
-                if self:CheckTrigger(tModule) and self.unitPlayer:IsInCombat() then
-                    self.tCurrentEncounter = tModule
+    if self.bIsRunning then
+        for sName,tModule in pairs(self.modules) do
+            if self:CheckZone(tModule) then
+                return
+            end
 
-                    if self.tCurrentEncounter and self.tCurrentEncounter:IsEnabled() and not self.tCurrentEncounter:IsRunning() then
-                        self:StartFight()
-                    end
+            if self:CheckTrigger(tModule) and self.unitPlayer:IsInCombat() then
+                self.tCurrentEncounter = tModule
 
-                    return
+                if self.tCurrentEncounter and self.tCurrentEncounter:IsEnabled() and not self.tCurrentEncounter:IsRunning() then
+                    self:StartFight()
                 end
-            else
+
                 return
             end
         end
-    end
 
-    if self.bIsRunning then
         self:ResetFight()
     end
 
