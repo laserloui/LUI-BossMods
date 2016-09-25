@@ -108,13 +108,13 @@ function Mod:new(o)
                 enable = true,
                 priority = 5,
                 label = "unit.cooling_turbine",
-                color = "ade91dfb",
+                color = "afb0ff2f",
             },
             lubricant = {
                 enable = true,
                 priority = 6,
                 label = "unit.lubricant_nozzle",
-                color = "ade91dfb",
+                color = "afb0ff2f",
             },
         },
         timers = {
@@ -141,12 +141,12 @@ function Mod:new(o)
         },
         casts = {
             sword_jump = {
-                enable = true,
+                enable = false,
                 color = "ffff00ff",
                 label = "label.sword_jump",
             },
             gun_jump = {
-                enable = true,
+                enable = false,
                 color = "ffff00ff",
                 label = "label.gun_jump",
             },
