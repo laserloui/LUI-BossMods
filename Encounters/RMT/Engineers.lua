@@ -139,6 +139,18 @@ function Mod:new(o)
                 label = "debuff.atomic_attraction",
             },
         },
+        casts = {
+            sword_jump = {
+                enable = true,
+                color = "ffff00ff",
+                label = "label.sword_jump",
+            },
+            gun_jump = {
+                enable = true,
+                color = "ffff00ff",
+                label = "label.gun_jump",
+            },
+        },
         alerts = {
             pillar = {
                 enable = true,
@@ -429,6 +441,9 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.rocket_jump"] then
         local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
         if sCurrentPlatform then
+            if self.config.casts.sword_jump.enable == true then
+                self.core:ShowCast(tCast,sCastName,self.config.casts.sword_jump.color)
+            end
             if self.config.alerts.sword_jump.enable == true then
                 self.core:ShowAlert("sword_jump", self.L["alert.sword_jump"] .. self.L[sCurrentPlatform], self.config.alerts.sword_jump.duration, self.config.alerts.sword_jump.color)
             end
@@ -439,6 +454,9 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     elseif sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.rocket_jump"] then
         local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
         if sCurrentPlatform then
+            if self.config.casts.gun_jump.enable == true then
+                self.core:ShowCast(tCast,sCastName,self.config.casts.gun_jump.color)
+            end
             if self.config.alerts.gun_jump.enable == true then
                 self.core:ShowAlert("gun_jump", self.L["alert.gun_jump"] .. self.L[sCurrentPlatform], self.config.alerts.gun_jump.duration, self.config.alerts.gun_jump.color)
             end
