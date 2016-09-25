@@ -111,6 +111,8 @@ function LUI_BossMods:new(o)
             healthHeight = 32,
             shieldHeight = 10,
             shieldWidth = 40,
+            castColor = "96ff00ff",
+            mooColor = "ff9400d3",
             healthColor = "96adff2f",
             shieldColor = "9600ffff",
             absorbColor = "96ffd700",
@@ -228,7 +230,11 @@ function LUI_BossMods:LoadModules()
 end
 
 function LUI_BossMods:LoadSettings()
-    self.settings:Init(self)
+    if self.settings then
+        self.settings:Init(self)
+    else
+        self:Print("Settings unable to load.")
+    end
 end
 
 -- #########################################################################################################################################
@@ -319,6 +325,10 @@ function LUI_BossMods:CheckTrigger(tModule)
 
     if not tModule.tTrigger.tNames or not tModule.tTrigger.tNames[self.language] then
         return true
+    end
+
+    if not self.tSavedUnits then
+        return false
     end
 
     if tModule.tTrigger.sType == "ANY" then
@@ -445,6 +455,7 @@ function LUI_BossMods:StartFight()
         return
     end
 
+    self:OnBreakEnd()
     self.bIsRunning = true
     self.tCurrentEncounter:OnEnable()
     self:ProcessSavedUnits()
@@ -754,10 +765,10 @@ function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuf
             bShowUnit = bShowUnit or false,
             bOnCast = bOnCast or false,
             bOnBuff = bOnBuff or false,
-            bOnDebuff = bOnDebuff or false
+            bOnDebuff = bOnDebuff or false,
         }
 
-        if (bOnBuff ~= nil and bOnBuff == true) then
+        if ((bOnBuff ~= nil and bOnBuff == true) or (bOnDebuff ~= nil and bOnDebuff == true)) then
             self:CheckBuffs(nId)
         end
 
@@ -784,15 +795,24 @@ function LUI_BossMods:StyleUnit(wnd,tData)
     end
 
     wnd:SetAnchorOffsets(0,0,0,(self.config.units.healthHeight + 15))
+
     wnd:FindChild("ShieldBar"):SetAnchorPoints((0.95-(self.config.units.shieldWidth/100)),1,0.95,1)
     wnd:FindChild("ShieldBar"):SetAnchorOffsets(0,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
 
     wnd:FindChild("Name"):SetText(tData.sName)
     wnd:FindChild("Name"):SetTextColor(self.config.units.textColor)
+
     wnd:FindChild("Mark"):SetText(tData.sMark)
     wnd:FindChild("Mark"):Show(tData.sMark ~= nil,true)
-    wnd:FindChild("HealthText"):SetTextColor(self.config.units.textColor)
-    wnd:FindChild("HealthBar"):SetBGColor(tData.sColor or self.config.units.healthColor)
+
+    wnd:FindChild("HealthBar"):FindChild("Progress"):SetBGColor(tData.sColor or self.config.units.healthColor)
+    wnd:FindChild("HealthBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
+
+    wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.castColor)
+    wnd:FindChild("CastBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
+
+    wnd:FindChild("ShieldBar"):FindChild("Progress"):SetBGColor(self.config.units.shieldColor)
+    wnd:FindChild("ShieldBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
 
     return wnd
 end
@@ -837,6 +857,49 @@ function LUI_BossMods:UpdateUnit(tData)
         return
     end
 
+    if not tData.wnd then
+        return
+    end
+
+    -- Cast
+    if tData.tCast then
+        if not tData.tCast.bIsRunning then
+            local nRemaining = (tData.tCast.nDuration - tData.tCast.nElapsed)
+            local nElapsed = (tData.tCast.nElapsed * 100) / tData.tCast.nDuration
+            local nProgress = nElapsed / 100
+            local fPoint = 1
+
+            if tData.tCast.sName == "MOO" then
+                fPoint = 0
+                nProgress = 1 - nProgress
+                tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.mooColor)
+                tData.wnd:FindChild("CastBar"):FindChild("Percent"):SetText()
+            else
+                tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.castColor)
+                tData.wnd:FindChild("CastBar"):FindChild("Percent"):SetText(string.format("%.0f%%", nElapsed))
+            end
+
+            tData.wnd:FindChild("CastBar"):FindChild("Text"):SetText(tData.tCast.sName)
+            tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetAnchorPoints(0, 0, nProgress, 1)
+            tData.wnd:FindChild("CastBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, fPoint, 1}}), nRemaining)
+
+            tData.wnd:FindChild("CastBar"):Show(true,true)
+            tData.wnd:FindChild("HealthBar"):Show(false,true)
+
+            tData.tCast.bIsRunning = true
+        else
+            if tData.tCast.sName ~= "MOO" then
+                local nElapsed = (tData.tCast.nElapsed * 100) / tData.tCast.nDuration
+                tData.wnd:FindChild("CastBar"):FindChild("Percent"):SetText(string.format("%.0f%%", nElapsed))
+            end
+        end
+    else
+        if tData.wnd:FindChild("CastBar"):IsShown() then
+            tData.wnd:FindChild("CastBar"):Show(false,true)
+            tData.wnd:FindChild("HealthBar"):Show(true,true)
+        end
+    end
+
     -- Health
     local bIsDead = tData.tUnit:IsDead()
     local nHealth = tData.tUnit:GetHealth() or 0
@@ -850,8 +913,8 @@ function LUI_BossMods:UpdateUnit(tData)
 
     if nHealthProgress ~= (tData.runtime.health or 0) then
         if tData.wnd then
-            tData.wnd:FindChild("HealthText"):SetText(nHealthPercent > 0 and string.format("%.1f%%", nHealthPercent) or "DEAD")
-            tData.wnd:FindChild("HealthBar"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nHealthProgress, 1}}), .075)
+            tData.wnd:FindChild("HealthBar"):FindChild("Text"):SetText(nHealthPercent > 0 and string.format("%.1f%%", nHealthPercent) or "DEAD")
+            tData.wnd:FindChild("HealthBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nHealthProgress, 1}}), .075)
         end
 
         tData.runtime.health = nHealthProgress
@@ -859,10 +922,6 @@ function LUI_BossMods:UpdateUnit(tData)
         if self.tCurrentEncounter and self.tCurrentEncounter.OnHealthChanged then
             self.tCurrentEncounter:OnHealthChanged(tData.nId, nHealthPercent, tData.sName, tData.tUnit)
         end
-    end
-
-    if not tData.wnd then
-        return
     end
 
     -- Absorb
@@ -886,6 +945,7 @@ function LUI_BossMods:UpdateUnit(tData)
         end
 
         if nAbsorbProgress ~= (tData.runtime.shield or 0) then
+            tData.wnd:FindChild("ShieldBar"):FindChild("Text"):SetText(self:HelperFormatBigNumber(nAbsorb))
             tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nAbsorbProgress, 1}}), .075)
             tData.runtime.shield = nAbsorbProgress
         end
@@ -911,6 +971,7 @@ function LUI_BossMods:UpdateUnit(tData)
             end
 
             if nShieldProgress ~= (tData.runtime.shield or 0) then
+                tData.wnd:FindChild("ShieldBar"):FindChild("Text"):SetText(self:HelperFormatBigNumber(nShield))
                 tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nShieldProgress, 1}}), .075)
                 tData.runtime.shield = nShieldProgress
             end
@@ -959,20 +1020,24 @@ function LUI_BossMods:CheckBuffs(nId)
         return
     end
 
-    if self.runtime.units[nId] ~= nil and self.runtime.units[nId].bOnBuff then
+    if self.runtime.units[nId] ~= nil and (self.runtime.units[nId].bOnBuff == true or self.runtime.units[nId].bOnDebuff == true) then
         local tBuffs = self.runtime.units[nId].tUnit:GetBuffs()
 
         -- Process Buffs
-        if tBuffs ~= nil and tBuffs.arBeneficial ~= nil then
-            for i=1, #tBuffs.arBeneficial do
-                self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arBeneficial[i])
+        if self.runtime.units[nId].bOnBuff == true then
+            if tBuffs ~= nil and tBuffs.arBeneficial ~= nil then
+                for i=1, #tBuffs.arBeneficial do
+                    self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arBeneficial[i])
+                end
             end
         end
 
         -- Process Debuffs
-        if tBuffs ~= nil and tBuffs.arHarmful ~= nil then
-            for i=1, #tBuffs.arHarmful do
-                self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arHarmful[i])
+        if self.runtime.units[nId].bOnDebuff == true then
+            if tBuffs ~= nil and tBuffs.arHarmful ~= nil then
+                for i=1, #tBuffs.arHarmful do
+                    self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arHarmful[i])
+                end
             end
         end
     end
@@ -991,19 +1056,18 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
         return
     end
 
-    local nId = unit:GetId()
+    local buff = spell.splEffect:IsBeneficial()
+    local nUnitId = unit:GetId()
 
-    if self.runtime.units[nId] ~= nil  then
-        local buff = spell.splEffect:IsBeneficial() or false
-
-        if (buff == true and self.runtime.units[nId].bOnBuff) or (buff == false and self.runtime.units[unit:GetId()].bOnDebuff) then
+    if self.runtime.units[nUnitId] ~= nil then
+        if (buff == true and self.runtime.units[nUnitId].bOnBuff == true) or (buff == false and self.runtime.units[nUnitId].bOnDebuff == true) then
             local tData = {
                 nId = spell.splEffect:GetId(),
                 sName = spell.splEffect:GetName(),
                 nDuration = spell.fTimeRemaining,
                 nTick = GetTickCount(),
                 nCount = spell.nCount,
-                nUnitId = unit:GetId(),
+                nUnitId = nUnitId,
                 sUnitName = unit:GetName(),
                 tUnit = unit,
                 tSpell = spell,
@@ -1013,14 +1077,14 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
                 self.tCurrentEncounter:OnBuffAdded(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
             end
         end
-    elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and spell.splEffect:IsBeneficial() == false then
+    elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and buff == false then
         local tData = {
             nId = spell.splEffect:GetId(),
             sName = spell.splEffect:GetName(),
             nDuration = spell.fTimeRemaining,
             nTick = GetTickCount(),
             nCount = spell.nCount,
-            nUnitId = unit:GetId(),
+            nUnitId = nUnitId,
             sUnitName = unit:GetName(),
             tUnit = unit,
             tSpell = spell,
@@ -1045,14 +1109,35 @@ function LUI_BossMods:OnBuffUpdated(unit,spell)
         return
     end
 
-    if self.runtime.units[unit:GetId()] ~= nil and self.runtime.units[unit:GetId()].bOnBuff then
+    local buff = spell.splEffect:IsBeneficial()
+    local nUnitId = unit:GetId()
+
+    if self.runtime.units[nUnitId] ~= nil then
+        if (buff == true and self.runtime.units[nUnitId].bOnBuff == true) or (buff == false and self.runtime.units[nUnitId].bOnDebuff == true) then
+            local tData = {
+                nId = spell.splEffect:GetId(),
+                sName = spell.splEffect:GetName(),
+                nDuration = spell.fTimeRemaining,
+                nTick = GetTickCount(),
+                nCount = spell.nCount,
+                nUnitId = nUnitId,
+                sUnitName = unit:GetName(),
+                tUnit = unit,
+                tSpell = spell,
+            }
+
+            if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffUpdated then
+                self.tCurrentEncounter:OnBuffUpdated(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
+            end
+        end
+    elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and buff == false then
         local tData = {
             nId = spell.splEffect:GetId(),
             sName = spell.splEffect:GetName(),
             nDuration = spell.fTimeRemaining,
             nTick = GetTickCount(),
             nCount = spell.nCount,
-            nUnitId = unit:GetId(),
+            nUnitId = nUnitId,
             sUnitName = unit:GetName(),
             tUnit = unit,
             tSpell = spell,
@@ -1077,11 +1162,29 @@ function LUI_BossMods:OnBuffRemoved(unit,spell)
         return
     end
 
-    if self.runtime.units[unit:GetId()] ~= nil and self.runtime.units[unit:GetId()].bOnBuff then
+    local buff = spell.splEffect:IsBeneficial()
+    local nUnitId = unit:GetId()
+
+    if self.runtime.units[nUnitId] ~= nil then
+        if (buff == true and self.runtime.units[nUnitId].bOnBuff == true) or (buff == false and self.runtime.units[nUnitId].bOnDebuff == true) then
+            local tData = {
+                nId = spell.splEffect:GetId(),
+                sName = spell.splEffect:GetName(),
+                nUnitId = nUnitId,
+                sUnitName = unit:GetName(),
+                tUnit = unit,
+                tSpell = spell,
+            }
+
+            if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffRemoved then
+                self.tCurrentEncounter:OnBuffRemoved(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName)
+            end
+        end
+    elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and buff == false then
         local tData = {
             nId = spell.splEffect:GetId(),
             sName = spell.splEffect:GetName(),
-            nUnitId = unit:GetId(),
+            nUnitId = nUnitId,
             sUnitName = unit:GetName(),
             tUnit = unit,
             tSpell = spell,
@@ -1171,8 +1274,12 @@ function LUI_BossMods:RemoveTimer(sName,bCallback)
     end
 
     if bCallback ~= nil and bCallback == true then
-        if self.runtime.timer[sName].fHandler and self.tCurrentEncounter then
-            self.runtime.timer[sName].fHandler(self.tCurrentEncounter, self.runtime.timer[sName].tData)
+        if self.runtime.timer[sName].fHandler then
+            if self.tCurrentEncounter then
+                self.runtime.timer[sName].fHandler(self.tCurrentEncounter, self.runtime.timer[sName].tData)
+            else
+                self.runtime.timer[sName].fHandler(self, self.runtime.timer[sName].tData)
+            end
         end
     end
 
@@ -1374,8 +1481,11 @@ function LUI_BossMods:ShowCast(tCast,sName,sColor)
         fPoint = 0
         nProgress = 1 - nProgress
         self.wndCastbar:FindChild("Progress"):SetBGColor(self.config.castbar.mooColor)
+        self.wndCastbar:FindChild("Duration"):SetText()
     else
         self.wndCastbar:FindChild("Progress"):SetBGColor(sColor or self.config.castbar.barColor)
+        self.wndCastbar:FindChild("Duration"):SetTextColor(self.config.castbar.textColor)
+        self.wndCastbar:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
     end
 
     local sCastName = sName
@@ -1386,8 +1496,6 @@ function LUI_BossMods:ShowCast(tCast,sName,sColor)
 
     self.wndCastbar:FindChild("Name"):SetTextColor(self.config.castbar.textColor)
     self.wndCastbar:FindChild("Name"):SetText(sCastName)
-    self.wndCastbar:FindChild("Duration"):SetTextColor(self.config.castbar.textColor)
-    self.wndCastbar:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
     self.wndCastbar:FindChild("Progress"):SetAnchorPoints(0, 0, nProgress, 1)
     self.wndCastbar:FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, fPoint, 1}}), nRemaining)
 end
@@ -1407,7 +1515,9 @@ function LUI_BossMods:UpdateCast()
     if tCast.nElapsed > tCast.nDuration then
         self:HideCast()
     else
-        self.wndCastbar:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
+        if tCast.sName == "MOO" then
+            self.wndCastbar:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
+        end
     end
 end
 
@@ -1577,8 +1687,9 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, sFont)
                 0,
                 offsetTop
             }
-            alert.wnd:SetOpacity(0.65)
-            alert.wnd:TransitionMove(WindowLocation.new({fPoints = {0,0,1,0}, nOffsets = tOffsets}), .25)
+            --alert.wnd:SetOpacity(0.65)
+            --alert.wnd:TransitionMove(WindowLocation.new({fPoints = {0,0,1,0}, nOffsets = tOffsets}), .25)
+            alert.wnd:SetAnchorOffsets(unpack(tOffsets))
         end
     end
 
@@ -1802,17 +1913,15 @@ function LUI_BossMods:RemoveIcon(Key,bCallback)
         return
     end
 
-    local tDraw = self.tDraws[Key]
-
-    if tDraw then
-        if tDraw.wnd then
-            tDraw.wnd:Show(false,true)
-            tDraw.wnd:Destroy()
+    if self.tDraws[Key] then
+        if self.tDraws[Key].wnd then
+            self.tDraws[Key].wnd:Show(false,true)
+            self.tDraws[Key].wnd:Destroy()
         end
 
         if bCallback ~= nil and bCallback == true then
-            if tDraw.fHandler and self.tCurrentEncounter then
-                tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
+            if self.tDraws[Key].fHandler and self.tCurrentEncounter then
+                self.tDraws[Key].fHandler(self.tCurrentEncounter, self.tDraws[Key].tData)
             end
         end
 
@@ -2758,8 +2867,53 @@ function LUI_BossMods:OnConfigure()
     self.settings:OnToggleMenu()
 end
 
-function LUI_BossMods:OnSlashCommand()
-    self.settings:OnToggleMenu()
+function LUI_BossMods:OnSlashCommand(cmd, args)
+    local tArgc = {}
+
+    for sWord in string.gmatch(args, "[^%s]+") do
+        table.insert(tArgc, sWord)
+    end
+
+    local strName, nDuration
+
+    if #tArgc >= 1 then
+        strName = tArgc[1] == "break" and tArgc[1] or nil
+        nDuration = tonumber(tArgc[2]) ~= nil and tonumber(tArgc[2]) or nil
+    end
+
+    if strName and nDuration then
+    	self:AddTimer("break", "Break", nDuration, nil, LUI_BossMods.OnBreakFinished)
+
+        if not self.breakTimer then
+            self.breakTimer = ApolloTimer.Create(0.1, true, "OnBreakTimer", self)
+            self.breakTimer:Start()
+        end
+	else
+	    self.settings:OnToggleMenu()
+    end
+end
+
+function LUI_BossMods:OnBreakFinished()
+    GroupLib.ReadyCheck()
+end
+
+function LUI_BossMods:OnBreakTimer()
+    if self.runtime.timer and self.runtime.timer["break"] then
+        self:UpdateTimer(self.runtime.timer["break"])
+        self:SortTimer()
+    else
+        if self.breakTimer then
+            self.breakTimer:Stop()
+        end
+
+        self.breakTimer = nil
+    end
+end
+
+function LUI_BossMods:OnBreakEnd()
+    if self.runtime.timer and self.runtime.timer["break"] then
+        self:RemoveTimer("break")
+    end
 end
 
 function LUI_BossMods:OnInterfaceMenuListHasLoaded()
@@ -2854,6 +3008,34 @@ function LUI_BossMods:InsertDefaults(t,defaults)
     end
 
     return t
+end
+
+function LUI_BossMods:HelperFormatBigNumber(nArg)
+    local strResult
+    if nArg < 1000 then
+        strResult = tostring(nArg)
+    elseif nArg < 1000000 then
+        if math.floor(nArg%1000/100) == 0 then
+            strResult = String_GetWeaselString("$1ck", math.floor(nArg / 1000))
+        else
+            strResult = String_GetWeaselString("$1f1k", nArg / 1000)
+        end
+    elseif nArg < 1000000000 then
+        if math.floor(nArg%1000000/100000) == 0 then
+            strResult = String_GetWeaselString("$1cm", math.floor(nArg / 1000000))
+        else
+            strResult = String_GetWeaselString("$1f1m", nArg / 1000000)
+        end
+    elseif nArg < 1000000000000 then
+        if math.floor(nArg%1000000/100000) == 0 then
+            strResult = String_GetWeaselString("$1cb", math.floor(nArg / 1000000))
+        else
+            strResult = String_GetWeaselString("$1f1b", nArg / 1000000)
+        end
+    else
+        strResult = tostring(nArg)
+    end
+    return strResult
 end
 
 function LUI_BossMods:Rotation(tVector, tMatrixTeta)
