@@ -230,7 +230,11 @@ function LUI_BossMods:LoadModules()
 end
 
 function LUI_BossMods:LoadSettings()
-    self.settings:Init(self)
+    if self.settings then
+        self.settings:Init(self)
+    else
+        self:Print("Settings unable to load.")
+    end
 end
 
 -- #########################################################################################################################################
@@ -791,17 +795,22 @@ function LUI_BossMods:StyleUnit(wnd,tData)
     end
 
     wnd:SetAnchorOffsets(0,0,0,(self.config.units.healthHeight + 15))
+
     wnd:FindChild("ShieldBar"):SetAnchorPoints((0.95-(self.config.units.shieldWidth/100)),1,0.95,1)
     wnd:FindChild("ShieldBar"):SetAnchorOffsets(0,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
 
     wnd:FindChild("Name"):SetText(tData.sName)
     wnd:FindChild("Name"):SetTextColor(self.config.units.textColor)
+
     wnd:FindChild("Mark"):SetText(tData.sMark)
     wnd:FindChild("Mark"):Show(tData.sMark ~= nil,true)
-    wnd:FindChild("HealthText"):SetTextColor(self.config.units.textColor)
-    wnd:FindChild("HealthBar"):SetBGColor(tData.sColor or self.config.units.healthColor)
+
+    wnd:FindChild("HealthBar"):FindChild("Progress"):SetBGColor(tData.sColor or self.config.units.healthColor)
+    wnd:FindChild("HealthBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
+
     wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.castColor)
     wnd:FindChild("CastBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
+
     wnd:FindChild("ShieldBar"):FindChild("Progress"):SetBGColor(self.config.units.shieldColor)
     wnd:FindChild("ShieldBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
 
@@ -873,7 +882,9 @@ function LUI_BossMods:UpdateUnit(tData)
             tData.wnd:FindChild("CastBar"):FindChild("Text"):SetText(tData.tCast.sName)
             tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetAnchorPoints(0, 0, nProgress, 1)
             tData.wnd:FindChild("CastBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, fPoint, 1}}), nRemaining)
+
             tData.wnd:FindChild("CastBar"):Show(true,true)
+            tData.wnd:FindChild("HealthBar"):Show(false,true)
 
             tData.tCast.bIsRunning = true
         else
@@ -883,7 +894,10 @@ function LUI_BossMods:UpdateUnit(tData)
             end
         end
     else
-        tData.wnd:FindChild("CastBar"):Show(false,true)
+        if tData.wnd:FindChild("CastBar"):IsShown() then
+            tData.wnd:FindChild("CastBar"):Show(false,true)
+            tData.wnd:FindChild("HealthBar"):Show(true,true)
+        end
     end
 
     -- Health
@@ -899,8 +913,8 @@ function LUI_BossMods:UpdateUnit(tData)
 
     if nHealthProgress ~= (tData.runtime.health or 0) then
         if tData.wnd then
-            tData.wnd:FindChild("HealthText"):SetText(nHealthPercent > 0 and string.format("%.1f%%", nHealthPercent) or "DEAD")
-            tData.wnd:FindChild("HealthBar"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nHealthProgress, 1}}), .075)
+            tData.wnd:FindChild("HealthBar"):FindChild("Text"):SetText(nHealthPercent > 0 and string.format("%.1f%%", nHealthPercent) or "DEAD")
+            tData.wnd:FindChild("HealthBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nHealthProgress, 1}}), .075)
         end
 
         tData.runtime.health = nHealthProgress
@@ -931,8 +945,8 @@ function LUI_BossMods:UpdateUnit(tData)
         end
 
         if nAbsorbProgress ~= (tData.runtime.shield or 0) then
-            tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nAbsorbProgress, 1}}), .075)
             tData.wnd:FindChild("ShieldBar"):FindChild("Text"):SetText(self:HelperFormatBigNumber(nAbsorb))
+            tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nAbsorbProgress, 1}}), .075)
             tData.runtime.shield = nAbsorbProgress
         end
     else
@@ -957,8 +971,8 @@ function LUI_BossMods:UpdateUnit(tData)
             end
 
             if nShieldProgress ~= (tData.runtime.shield or 0) then
-                tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nShieldProgress, 1}}), .075)
                 tData.wnd:FindChild("ShieldBar"):FindChild("Text"):SetText(self:HelperFormatBigNumber(nShield))
+                tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nShieldProgress, 1}}), .075)
                 tData.runtime.shield = nShieldProgress
             end
         else
@@ -1260,8 +1274,12 @@ function LUI_BossMods:RemoveTimer(sName,bCallback)
     end
 
     if bCallback ~= nil and bCallback == true then
-        if self.runtime.timer[sName].fHandler and self.tCurrentEncounter then
-            self.runtime.timer[sName].fHandler(self.tCurrentEncounter, self.runtime.timer[sName].tData)
+        if self.runtime.timer[sName].fHandler then
+            if self.tCurrentEncounter then
+                self.runtime.timer[sName].fHandler(self.tCurrentEncounter, self.runtime.timer[sName].tData)
+            else
+                self.runtime.timer[sName].fHandler(self, self.runtime.timer[sName].tData)
+            end
         end
     end
 
@@ -2858,7 +2876,7 @@ function LUI_BossMods:OnSlashCommand(cmd, args)
     end
 
     if strName and nDuration then
-    	self:AddTimer("break", "Break", nDuration)
+    	self:AddTimer("break", "Break", nDuration, nil, LUI_BossMods.OnBreakFinished)
 
         if not self.breakTimer then
             self.breakTimer = ApolloTimer.Create(0.1, true, "OnBreakTimer", self)
@@ -2869,13 +2887,15 @@ function LUI_BossMods:OnSlashCommand(cmd, args)
     end
 end
 
+function LUI_BossMods:OnBreakFinished()
+    GroupLib.ReadyCheck()
+end
+
 function LUI_BossMods:OnBreakTimer()
     if self.runtime.timer and self.runtime.timer["break"] then
-        self:UpdateTimer("break")
+        self:UpdateTimer(self.runtime.timer["break"])
         self:SortTimer()
-        Print("Update")
     else
-        Print("Remove")
         if self.breakTimer then
             self.breakTimer:Stop()
         end
