@@ -108,9 +108,9 @@ function LUI_BossMods:new(o)
         },
         units = {
             enable = true,
+            showText = false,
             healthHeight = 32,
             shieldHeight = 10,
-            shieldWidth = 40,
             castColor = "96ff00ff",
             mooColor = "ff9400d3",
             healthColor = "96adff2f",
@@ -795,9 +795,8 @@ function LUI_BossMods:StyleUnit(wnd,tData)
     end
 
     wnd:SetAnchorOffsets(0,0,0,(self.config.units.healthHeight + 15))
-
-    wnd:FindChild("ShieldBar"):SetAnchorPoints((0.95-(self.config.units.shieldWidth/100)),1,0.95,1)
-    wnd:FindChild("ShieldBar"):SetAnchorOffsets(0,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
+    wnd:FindChild("ShieldBar"):SetAnchorOffsets(4,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
+    wnd:FindChild("CastBar"):SetAnchorOffsets(0,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
 
     wnd:FindChild("Name"):SetText(tData.sName)
     wnd:FindChild("Name"):SetTextColor(self.config.units.textColor)
@@ -813,6 +812,7 @@ function LUI_BossMods:StyleUnit(wnd,tData)
 
     wnd:FindChild("ShieldBar"):FindChild("Progress"):SetBGColor(self.config.units.shieldColor)
     wnd:FindChild("ShieldBar"):FindChild("Text"):SetTextColor(self.config.units.textColor)
+    wnd:FindChild("ShieldBar"):FindChild("Text"):Show(self.config.units.showText,true)
 
     return wnd
 end
@@ -859,45 +859,6 @@ function LUI_BossMods:UpdateUnit(tData)
 
     if not tData.wnd then
         return
-    end
-
-    -- Cast
-    if tData.tCast then
-        if not tData.tCast.bIsRunning then
-            local nRemaining = (tData.tCast.nDuration - tData.tCast.nElapsed)
-            local nElapsed = (tData.tCast.nElapsed * 100) / tData.tCast.nDuration
-            local nProgress = nElapsed / 100
-            local fPoint = 1
-
-            if tData.tCast.sName == "MOO" then
-                fPoint = 0
-                nProgress = 1 - nProgress
-                tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.mooColor)
-                tData.wnd:FindChild("CastBar"):FindChild("Percent"):SetText()
-            else
-                tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.castColor)
-                tData.wnd:FindChild("CastBar"):FindChild("Percent"):SetText(string.format("%.0f%%", nElapsed))
-            end
-
-            tData.wnd:FindChild("CastBar"):FindChild("Text"):SetText(tData.tCast.sName)
-            tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetAnchorPoints(0, 0, nProgress, 1)
-            tData.wnd:FindChild("CastBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, fPoint, 1}}), nRemaining)
-
-            tData.wnd:FindChild("CastBar"):Show(true,true)
-            tData.wnd:FindChild("HealthBar"):Show(false,true)
-
-            tData.tCast.bIsRunning = true
-        else
-            if tData.tCast.sName ~= "MOO" then
-                local nElapsed = (tData.tCast.nElapsed * 100) / tData.tCast.nDuration
-                tData.wnd:FindChild("CastBar"):FindChild("Percent"):SetText(string.format("%.0f%%", nElapsed))
-            end
-        end
-    else
-        if tData.wnd:FindChild("CastBar"):IsShown() then
-            tData.wnd:FindChild("CastBar"):Show(false,true)
-            tData.wnd:FindChild("HealthBar"):Show(true,true)
-        end
     end
 
     -- Health
@@ -979,6 +940,48 @@ function LUI_BossMods:UpdateUnit(tData)
             if tData.wnd:FindChild("ShieldBar"):IsShown() then
                 tData.wnd:FindChild("ShieldBar"):Show(false,true)
             end
+        end
+    end
+
+    -- Cast
+    if tData.tCast then
+        if tData.runtime.shield ~= nil and tData.runtime.shield > 0 then
+            if tData.runtime.isMax then
+                tData.wnd:FindChild("CastBar"):SetAnchorPoints(0.05,1,0.65,1)
+                tData.runtime.isMax = nil
+            end
+        else
+            if not tData.runtime.isMax then
+                tData.wnd:FindChild("CastBar"):SetAnchorPoints(0.05,1,0.95,1)
+                tData.runtime.isMax = true
+            end
+        end
+
+        if not tData.tCast.bIsRunning then
+            local nRemaining = (tData.tCast.nDuration - tData.tCast.nElapsed)
+            local nElapsed = (tData.tCast.nElapsed * 100) / tData.tCast.nDuration
+            local nProgress = nElapsed / 100
+            local fPoint = 1
+
+            if tData.tCast.sName == "MOO" then
+                fPoint = 0
+                nProgress = 1 - nProgress
+                tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.mooColor)
+            else
+                tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetBGColor(self.config.units.castColor)
+            end
+
+            tData.wnd:FindChild("CastBar"):FindChild("Text"):SetText(tData.tCast.sName)
+            tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetAnchorPoints(0, 0, nProgress, 1)
+            tData.wnd:FindChild("CastBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, fPoint, 1}}), nRemaining)
+
+            tData.wnd:FindChild("CastBar"):Show(true,true)
+
+            tData.tCast.bIsRunning = true
+        end
+    else
+        if tData.wnd:FindChild("CastBar"):IsShown() then
+            tData.wnd:FindChild("CastBar"):Show(false,true)
         end
     end
 end
