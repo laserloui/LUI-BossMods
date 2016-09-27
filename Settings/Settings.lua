@@ -1284,6 +1284,7 @@ function Settings:OnLock(state)
         self.core.wndTimers:SetStyle("Picture", state)
         self.core.wndTimers:SetStyle("IgnoreMouse", not state)
         self.core.wndTimers:SetText(state == true and "TIMER" or "")
+		self.core.wndTimers:SetSprite(state == true and "AbilitiesSprites:spr_StatVertProgBase" or "")
 
         if state == true or not self.core.bIsRunning == true then
             self.core.wndTimers:Show(state,true)
@@ -1296,6 +1297,7 @@ function Settings:OnLock(state)
         self.core.wndUnits:SetStyle("Picture", state)
         self.core.wndUnits:SetStyle("IgnoreMouse", not state)
         self.core.wndUnits:SetText(state == true and "UNITS" or "")
+        self.core.wndUnits:SetSprite(state == true and "AbilitiesSprites:spr_StatVertProgBase" or "")
 
         if state == true or not self.core.bIsRunning == true then
             self.core.wndUnits:Show(state,true)
@@ -1309,6 +1311,7 @@ function Settings:OnLock(state)
         self.core.wndCastbar:SetStyle("IgnoreMouse", not state)
         self.core.wndCastbar:FindChild("Container"):Show(not state,true)
         self.core.wndCastbar:SetText(state == true and "CASTBAR" or "")
+        self.core.wndCastbar:SetSprite(state == true and "AbilitiesSprites:spr_StatVertProgBase" or "")
 
         if state == true or not self.core.bIsRunning == true then
             self.core.wndCastbar:Show(state,true)
@@ -1322,6 +1325,7 @@ function Settings:OnLock(state)
         self.core.wndAura:SetStyle("IgnoreMouse", not state)
         self.core.wndAura:FindChild("Icon"):Show(not state,true)
         self.core.wndAura:SetText(state == true and "AURA" or "")
+        self.core.wndAura:SetSprite(state == true and "AbilitiesSprites:spr_StatVertProgBase" or "")
 
         if state == true or not self.core.bIsRunning == true then
             self.core.wndAura:Show(state,true)
@@ -1333,6 +1337,7 @@ function Settings:OnLock(state)
         self.core.wndAlerts:SetStyle("Picture", state)
         self.core.wndAlerts:SetStyle("IgnoreMouse", not state)
         self.core.wndAlerts:SetText(state == true and "ALERTS" or "")
+        self.core.wndAlerts:SetSprite(state == true and "AbilitiesSprites:spr_StatVertProgBase" or "")
 
         if state == true or not self.core.bIsRunning == true then
             self.core.wndAlerts:Show(state,true)

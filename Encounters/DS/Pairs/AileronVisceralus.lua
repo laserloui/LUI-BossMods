@@ -23,7 +23,7 @@ function Mod:new(o)
     self.displayName = "Aileron & Visceralus"
     self.groupName = "Elemental Pairs"
     self.tTrigger = {
-        sType = "ANY",
+        sType = "ALL",
         tZones = {
             [1] = {
                 continentId = 52,
@@ -33,6 +33,8 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Aileron","Visceralus"},
+            ["deDE"] = {"Aileron","Visceralus"},
+            ["frFR"] = {"Aileron","Visceralus"},
         },
     }
     self.run = false

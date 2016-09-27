@@ -26,8 +26,32 @@ local Locales = {
         -- Labels
         ["label.lines_room"] = "Room Dividers",
         ["label.circle_telegraph"] = "Circle Telegraphs",
+		
+		["text.stackmoron"] = "/p I hit %d stacks because I'm a complete moron.",
     },
-    ["deDE"] = {},
+    ["deDE"] = {
+		-- Units
+        ["unit.boss"] = "Swabbie Ski'Li", -- Some of these might look to be english. They are. Because the Client doesnt Localize them... Carbine -.-
+        ["unit.noxious_nabber"] = "Noxious Nabber",
+        ["unit.regor_the_rancid"] = "Regor the Rancid", -- Miniboss during Midphase
+        ["unit.braugh_the_bloodied"] = "Braugh der Blähbauch", -- Miniboss during Midphase
+        ["unit.sawblade"] = "Sägeblatt",
+        ["unit.circle_telegraph"] = "Feindselige unsichtbare Einheit für Felder (Trefferradius 1.2)",
+        -- Casts
+        ["cast.necrotic_lash"] = "Nekrotisches Peitschen", -- Cast by Noxious Nabber (grab and disorient), interruptable
+        ["cast.deathwail"] = "Totenklage", -- Miniboss knockdown, interruptable
+        ["cast.gravedigger"] = "Totengräber", -- Miniboss cast
+        -- Alerts
+        ["alert.oozing_bile"] = "Triefende Galle - Stop Damage!",
+        ["alert.interrupt"] = "Unterbrechen!",
+        -- Debuffs
+        ["debuff.oozing_bile"] = "Triefende Galle",
+        -- Labels
+        ["label.lines_room"] = "Raum Einteilungen",
+        ["label.circle_telegraph"] = "Kreis Telegraphen",
+		
+		["text.stackmoron"] = "/gr Ich Vollidiot habe %d Stacks erreicht!",
+	},
     ["frFR"] = {},
 }
 
@@ -57,6 +81,8 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Swabbie Ski'Li"},
+            ["deDE"] = {"Swabbie Ski'Li"},
+            ["frFR"] = {"Swabbie Ski'Li"},
         },
     }
     self.run = false
@@ -241,7 +267,7 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
             end
 
             if nStack >= 10 then
-                ChatSystemLib.Command("/p I hit " .. nStack .. " stacks because I'm a complete moron.")
+                ChatSystemLib.Command(self.L["text.stackmoron"]:format(nStack))
             end
         end
     end
