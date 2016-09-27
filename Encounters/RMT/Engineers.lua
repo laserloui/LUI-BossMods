@@ -344,6 +344,12 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 end
 
+function Mod:OnUnitDestroyed(nId, tUnit, sName)
+    if sName == self.L["unit.circle_telegraph"] then
+        self.core:RemovePolygon(nId)
+    end
+end
+
 function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
     if sName == self.L["unit.fusion_core"] or sName == self.L["unit.lubricant_nozzle"] or sName == self.L["unit.spark_plug"] or sName == self.L["unit.cooling_turbine"] then
         if self.config.icons.pillar.enable == true then
