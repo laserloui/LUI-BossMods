@@ -219,6 +219,14 @@ function Mod:OnUnitDestroyed(nId, tUnit, sName)
     end
 end
 
+function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
+    if sName == self.L["unit.noxious_nabber"] or sName == self.L["unit.regor_the_rancid"] or sName == self.L["unit.braugh_the_bloodied"] then
+        if tUnit:IsDead() then
+            self.core:RemoveUnit(nId)
+        end
+    end
+end
+
 function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if DEBUFF_OOZING_BILE == nSpellId then
         if tData.tUnit:IsThePlayer() then
