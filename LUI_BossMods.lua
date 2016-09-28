@@ -1327,12 +1327,12 @@ function LUI_BossMods:CheckCast(tData)
         elseif tData.tCast then
             if sName ~= tData.tCast.sName or nElapsed < tData.tCast.nElapsed then
                 -- New cast just after a previous one.
-                if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
-                    self.tCurrentEncounter:OnCastEnd(tData.nId, tData.tCast.sName, tData.tCast, tData.sName)
-                end
-
                 if self.runtime.cast and self.runtime.cast.nUnitId == tData.nId then
                     self:HideCast()
+                end
+
+                if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
+                    self.tCurrentEncounter:OnCastEnd(tData.nId, tData.tCast.sName, tData.tCast, tData.sName)
                 end
 
                 tData.tCast = {
@@ -1353,12 +1353,12 @@ function LUI_BossMods:CheckCast(tData)
             else
                 if nTick > (tData.tCast.nTick + (tData.tCast.nDuration * 1000)) then
                     -- End of cast
-                    if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
-                        self.tCurrentEncounter:OnCastEnd(tData.nId, tData.tCast.sName, tData.tCast, tData.sName)
-                    end
-
                     if self.runtime.cast and self.runtime.cast.nUnitId == tData.nId then
                         self:HideCast()
+                    end
+
+                    if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
+                        self.tCurrentEncounter:OnCastEnd(tData.nId, tData.tCast.sName, tData.tCast, tData.sName)
                     end
 
                     tData.tCast = nil
@@ -1371,16 +1371,16 @@ function LUI_BossMods:CheckCast(tData)
             end
         end
     else
+        if self.runtime.cast and self.runtime.cast.nUnitId == tData.nId then
+            self:HideCast()
+        end
+
         if tData.tCast ~= nil then
             if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
                 self.tCurrentEncounter:OnCastEnd(tData.nId, tData.tCast.sName, tData.tCast, tData.sName)
             end
 
             tData.tCast = nil
-        end
-
-        if self.runtime.cast and self.runtime.cast.nUnitId == tData.nId then
-            self:HideCast()
         end
 
         return
