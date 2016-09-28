@@ -444,14 +444,12 @@ function LUI_BossMods:StartFight()
     self.tCurrentEncounter:OnEnable()
     self:ProcessSavedUnits()
 
-    Apollo.RemoveEventHandler("VarChange_FrameCount",self)
-    Apollo.RegisterEventHandler("VarChange_FrameCount", "OnUpdate", self)
+    Apollo.RemoveEventHandler("NextFrame",self)
+    Apollo.RegisterEventHandler("NextFrame", "OnUpdate", self)
+    Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
 
     Apollo.RemoveEventHandler("ChatMessage",self)
     Apollo.RegisterEventHandler("ChatMessage", "OnChatMessage", self)
-
-    Apollo.RemoveEventHandler("NextFrame",self)
-    Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
 
     Apollo.RemoveEventHandler("BuffAdded",self)
     Apollo.RegisterEventHandler("BuffAdded", "OnBuffAdded", self)
@@ -468,7 +466,6 @@ function LUI_BossMods:ResetFight()
     self.wipeTimer:Stop()
 
     Apollo.RemoveEventHandler("NextFrame",self)
-    Apollo.RemoveEventHandler("VarChange_FrameCount",self)
     Apollo.RemoveEventHandler("ChatMessage",self)
     Apollo.RemoveEventHandler("BuffAdded",self)
     Apollo.RemoveEventHandler("BuffUpdated",self)
@@ -1572,7 +1569,7 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, sFont)
+function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor)
     if not sName or not sText then
         return
     end
@@ -1596,7 +1593,7 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, sFont)
     self.runtime.alerts[sName].nTick = GetTickCount()
     self.runtime.alerts[sName].nDuration = nDuration or 5
     self.runtime.alerts[sName].wnd:SetText(sText or "")
-    self.runtime.alerts[sName].wnd:SetFont(sFont or self.config.alerts.font)
+    self.runtime.alerts[sName].wnd:SetFont(self.config.alerts.font)
     self.runtime.alerts[sName].wnd:SetTextColor(sColor or self.config.alerts.color)
     self.runtime.alerts[sName].wnd:SetAnchorOffsets(0,0,0,nHeight)
 
@@ -2363,7 +2360,7 @@ function LUI_BossMods:RemoveLine(Key,bCallback)
     end
 end
 
-function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, nWidth, sColor, nDuration, nNumberOfDot, fHandler, tData)
+function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, sColor, nWidth, nDuration, nNumberOfDot, fHandler, tData)
     if not self.wndOverlay then
         self:LoadWindows()
     end

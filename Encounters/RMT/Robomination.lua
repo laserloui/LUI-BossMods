@@ -243,17 +243,17 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         end
 
         if self.config.lines.cannon_arm.enable == true then
-            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.cannon_arm.thickness, self.config.lines.cannon_arm.color)
+            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.cannon_arm.color, self.config.lines.cannon_arm.thickness)
         end
     elseif sName == self.L["unit.flailing_arm"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.flailing_arm.enable,true,false,false,nil,self.config.units.flailing_arm.color, self.config.units.flailing_arm.priority)
 
         if self.config.lines.flailing_arm.enable == true then
-            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.flailing_arm.thickness, self.config.lines.flailing_arm.color)
+            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.flailing_arm.color, self.config.lines.flailing_arm.thickness)
         end
     elseif sName == self.L["unit.scanning_eye"] then
         if self.config.lines.scanning_eye.enable == true then
-            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.scanning_eye.thickness, self.config.lines.scanning_eye.color)
+            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.scanning_eye.color, self.config.lines.scanning_eye.thickness)
         end
     end
 end
@@ -402,7 +402,7 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
             end
 
             if self.boss and self.config.lines.incineration.enable == true then
-                self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration.thickness, self.config.lines.incineration.color, 10)
+                self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration.color, self.config.lines.incineration.thickness, 10)
             end
         end
     end

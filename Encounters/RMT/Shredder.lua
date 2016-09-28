@@ -26,8 +26,31 @@ local Locales = {
         -- Labels
         ["label.lines_room"] = "Room Dividers",
         ["label.circle_telegraph"] = "Circle Telegraphs",
+        -- Texts
+        ["text.stackmoron"] = "/p I hit %d stacks because I'm a complete moron.",
     },
-    ["deDE"] = {},
+    ["deDE"] = {
+        ["unit.boss"] = "Swabbie Ski'Li",
+        ["unit.noxious_nabber"] = "Noxious Nabber",
+        ["unit.regor_the_rancid"] = "Regor the Rancid", -- Miniboss during Midphase
+        ["unit.braugh_the_bloodied"] = "Braugh der Blähbauch", -- Miniboss during Midphase
+        ["unit.sawblade"] = "Sägeblatt",
+        ["unit.circle_telegraph"] = "Feindselige unsichtbare Einheit für Felder (Trefferradius 1.2)",
+        -- Casts
+        ["cast.necrotic_lash"] = "Nekrotisches Peitschen", -- Cast by Noxious Nabber (grab and disorient), interruptable
+        ["cast.deathwail"] = "Totenklage", -- Miniboss knockdown, interruptable
+        ["cast.gravedigger"] = "Gravedigger", -- Miniboss cast
+        -- Alerts
+        ["alert.oozing_bile"] = "Triefende Galle - Stop Damage!",
+        ["alert.interrupt"] = "Unterbrechen!",
+        -- Debuffs
+        ["debuff.oozing_bile"] = "Triefende Galle",
+        -- Labels
+        ["label.lines_room"] = "Raum Einteilungen",
+        ["label.circle_telegraph"] = "Kreis Telegraphen",
+        -- Texts
+        ["text.stackmoron"] = "/gr Ich Vollidiot habe %d Stacks erreicht!",
+    },
     ["frFR"] = {},
 }
 
@@ -57,6 +80,7 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Swabbie Ski'Li"},
+            ["deDE"] = {"Swabbie Ski'Li"},
         },
     }
     self.run = false
@@ -190,9 +214,9 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
 
         if self.config.lines.room.enable == true then
-            self.core:DrawLineBetween("ExitLine", EXITLINE_A, EXITLINE_B, self.config.lines.room.thickness, self.config.lines.room.color)
-            self.core:DrawLineBetween("CenterLine", CENTERLINE_A, CENTERLINE_B, self.config.lines.room.thickness, self.config.lines.room.color)
-            self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, self.config.lines.room.thickness, self.config.lines.room.color)
+            self.core:DrawLineBetween("ExitLine", EXITLINE_A, EXITLINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
+            self.core:DrawLineBetween("CenterLine", CENTERLINE_A, CENTERLINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
+            self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
         end
     elseif sName == self.L["unit.noxious_nabber"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.noxious_nabber.enable,true,false,false,nil,self.config.units.noxious_nabber.color, self.config.units.noxious_nabber.priority)
@@ -249,7 +273,7 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
             end
 
             if nStack >= 10 then
-                ChatSystemLib.Command("/p I hit " .. nStack .. " stacks because I'm a complete moron.")
+                ChatSystemLib.Command(self.L["text.stackmoron"]:format(nStack))
             end
         end
     end
