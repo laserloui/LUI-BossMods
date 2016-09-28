@@ -296,6 +296,7 @@ function LUI_BossMods:SearchForEncounter()
 
     if self.unitPlayer:IsInCombat() then
         for sName,tModule in pairs(self.modules) do
+
             if tModule and tModule:IsEnabled() and not tModule:IsRunning() and self:CheckZone(tModule) and self:CheckTrigger(tModule) then
                 self.tCurrentEncounter = tModule
                 self:StartFight()
@@ -1215,10 +1216,12 @@ function LUI_BossMods:RemoveTimer(sName,bCallback)
     end
 
     if bCallback ~= nil and bCallback then
-        if self.runtime.timer[sName].fHandler and self.tCurrentEncounter then
-            self.runtime.timer[sName].fHandler(self.tCurrentEncounter, self.runtime.timer[sName].tData)
-        else
-            self.runtime.timer[sName].fHandler(self, self.runtime.timer[sName].tData)
+        if self.runtime.timer[sName].fHandler then
+            if self.tCurrentEncounter then
+                self.runtime.timer[sName].fHandler(self.tCurrentEncounter, self.runtime.timer[sName].tData)
+            else
+                self.runtime.timer[sName].fHandler(self, self.runtime.timer[sName].tData)
+            end
         end
     end
 
