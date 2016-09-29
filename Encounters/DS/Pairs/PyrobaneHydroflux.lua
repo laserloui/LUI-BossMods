@@ -23,7 +23,7 @@ function Mod:new(o)
     self.displayName = "Pyrobane & Hydroflux"
     self.groupName = "Elemental Pairs"
     self.tTrigger = {
-        sType = "ALL",
+        sType = "ANY",
         tZones = {
             [1] = {
                 continentId = 52,
@@ -32,9 +32,7 @@ function Mod:new(o)
             },
         },
         tNames = {
-            ["enUS"] = {"Pyrobane", "Hydroflux"},
-			["deDE"] = {"Pyroman", "Hydroflux"},
-			["frFR"] = {"Pyromagnus", "Hydroflux"},
+            ["enUS"] = {"Pyrobane","Hydroflux"},
         },
     }
     self.run = false

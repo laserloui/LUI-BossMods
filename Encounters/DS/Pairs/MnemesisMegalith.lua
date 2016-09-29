@@ -23,7 +23,7 @@ function Mod:new(o)
     self.displayName = "Mnemesis & Megalith"
     self.groupName = "Elemental Pairs"
     self.tTrigger = {
-        sType = "ALL",
+        sType = "ANY",
         tZones = {
             [1] = {
                 continentId = 52,
@@ -33,8 +33,6 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Mnemesis","Megalith"},
-            ["deDE"] = {"Mnemesis","Megalith"},
-            ["frFR"] = {"Mnemesis","Megalith"},
         },
     }
     self.run = false
