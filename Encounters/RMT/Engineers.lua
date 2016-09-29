@@ -63,7 +63,7 @@ function Mod:new(o)
     self.instance = "Redmoon Terror"
     self.displayName = "Engineers"
     self.tTrigger = {
-        sType = "ALL",
+        sType = "ANY",
         tZones = {
             [1] = {
                 continentId = 104,
