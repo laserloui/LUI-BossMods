@@ -81,8 +81,6 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Swabbie Ski'Li"},
-            ["deDE"] = {"Swabbie Ski'Li"},
-            ["frFR"] = {"Swabbie Ski'Li"},
         },
     }
     self.run = false
