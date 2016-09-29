@@ -33,8 +33,6 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Pyrobane","Visceralus"},
-            ["deDE"] = {"Pyrobane","Visceralus"},
-            ["frFR"] = {"Pyrobane","Visceralus"},
         },
     }
     self.run = false

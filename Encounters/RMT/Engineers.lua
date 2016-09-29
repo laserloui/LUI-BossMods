@@ -25,7 +25,7 @@ local Locales = {
         -- Alerts
         ["alert.liquidate"] = "Liquidate!",
         ["alert.electroshock"] = "Electroshock!",
-        ["alert.atomic_attraction"] = "Orb on ",
+        ["alert.atomic_attraction"] = "Atomic Attraction on ",
         ["alert.vulnerability"] = " swap to SWORD!",
         ["alert.vulnerability_player"] = "SWAP TO SWORD!",
         ["alert.sword_jump"] = "Sword is leaving ",
@@ -46,7 +46,7 @@ local Locales = {
     ["frFR"] = {},
 }
 
-local DEBUFF__ELECTROSHOCK_VULNERABILITY = 83798
+local DEBUFF_ELECTROSHOCK_VULNERABILITY = 83798
 local DEBUFF_ATOMIC_ATTRACTION = 84053
 local BUFF_INSULATION = 83987
 local PLATFORM_BOUNDING_BOXES = {
@@ -63,7 +63,7 @@ function Mod:new(o)
     self.instance = "Redmoon Terror"
     self.displayName = "Engineers"
     self.tTrigger = {
-        sType = "ANY",
+        sType = "ALL",
         tZones = {
             [1] = {
                 continentId = 104,
@@ -108,13 +108,13 @@ function Mod:new(o)
                 enable = true,
                 priority = 5,
                 label = "unit.cooling_turbine",
-                color = "ade91dfb",
+                color = "afb0ff2f",
             },
             lubricant = {
                 enable = true,
                 priority = 6,
                 label = "unit.lubricant_nozzle",
-                color = "ade91dfb",
+                color = "afb0ff2f",
             },
         },
         timers = {
@@ -137,6 +137,18 @@ function Mod:new(o)
                 enable = true,
                 color = "afff4500",
                 label = "debuff.atomic_attraction",
+            },
+        },
+        casts = {
+            sword_jump = {
+                enable = false,
+                color = "ffff00ff",
+                label = "label.sword_jump",
+            },
+            gun_jump = {
+                enable = false,
+                color = "ffff00ff",
+                label = "label.gun_jump",
             },
         },
         alerts = {
@@ -303,16 +315,28 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         end
     elseif sName == self.L["unit.fusion_core"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion.enable,false,true,false,nil,self.config.units.fusion.color, self.config.units.fusion.priority)
-        self.core:DrawIcon(nId, tUnit, "", 300, -275)
+
+        if self.config.icons.pillar.enable == true then
+            self.core:DrawIcon(nId, tUnit, "", 300, -275)
+        end
     elseif sName == self.L["unit.lubricant_nozzle"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.lubricant.enable,false,false,false,nil,self.config.units.lubricant.color, self.config.units.lubricant.priority)
-        self.core:DrawIcon(nId, tUnit, "", 300, -275)
+
+        if self.config.icons.pillar.enable == true then
+            self.core:DrawIcon(nId, tUnit, "", 300, -275)
+        end
     elseif sName == self.L["unit.spark_plug"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.spark.enable,false,false,false,nil,self.config.units.spark.color, self.config.units.spark.priority)
-        self.core:DrawIcon(nId, tUnit, "", 300, -275)
+
+        if self.config.icons.pillar.enable == true then
+            self.core:DrawIcon(nId, tUnit, "", 300, -275)
+        end
     elseif sName == self.L["unit.cooling_turbine"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.cooling.enable,false,false,false,nil,self.config.units.cooling.color, self.config.units.cooling.priority)
-        self.core:DrawIcon(nId, tUnit, "", 300, -275)
+
+        if self.config.icons.pillar.enable == true then
+            self.core:DrawIcon(nId, tUnit, "", 300, -275)
+        end
     elseif sName == self.L["unit.circle_telegraph"] then
         if self.config.lines.circle_telegraph.enable == true then
             self.core:DrawPolygon(nId, tUnit, 6.3, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
@@ -320,9 +344,15 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 end
 
+function Mod:OnUnitDestroyed(nId, tUnit, sName)
+    if sName == self.L["unit.circle_telegraph"] then
+        self.core:RemovePolygon(nId)
+    end
+end
+
 function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
-    if self.config.alerts.pillar.enable == true or self.config.sounds.pillar == true then
-        if sName == self.L["unit.fusion_core"] or sName == self.L["unit.lubricant_nozzle"] or sName == self.L["unit.spark_plug"] or sName == self.L["unit.cooling_turbine"] then
+    if sName == self.L["unit.fusion_core"] or sName == self.L["unit.lubricant_nozzle"] or sName == self.L["unit.spark_plug"] or sName == self.L["unit.cooling_turbine"] then
+        if self.config.icons.pillar.enable == true then
             local tIcon = self.core:GetDraw(nId)
 
             if tIcon and tIcon.wnd then
@@ -339,7 +369,9 @@ function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
                     end
                 end
             end
+        end
 
+        if self.config.alerts.pillar.enable == true or self.config.sounds.pillar.enable == true then
             if nPercent < 20 then
                 if self.core:GetDistance(tUnit) < 30 then
                     if not self.warned or self.warned ~= sName then
@@ -360,7 +392,7 @@ function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
 end
 
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
-    if nSpellId == DEBUFF__ELECTROSHOCK_VULNERABILITY then
+    if nSpellId == DEBUFF_ELECTROSHOCK_VULNERABILITY then
         if self.config.icons.vulnerability.enable == true then
             self.core:DrawIcon("Electroshock_"..tostring(nId), tData.tUnit, self.config.icons.vulnerability.sprite, self.config.icons.vulnerability.size, nil, self.config.icons.vulnerability.color, nDuration)
         end
@@ -378,7 +410,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         end
 
         if self.config.alerts.atomic_attraction.enable == true then
-            self.core:ShowAlert("atomic_attraction_"..tostring(nId), self.L["alert.atomic_attraction"]..sName, self.config.alerts.atomic_attraction.duration, self.config.alerts.atomic_attraction.color)
+            self.core:ShowAlert("atomic_attraction_"..tostring(nId), self.L["alert.atomic_attraction"]..sUnitName, self.config.alerts.atomic_attraction.duration, self.config.alerts.atomic_attraction.color)
         end
 
         if self.config.timers.atomic_attraction.enable == true then
@@ -394,7 +426,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
 end
 
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
-    if nSpellId == DEBUFF__ELECTROSHOCK_VULNERABILITY then
+    if nSpellId == DEBUFF_ELECTROSHOCK_VULNERABILITY then
         self.core:RemoveIcon("Electroshock_"..tostring(nId))
 
         if self.config.alerts.gun_return.enable == true then
@@ -415,6 +447,9 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.rocket_jump"] then
         local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
         if sCurrentPlatform then
+            if self.config.casts.sword_jump.enable == true then
+                self.core:ShowCast(tCast,sCastName,self.config.casts.sword_jump.color)
+            end
             if self.config.alerts.sword_jump.enable == true then
                 self.core:ShowAlert("sword_jump", self.L["alert.sword_jump"] .. self.L[sCurrentPlatform], self.config.alerts.sword_jump.duration, self.config.alerts.sword_jump.color)
             end
@@ -425,6 +460,9 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     elseif sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.rocket_jump"] then
         local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
         if sCurrentPlatform then
+            if self.config.casts.gun_jump.enable == true then
+                self.core:ShowCast(tCast,sCastName,self.config.casts.gun_jump.color)
+            end
             if self.config.alerts.gun_jump.enable == true then
                 self.core:ShowAlert("gun_jump", self.L["alert.gun_jump"] .. self.L[sCurrentPlatform], self.config.alerts.gun_jump.duration, self.config.alerts.gun_jump.color)
             end

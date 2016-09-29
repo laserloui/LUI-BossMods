@@ -11,8 +11,8 @@ Mod:Locales(
         ["unit.boss_water"] = "Hydroflux",
 		
 		--casts
-		["cast.tsunami"] = "",
-		["cast.icestorm"] = "",
+		["cast.tsunami"] = "Tsunami",
+		["cast.icestorm"] = "Glacial Icestorm",
 		
 		--labels
 		["label.midphase"] = "Midphase",
@@ -25,11 +25,44 @@ Mod:Locales(
 		["alert.twirlyou"] = "Twirl on YOU!",
     },
     {--[[deDE]] 
+		-- Unit names
+        ["unit.boss_air"] = "Aileron",
+        ["unit.boss_water"] = "Hydroflux",
+		
+		--casts
+		["cast.tsunami"] = "Tsunami",
+		["cast.icestorm"] = "Frostiger Eissturm",
+		
+		--labels
+		["label.midphase"] = "Midphase",
+		["label.tomb"] = "Ice Tomb",
+		["label.phase2"] = "Phase 2",
+		["label.icestorm"] = "Icestorm",
+		["label.twirl"] = "Twirl",
+		
+		--alerts
+		["alert.twirlyou"] = "Twirl on YOU!",
 	}, 
     {--[[frFR]] 
-	
+		-- Unit names
+        ["unit.boss_air"] = "Ventemort",
+        ["unit.boss_water"] = "Hydroflux",
+		
+		--casts
+		["cast.tsunami"] = "Tsunami",
+		["cast.icestorm"] = "Tempête de neige glaciale",
+		
+		--labels
+		["label.midphase"] = "Midphase",
+		["label.tomb"] = "Ice Tomb",
+		["label.phase2"] = "Phase 2",
+		["label.icestorm"] = "Icestorm",
+		["label.twirl"] = "Twirl",
+		
+		--alerts
+		["alert.twirlyou"] = "Twirl on YOU!",
 	})
-
+	
 local nMOOCount = 0
 local bIsPhase2 = false
 
@@ -39,7 +72,7 @@ local DEBUFFID_TWIRL = 70440
 
 function Mod:Setup()
 	name("Datascape", "Aileron & Hydroflux", "Elemental Pairs")
-	trigger("All", {"Aileron","Hydroflux"}, {"Aileron","Hydroflux"}, {"Aileron","Hydroflux"}, {continentId = 52, parentZoneId = 98, mapId = 118 })
+	trigger("All", {"Aileron","Hydroflux"}, {"Aileron","Hydroflux"}, {"Ventemort","Hydroflux"}, {continentId = 52, parentZoneId = 98, mapId = 118 })
 	
 	--units
 	unit("boss_air", true, 1, "af00ffff", "unit.boss_air")

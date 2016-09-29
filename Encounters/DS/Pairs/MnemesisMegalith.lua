@@ -33,8 +33,6 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Mnemesis","Megalith"},
-            ["deDE"] = {"Mnemesis","Megalith"},
-            ["frFR"] = {"Mnemesis","Megalith"},
         },
     }
     self.run = false

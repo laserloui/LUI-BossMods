@@ -33,8 +33,6 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Pyrobane","Megalith"},
-            ["deDE"] = {"Pyrobane","Megalith"},
-            ["frFR"] = {"Pyrobane","Megalith"},
         },
     }
     self.run = false

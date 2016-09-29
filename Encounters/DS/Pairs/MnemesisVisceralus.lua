@@ -33,8 +33,6 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Mnemesis","Visceralus"},
-            ["deDE"] = {"Mnemesis","Visceralus"},
-            ["frFR"] = {"Mnemesis","Visceralus"},
         },
     }
     self.run = false

@@ -33,8 +33,6 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Mnemesis","Hydroflux"},
-            ["deDE"] = {"Mnemesis","Hydroflux"},
-            ["frFR"] = {"Mnemesis","Hydroflux"},
         },
     }
     self.run = false

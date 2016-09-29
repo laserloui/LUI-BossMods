@@ -19,7 +19,7 @@ require "Apollo"
         @param sColor           - Health Bar Color (ARGB String)
         @param nPriority        - Priority in UnitFrame and Option Panel (Top to Bottom)
 
-    Remove Unit(nId)
+    RemoveUnit(nId)
         Removes the unit completely.
         @param nId              - Unique ID of unit
 
@@ -58,13 +58,12 @@ require "Apollo"
         @param sName            - Name of the Aura
         @param bCallback        - Perform Callback (boolean)
 
-    ShowAlert(sName, sText, nDuration, sColor, sFont)
+    ShowAlert(sName, sText, nDuration, sColor)
         Shows a Text Notification on your screen
         @param sName            - Unique ID
         @param sText            - Text displayed
         @param nDuration        - Duration in Seconds
         @param sColor           - Text Color (ARGB String)
-        @param sFont            - Text Font
 
     PlaySound(sound)
         Plays a soundfile
@@ -144,12 +143,12 @@ require "Apollo"
         @param Key              - Unique ID
         @param bCallback        - Perform Callback (boolean)
 
-    DrawLineBetween(Key, FromOrigin, ToOrigin, nWidth, sColor, nDuration, nNumberOfDot, fHandler, tData)
+    DrawLineBetween(Key, FromOrigin, ToOrigin, sColor, nWidth, nDuration, nNumberOfDot, fHandler, tData)
         @param Key              - Unique ID
         @param FromOrigin       - Unit Object / UnitId or Coordinates
         @param ToOrigin         - Unit Object / UnitId or Coordinates (PlayerUnit if nil)
-        @param nWidth           - Thickness
         @param sColor           - Text Color (ARGB String)
+        @param nWidth           - Thickness
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param nNumberOfDot     - Amount of dots (1 = default)
         @param fHandler         - Callback function
@@ -163,6 +162,7 @@ require "Apollo"
     GetDraw(Key)
         Returns Icon/Pixie/Polygon/Line/LineBetween
         @param Key              - Unique ID
+        @return DrawObject
 
     GetDistance(FromOrigin, ToOrigin)
         Compute the distance between two origins.
@@ -250,7 +250,7 @@ function Mod:new(o)
                 label = "sound.a"       -- Text in Option Panel (Text or Locale Key)
             },
         },
-        icons = {
+        icons = {                       -- Icons / Pixies
             iconA = {
                 enable = true,          -- Enable/Disable icon
                 sprite = "target2",     -- Icon Sprite
@@ -259,7 +259,7 @@ function Mod:new(o)
                 label = "icon.a"        -- Text in Option Panel (Text or Locale Key)
             },
         },
-        auras = {
+        auras = {                       -- Auras
             auraA = {
                 enable = true,          -- Enable/Disable icon
                 sprite = "bomb",        -- Icon Sprite
@@ -267,7 +267,7 @@ function Mod:new(o)
                 label = "aura.a"        -- Text in Option Panel (Text or Locale Key)
             },
         },
-        lines = {
+        lines = {                       -- Line / LineBetween / Polygon
             lineA = {
                 enable = true,          -- Enable/Disable line
                 color = "ffff0000",     -- Color (Default: Global Setting)
@@ -403,12 +403,12 @@ end
 
 -- Register Event Handler for the module
 function Mod:RegisterEvents()
-    Apollo.RegisterEventHandler("VarChange_FrameCount", "OnFrame", self)
+    Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
 end
 
 -- Unregister Event Handler for the module
 function Mod:RemoveEvents()
-    Apollo.RemoveEventHandler("VarChange_FrameCount", self)
+    Apollo.RemoveEventHandler("NextFrame", self)
 end
 
 function Mod:IsRunning()

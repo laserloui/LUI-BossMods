@@ -33,8 +33,6 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Aileron","Visceralus"},
-            ["deDE"] = {"Aileron","Visceralus"},
-            ["frFR"] = {"Aileron","Visceralus"},
         },
     }
     self.run = false

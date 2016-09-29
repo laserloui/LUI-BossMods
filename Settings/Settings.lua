@@ -785,6 +785,10 @@ function Settings:BuildGlobalSettings()
     wndUnit:FindChild("EnableCheckbox"):SetData({"units","enable"})
     wndUnit:FindChild("EnableCheckbox"):SetCheck(self.config.units.enable or false)
 
+    -- Show Text Checkbox
+    wndUnit:FindChild("TextCheckbox"):SetData({"units","showText"})
+    wndUnit:FindChild("TextCheckbox"):SetCheck(self.config.units.showText or false)
+
     -- Health Color
     wndUnit:FindChild("HealthColorSetting"):FindChild("Color"):SetData({"units","healthColor"})
     wndUnit:FindChild("HealthColorSetting"):FindChild("ColorText"):SetText(self.config.units.healthColor or "")
@@ -800,6 +804,16 @@ function Settings:BuildGlobalSettings()
     wndUnit:FindChild("AbsorbColorSetting"):FindChild("ColorText"):SetText(self.config.units.absorbColor or "")
     wndUnit:FindChild("AbsorbColorSetting"):FindChild("BG"):SetBGColor(self.config.units.absorbColor)
 
+    -- Cast Color
+    wndUnit:FindChild("CastColorSetting"):FindChild("Color"):SetData({"units","castColor"})
+    wndUnit:FindChild("CastColorSetting"):FindChild("ColorText"):SetText(self.config.units.castColor or "")
+    wndUnit:FindChild("CastColorSetting"):FindChild("BG"):SetBGColor(self.config.units.castColor)
+
+    -- MOO Color
+    wndUnit:FindChild("MooColorSetting"):FindChild("Color"):SetData({"units","mooColor"})
+    wndUnit:FindChild("MooColorSetting"):FindChild("ColorText"):SetText(self.config.units.mooColor or "")
+    wndUnit:FindChild("MooColorSetting"):FindChild("BG"):SetBGColor(self.config.units.mooColor)
+
     -- Text Color
     wndUnit:FindChild("TextColorSetting"):FindChild("Color"):SetData({"units","textColor"})
     wndUnit:FindChild("TextColorSetting"):FindChild("ColorText"):SetText(self.config.units.textColor or "")
@@ -814,11 +828,6 @@ function Settings:BuildGlobalSettings()
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("Slider"):SetData({"units","shieldHeight"})
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("Slider"):SetValue(self.config.units.shieldHeight or 0)
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("SliderText"):SetText(self.config.units.shieldHeight or 0)
-
-    -- Shield Height
-    wndUnit:FindChild("ShieldWidthSetting"):FindChild("Slider"):SetData({"units","shieldWidth"})
-    wndUnit:FindChild("ShieldWidthSetting"):FindChild("Slider"):SetValue(self.config.units.shieldWidth or 0)
-    wndUnit:FindChild("ShieldWidthSetting"):FindChild("SliderText"):SetText(self.config.units.shieldWidth or 0)
 
     -- #########################################################################################################################################
     -- # ALERTS
@@ -1275,7 +1284,6 @@ function Settings:OnLock(state)
         self.core.wndTimers:SetStyle("Picture", state)
         self.core.wndTimers:SetStyle("IgnoreMouse", not state)
         self.core.wndTimers:SetText(state == true and "TIMER" or "")
-		self.core.wndTimers:SetSprite(state == true and "AbilitiesSprites:spr_StatVertProgBase" or "")
 
         if state == true or not self.core.bIsRunning == true then
             self.core.wndTimers:Show(state,true)
@@ -1288,7 +1296,6 @@ function Settings:OnLock(state)
         self.core.wndUnits:SetStyle("Picture", state)
         self.core.wndUnits:SetStyle("IgnoreMouse", not state)
         self.core.wndUnits:SetText(state == true and "UNITS" or "")
-        self.core.wndUnits:SetSprite(state == true and "AbilitiesSprites:spr_StatVertProgBase" or "")
 
         if state == true or not self.core.bIsRunning == true then
             self.core.wndUnits:Show(state,true)
@@ -1302,7 +1309,6 @@ function Settings:OnLock(state)
         self.core.wndCastbar:SetStyle("IgnoreMouse", not state)
         self.core.wndCastbar:FindChild("Container"):Show(not state,true)
         self.core.wndCastbar:SetText(state == true and "CASTBAR" or "")
-        self.core.wndCastbar:SetSprite(state == true and "AbilitiesSprites:spr_StatVertProgBase" or "")
 
         if state == true or not self.core.bIsRunning == true then
             self.core.wndCastbar:Show(state,true)
@@ -1316,7 +1322,6 @@ function Settings:OnLock(state)
         self.core.wndAura:SetStyle("IgnoreMouse", not state)
         self.core.wndAura:FindChild("Icon"):Show(not state,true)
         self.core.wndAura:SetText(state == true and "AURA" or "")
-        self.core.wndAura:SetSprite(state == true and "AbilitiesSprites:spr_StatVertProgBase" or "")
 
         if state == true or not self.core.bIsRunning == true then
             self.core.wndAura:Show(state,true)
@@ -1328,7 +1333,6 @@ function Settings:OnLock(state)
         self.core.wndAlerts:SetStyle("Picture", state)
         self.core.wndAlerts:SetStyle("IgnoreMouse", not state)
         self.core.wndAlerts:SetText(state == true and "ALERTS" or "")
-        self.core.wndAlerts:SetSprite(state == true and "AbilitiesSprites:spr_StatVertProgBase" or "")
 
         if state == true or not self.core.bIsRunning == true then
             self.core.wndAlerts:Show(state,true)
