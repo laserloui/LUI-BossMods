@@ -785,6 +785,10 @@ function Settings:BuildGlobalSettings()
     wndUnit:FindChild("EnableCheckbox"):SetData({"units","enable"})
     wndUnit:FindChild("EnableCheckbox"):SetCheck(self.config.units.enable or false)
 
+    -- Show Text Checkbox
+    wndUnit:FindChild("TextCheckbox"):SetData({"units","showText"})
+    wndUnit:FindChild("TextCheckbox"):SetCheck(self.config.units.showText or false)
+
     -- Health Color
     wndUnit:FindChild("HealthColorSetting"):FindChild("Color"):SetData({"units","healthColor"})
     wndUnit:FindChild("HealthColorSetting"):FindChild("ColorText"):SetText(self.config.units.healthColor or "")
@@ -824,11 +828,6 @@ function Settings:BuildGlobalSettings()
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("Slider"):SetData({"units","shieldHeight"})
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("Slider"):SetValue(self.config.units.shieldHeight or 0)
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("SliderText"):SetText(self.config.units.shieldHeight or 0)
-
-    -- Shield Height
-    wndUnit:FindChild("ShieldWidthSetting"):FindChild("Slider"):SetData({"units","shieldWidth"})
-    wndUnit:FindChild("ShieldWidthSetting"):FindChild("Slider"):SetValue(self.config.units.shieldWidth or 0)
-    wndUnit:FindChild("ShieldWidthSetting"):FindChild("SliderText"):SetText(self.config.units.shieldWidth or 0)
 
     -- #########################################################################################################################################
     -- # ALERTS

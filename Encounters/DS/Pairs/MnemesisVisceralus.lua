@@ -23,7 +23,7 @@ function Mod:new(o)
     self.displayName = "Mnemesis & Visceralus"
     self.groupName = "Elemental Pairs"
     self.tTrigger = {
-        sType = "ANY",
+        sType = "ALL",
         tZones = {
             [1] = {
                 continentId = 52,

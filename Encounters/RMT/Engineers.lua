@@ -63,7 +63,7 @@ function Mod:new(o)
     self.instance = "Redmoon Terror"
     self.displayName = "Engineers"
     self.tTrigger = {
-        sType = "ANY",
+        sType = "ALL",
         tZones = {
             [1] = {
                 continentId = 104,
@@ -341,6 +341,12 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         if self.config.lines.circle_telegraph.enable == true then
             self.core:DrawPolygon(nId, tUnit, 6.3, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
         end
+    end
+end
+
+function Mod:OnUnitDestroyed(nId, tUnit, sName)
+    if sName == self.L["unit.circle_telegraph"] then
+        self.core:RemovePolygon(nId)
     end
 end
 

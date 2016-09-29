@@ -26,12 +26,35 @@ local Locales = {
         -- Labels
         ["label.lines_room"] = "Room Dividers",
         ["label.circle_telegraph"] = "Circle Telegraphs",
+        -- Texts
+        ["text.stackmoron"] = "/p I hit %d stacks because I'm a complete moron.",
     },
-    ["deDE"] = {},
+    ["deDE"] = {
+        ["unit.boss"] = "Swabbie Ski'Li",
+        ["unit.noxious_nabber"] = "Noxious Nabber",
+        ["unit.regor_the_rancid"] = "Regor the Rancid", -- Miniboss during Midphase
+        ["unit.braugh_the_bloodied"] = "Braugh der Blähbauch", -- Miniboss during Midphase
+        ["unit.sawblade"] = "Sägeblatt",
+        ["unit.circle_telegraph"] = "Feindselige unsichtbare Einheit für Felder (Trefferradius 1.2)",
+        -- Casts
+        ["cast.necrotic_lash"] = "Nekrotisches Peitschen", -- Cast by Noxious Nabber (grab and disorient), interruptable
+        ["cast.deathwail"] = "Totenklage", -- Miniboss knockdown, interruptable
+        ["cast.gravedigger"] = "Gravedigger", -- Miniboss cast
+        -- Alerts
+        ["alert.oozing_bile"] = "Triefende Galle - Stop Damage!",
+        ["alert.interrupt"] = "Unterbrechen!",
+        -- Debuffs
+        ["debuff.oozing_bile"] = "Triefende Galle",
+        -- Labels
+        ["label.lines_room"] = "Raum Einteilungen",
+        ["label.circle_telegraph"] = "Kreis Telegraphen",
+        -- Texts
+        ["text.stackmoron"] = "/gr Ich Vollidiot habe %d Stacks erreicht!",
+    },
     ["frFR"] = {},
 }
 
-local DEBUFF__OOZING_BILE = 84321
+local DEBUFF_OOZING_BILE = 84321
 local DECK_Y_LOC = 598
 local ENTRANCELINE_A = Vector3.New(-1, DECK_Y_LOC, -830)
 local ENTRANCELINE_B = Vector3.New(-40, DECK_Y_LOC, -830)
@@ -57,6 +80,7 @@ function Mod:new(o)
         },
         tNames = {
             ["enUS"] = {"Swabbie Ski'Li"},
+            ["deDE"] = {"Swabbie Ski'Li"},
         },
     }
     self.run = false
@@ -187,27 +211,19 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss"] and bInCombat == true then
-        if self.config.units.boss.enable == true then
-            self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
 
         if self.config.lines.room.enable == true then
-            self.core:DrawLineBetween("ExitLine", EXITLINE_A, EXITLINE_B, self.config.lines.room.thickness, self.config.lines.room.color)
-            self.core:DrawLineBetween("CenterLine", CENTERLINE_A, CENTERLINE_B, self.config.lines.room.thickness, self.config.lines.room.color)
-            self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, self.config.lines.room.thickness, self.config.lines.room.color)
+            self.core:DrawLineBetween("ExitLine", EXITLINE_A, EXITLINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
+            self.core:DrawLineBetween("CenterLine", CENTERLINE_A, CENTERLINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
+            self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
         end
     elseif sName == self.L["unit.noxious_nabber"] then
-        if self.config.units.noxious_nabber.enable == true then
-            self.core:AddUnit(nId,sName,tUnit,self.config.units.noxious_nabber.enable,true,false,false,nil,self.config.units.noxious_nabber.color, self.config.units.noxious_nabber.priority)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.noxious_nabber.enable,true,false,false,nil,self.config.units.noxious_nabber.color, self.config.units.noxious_nabber.priority)
     elseif sName == self.L["unit.regor_the_rancid"] then
-        if self.config.units.regor_the_rancid.enable == true then
-            self.core:AddUnit(nId,sName,tUnit,self.config.units.regor_the_rancid.enable,true,false,false,nil,self.config.units.regor_the_rancid.color, self.config.units.regor_the_rancid.priority)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.regor_the_rancid.enable,true,false,false,nil,self.config.units.regor_the_rancid.color, self.config.units.regor_the_rancid.priority)
     elseif sName == self.L["unit.braugh_the_bloodied"] then
-        if self.config.units.braugh_the_bloodied.enable == true then
-            self.core:AddUnit(nId,sName,tUnit,self.config.units.braugh_the_bloodied.enable,true,false,false,nil,self.config.units.braugh_the_bloodied.color, self.config.units.braugh_the_bloodied.priority)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.braugh_the_bloodied.enable,true,false,false,nil,self.config.units.braugh_the_bloodied.color, self.config.units.braugh_the_bloodied.priority)
     elseif sName == self.L["unit.sawblade"] then
         if self.config.lines.sawblade.enable == true then
             self.core:DrawLine(nId, tUnit, self.config.lines.sawblade.color, self.config.lines.sawblade.thickness, 60, 0, 0)
@@ -227,8 +243,16 @@ function Mod:OnUnitDestroyed(nId, tUnit, sName)
     end
 end
 
+function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
+    if sName == self.L["unit.noxious_nabber"] or sName == self.L["unit.regor_the_rancid"] or sName == self.L["unit.braugh_the_bloodied"] then
+        if tUnit:IsDead() then
+            self.core:RemoveUnit(nId)
+        end
+    end
+end
+
 function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
-    if DEBUFF__OOZING_BILE == nSpellId then
+    if DEBUFF_OOZING_BILE == nSpellId then
         if tData.tUnit:IsThePlayer() then
             if nStack >= 8 then
                 if self.config.auras.oozing_bile.enable == true then
@@ -249,14 +273,14 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
             end
 
             if nStack >= 10 then
-                ChatSystemLib.Command("/p I hit " .. nStack .. " stacks because I'm a complete moron.")
+                ChatSystemLib.Command(self.L["text.stackmoron"]:format(nStack))
             end
         end
     end
 end
 
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
-    if DEBUFF__OOZING_BILE == nSpellId then
+    if DEBUFF_OOZING_BILE == nSpellId then
         if tData.tUnit:IsThePlayer() then
             if self.config.auras.oozing_bile.enable == true then
                 self.core:HideAura("OOZE")

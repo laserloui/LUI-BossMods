@@ -32,19 +32,17 @@ local Locales = {
         -- Datachron messages
         ["datachron.midphase_start"] = "The Robomination sinks",
         ["datachron.midphase_end"] = "The Robomination erupts back into the fight!",
-        ["datachron.incineration"] = "The Robomination tries to incinerate (.*)!",
+        ["datachron.incineration"] = "The Robomination tries to incinerate (.*)",
         -- Labels
         ["label.arms"] = "Arms",
         ["label.crush"] = "Crush",
         ["label.crush_player"] = "Crush on player",
-        ["label.crush_nearby"] = "Crush nearby",
-        ["label.crush_unit"] = "Crush on unit",
     },
     ["deDE"] = {},
     ["frFR"] = {},
 }
 
-local DEBUFF__THE_SKY_IS_FALLING = 75126 -- Crush target
+local DEBUFF_THE_SKY_IS_FALLING = 75126 -- Crush target
 
 function Mod:new(o)
     o = o or {}
@@ -149,9 +147,9 @@ function Mod:new(o)
                 enable = true,
                 label = "label.crush_player",
             },
-            crush_nearby = {
+            crush = {
                 enable = true,
-                label = "label.crush_nearby",
+                label = "label.crush",
             },
             incineration = {
                 enable = true,
@@ -169,10 +167,10 @@ function Mod:new(o)
                 file = "run-away",
                 label = "label.crush_player",
             },
-            crush_nearby = {
+            crush = {
                 enable = true,
                 file = "info",
-                label = "label.crush_nearby",
+                label = "label.crush",
             },
             incineration = {
                 enable = true,
@@ -186,7 +184,7 @@ function Mod:new(o)
                 sprite = "meteor",
                 size = 80,
                 color = "ffff4500",
-                label = "label.crush_unit",
+                label = "label.crush",
             },
             incineration = {
                 enable = true,
@@ -236,45 +234,26 @@ end
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if sName == self.L["unit.boss"] and bInCombat == true then
         self.boss = tUnit
-
-        if self.config.units.boss.enable == true then
-            self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,true,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
-        end
-
-        if self.config.timers.arms.enable == true then
-            self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
-        end
-
-        if self.config.timers.crush.enable == true then
-            self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color)
-        end
-
-        if self.config.timers.noxious_belch.enable == true then
-            self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 16, self.config.timers.noxious_belch.color)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,true,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
     elseif sName == self.L["unit.cannon_arm"] then
-        if self.config.units.cannon_arm.enable == true then
-            self.core:AddUnit(nId,sName,tUnit,self.config.units.cannon_arm.enable,true,false,false,nil,self.config.units.cannon_arm.color, self.config.units.cannon_arm.priority)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.cannon_arm.enable,true,false,false,nil,self.config.units.cannon_arm.color, self.config.units.cannon_arm.priority)
 
         if not self.bIsMidPhase and self.config.timers.arms.enable == true then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
         end
 
         if self.config.lines.cannon_arm.enable == true then
-            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.cannon_arm.thickness, self.config.lines.cannon_arm.color)
+            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.cannon_arm.color, self.config.lines.cannon_arm.thickness)
         end
     elseif sName == self.L["unit.flailing_arm"] then
-        if self.config.units.flailing_arm.enable == true then
-            self.core:AddUnit(nId,sName,tUnit,self.config.units.flailing_arm.enable,true,false,false,nil,self.config.units.flailing_arm.color, self.config.units.flailing_arm.priority)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.flailing_arm.enable,true,false,false,nil,self.config.units.flailing_arm.color, self.config.units.flailing_arm.priority)
 
         if self.config.lines.flailing_arm.enable == true then
-            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.flailing_arm.thickness, self.config.lines.flailing_arm.color)
+            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.flailing_arm.color, self.config.lines.flailing_arm.thickness)
         end
     elseif sName == self.L["unit.scanning_eye"] then
         if self.config.lines.scanning_eye.enable == true then
-            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.scanning_eye.thickness, self.config.lines.scanning_eye.color)
+            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.scanning_eye.color, self.config.lines.scanning_eye.thickness)
         end
     end
 end
@@ -328,7 +307,7 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
 end
 
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
-    if DEBUFF__THE_SKY_IS_FALLING == nSpellId then
+    if DEBUFF_THE_SKY_IS_FALLING == nSpellId then
         if self.config.timers.crush.enable == true then
             self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 17, self.config.timers.crush.color)
         end
@@ -346,14 +325,12 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
                 self.core:PlaySound(self.config.sounds.crush_player.file)
             end
         else
-            if self.core:GetDistance(tData.tUnit) < 15 then
-                if self.config.sounds.crush_nearby.enable == true then
-                    self.core:PlaySound(self.config.sounds.crush_nearby.file)
-                end
+            if self.config.sounds.crush.enable == true then
+                self.core:PlaySound(self.config.sounds.crush.file)
+            end
 
-                if self.config.alerts.crush_nearby.enable == true then
-                    self.core:ShowAlert("Alert_Crush", self.L["alert.crush"]:format(sUnitName),self.config.alerts.crush_nearby.duration, self.config.alerts.crush_nearby.color)
-                end
+            if self.config.alerts.crush.enable == true then
+                self.core:ShowAlert("Alert_Crush", self.L["alert.crush"]:format(sUnitName),self.config.alerts.crush.duration, self.config.alerts.crush.color)
             end
 
             if self.config.icons.crush.enable == true then
@@ -364,7 +341,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
 end
 
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
-    if DEBUFF__THE_SKY_IS_FALLING == nSpellId then
+    if DEBUFF_THE_SKY_IS_FALLING == nSpellId then
         self.core:HideAura("Aura_Crush")
         self.core:RemoveIcon("Icon_Crush")
     end
@@ -425,7 +402,7 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
             end
 
             if self.boss and self.config.lines.incineration.enable == true then
-                self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration.thickness, self.config.lines.incineration.color, 10)
+                self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration.color, self.config.lines.incineration.thickness, 10)
             end
         end
     end
@@ -444,6 +421,18 @@ function Mod:OnEnable()
     self.boss = nil
     self.bIsMidPhase = nil
     self.nMidphaseWarnings = 0
+
+    if self.config.timers.arms.enable == true then
+        self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
+    end
+
+    if self.config.timers.crush.enable == true then
+        self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color)
+    end
+
+    if self.config.timers.noxious_belch.enable == true then
+        self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 16, self.config.timers.noxious_belch.color)
+    end
 end
 
 function Mod:OnDisable()
