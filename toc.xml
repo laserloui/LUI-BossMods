@@ -6,6 +6,9 @@
 	<!-- Main -->
 	<Script Name="LUI_BossMods.lua"/>
 	<Form Name="LUI_BossMods.xml"/>
+	
+	<Script Name ="Encounters\EncounterPrototype.lua"/>
+	
 	<!-- Encounters: Test Encounter -->
 	<!-- <Script Name="Encounters\TEST\Test.lua"/> -->
 	<!-- Encounters: Genetic Archives -->
