@@ -1361,9 +1361,10 @@ function LUI_BossMods:CheckCast(tData)
             sName = tData.tUnit:GetCastName() or ""
             nElapsed = tData.tUnit:GetCastElapsed() / 1000
             nDuration = tData.tUnit:GetCastDuration() / 1000
-            --bCasting = tData.tUnit:IsCasting()
+            bCasting = tData.tUnit:IsCasting()
         end
     end
+
     if bCasting == true then
         local nTick = GetTickCount()
         sName = string.gsub(sName, NO_BREAK_SPACE, " ")
@@ -1388,17 +1389,10 @@ function LUI_BossMods:CheckCast(tData)
         elseif tData.tCast then
             if sName ~= tData.tCast.sName or nElapsed < tData.tCast.nElapsed then
                 -- New cast just after a previous one.
-				if self.runtime.cast then
-					if self.runtime.cast.sName == tData.tCast.sName and self.runtime.cast.nUnitId == tData.nId then
-						self.runtime.cast = nil
-						self.wndCastbar:Show(false,true)
-					end
-				end
-				
                 if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
                     self.tCurrentEncounter:OnCastEnd(tData.nId, tData.tCast.sName, tData.tCast, tData.sName)
                 end
-				
+
                 tData.tCast = {
                     sName = sName,
                     nDuration = nDuration,
@@ -1417,15 +1411,15 @@ function LUI_BossMods:CheckCast(tData)
             else
                 if nTick > (tData.tCast.nTick + (tData.tCast.nDuration * 1000)) then
                     -- End of cast
-					if self.runtime.cast then
+                    if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
+                        self.tCurrentEncounter:OnCastEnd(tData.nId, sName, tData.tCast, tData.sName)
+                    end
+
+                    if self.runtime.cast then
                         if self.runtime.cast.sName == sName and self.runtime.cast.nUnitId == tData.nId then
                             self.runtime.cast = nil
                             self.wndCastbar:Show(false,true)
                         end
-                    end
-					
-                    if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
-                        self.tCurrentEncounter:OnCastEnd(tData.nId, sName, tData.tCast, tData.sName)
                     end
 
                     tData.tCast = nil
