@@ -296,11 +296,14 @@ function LUI_BossMods:SearchForEncounter()
 
     if self.unitPlayer:IsInCombat() then
         for sName,tModule in pairs(self.modules) do
-
-            if tModule and tModule:IsEnabled() and not tModule:IsRunning() and self:CheckZone(tModule) and self:CheckTrigger(tModule) then
-                self.tCurrentEncounter = tModule
-                self:StartFight()
-                return
+            if tModule and tModule:IsEnabled() and not tModule:IsRunning() then
+                if self:CheckZone(tModule) then
+                    if self:CheckTrigger(tModule) then
+                        self.tCurrentEncounter = tModule
+                        self:StartFight()
+                        return
+                    end
+                end
             end
         end
     end
@@ -658,10 +661,10 @@ function LUI_BossMods:OnUnitDestroyed(unit)
         if self.tCurrentEncounter and self.tCurrentEncounter.OnUnitDestroyed then
             self.tCurrentEncounter:OnUnitDestroyed(unit:GetId(),unit,unit:GetName())
         end
-    else
-        if self.tSavedUnits ~= nil and self.tSavedUnits[unit:GetName()] ~= nil and self.tSavedUnits[unit:GetName()][unit:GetId()] ~= nil then
-            self.tSavedUnits[unit:GetName()][unit:GetId()] = nil
-        end
+    end
+
+    if self.tSavedUnits ~= nil and self.tSavedUnits[unit:GetName()] ~= nil and self.tSavedUnits[unit:GetName()][unit:GetId()] ~= nil then
+        self.tSavedUnits[unit:GetName()][unit:GetId()] = nil
     end
 end
 
