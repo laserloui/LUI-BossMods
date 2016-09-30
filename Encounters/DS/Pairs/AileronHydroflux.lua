@@ -72,7 +72,7 @@ local DEBUFFID_TWIRL = 70440
 
 function Mod:Setup()
 	name("Datascape", "Aileron & Hydroflux", "Elemental Pairs")
-	trigger("All", {"Aileron","Hydroflux"}, {"Aileron","Hydroflux"}, {"Ventemort","Hydroflux"}, {continentId = 52, parentZoneId = 98, mapId = 118 })
+	trigger("ALL", {"Aileron","Hydroflux"}, {"Aileron","Hydroflux"}, {"Ventemort","Hydroflux"}, {continentId = 52, parentZoneId = 98, mapId = 118 })
 	
 	--units
 	unit("boss_air", true, 1, "af00ffff", "unit.boss_air")
