@@ -63,7 +63,7 @@ function Mod:new(o)
     self.instance = "Redmoon Terror"
     self.displayName = "Engineers"
     self.tTrigger = {
-        sType = "ANY",
+        sType = "ALL",
         tZones = {
             [1] = {
                 continentId = 104,
@@ -296,11 +296,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.core:AddUnit(nId,sName,tUnit,self.config.units.gun.enable,true,false,false,nil,self.config.units.gun.color, self.config.units.gun.priority)
 
         if self.config.lines.gun.enable == true then
-            self.core:DrawLine(nId, tUnit, self.config.lines.gun.color, self.config.lines.gun.thickness, 20)
-        end
-
-        if self.config.timers.electroshock.enable == true then
-            self.core:AddTimer("cast.electroshock", self.L["cast.electroshock"], 10, self.config.timers.electroshock.color, Mod.OnElectroshock, tUnit)
+            self.core:DrawLine(nId, tUnit, self.config.lines.gun.color, self.config.lines.gun.thickness, 30)
         end
     elseif sName == self.L["unit.boss_sword"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.sword.enable,true,false,false,nil,self.config.units.sword.color, self.config.units.sword.priority)
@@ -308,10 +304,6 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         if self.config.lines.sword.enable == true then
             self.core:DrawLine("CleaveA", tUnit, self.config.lines.sword.color, self.config.lines.sword.thickness, 15, -50, 0, Vector3.New(2,0,-1.5))
             self.core:DrawLine("CleaveB", tUnit, self.config.lines.sword.color, self.config.lines.sword.thickness, 15, 50, 0, Vector3.New(-2,0,-1.5))
-        end
-
-        if self.config.timers.liquidate.enable == true then
-            self.core:AddTimer("cast.liquidate", self.L["cast.liquidate"], 10, self.config.timers.liquidate.color, Mod.OnLiquidate, tUnit)
         end
     elseif sName == self.L["unit.fusion_core"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion.enable,false,true,false,nil,self.config.units.fusion.color, self.config.units.fusion.priority)
@@ -445,29 +437,59 @@ end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.rocket_jump"] then
+        if self.config.casts.sword_jump.enable == true then
+            self.core:ShowCast(tCast,sCastName,self.config.casts.sword_jump.color)
+        end
+
+        if self.config.sounds.sword_jump.enable == true then
+            self.core:PlaySound(self.config.sounds.sword_jump.file)
+        end
+
         local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
-        if sCurrentPlatform then
-            if self.config.casts.sword_jump.enable == true then
-                self.core:ShowCast(tCast,sCastName,self.config.casts.sword_jump.color)
-            end
-            if self.config.alerts.sword_jump.enable == true then
-                self.core:ShowAlert("sword_jump", self.L["alert.sword_jump"] .. self.L[sCurrentPlatform], self.config.alerts.sword_jump.duration, self.config.alerts.sword_jump.color)
-            end
-            if self.config.sounds.sword_jump.enable == true then
-                self.core:PlaySound(self.config.sounds.sword_jump.file)
-            end
+        if sCurrentPlatform and self.config.alerts.sword_jump.enable == true then
+            self.core:ShowAlert("sword_jump", self.L["alert.sword_jump"] .. self.L[sCurrentPlatform], self.config.alerts.sword_jump.duration, self.config.alerts.sword_jump.color)
         end
     elseif sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.rocket_jump"] then
+        if self.config.casts.gun_jump.enable == true then
+            self.core:ShowCast(tCast,sCastName,self.config.casts.gun_jump.color)
+        end
+
+        if self.config.sounds.gun_jump.enable == true then
+            self.core:PlaySound(self.config.sounds.gun_jump.file)
+        end
+
         local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
-        if sCurrentPlatform then
-            if self.config.casts.gun_jump.enable == true then
-                self.core:ShowCast(tCast,sCastName,self.config.casts.gun_jump.color)
+        if sCurrentPlatform and self.config.alerts.gun_jump.enable == true then
+            self.core:ShowAlert("gun_jump", self.L["alert.gun_jump"] .. self.L[sCurrentPlatform], self.config.alerts.gun_jump.duration, self.config.alerts.gun_jump.color)
+        end
+    elseif sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.electroshock"] then
+        --Print("Electroshock after: "..tostring((Apollo.GetTickCount() - self.electroshock) / 1000))
+
+        local sPlatformPlayer = self:GetPlatform(GameLib.GetPlayerUnit())
+        local sPlatformGun = self:GetPlatform(tCast.tUnit)
+
+        if sPlatformPlayer == sPlatformGun then
+            if self.config.alerts.electroshock.enable == true then
+                self.core:ShowAlert("electroshock", self.L["alert.electroshock"], self.config.alerts.electroshock.duration, self.config.alerts.electroshock.color)
             end
-            if self.config.alerts.gun_jump.enable == true then
-                self.core:ShowAlert("gun_jump", self.L["alert.gun_jump"] .. self.L[sCurrentPlatform], self.config.alerts.gun_jump.duration, self.config.alerts.gun_jump.color)
+
+            if self.config.sounds.electroshock.enable == true then
+                self.core:PlaySound(self.config.sounds.electroshock.file)
             end
-            if self.config.sounds.gun_jump.enable == true then
-                self.core:PlaySound(self.config.sounds.gun_jump.file)
+        end
+    elseif sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.liquidate"] then
+        --Print("Liquidate after: "..tostring((Apollo.GetTickCount() - self.liquidate) / 1000))
+
+        local sPlatformPlayer = self:GetPlatform(GameLib.GetPlayerUnit())
+        local sPlatformSword = self:GetPlatform(tCast.tUnit)
+
+        if sPlatformPlayer == sPlatformSword then
+            if self.config.alerts.liquidate.enable == true then
+                self.core:ShowAlert("liquidate", self.L["alert.liquidate"], self.config.alerts.liquidate.duration, self.config.alerts.liquidate.color)
+            end
+
+            if self.config.sounds.liquidate.enable == true then
+                self.core:PlaySound(self.config.sounds.liquidate.file)
             end
         end
     end
@@ -476,48 +498,14 @@ end
 function Mod:OnCastEnd(nId, sCastName, tCast, sName)
     if sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.electroshock"] then
         if self.config.timers.electroshock.enable == true then
-            self.core:AddTimer("cast.electroshock", sCastName, 20, self.config.timers.electroshock.color, Mod.OnElectroshock, tCast.tUnit)
+            self.core:AddTimer("cast.electroshock", sCastName, 18.5, self.config.timers.electroshock.color)
         end
+        self.electroshock = Apollo.GetTickCount()
     elseif sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.liquidate"] then
         if self.config.timers.liquidate.enable == true then
-            self.core:AddTimer("cast.liquidate", sCastName, 20, self.config.timers.liquidate.color, Mod.OnLiquidate, tCast.tUnit)
+            self.core:AddTimer("cast.liquidate", sCastName, 21.5, self.config.timers.liquidate.color)
         end
-    end
-end
-
-function Mod:OnLiquidate(tUnit)
-    if not tUnit then
-        return
-    end
-
-    local distance = self.core:GetDistance(tUnit)
-
-    if distance < 30 then
-        if self.config.alerts.liquidate.enable == true then
-            self.core:ShowAlert("liquidate", self.L["alert.liquidate"], self.config.alerts.liquidate.duration, self.config.alerts.liquidate.color)
-        end
-
-        if self.config.sounds.liquidate.enable == true then
-            self.core:PlaySound(self.config.sounds.liquidate.file)
-        end
-    end
-end
-
-function Mod:OnElectroshock(tUnit)
-    if not tUnit then
-        return
-    end
-
-    local distance = self.core:GetDistance(tUnit)
-
-    if distance < 30 then
-        if self.config.alerts.electroshock.enable == true then
-            self.core:ShowAlert("electroshock", self.L["alert.electroshock"], self.config.alerts.electroshock.duration, self.config.alerts.electroshock.color)
-        end
-
-        if self.config.sounds.electroshock.enable == true then
-            self.core:PlaySound(self.config.sounds.electroshock.file)
-        end
+        self.liquidate = Apollo.GetTickCount()
     end
 end
 
@@ -542,6 +530,17 @@ end
 
 function Mod:OnEnable()
     self.run = true
+
+    if self.config.timers.electroshock.enable == true then
+        self.core:AddTimer("cast.electroshock", self.L["cast.electroshock"], 11, self.config.timers.electroshock.color)
+    end
+
+    if self.config.timers.liquidate.enable == true then
+        self.core:AddTimer("cast.liquidate", self.L["cast.liquidate"], 12, self.config.timers.liquidate.color)
+    end
+
+    self.liquidate = Apollo.GetTickCount()
+    self.electroshock = Apollo.GetTickCount()
 end
 
 function Mod:OnDisable()
