@@ -50,7 +50,7 @@ end
 function Mod:AddTimer(key, nDuration, uniqueID, sText, sColor, fHandler, tData)
 	if self.config.timers[key] and self.config.timers[key].enable then
 		local txt = sText or self.L[self.config.timers[key].label] or self.config.timers[key].label
-		self.core:AddTimer(uniqueID or key, txt, time, sColor or self.config.timers[key].color, fHandler, tData)
+		self.core:AddTimer(uniqueID or key, txt, nDuration, sColor or self.config.timers[key].color, fHandler, tData)
 	end
 end
 
@@ -278,7 +278,7 @@ do
 		@params ...					- All Zones, in which this Encounter could be loaded. Example: {continentId = 104, parentZoneId = 548, mapId = 549} ]]
 	function trigger(sType, enUnits, deUnits, frUnits, ...)
 		configEnviroment.Mod.tTrigger = {
-			sType = type,
+			sType = sType,
 			tNames = {
 				["enUS"] = enUnits,
 				["deDE"] = deUnits,
@@ -372,7 +372,7 @@ do
 	--[[Adds the defaults for a sound.
 		@param key					- The key for these options
 		@param bEnable				- Default for Enable/Disable sound
-		@param sFile				- Default for Alerts sound-file (can be either string of filename or number of carbine sound)
+		@param sFile				- Default for sound-file (can be either string of filename or number of carbine sound)
 		@param sLabel				- Text in Option Panel (Text or Locale Key)]]
 	function sound(key, bEnable, sFile, sLabel)
 		if not configEnviroment.Mod.config.sounds then configEnviroment.Mod.config.sounds = {} end
