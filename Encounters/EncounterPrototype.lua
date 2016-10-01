@@ -3,6 +3,7 @@ require "Apollo"
 local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
 local Mod = {}
 local meta = {__index = Mod}
+local nilKey = {} --this is the key we identify nil-parameters within event-filtering with.
 
 
 --[[Creates a Encounter Prototype
@@ -433,6 +434,104 @@ do
 		}
 	end
 	
+	--this will build up something like this: self.eventFilters[arg1][arg2][arg3][arg4] = {sMethod, ???} (with nParameters = 4)
+	-- nParameters is actually the amount of parameters in ...
+	-- arg1 will usually be the original Method to recieve Events from e.g. "OnUnitCreated"
+	local function filterEvent(sMethod, nParameters, ...)
+		local self = configEnviroment.Mod
+		local args = {...}
+		if not self.eventFilters then self.eventFilters = {} end
+		local curr = self.eventFilters
+		for i=1, nParameters, 1 do
+			local parameter = args[i]~=nil and args[i] or nilKey
+			curr[parameter] = curr[parameter] or {}
+			curr = curr[parameter]
+		end
+		table.insert(curr, sMethod)
+	end
+	
+	--[[Calls the Method 'sMethod' whenever a matching event was recieved. Passes only events on, which match the parameters after sMethod.
+		@param sMethod				- The key, to find the to-be-called method at. (e.g. "Cast123" would call Mod:Cast123(...))
+		@param sName				- The units name													- Optional, nil = dont filter by this parameter
+		@param bInCombat			- Is the unit in combat?											- Optional, nil = dont filter by this parameter]]
+	function onUnitCreated(sMethod, sName, bInCombat)
+		filterEvent(sMethod, 3, "OnUnitCreated", sName, bInCombat)
+	end
+	
+	--[[Calls the Method 'sMethod' whenever a matching event was recieved. Passes only events on, which match the parameters after sMethod.
+		@param sMethod				- The key, to find the to-be-called method at. (e.g. "Cast123" would call Mod:Cast123(...))
+		@param sName				- The units name													- Optional, nil = dont filter by this parameter]]
+	function onUnitDestroyed(sMethod, sName)
+		filterEvent(sMethod, 2, "OnUnitDestroyed", sName)
+	end
+	
+	--[[Calls the Method 'sMethod' whenever a matching event was recieved. Passes only events on, which match the parameters after sMethod.
+		@param sMethod				- The key, to find the to-be-called method at. (e.g. "Cast123" would call Mod:Cast123(...))
+		@param uniqueID				- The uniqueID the unit was added with								- Optional, nil = dont filter by this parameter
+		@param sName				- The units name													- Optional, nil = dont filter by this parameter]]
+	function onHealthChanged(sMethod, uniqueID, sName)
+		filterEvent(sMethod, 3, "OnHealthChanged", uniqueID, sName)
+	end
+	
+	--[[Calls the Method 'sMethod' whenever a matching event was recieved. Passes only events on, which match the parameters after sMethod.
+		@param sMethod				- The key, to find the to-be-called method at. (e.g. "Cast123" would call Mod:Cast123(...))
+		@param sMessage				- The said message													- Optional, nil = dont filter by this parameter
+		@param sName				- The units name													- Optional, nil = dont filter by this parameter
+		@param sEvent				- The Original Chat-Event OnNPCSay, OnNPCYell, OnNPCWhisper, OnDatachron - Optional, nil = dont filter by this parameter]]
+	function onDatachron(sMethod, sMessage, sName, sEvent)
+		filterEvent(sMethod, 4, "OnDatachron", sMessage, sName, sEvent)
+	end
+
+	--[[Calls the Method 'sMethod' whenever a matching event was recieved. Passes only events on, which match the parameters after sMethod.
+		@param sMethod				- The key, to find the to-be-called method at. (e.g. "Cast123" would call Mod:Cast123(...))
+		@param uniqueID				- The uniqueID the unit was added with								- Optional, nil = dont filter by this parameter
+		@param sUnitName			- The units name													- Optional, nil = dont filter by this parameter
+		@param spellID				- The spells ID														- Optional, nil = dont filter by this parameter
+		@param sSpellName			- The spells name													- Optional, nil = dont filter by this parameter	
+		@param nStack				- The amount of stacks this buff was applied with 					- Optional, nil = dont filter by this parameter]]
+	function onBuffAdded(sMethod, uniqueID, sUnitName, spellID, sSpellName, nStack)
+		filterEvent(sMethod, 6, "OnBuffAdded", uniqueID, sUnitName, spellID, sSpellName, nStack)
+	end
+
+	--[[Calls the Method 'sMethod' whenever a matching event was recieved. Passes only events on, which match the parameters after sMethod.
+		@param sMethod				- The key, to find the to-be-called method at. (e.g. "Cast123" would call Mod:Cast123(...))
+		@param uniqueID				- The uniqueID the unit was added with								- Optional, nil = dont filter by this parameter
+		@param sUnitName			- The units name													- Optional, nil = dont filter by this parameter
+		@param spellID				- The spells ID														- Optional, nil = dont filter by this parameter
+		@param sSpellName			- The spells name													- Optional, nil = dont filter by this parameter	
+		@param nStack				- The amount of stacks this buff now has		 					- Optional, nil = dont filter by this parameter]]
+	function onBuffUpdated(sMethod, uniqueID, sUnitName, spellID, sSpellName, nStack)
+		filterEvent(sMethod, 6, "OnBuffUpdated", uniqueID, sUnitName, spellID, sSpellName, nStack)
+	end
+
+	--[[Calls the Method 'sMethod' whenever a matching event was recieved. Passes only events on, which match the parameters after sMethod.
+		@param sMethod				- The key, to find the to-be-called method at. (e.g. "Cast123" would call Mod:Cast123(...))
+		@param uniqueID				- The uniqueID the unit was added with								- Optional, nil = dont filter by this parameter
+		@param sUnitName			- The units name													- Optional, nil = dont filter by this parameter
+		@param spellID				- The spells ID														- Optional, nil = dont filter by this parameter
+		@param sSpellName			- The spells name													- Optional, nil = dont filter by this parameter]]
+	function onBuffRemoved(sMethod, uniqueID, sUnitName, spellID, sSpellName)
+		filterEvent(sMethod, 5, "OnBuffRemoved", uniqueID, sUnitName, spellID, sSpellName)
+	end
+	
+	--[[Calls the Method 'sMethod' whenever a matching event was recieved. Passes only events on, which match the parameters after sMethod.
+		@param sMethod				- The key, to find the to-be-called method at. (e.g. "Cast123" would call Mod:Cast123(...))
+		@param uniqueID				- The uniqueID the unit was added with								- Optional, nil = dont filter by this parameter
+		@param sUnitName			- The units name													- Optional, nil = dont filter by this parameter
+		@param sSpellName			- The spells name													- Optional, nil = dont filter by this parameter]]
+	function onCastStart(sMethod, uniqueID, sUnitName, sSpellName)
+		filterEvent(sMethod, 4, "OnCastStart", uniqueID, sUnitName, sSpellName)
+	end
+	
+	--[[Calls the Method 'sMethod' whenever a matching event was recieved. Passes only events on, which match the parameters after sMethod.
+		@param sMethod				- The key, to find the to-be-called method at. (e.g. "Cast123" would call Mod:Cast123(...))
+		@param uniqueID				- The uniqueID the unit was added with								- Optional, nil = dont filter by this parameter
+		@param sUnitName			- The units name													- Optional, nil = dont filter by this parameter
+		@param sSpellName			- The spells name													- Optional, nil = dont filter by this parameter]]
+	function onCastEnd(sMethod, uniqueID, sUnitName, sSpellName)
+		filterEvent(sMethod, 4, "OnCastStart", uniqueID, sUnitName, sSpellName)
+	end
+	
 	_G.setfenv(1, _G)
 	setmetatable(configEnviroment, {__index = _G, __newindex = _G})
 end
@@ -450,9 +549,11 @@ function Mod:new(o)
 	
 	LUI_BossMods.modules[self.encounterKey] = o
 	
-	rawset(configEnviroment, "Mod", self)
-	setfenv(self.Setup, configEnviroment)
-	self:Setup()
+	if self.Setup then
+		rawset(configEnviroment, "Mod", self)
+		setfenv(self.Setup, configEnviroment)
+		self:Setup()
+	end
 
     return o
 end
@@ -461,6 +562,12 @@ function Mod:Init(parent)
     Apollo.LinkAddon(parent, self)
     self.core = parent
     self.L = parent:GetLocale(self.encounterKey,self.locales)
+	
+	if self.SetupEvents then
+		rawset(configEnviroment, "Mod", self)
+		setfenv(self.SetupEvents, configEnviroment)
+		self:SetupEvents()
+	end
 end
 
 function Mod:IsRunning()
@@ -485,4 +592,98 @@ function Mod:OnDisable()
 		self:OnEnd()
 	end
     self.run = false
+end
+
+--could do this recursive aswell, not sure whats better.
+-- table insertion or filling stack?
+local function passEventOn(self, tArgs, nParameters, ...) --table insertion
+	if not self.eventFilters then return end
+	local args = {...}
+	local curr = {self.eventFilters} -- The searched-in table.
+	local wip = {} --work in progress - the currently filling table
+	for i=1, nParameters, 1 do
+		for _, tbl in ipairs(curr) do --this can end up very often in ipairs({}) for events which are not supposed to reach anwhere. --maybe prevent and return?
+			if args[i]~=nil and tbl[args[i]] then
+				table.insert(wip, tbl[args[i]])
+			end
+			if tbl[nilKey] then
+				table.insert(wip, tbl[nilKey])
+			end
+		end
+		curr = wip
+		wip = {}
+	end
+	
+	--maybe put this into its own function to only unpack() once?
+	for _, tbl in ipairs(curr) do --this can end up having a max size of 2^(nParameters-1) - each of which needs to contain at least a single Method to be called.
+		for _, sMethod in ipairs(tbl) do --this SHOULD most of the times only return a single one, but... who knows xD?
+			self[sMethod](self, unpack(tArgs))
+		end
+	end
+end
+
+--[[ Recursive approach (filling stack)
+	local function helper(self, tArgs, tbl, nParameters, arg1, ...)
+		if not tbl then return end
+		if nParameters==0 then
+			for _, sMethod in ipairs(tbl) do
+				self[sMethod](self, unpack(tArgs))
+			end
+		else
+			if arg1~=nil then
+				helper(self, tArgs, tbl[arg1], nParameters-1, ...)
+			end
+			helper(self, tArgs, tbl[nilKey], nParameters-1, ...)
+		end
+	end
+
+	local function passEventOn(self, tArgs, nParameters, ...)
+		helper(self, tArgs, self.eventFilters, nParameters, ...)
+	end
+]]
+
+
+function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
+	if not self.run then return end
+	passEventOn(self, {nId, tUnit, sName, bInCombat}, 3, "OnUnitCreated", sName, bInCombat)
+end
+
+function Mod:OnUnitDestroyed(nId, tUnit, sName)
+	if not self.run then return end
+	passEventOn(self, {nId, tUnit, sName}, 2, "OnUnitDestroyed", sName)
+end
+
+function Mod:OnHealthChanged(nId, nHealthPercent, sName, tUnit)
+	if not self.run then return end
+	passEventOn(self, {nId, nHealthPercent, sName, tUnit}, 3, "OnHealthChanged", nId, sName)
+end
+
+function Mod:OnDatachron(sMessage, sSender, sHandler)
+	if not self.run then return end
+	passEventOn(self, {sMessage, sSender, sHandler}, 4, "OnDatachron", sMessage, sSender, sHandler)
+end
+
+function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
+	if not self.run then return end
+	passEventOn(self, {nId, nSpellId, sName, tData, sUnitName, nStack, nDuration}, 6, "OnBuffAdded", nId, sUnitName, nSpellId, sName, nStack)
+end
+
+function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
+	if not self.run then return end
+	passEventOn(self, {nId, nSpellId, sName, tData, sUnitName, nStack, nDuration}, 6, "OnBuffUpdated", nId, sUnitName, nSpellId, sName, nStack)
+end
+
+function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
+	if not self.run then return end
+	passEventOn(self, {nId, nSpellId, sName, tData, sUnitName}, 5, "OnBuffUpdated", nId, sUnitName, nSpellId, sName)
+end
+
+function Mod:OnCastStart(nId, sCastName, tCast, sName, nDuration)
+	if not self.run then return end
+	passEventOn(self, {nId, sCastName, tCast, sName, nDuration}, 4, "OnCastStart", nId, sName, sCastName)
+end
+
+function Mod:OnCastEnd(nId, sCastName, tCast, sName)
+	if not self.run then return end
+	passEventOn(self, {nId, sCastName, tCast, sName}, 4, "OnCastEnd", nId, sName, sCastName)
 end
