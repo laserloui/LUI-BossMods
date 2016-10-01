@@ -161,6 +161,8 @@ function LUI_BossMods:OnLoad()
     self.xmlDoc = XmlDoc.CreateFromFile("LUI_BossMods.xml")
     self.xmlDoc:RegisterCallback("OnDocLoaded", self)
 
+    Apollo.RegisterEventHandler("CharacterCreated", "OnCharacterCreated", self)
+    Apollo.RegisterEventHandler("PlayerEnteredWorld", "OnCharacterCreated", self)
     Apollo.RegisterEventHandler("InterfaceMenuListHasLoaded", "OnInterfaceMenuListHasLoaded", self)
     Apollo.RegisterEventHandler("ChangeWorld", "OnChangeZone", self)
     Apollo.RegisterEventHandler("SubZoneChanged", "OnChangeZone", self)
@@ -203,13 +205,26 @@ function LUI_BossMods:OnDocLoaded()
         end
     end
 
-    if not self.unitPlayer then
-        self.unitPlayer = GetPlayerUnit()
-    end
+    self:OnCharacterCreated()
+end
 
-    if self.unitPlayer then
+function LUI_BossMods:OnCharacterCreated()
+    if self.unitPlayer and self.unitPlayer:IsValid() then
+        if self.unitPlayerTimer then
+            self.unitPlayerTimer:Stop()
+            self.unitPlayerTimer = nil
+        end
+
         self:OnChangeZone()
         self:OnEnteredCombat(self.unitPlayer,self.unitPlayer:IsInCombat())
+    else
+        self.unitPlayer = GetPlayerUnit()
+
+        if not self.unitPlayerTimer then
+            self.unitPlayerTimer = ApolloTimer.Create(0.1, false, "OnCharacterCreated", self)
+        end
+
+        self.unitPlayerTimer:Start()
     end
 end
 
@@ -282,7 +297,7 @@ function LUI_BossMods:SearchForEncounter()
         return
     end
 
-    if not self.unitPlayer then
+    if not self.unitPlayer or not self.unitPlayer:IsValid() then
         self.unitPlayer = GetPlayerUnit()
     end
 
@@ -661,10 +676,10 @@ function LUI_BossMods:OnUnitDestroyed(unit)
         if self.tCurrentEncounter and self.tCurrentEncounter.OnUnitDestroyed then
             self.tCurrentEncounter:OnUnitDestroyed(unit:GetId(),unit,unit:GetName())
         end
-    end
-
-    if self.tSavedUnits ~= nil and self.tSavedUnits[unit:GetName()] ~= nil and self.tSavedUnits[unit:GetName()][unit:GetId()] ~= nil then
-        self.tSavedUnits[unit:GetName()][unit:GetId()] = nil
+    else
+        if self.tSavedUnits ~= nil and self.tSavedUnits[unit:GetName()] ~= nil and self.tSavedUnits[unit:GetName()][unit:GetId()] ~= nil then
+            self.tSavedUnits[unit:GetName()][unit:GetId()] = nil
+        end
     end
 end
 
@@ -720,6 +735,8 @@ function LUI_BossMods:ProcessSavedUnits()
             self:OnUnitCreated(unit)
         end
     end
+
+    self.tSavedUnits = nil
 end
 
 -- #########################################################################################################################################
