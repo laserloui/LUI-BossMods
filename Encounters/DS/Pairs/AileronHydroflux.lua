@@ -97,14 +97,20 @@ function Mod:Setup()
 	icon("icon_twirl", true, "target", 20, "ffff0000", "label.twirl")
 end
 
-function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
-    if not self.run == true then return end
-
-    if sName == self.L["unit.boss_air"] and bInCombat == true then
-		self:AddUnit("boss_air", tUnit, false, true, false) --bOnCast, bOnBuff, bOnDebuff
-    elseif sName == self.L["unit.boss_water"] and bInCombat == true then
-		self:AddUnit("boss_water", tUnit, true, true, false)
-    end
+function Mod:SetupEvents()
+	onUnitCreated("BossCreated_Air", self.L["unit.boss_air"], true)
+	onUnitCreated("BossCreated_Water", self.L["unit.boss_water"], true)
+	
+	onCastStart("CastStart_Tsunami", "unit.boss_water", nil, self.L["cast.tsunami"])
+	onCastStart("CastStart_IceStorm", "unit.boss_water", nil, self.L["cast.icestorm"])
+	
+	onCastEnd("CastEnd_Tsunami", "unit.boss_water", nil, self.L["cast.tsunami"])
+	
+	onBuffAdded("BuffAdd_Moo", nil, nil, BUFFID_MOO1)
+	onBuffAdded("BuffAdd_Moo", nil, nil, BUFFID_MOO2)
+	onBuffAdded("BuffAdd_Twirl", nil, nil, DEBUFFID_TWIRL)
+	
+	onBuffRemoved("BuffRemove_Twirl", nil, nil, DEBUFFID_TWIRL)
 end
 
 function Mod:OnStart()
@@ -115,52 +121,55 @@ function Mod:OnStart()
 	self:AddTimer("timer_tomb", 30)
 end
 
-function Mod:OnCastStart(nId, sCastName, tCast, sName, nDuration)
-	if sName  == self.L["unit.boss_water"] then
-		if sCastName == self.L["cast.tsunami"] then
-			bIsPhase2 = true
-            nMOOCount = nMOOCount + 1
-			self:ShowAlert("alert_phase2")
-			self:PlaySound("sound_phase2")
-		elseif sCastName == self.L["cast.icestorm"] then
-			self:ShowAlert("alert_icestorm")
-			self:PlaySound("sound_icestorm")
-		end
-	end
+function Mod:BossCreated_Air(nId, tUnit, sName, bInCombat)
+	self:AddUnit("boss_air", tUnit, false, true, false) --bOnCast, bOnBuff, bOnDebuff
 end
 
-function Mod:OnCastEnd(nId, sCastName, tCast, sName)
-	if sName == self.L["unit.boss_water"] then
-		if sCastName == self.L["cast.tsunami"] then
-			self:AddTimer("timer_midphase", 88)
-			self:AddTimer("timer_tomb", 30)
-		end
-	end
+function Mod:BossCreated_Water(nId, tUnit, sName, bInCombat)
+	self:AddUnit("boss_water", tUnit, true, true, false)
 end
 
-function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
-	if bIsPhase2 and (nSpellId == BUFFID_MOO1 or nSpellId == BUFFID_MOO2) then
+function Mod:CastStart_Tsunami(nId, sCastName, tCast, sName, nDuration)
+	bIsPhase2 = true
+	nMOOCount = nMOOCount + 1
+	self:ShowAlert("alert_phase2")
+	self:PlaySound("sound_phase2")
+end
+
+function Mod:CastStart_IceStorm(nId, sCastName, tCast, sName, nDuration)
+	self:ShowAlert("alert_icestorm")
+	self:PlaySound("sound_icestorm")
+end
+
+function Mod:CastEnd_Tsunami(nId, sCastName, tCast, sName)
+	self:AddTimer("timer_midphase", 88)
+	self:AddTimer("timer_tomb", 30)
+end
+
+function Mod:BuffAdd_Moo(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration) 
+	if bIsPhase2 then
 		bIsPhase2 = false
 		if nMOOCount == 2 then
             nMOOCount = 0
             mod:AddTimer("timer_icestorm", 15)
         end
-	elseif nSpellId == DEBUFFID_TWIRL then
-		local tUnit = tData.tUnit
-		if tUnit:IsThePlayer() then
-			self:ShowAlert("alert_twirl")
-			self:PlaySound("sound_twirl")
-		else
-			self:DrawIcon("icon_twirl", tUnit, 20, 20, nil, "twirl"..tUnit:GetId()) --show for max 20s
-		end
 	end
 end
 
-function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
-	if nSpellId == DEBUFFID_TWIRL and not tData.tUnit:IsThePlayer() then
+function Mod:BuffAdd_Twirl(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration) 
+	local tUnit = tData.tUnit
+	if tUnit:IsThePlayer() then
+		self:ShowAlert("alert_twirl")
+		self:PlaySound("sound_twirl")
+	else
+		self:DrawIcon("icon_twirl", tUnit, 20, 20, nil, "twirl"..tUnit:GetId()) --show for max 20s
+	end
+end
+
+function Mod:BuffRemove_Twirl(nId, nSpellId, sName, tData, sUnitName)
+	if not tData.tUnit:IsThePlayer() then
 		self:RemoveIcon("twirl"..tData.tUnit:GetId())
 	end
 end
-
 
 Mod:new()
