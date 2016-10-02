@@ -861,7 +861,7 @@ function LUI_BossMods:SortUnits()
 end
 
 function LUI_BossMods:UpdateUnit(tData)
-    if not tData or not type(tData) == "table" or not tData.wnd then
+    if not tData or not type(tData) == "table" then
         return
     end
 
@@ -887,6 +887,10 @@ function LUI_BossMods:UpdateUnit(tData)
         if self.tCurrentEncounter and self.tCurrentEncounter.OnHealthChanged then
             self.tCurrentEncounter:OnHealthChanged(tData.nId, nHealthPercent, tData.sName, tData.tUnit)
         end
+    end
+
+    if not tData.wnd then
+        return
     end
 
     -- Absorb
