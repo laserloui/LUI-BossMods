@@ -676,10 +676,10 @@ function LUI_BossMods:OnUnitDestroyed(unit)
         if self.tCurrentEncounter and self.tCurrentEncounter.OnUnitDestroyed then
             self.tCurrentEncounter:OnUnitDestroyed(unit:GetId(),unit,unit:GetName())
         end
-    else
-        if self.tSavedUnits ~= nil and self.tSavedUnits[unit:GetName()] ~= nil and self.tSavedUnits[unit:GetName()][unit:GetId()] ~= nil then
-            self.tSavedUnits[unit:GetName()][unit:GetId()] = nil
-        end
+    end
+
+    if self.tSavedUnits ~= nil and self.tSavedUnits[unit:GetName()] ~= nil and self.tSavedUnits[unit:GetName()][unit:GetId()] ~= nil then
+        self.tSavedUnits[unit:GetName()][unit:GetId()] = nil
     end
 end
 
@@ -735,8 +735,6 @@ function LUI_BossMods:ProcessSavedUnits()
             self:OnUnitCreated(unit)
         end
     end
-
-    self.tSavedUnits = nil
 end
 
 -- #########################################################################################################################################
