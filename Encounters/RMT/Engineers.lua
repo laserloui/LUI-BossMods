@@ -365,7 +365,9 @@ function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
 
         if self.config.alerts.pillar.enable == true or self.config.sounds.pillar.enable == true then
             if nPercent < 20 then
-                if self.core:GetDistance(tUnit) < 30 then
+                local sCurrentPlatform = self:GetPlatform(self.unitPlayer)
+
+                if sCurrentPlatform and sName == self.L[sCurrentPlatform] then
                     if not self.warned or self.warned ~= sName then
                         if self.config.sounds.pillar.enable == true then
                             self.core:PlaySound(self.config.sounds.pillar.file)
@@ -465,7 +467,7 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     elseif sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.electroshock"] then
         --Print("Electroshock after: "..tostring((Apollo.GetTickCount() - self.electroshock) / 1000))
 
-        local sPlatformPlayer = self:GetPlatform(GameLib.GetPlayerUnit())
+        local sPlatformPlayer = self:GetPlatform(self.unitPlayer)
         local sPlatformGun = self:GetPlatform(tCast.tUnit)
 
         if sPlatformPlayer == sPlatformGun then
@@ -480,7 +482,7 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     elseif sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.liquidate"] then
         --Print("Liquidate after: "..tostring((Apollo.GetTickCount() - self.liquidate) / 1000))
 
-        local sPlatformPlayer = self:GetPlatform(GameLib.GetPlayerUnit())
+        local sPlatformPlayer = self:GetPlatform(self.unitPlayer)
         local sPlatformSword = self:GetPlatform(tCast.tUnit)
 
         if sPlatformPlayer == sPlatformSword then
@@ -530,6 +532,7 @@ end
 
 function Mod:OnEnable()
     self.run = true
+    self.unitPlayer = GameLib.GetPlayerUnit()
 
     if self.config.timers.electroshock.enable == true then
         self.core:AddTimer("cast.electroshock", self.L["cast.electroshock"], 11, self.config.timers.electroshock.color)
