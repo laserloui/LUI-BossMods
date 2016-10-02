@@ -845,17 +845,20 @@ function LUI_BossMods:SortUnits()
 
     for i=1,#tSorted do
         local tUnit = self.runtime.units[tSorted[i].nId]
-        local tOffsets = {0,(height * (i-1)),0,(height * i)}
 
-        if tUnit.nPosition then
-            if tUnit.nPosition ~= i then
-                tUnit.wnd:TransitionMove(WindowLocation.new({fPoints = {0,0,1,0}, nOffsets = tOffsets}), .25)
+        if tUnit.wnd then
+            local tOffsets = {0,(height * (i-1)),0,(height * i)}
+
+            if tUnit.nPosition then
+                if tUnit.nPosition ~= i then
+                    tUnit.wnd:TransitionMove(WindowLocation.new({fPoints = {0,0,1,0}, nOffsets = tOffsets}), .25)
+                end
+            else
+                tUnit.wnd:SetAnchorOffsets(unpack(tOffsets))
             end
-        else
-            tUnit.wnd:SetAnchorOffsets(unpack(tOffsets))
-        end
 
-        tUnit.nPosition = i
+            tUnit.nPosition = i
+        end
     end
 end
 
