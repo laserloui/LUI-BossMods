@@ -1261,6 +1261,11 @@ function Settings:OnUnlockBtn(wndHandler, wndControl)
         return
     end
 
+    if self.core.bIsRunning then
+        self.core:Print("You are infight.")
+        return
+    end
+
     self:OnToggleMenu()
     self:OnLock(true)
 end
@@ -1273,46 +1278,80 @@ function Settings:OnLockBtn(wndHandler, wndControl)
     self:OnLock(false)
 end
 
+function Settings:OnRefresh(sId)
+    if sId:match("timer") then
+        self.core:AddTimer(sId, "60 Second Timer", 60, nil, Settings.OnRefresh, sId)
+    elseif sId == "cast" then
+        self.core:ShowCast({
+            sName = "cast",
+            nDuration = 20,
+            nElapsed = 0,
+            nTick = Apollo.GetTickCount()
+        },"Castbar", nil, Settings.OnRefresh, "cast")
+    end
+end
+
 function Settings:OnLock(state)
     if not self.core then
         return
     end
 
+    self.core.bIsLocked = not state
+
+    if state then
+        Apollo.RegisterEventHandler("FrameCount", "OnUpdate", self.core)
+
+        self.core:AddTimer("timer_1", "60 Second Timer", 60, nil, Settings.OnRefresh, "timer_1")
+        self.core:AddTimer("timer_2", "45 Second Timer", 45, nil, Settings.OnRefresh, "timer_2")
+        self.core:AddTimer("timer_3", "30 Second Timer", 30, nil, Settings.OnRefresh, "timer_3")
+        self.core:AddTimer("timer_4", "15 Second Timer", 15, nil, Settings.OnRefresh, "timer_4")
+
+        self.core:AddUnit("unit_1", "Unit A", self.core.unitPlayer, true, false, false, false, nil, nil, 1)
+        self.core:AddUnit("unit_2", "Unit B", self.core.unitPlayer, true, false, false, false, nil, nil, 2)
+        self.core:AddUnit("unit_3", "Unit C", self.core.unitPlayer, true, false, false, false, nil, nil, 3)
+
+        self.core:ShowAlert("alert", "This is a dummy message!", 60)
+        self.core:ShowCast({
+            sName = "cast",
+            nDuration = 20,
+            nElapsed = 0,
+            nTick = Apollo.GetTickCount()
+        },"Castbar", nil, Settings.OnRefresh, "cast")
+    else
+        Apollo.RemoveEventHandler("FrameCount",self.core)
+
+        self.core:RemoveTimer("timer_1")
+        self.core:RemoveTimer("timer_2")
+        self.core:RemoveTimer("timer_3")
+        self.core:RemoveTimer("timer_4")
+
+        self.core:RemoveUnit("unit_1")
+        self.core:RemoveUnit("unit_2")
+        self.core:RemoveUnit("unit_3")
+
+        self.core:HideAlert("alert")
+        self.core:HideCast()
+    end
+
     if self.core.wndTimers then
         self.core.wndTimers:SetStyle("Moveable", state)
         self.core.wndTimers:SetStyle("Sizable", state)
-        self.core.wndTimers:SetStyle("Picture", state)
         self.core.wndTimers:SetStyle("IgnoreMouse", not state)
-        self.core.wndTimers:SetText(state == true and "TIMER" or "")
-
-        if state == true or not self.core.bIsRunning == true then
-            self.core.wndTimers:Show(state,true)
-        end
+        self.core.wndTimers:Show(state,true)
     end
 
     if self.core.wndUnits then
         self.core.wndUnits:SetStyle("Moveable", state)
         self.core.wndUnits:SetStyle("Sizable", state)
-        self.core.wndUnits:SetStyle("Picture", state)
         self.core.wndUnits:SetStyle("IgnoreMouse", not state)
-        self.core.wndUnits:SetText(state == true and "UNITS" or "")
-
-        if state == true or not self.core.bIsRunning == true then
-            self.core.wndUnits:Show(state,true)
-        end
+        self.core.wndUnits:Show(state,true)
     end
 
     if self.core.wndCastbar then
         self.core.wndCastbar:SetStyle("Moveable", state)
         self.core.wndCastbar:SetStyle("Sizable", state)
-        self.core.wndCastbar:SetStyle("Picture", state)
         self.core.wndCastbar:SetStyle("IgnoreMouse", not state)
-        self.core.wndCastbar:FindChild("Container"):Show(not state,true)
-        self.core.wndCastbar:SetText(state == true and "CASTBAR" or "")
-
-        if state == true or not self.core.bIsRunning == true then
-            self.core.wndCastbar:Show(state,true)
-        end
+        self.core.wndCastbar:Show(state,true)
     end
 
     if self.core.wndAura then
@@ -1320,23 +1359,14 @@ function Settings:OnLock(state)
         self.core.wndAura:SetStyle("Sizable", state)
         self.core.wndAura:SetStyle("Picture", state)
         self.core.wndAura:SetStyle("IgnoreMouse", not state)
-        self.core.wndAura:FindChild("Icon"):Show(not state,true)
         self.core.wndAura:SetText(state == true and "AURA" or "")
-
-        if state == true or not self.core.bIsRunning == true then
-            self.core.wndAura:Show(state,true)
-        end
+        self.core.wndAura:Show(state,true)
     end
 
     if self.core.wndAlerts then
         self.core.wndAlerts:SetStyle("Moveable", state)
-        self.core.wndAlerts:SetStyle("Picture", state)
         self.core.wndAlerts:SetStyle("IgnoreMouse", not state)
-        self.core.wndAlerts:SetText(state == true and "ALERTS" or "")
-
-        if state == true or not self.core.bIsRunning == true then
-            self.core.wndAlerts:Show(state,true)
-        end
+        self.core.wndAlerts:Show(state,true)
     end
 
     if state == true then
@@ -1347,6 +1377,7 @@ function Settings:OnLock(state)
     else
         if self.wndLock then
             self.wndLock:Destroy()
+            self.wndLock = nil
         end
     end
 end
@@ -1473,5 +1504,4 @@ function Settings:SetVar(setting,value)
     end
 end
 
-local SettingsInst = Settings:new()
-LUI_BossMods.settings = SettingsInst
+LUI_BossMods.settings = Settings:new()
