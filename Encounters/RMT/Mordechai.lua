@@ -146,7 +146,7 @@ function Mod:new(o)
             },
             shocking_attraction = {
                 enable = true,
-                file = "burn",
+                file = "alert",
                 label = "debuff.shocking_attraction",
             },
         },
