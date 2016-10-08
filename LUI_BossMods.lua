@@ -48,6 +48,7 @@ function LUI_BossMods:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+    self.bIsLocked = true
     self.bIsRunning = false
     self.language = "enUS"
     self.runtime = {}
@@ -85,8 +86,8 @@ function LUI_BossMods:new(o)
             volumeVoice = 0,
         },
         castbar = {
-            mooColor = "ff9400d3",
-            barColor = "ffb22222",
+            mooColor = "969400d3",
+            barColor = "9600ffff",
             textColor = "ffebebeb",
             offsets = {
                 left = -300,
@@ -403,7 +404,7 @@ function LUI_BossMods:OnFrame()
 end
 
 function LUI_BossMods:OnUpdate()
-    if not self.bIsRunning or not self.tCurrentEncounter then
+    if (not self.bIsRunning or not self.tCurrentEncounter) and self.bIsLocked then
         return
     end
 
@@ -458,13 +459,19 @@ function LUI_BossMods:StartFight()
         return
     end
 
+    if not self.bIsLocked then
+        self.settings:OnLock(false)
+    end
+
     self:OnBreakEnd()
     self.bIsRunning = true
     self.tCurrentEncounter:OnEnable()
     self:ProcessSavedUnits()
 
+    Apollo.RemoveEventHandler("FrameCount",self)
+    Apollo.RegisterEventHandler("FrameCount", "OnUpdate", self)
+
     Apollo.RemoveEventHandler("NextFrame",self)
-    Apollo.RegisterEventHandler("NextFrame", "OnUpdate", self)
     Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
 
     Apollo.RemoveEventHandler("ChatMessage",self)
@@ -484,6 +491,7 @@ function LUI_BossMods:ResetFight()
     self.bIsRunning = false
     self.wipeTimer:Stop()
 
+    Apollo.RemoveEventHandler("FrameCount",self)
     Apollo.RemoveEventHandler("NextFrame",self)
     Apollo.RemoveEventHandler("ChatMessage",self)
     Apollo.RemoveEventHandler("BuffAdded",self)
@@ -499,15 +507,15 @@ function LUI_BossMods:ResetFight()
         for key,draw in pairs(self.tDraws) do
             if draw.sType then
                 if draw.sType == "Icon" then
-                    self:RemoveIcon(key,draw)
+                    self:RemoveIcon(key)
                 elseif draw.sType == "Pixie" then
-                    self:RemovePixie(key,draw)
+                    self:RemovePixie(key)
                 elseif draw.sType == "Polygon" then
-                    self:RemovePolygon(key,draw)
+                    self:RemovePolygon(key)
                 elseif draw.sType == "Line" then
-                    self:RemoveLine(key,draw)
+                    self:RemoveLine(key)
                 elseif draw.sType == "LineBetween" then
-                    self:RemoveLineBetween(key,draw)
+                    self:RemoveLineBetween(key)
                 end
             end
         end
@@ -995,7 +1003,15 @@ function LUI_BossMods:UpdateUnit(tData)
 end
 
 function LUI_BossMods:RemoveUnit(nId)
-    if not nId or not self.runtime.units or not self.runtime.units[nId] then
+    if not nId then
+        return
+    end
+
+    if self.runtime.buffs and self.runtime.buffs[nId] then
+        self.runtime.buffs[nId] = nil
+    end
+
+    if not self.runtime.units or not self.runtime.units[nId] then
         return
     end
 
@@ -1004,6 +1020,7 @@ function LUI_BossMods:RemoveUnit(nId)
     end
 
     self.runtime.units[nId] = nil
+    self:SortUnits()
 end
 
 -- #########################################################################################################################################
@@ -1049,11 +1066,25 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
 
     local buff = spell.splEffect:IsBeneficial()
     local nUnitId = unit:GetId()
+    local nSpellId = spell.splEffect:GetId()
+
+    if not self.runtime.buffs then
+        self.runtime.buffs = {}
+    end
+
+    if not self.runtime.buffs[nUnitId] then
+        self.runtime.buffs[nUnitId] = {}
+    end
+
+    if self.runtime.buffs[nUnitId][nSpellId] ~= nil then
+        self:OnBuffUpdated(unit,spell)
+        return
+    end
 
     if self.runtime.units[nUnitId] ~= nil then
         if (buff and self.runtime.units[nUnitId].bOnBuff) or (not buff and self.runtime.units[nUnitId].bOnDebuff) then
             local tData = {
-                nId = spell.splEffect:GetId(),
+                nId = nSpellId,
                 sName = spell.splEffect:GetName(),
                 nDuration = spell.fTimeRemaining,
                 nTick = GetTickCount(),
@@ -1065,12 +1096,13 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
             }
 
             if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffAdded then
+                self.runtime.buffs[nUnitId][nSpellId] = tData
                 self.tCurrentEncounter:OnBuffAdded(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
             end
         end
     elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and not buff then
         local tData = {
-            nId = spell.splEffect:GetId(),
+            nId = nSpellId,
             sName = spell.splEffect:GetName(),
             nDuration = spell.fTimeRemaining,
             nTick = GetTickCount(),
@@ -1082,6 +1114,7 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
         }
 
         if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffAdded then
+            self.runtime.buffs[nUnitId][nSpellId] = tData
             self.tCurrentEncounter:OnBuffAdded(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
         end
     end
@@ -1094,11 +1127,17 @@ function LUI_BossMods:OnBuffUpdated(unit,spell)
 
     local buff = spell.splEffect:IsBeneficial()
     local nUnitId = unit:GetId()
+    local nSpellId = spell.splEffect:GetId()
+
+    if not self.runtime.buffs or not self.runtime.buffs[nUnitId] or not self.runtime.buffs[nUnitId][nSpellId] then
+        self:OnBuffAdded(unit,spell)
+        return
+    end
 
     if self.runtime.units[nUnitId] ~= nil then
         if (buff and self.runtime.units[nUnitId].bOnBuff) or (not buff and self.runtime.units[nUnitId].bOnDebuff) then
             local tData = {
-                nId = spell.splEffect:GetId(),
+                nId = nSpellId,
                 sName = spell.splEffect:GetName(),
                 nDuration = spell.fTimeRemaining,
                 nTick = GetTickCount(),
@@ -1115,7 +1154,7 @@ function LUI_BossMods:OnBuffUpdated(unit,spell)
         end
     elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and not buff then
         local tData = {
-            nId = spell.splEffect:GetId(),
+            nId = nSpellId,
             sName = spell.splEffect:GetName(),
             nDuration = spell.fTimeRemaining,
             nTick = GetTickCount(),
@@ -1139,11 +1178,16 @@ function LUI_BossMods:OnBuffRemoved(unit,spell)
 
     local buff = spell.splEffect:IsBeneficial()
     local nUnitId = unit:GetId()
+    local nSpellId = spell.splEffect:GetId()
+
+    if not self.runtime.buffs or not self.runtime.buffs[nUnitId] or not self.runtime.buffs[nUnitId][nSpellId] then
+        return
+    end
 
     if self.runtime.units[nUnitId] ~= nil then
         if (buff and self.runtime.units[nUnitId].bOnBuff) or (not buff and self.runtime.units[nUnitId].bOnDebuff) then
             local tData = {
-                nId = spell.splEffect:GetId(),
+                nId = nSpellId,
                 sName = spell.splEffect:GetName(),
                 nUnitId = nUnitId,
                 sUnitName = unit:GetName(),
@@ -1152,12 +1196,13 @@ function LUI_BossMods:OnBuffRemoved(unit,spell)
             }
 
             if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffRemoved then
+                self.runtime.buffs[nUnitId][nSpellId] = nil
                 self.tCurrentEncounter:OnBuffRemoved(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName)
             end
         end
     elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and not buff then
         local tData = {
-            nId = spell.splEffect:GetId(),
+            nId = nSpellId,
             sName = spell.splEffect:GetName(),
             nUnitId = nUnitId,
             sUnitName = unit:GetName(),
@@ -1166,6 +1211,7 @@ function LUI_BossMods:OnBuffRemoved(unit,spell)
         }
 
         if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffRemoved then
+            self.runtime.buffs[nUnitId][nSpellId] = nil
             self.tCurrentEncounter:OnBuffRemoved(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName)
         end
     end
@@ -1228,30 +1274,27 @@ function LUI_BossMods:UpdateTimer(tTimer)
     local nRemaining = tTimer.nDuration - nElapsed
 
     if tTimer.nRemaining and (nElapsed >= tTimer.nDuration) then
-        self:RemoveTimer(tTimer.sName,true)
+        self:RemoveTimer(tTimer.sName)
     else
         tTimer.nRemaining = nRemaining
         tTimer.wnd:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
     end
 end
 
-function LUI_BossMods:RemoveTimer(sName,bCallback)
+function LUI_BossMods:RemoveTimer(sName)
     if not sName or not self.runtime.timer or not self.runtime.timer[sName] then
         return
     end
 
-    if bCallback ~= nil and bCallback then
-        if self.runtime.timer[sName].fHandler then
-            if self.tCurrentEncounter then
-                self.runtime.timer[sName].fHandler(self.tCurrentEncounter, self.runtime.timer[sName].tData)
-            else
-                self.runtime.timer[sName].fHandler(self, self.runtime.timer[sName].tData)
-            end
-        end
-    end
+    local tCallback = {
+        fHandler = self.runtime.timer[sName].fHandler,
+        tData = self.runtime.timer[sName].tData
+    }
 
     self.runtime.timer[sName].wnd:Destroy()
     self.runtime.timer[sName] = nil
+
+    self:Callback(tCallback.fHandler, tCallback.tData)
 end
 
 function LUI_BossMods:SortTimer()
@@ -1275,8 +1318,8 @@ function LUI_BossMods:SortTimer()
         return a.nRemaining < b.nRemaining
     end)
 
-    for i=1,#tSorted do
-        local tTimer = self.runtime.timer[tSorted[i].sName]
+    for i=0,#tSorted-1 do
+        local tTimer = self.runtime.timer[tSorted[i+1].sName]
         local tOffsets = {0,(height * (i+1)) * -1,0,(height * i) * -1}
 
         if not tTimer.wnd:IsShown() then
@@ -1412,10 +1455,13 @@ function LUI_BossMods:CheckCast(tData)
     end
 end
 
-function LUI_BossMods:ShowCast(tCast,sName,sColor)
+function LUI_BossMods:ShowCast(tCast,sName,sColor,fHandler,tData)
     if not tCast then
         return
     end
+
+    tCast.fHandler = fHandler or nil
+    tCast.tData = tData or nil
 
     if not self.wndCastbar then
         self:LoadWindows()
@@ -1467,7 +1513,11 @@ function LUI_BossMods:UpdateCast()
     local tCast = self.runtime.cast
     local nRemaining = (tCast.nDuration - tCast.nElapsed)
 
-    if tCast.nElapsed > tCast.nDuration then
+    if not self.bIsLocked then
+        nRemaining = ((tCast.nTick + (tCast.nDuration * 1000)) - GetTickCount()) / 1000
+    end
+
+    if (tCast.nElapsed > tCast.nDuration) or nRemaining <= 0 then
         self:HideCast()
     else
         if tCast.sName ~= "MOO" then
@@ -1477,11 +1527,17 @@ function LUI_BossMods:UpdateCast()
 end
 
 function LUI_BossMods:HideCast()
-    self.runtime.cast = nil
+    local tCallback = {
+        fHandler = self.runtime.cast.fHandler,
+        tData = self.runtime.cast.tData
+    }
 
     if self.wndCastbar:IsShown() then
         self.wndCastbar:Show(false,true)
     end
+
+    self.runtime.cast = nil
+    self:Callback(tCallback.fHandler, tCallback.tData)
 end
 
 -- #########################################################################################################################################
@@ -1547,23 +1603,6 @@ function LUI_BossMods:ShowAura(sName,sSprite,sColor,nDuration,bShowDuration,fHan
     end
 end
 
-function LUI_BossMods:HideAura(sName,bCallback)
-    if not sName or not self.runtime.aura then
-        return
-    end
-
-    if self.runtime.aura.sName == sName then
-        if bCallback ~= nil and bCallback then
-            if self.runtime.aura.fHandler and self.tCurrentEncounter then
-                self.runtime.aura.fHandler(self.tCurrentEncounter, self.runtime.aura.tData)
-            end
-        end
-
-        self.runtime.aura = nil
-        self.wndAura:Show(false,true)
-    end
-end
-
 function LUI_BossMods:UpdateAura()
     if not self.runtime.aura or not self.runtime.aura.nTick then
         return
@@ -1576,16 +1615,32 @@ function LUI_BossMods:UpdateAura()
     local nRemaining = (nTotal - nElapsed)
 
     if nElapsed > nTotal then
-        if tAura.fHandler and self.tCurrentEncounter then
-            tAura.fHandler(self.tCurrentEncounter, tAura.tData)
-        end
-
-        self.runtime.aura = nil
-        self.wndAura:Show(false,true)
+        self:HideAura(tAura.sName)
     else
         if tAura.bShowDuration then
             self.wndAura:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
         end
+    end
+end
+
+function LUI_BossMods:HideAura(sName)
+    if not sName or not self.runtime.aura then
+        return
+    end
+
+    if self.runtime.aura.sName == sName then
+        local tCallback = {
+            fHandler = self.runtime.aura.fHandler,
+            tData = self.runtime.aura.tData
+        }
+
+        self.runtime.aura = nil
+
+        if self.wndAura:IsShown() then
+            self.wndAura:Show(false,true)
+        end
+
+        self:Callback(tCallback.fHandler, tCallback.tData)
     end
 end
 
@@ -1597,7 +1652,7 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor)
+function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, fHandler, tData)
     if not sName or not sText then
         return
     end
@@ -1617,9 +1672,12 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor)
         }
     end
 
-    local nHeight = self.config.alerts.size * 2
     self.runtime.alerts[sName].nTick = GetTickCount()
     self.runtime.alerts[sName].nDuration = nDuration or 5
+    self.runtime.alerts[sName].fHandler = fHandler or nil
+    self.runtime.alerts[sName].tData = tData or nil
+
+    local nHeight = self.config.alerts.size * 2
     self.runtime.alerts[sName].wnd:SetText(sText or "")
     self.runtime.alerts[sName].wnd:SetFont(self.config.alerts.font)
     self.runtime.alerts[sName].wnd:SetTextColor(sColor or self.config.alerts.color)
@@ -1652,9 +1710,23 @@ function LUI_BossMods:UpdateAlert(tAlert)
     local nElapsed = (nTick - tAlert.nTick) / 1000
 
     if nElapsed > nTotal then
-        self.runtime.alerts[tAlert.sName].wnd:Destroy()
-        self.runtime.alerts[tAlert.sName] = nil
+        self:HideAlert(tAlert.sName)
     end
+end
+
+function LUI_BossMods:HideAlert(sName)
+    if not sName or not self.runtime.alerts or not self.runtime.alerts[sName] then
+        return
+    end
+
+    local tCallback = {
+        fHandler = self.runtime.alerts[sName].fHandler,
+        tData = self.runtime.alerts[sName].tData
+    }
+
+    self.runtime.alerts[sName].wnd:Destroy()
+    self.runtime.alerts[sName] = nil
+    self:Callback(tCallback.fHandler, tCallback.tData)
 end
 
 -- #########################################################################################################################################
@@ -1828,20 +1900,20 @@ function LUI_BossMods:UpdateIcon(Key,tDraw)
         local nElapsed = (nTick - tDraw.nTick) / 1000
 
         if nElapsed > nTotal then
-            self:RemoveIcon(Key,true)
+            self:RemoveIcon(Key)
             return
         end
     end
 
     if tDraw.tOrigin and type(tDraw.tOrigin) == "userdata" then
         if tDraw.tOrigin:IsDead() then
-            self:RemoveIcon(Key,true)
+            self:RemoveIcon(Key)
             return
         end
     end
 end
 
-function LUI_BossMods:RemoveIcon(Key,bCallback)
+function LUI_BossMods:RemoveIcon(Key)
     if not self.tDraws then
         return
     end
@@ -1852,13 +1924,13 @@ function LUI_BossMods:RemoveIcon(Key,bCallback)
             self.tDraws[Key].wnd:Destroy()
         end
 
-        if bCallback ~= nil and bCallback then
-            if self.tDraws[Key].fHandler and self.tCurrentEncounter then
-                self.tDraws[Key].fHandler(self.tCurrentEncounter, self.tDraws[Key].tData)
-            end
-        end
+        local tCallback = {
+            fHandler = self.tDraws[Key].fHandler,
+            tData = self.tDraws[Key].tData
+        }
 
         self.tDraws[Key] = nil
+        self:Callback(tCallback.fHandler, tCallback.tData)
     end
 end
 
@@ -1937,7 +2009,7 @@ function LUI_BossMods:UpdatePixie(Key,tDraw)
         local nElapsed = (nTick - tDraw.nTick) / 1000
 
         if nElapsed > nTotal then
-            self:RemovePixie(Key,true)
+            self:RemovePixie(Key)
             return
         end
     end
@@ -1996,7 +2068,7 @@ function LUI_BossMods:UpdatePixie(Key,tDraw)
     end
 end
 
-function LUI_BossMods:RemovePixie(Key,bCallback)
+function LUI_BossMods:RemovePixie(Key)
     if not self.tDraws then
         return
     end
@@ -2009,13 +2081,13 @@ function LUI_BossMods:RemovePixie(Key,bCallback)
             tDraw.nPixieId = nil
         end
 
-        if bCallback ~= nil and bCallback then
-            if tDraw.fHandler and self.tCurrentEncounter then
-                tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
-            end
-        end
+        local tCallback = {
+            fHandler = tDraw.fHandler,
+            tData = tDraw.tData
+        }
 
         self.tDraws[Key] = nil
+        self:Callback(tCallback.fHandler, tCallback.tData)
     end
 end
 
@@ -2091,7 +2163,7 @@ function LUI_BossMods:UpdatePolygon(Key,tDraw)
         local nElapsed = (nTick - tDraw.nTick) / 1000
 
         if nElapsed > nTotal then
-            self:RemovePolygon(Key,true)
+            self:RemovePolygon(Key)
             return
         end
     end
@@ -2176,7 +2248,7 @@ function LUI_BossMods:UpdatePolygon(Key,tDraw)
     end
 end
 
-function LUI_BossMods:RemovePolygon(Key,bCallback)
+function LUI_BossMods:RemovePolygon(Key)
     if not self.tDraws then
         return
     end
@@ -2191,13 +2263,13 @@ function LUI_BossMods:RemovePolygon(Key,bCallback)
             end
         end
 
-        if bCallback ~= nil and bCallback then
-            if tDraw.fHandler and self.tCurrentEncounter then
-                tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
-            end
-        end
+        local tCallback = {
+            fHandler = tDraw.fHandler,
+            tData = tDraw.tData
+        }
 
         self.tDraws[Key] = nil
+        self:Callback(tCallback.fHandler, tCallback.tData)
     end
 end
 
@@ -2303,7 +2375,7 @@ function LUI_BossMods:UpdateLine(Key,tDraw)
         local nElapsed = (nTick - tDraw.nTick) / 1000
 
         if nElapsed > nTotal then
-            self:RemoveLine(Key,true)
+            self:RemoveLine(Key)
             return
         end
     end
@@ -2358,7 +2430,7 @@ function LUI_BossMods:UpdateLine(Key,tDraw)
     self:UpdateDraw(tDraw,tVectorFrom,tVectorTo)
 end
 
-function LUI_BossMods:RemoveLine(Key,bCallback)
+function LUI_BossMods:RemoveLine(Key)
     if not self.tDraws then
         return
     end
@@ -2378,13 +2450,13 @@ function LUI_BossMods:RemoveLine(Key,bCallback)
             tDraw.nPixieIdDot = {}
         end
 
-        if bCallback ~= nil and bCallback then
-            if tDraw.fHandler and self.tCurrentEncounter then
-                tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
-            end
-        end
+        local tCallback = {
+            fHandler = tDraw.fHandler,
+            tData = tDraw.tData
+        }
 
         self.tDraws[Key] = nil
+        self:Callback(tCallback.fHandler, tCallback.tData)
     end
 end
 
@@ -2451,7 +2523,7 @@ function LUI_BossMods:UpdateLineBetween(Key,tDraw)
         local nElapsed = (nTick - tDraw.nTick) / 1000
 
         if nElapsed > nTotal then
-            self:RemoveLineBetween(Key,true)
+            self:RemoveLineBetween(Key)
             return
         end
     end
@@ -2576,7 +2648,7 @@ function LUI_BossMods:UpdateDraw(tDraw, tVectorFrom, tVectorTo)
     end
 end
 
-function LUI_BossMods:RemoveLineBetween(Key,bCallback)
+function LUI_BossMods:RemoveLineBetween(Key)
     if not self.tDraws then
         return
     end
@@ -2596,13 +2668,13 @@ function LUI_BossMods:RemoveLineBetween(Key,bCallback)
             tDraw.nPixieIdDot = {}
         end
 
-        if bCallback ~= nil and bCallback then
-            if tDraw.fHandler and self.tCurrentEncounter then
-                tDraw.fHandler(self.tCurrentEncounter, tDraw.tData)
-            end
-        end
+        local tCallback = {
+            fHandler = tDraw.fHandler,
+            tData = tDraw.tData
+        }
 
         self.tDraws[Key] = nil
+        self:Callback(tCallback.fHandler, tCallback.tData)
     end
 end
 
@@ -2659,6 +2731,20 @@ end
 -- #
 -- #########################################################################################################################################
 -- #########################################################################################################################################
+
+function LUI_BossMods:Callback(fHandler, tData)
+    if fHandler and type(fHandler) == "function" then
+        if not self.bIsLocked then
+            fHandler(self.settings, tData)
+        elseif self.tCurrentEncounter then
+            fHandler(self.tCurrentEncounter, tData)
+        else
+            if tData == "break" then
+                fHandler(self, tData)
+            end
+        end
+    end
+end
 
 function LUI_BossMods:GetDistance(FromOrigin, OriginTo)
     if not FromOrigin then
@@ -2821,7 +2907,7 @@ function LUI_BossMods:OnSlashCommand(cmd, args)
     end
 
     if strName and nDuration then
-        self:AddTimer("break", "Break", nDuration, nil, LUI_BossMods.OnBreakFinished)
+        self:AddTimer("break", "Break", nDuration, nil, LUI_BossMods.OnBreakFinished, "break")
 
         if not self.breakTimer then
             self.breakTimer = ApolloTimer.Create(0.1, true, "OnBreakTimer", self)
