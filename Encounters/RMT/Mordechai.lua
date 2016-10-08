@@ -24,7 +24,8 @@ local Locales = {
         ["alert.orb_spawned"] = "Orb spawned!",
         ["alert.kinetic_link"] = "HIT THE ORB!",
         ["alert.kinetic_fixation"] = "ORB ON YOU!",
-        ["alert.shocking_attraction"] = "MOVE TO THE RIGHT!",
+        ["alert.shocking_attraction_left"] = "MOVE TO THE LEFT!",
+        ["alert.shocking_attraction_right"] = "MOVE TO THE RIGHT!",
         -- Messages
         ["message.shuriken_next"] = "Next Shuriken",
         ["message.orb_next"] = "Next Orb",
@@ -32,6 +33,8 @@ local Locales = {
         -- Labels
         ["label.orb_next"] = "Kinetic Orb (Next)",
         ["label.orb_active"] = "Kinetic Orb (Active)",
+        ["label.shocking_attraction_left"] = "Shocking Attraction (Left)",
+        ["label.shocking_attraction_right"] = "Shocking Attraction (Right)",
         ["label.shuriken"] = "Shuriken",
         ["label.airlock"] = "Airlock",
     },
@@ -77,31 +80,37 @@ function Mod:new(o)
                 enable = true,
                 label = "unit.boss",
                 color = "afb0ff2f",
+                priority = 1,
             },
             orb = {
                 enable = true,
                 label = "unit.kinetic_orb",
                 color = "afb0ff2f",
+                priority = 2,
             },
         },
         timers = {
             orb = {
                 enable = true,
+                priority = 1,
                 color = "afb0ff2f",
                 label = "label.orb_next",
             },
             orb_active = {
                 enable = true,
+                priority = 2,
                 color = "afff4500",
                 label = "label.orb_active",
             },
             shuriken = {
                 enable = true,
+                priority = 3,
                 color = "afb0ff2f",
                 label = "label.shuriken",
             },
             airlock = {
                 enable = true,
+                priority = 4,
                 color = "afb0ff2f",
                 label = "label.airlock",
             },
@@ -110,42 +119,56 @@ function Mod:new(o)
             orb = {
                 enable = true,
                 duration = 3,
+                priority = 1,
                 label = "unit.kinetic_orb",
             },
             kinetic_link = {
                 enable = true,
                 duration = 3,
+                priority = 2,
                 label = "debuff.kinetic_link",
             },
             kinetic_fixation = {
                 enable = true,
                 duration = 3,
+                priority = 3,
                 label = "debuff.kinetic_fixation",
             },
-            shocking_attraction = {
+            shocking_attraction_left = {
+                enable = false,
+                duration = 3,
+                priority = 4,
+                label = "label.shocking_attraction_left",
+            },
+            shocking_attraction_right = {
                 enable = true,
                 duration = 3,
-                label = "debuff.shocking_attraction",
+                priority = 5,
+                label = "label.shocking_attraction_right",
             },
         },
         sounds = {
             orb = {
                 enable = true,
+                priority = 1,
                 file = "alert",
                 label = "unit.kinetic_orb",
             },
             kinetic_link = {
                 enable = true,
+                priority = 2,
                 file = "burn",
                 label = "debuff.kinetic_link",
             },
             kinetic_fixation = {
                 enable = true,
+                priority = 3,
                 file = "run-away",
                 label = "debuff.kinetic_fixation",
             },
             shocking_attraction = {
                 enable = true,
+                priority = 4,
                 file = "alert",
                 label = "debuff.shocking_attraction",
             },
@@ -153,12 +176,14 @@ function Mod:new(o)
         lines = {
             boss = {
                 enable = true,
+                priority = 1,
                 thickness = 10,
                 color = "ffffffff",
                 label = "unit.boss",
             },
             kinetic_fixation = {
                 enable = true,
+                priority = 2,
                 thickness = 6,
                 color = "ffb0ff2f",
                 label = "debuff.kinetic_fixation",
@@ -263,8 +288,12 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         end
     elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
         if tData.tUnit:IsThePlayer() then
-            if self.config.alerts.shocking_attraction.enable == true then
-                self.core:ShowAlert(nId, self.L["alert.shocking_attraction"],self.config.alerts.kinetic_link.duration, self.config.alerts.kinetic_link.color)
+            if self.config.alerts.shocking_attraction_right.enable == true then
+                self.core:ShowAlert(nId, self.L["alert.shocking_attraction_right"],self.config.alerts.shocking_attraction_right.duration, self.config.alerts.shocking_attraction_right.color)
+            else
+                if self.config.alerts.shocking_attraction_left.enable == true then
+                    self.core:ShowAlert(nId, self.L["alert.shocking_attraction_left"],self.config.alerts.shocking_attraction_left.duration, self.config.alerts.shocking_attraction_left.color)
+                end
             end
 
             if self.config.sounds.shocking_attraction.enable == true then
