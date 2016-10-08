@@ -226,6 +226,7 @@ function Mod:new(o)
         timers = {
             timerA = {
                 enable = true,          -- Enable/Disable timer
+                priority = 1,           -- Priority in Option Panel (Top to Bottom)
                 color = "ade91dfb",     -- Color (Default: Global Setting)
                 label = "timer.a",      -- Text in Option Panel (Text or Locale Key)
             },
@@ -233,6 +234,7 @@ function Mod:new(o)
         casts = {
             castA = {
                 enable = true,          -- Enable/Disable cast
+                priority = 1,           -- Priority in Option Panel (Top to Bottom)
                 color = "ffb22222",     -- Color (Default: Global Setting)
                 label = "cast.a"        -- Text in Option Panel (Text or Locale Key)
             },
@@ -240,6 +242,7 @@ function Mod:new(o)
         alerts = {
             alertA = {
                 enable = true,          -- Enable/Disable alert
+                priority = 1,           -- Priority in Option Panel (Top to Bottom)
                 color = "ffff4500",     -- Text Color (Default: Global Setting)
                 duration = 5,           -- Duration (Default: Global Setting)
                 label = "alert.a"       -- Text in Option Panel (Text or Locale Key)
@@ -248,6 +251,7 @@ function Mod:new(o)
         sounds = {
             soundA = {
                 enable = true,          -- Enable/Disable sound
+                priority = 1,           -- Priority in Option Panel (Top to Bottom)
                 file = "alert",         -- Sound File
                 label = "sound.a"       -- Text in Option Panel (Text or Locale Key)
             },
@@ -255,6 +259,7 @@ function Mod:new(o)
         icons = {                       -- Icons / Pixies
             iconA = {
                 enable = true,          -- Enable/Disable icon
+                priority = 1,           -- Priority in Option Panel (Top to Bottom)
                 sprite = "target2",     -- Icon Sprite
                 size = 20,              -- Icon Size (Default: Global Setting)
                 color = "ff40e0d0",     -- Icon Color (Default: Global Setting)
@@ -264,6 +269,7 @@ function Mod:new(o)
         auras = {                       -- Auras
             auraA = {
                 enable = true,          -- Enable/Disable icon
+                priority = 1,           -- Priority in Option Panel (Top to Bottom)
                 sprite = "bomb",        -- Icon Sprite
                 color = "ff40e0d0",     -- Icon Color (Default: Global Setting)
                 label = "aura.a"        -- Text in Option Panel (Text or Locale Key)
@@ -272,6 +278,7 @@ function Mod:new(o)
         lines = {                       -- Line / LineBetween / Polygon
             lineA = {
                 enable = true,          -- Enable/Disable line
+                priority = 1,           -- Priority in Option Panel (Top to Bottom)
                 color = "ffff0000",     -- Color (Default: Global Setting)
                 thickness = 10,         -- Thickness (Default: Global Setting)
                 label = "line.a"        -- Text in Option Panel (Text or Locale Key)
