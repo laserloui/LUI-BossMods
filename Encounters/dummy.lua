@@ -30,18 +30,20 @@ require "Apollo"
         @param nDuration        - Duration in Seconds
         @param sColor           - Bar Color (ARGB String)
         @param fHandler         - Callback function
-        @param tData            - Data to send on callback
+        @param tData            - Data forwarded by callback function
 
-    RemoveTimer(sName, bCallback)
+    RemoveTimer(sName)
         Hides the Timer
         @param sName            - Name of the Timer
-        @param bCallback        - Perform Callback (boolean)
 
     ShowCast(tCast, sName, sColor)
         Shows Castbar
         @param tCast            - Cast Object
         @param sName            - Text shown on the Castbar
         @param sColor           - Cast Bar Color (ARGB String)
+
+    HideCast()
+        Hides the Castbar
 
     ShowAura(sName, sSprite, sColor, nDuration, bShowDuration, fHandler, tData)
         Creates an Aura on your screen (like LUI Aura)
@@ -51,19 +53,24 @@ require "Apollo"
         @param nDuration        - Duration in Seconds (optional)
         @param bShowDuration    - Show Duration Text
         @param fHandler         - Callback function
-        @param tData            - Data to send on callback
+        @param tData            - Data forwarded by callback function
 
-    HideAura(sName, bCallback)
+    HideAura(sName)
         Hides the Aura
         @param sName            - Name of the Aura
-        @param bCallback        - Perform Callback (boolean)
 
-    ShowAlert(sName, sText, nDuration, sColor)
+    ShowAlert(sName, sText, nDuration, sColor, fHandler, tData)
         Shows a Text Notification on your screen
         @param sName            - Unique ID
         @param sText            - Text displayed
         @param nDuration        - Duration in Seconds
         @param sColor           - Text Color (ARGB String)
+        @param fHandler         - Callback function
+        @param tData            - Data forwarded by callback function
+
+    HideAlert(sName)
+        Hides the Alert
+        @param sName            - Name of the Alert
 
     PlaySound(sound)
         Plays a soundfile
@@ -80,12 +87,11 @@ require "Apollo"
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param bShowOverlay     - Show Duration Overlay (boolean)
         @param fHandler         - Callback function
-        @param tData            - Data to send on callback
+        @param tData            - Data forwarded by callback function
 
-    RemoveIcon(Key, bCallback)
+    RemoveIcon(Key)
         Removes Icon from Screen
         @param Key              - Unique ID
-        @param bCallback        - Perform Callback (boolean)
 
     DrawPixie(Key, Origin, sSprite, nSpriteSize, nRotation, nDistance, nHeight, sColor, nDuration, fHandler, tData)
         Draw Pixie on top of unit or coordinate
@@ -99,12 +105,11 @@ require "Apollo"
         @param sColor           - Text Color (ARGB String)
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param fHandler         - Callback function
-        @param tData            - Data to send on callback
+        @param tData            - Data forwarded by callback function
 
-    RemovePixie(Key, bCallback)
+    RemovePixie(Key)
         Removes Pixie from Screen
         @param Key              - Unique ID
-        @param bCallback        - Perform Callback (boolean)
 
     DrawPolygon(Key, Origin, nRadius, nRotation, nWidth, sColor, nSide, nDuration, fHandler, tData)
         Draws a polyon on the ground at unit or position
@@ -116,12 +121,11 @@ require "Apollo"
         @param nSides           - Amount of Sides of the Polygon
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param fHandler         - Callback function
-        @param tData            - Data to send on callback
+        @param tData            - Data forwarded by callback function
 
-    RemovePolygon(Key, bCallback)
+    RemovePolygon(Key)
         Removes Polygon from Screen
         @param Key              - Unique ID
-        @param bCallback        - Perform Callback (boolean)
 
     DrawLine(Key, Origin, sColor, nWidth, nLength, nRotation, nOffset, tVectorOffset, nDuration, nNumberOfDot, fHandler, tData)
         Draws a line from unit/coordinate into certain direction (unit facing/north by default)
@@ -136,12 +140,11 @@ require "Apollo"
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param nNumberOfDot     - Amount of dots (1 = default)
         @param fHandler         - Callback function
-        @param tData            - Data to send on callback
+        @param tData            - Data forwarded by callback function
 
-    RemoveLine(Key, bCallback)
+    RemoveLine(Key)
         Removes Lines from Screen
         @param Key              - Unique ID
-        @param bCallback        - Perform Callback (boolean)
 
     DrawLineBetween(Key, FromOrigin, ToOrigin, sColor, nWidth, nDuration, nNumberOfDot, fHandler, tData)
         @param Key              - Unique ID
@@ -152,12 +155,11 @@ require "Apollo"
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param nNumberOfDot     - Amount of dots (1 = default)
         @param fHandler         - Callback function
-        @param tData            - Data to send on callback
+        @param tData            - Data forwarded by callback function
 
-    RemoveLineBetween(Key, bCallback)
+    RemoveLineBetween(Key)
         Removes Lines from Screen
         @param Key              - Unique ID
-        @param bCallback        - Perform Callback (boolean)
 
     GetDraw(Key)
         Returns Icon/Pixie/Polygon/Line/LineBetween
