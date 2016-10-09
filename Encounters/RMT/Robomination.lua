@@ -95,21 +95,25 @@ function Mod:new(o)
         timers = {
             arms = {
                 enable = true,
+                priority = 1,
                 color = "afb0ff2f",
                 label = "label.arms",
             },
             crush = {
                 enable = true,
+                priority = 2,
                 color = "afe91dfb",
                 label = "label.crush",
             },
             noxious_belch = {
                 enable = true,
+                priority = 3,
                 color = "ad1dfbfb",
                 label = "cast.noxious_belch",
             },
             incineration = {
                 enable = true,
+                priority = 4,
                 color = "afff4500",
                 label = "cast.incineration_laser",
             },
@@ -135,47 +139,56 @@ function Mod:new(o)
             },
         },
         alerts = {
-            midphase = {
+            crush = {
                 enable = true,
-                label = "alert.midphase",
+                priority = 1,
+                label = "label.crush",
+            },
+            crush_player = {
+                enable = true,
+                priority = 2,
+                label = "label.crush_player",
             },
             lasers = {
                 enable = true,
+                priority = 3,
                 label = "alert.lasers",
-            },
-            crush_player = {
-                enable = true,
-                label = "label.crush_player",
-            },
-            crush = {
-                enable = true,
-                label = "label.crush",
             },
             incineration = {
                 enable = true,
+                priority = 4,
                 label = "cast.incineration_laser",
+            },
+            midphase = {
+                enable = true,
+                priority = 5,
+                label = "alert.midphase",
             },
         },
         sounds = {
-            cannon_fire = {
-                enable = false,
-                file = "info",
-                label = "cast.cannon_fire",
-            },
-            crush_player = {
-                enable = true,
-                file = "run-away",
-                label = "label.crush_player",
-            },
             crush = {
                 enable = true,
+                priority = 1,
                 file = "info",
                 label = "label.crush",
             },
+            crush_player = {
+                enable = true,
+                priority = 2,
+                file = "run-away",
+                label = "label.crush_player",
+            },
             incineration = {
                 enable = true,
+                priority = 3,
                 file = "run-away",
                 label = "cast.incineration_laser",
+            },
+            cannon_fire = {
+                enable = false,
+                priority = 4,
+                file = "info",
+                label = "cast.cannon_fire",
             },
         },
         icons = {
@@ -197,24 +210,28 @@ function Mod:new(o)
         lines = {
             cannon_arm = {
                 enable = true,
+                priority = 1,
                 thickness = 8,
                 color = "afff4500",
                 label = "unit.cannon_arm",
             },
             flailing_arm = {
                 enable = true,
+                priority = 2,
                 thickness = 8,
                 color = "af0084ff",
                 label = "unit.flailing_arm",
             },
             scanning_eye = {
                 enable = true,
+                priority = 3,
                 thickness = 8,
                 color = "af7fff00",
                 label = "unit.scanning_eye",
             },
             incineration = {
                 enable = true,
+                priority = 4,
                 thickness = 12,
                 color = "ffff4500",
                 label = "cast.incineration_laser",
@@ -239,7 +256,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.core:AddUnit(nId,sName,tUnit,self.config.units.cannon_arm.enable,true,false,false,nil,self.config.units.cannon_arm.color, self.config.units.cannon_arm.priority)
 
         if not self.bIsMidPhase and self.config.timers.arms.enable == true then
-            self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
+            self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color, self.config.timers.arms.sound, self.config.timers.arms.alert)
         end
 
         if self.config.lines.cannon_arm.enable == true then
@@ -289,7 +306,7 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
         end
 
         if self.config.timers.noxious_belch.enable == true then
-            self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 31, self.config.timers.noxious_belch.color)
+            self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 31, self.config.timers.noxious_belch.color, self.config.timers.noxious_belch.sound, self.config.timers.noxious_belch.alert)
         end
 
         if self.config.alerts.lasers.enable == true then
@@ -309,7 +326,7 @@ end
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if DEBUFF_THE_SKY_IS_FALLING == nSpellId then
         if self.config.timers.crush.enable == true then
-            self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 17, self.config.timers.crush.color)
+            self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 17, self.config.timers.crush.color, self.config.timers.crush.sound, self.config.timers.crush.alert)
         end
 
         if tData.tUnit:IsThePlayer() then
@@ -360,19 +377,19 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
         self.bIsMidPhase = nil
 
         if self.config.timers.arms.enable == true then
-            self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
+            self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color, self.config.timers.arms.sound, self.config.timers.arms.alert)
         end
 
         if self.config.timers.crush.enable == true then
-            self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color)
+            self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color, self.config.timers.crush.sound, self.config.timers.crush.alert)
         end
 
         if self.config.timers.noxious_belch.enable == true then
-            self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 14, self.config.timers.noxious_belch.color)
+            self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 14, self.config.timers.noxious_belch.color, self.config.timers.noxious_belch.sound, self.config.timers.noxious_belch.alert)
         end
 
         if self.config.timers.incineration.enable == true then
-            self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 20, self.config.timers.incineration.color)
+            self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 20, self.config.timers.incineration.color, self.config.timers.incineration.sound, self.config.timers.incineration.alert)
         end
     else
         local strPlayerLaserFocused = sMessage:match(self.L["datachron.incineration"])
@@ -394,7 +411,7 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
             end
 
             if self.config.timers.incineration.enable == true then
-                self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 40, self.config.timers.incineration.color)
+                self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 40, self.config.timers.incineration.color, self.config.timers.incineration.sound, self.config.timers.incineration.alert)
             end
 
             if self.config.icons.incineration.enable == true then
@@ -423,15 +440,15 @@ function Mod:OnEnable()
     self.nMidphaseWarnings = 0
 
     if self.config.timers.arms.enable == true then
-        self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color)
+        self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color, self.config.timers.arms.sound, self.config.timers.arms.alert)
     end
 
     if self.config.timers.crush.enable == true then
-        self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color)
+        self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color, self.config.timers.crush.sound, self.config.timers.crush.alert)
     end
 
     if self.config.timers.noxious_belch.enable == true then
-        self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 16, self.config.timers.noxious_belch.color)
+        self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 16, self.config.timers.noxious_belch.color, self.config.timers.noxious_belch.sound, self.config.timers.noxious_belch.alert)
     end
 end
 

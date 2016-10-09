@@ -230,15 +230,15 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.tUnitOrb = tUnit
 
         if self.config.timers.orb.enable == true then
-            self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 26, self.config.timers.orb.color)
+            self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 26, self.config.timers.orb.color, self.config.timers.orb.sound, self.config.timers.orb.alert)
         end
 
         if self.config.timers.orb_active.enable == true then
-            self.core:AddTimer("ORB_ACTIVE", self.L["message.orb_active"], 4.5, self.config.timers.orb_active.color)
+            self.core:AddTimer("ORB_ACTIVE", self.L["message.orb_active"], 4.5, self.config.timers.orb_active.color, self.config.timers.orb_active.sound, self.config.timers.orb_active.alert)
         end
 
         if self.config.alerts.orb.enable == true then
-            self.core:ShowAlert(nId, self.L["alert.orb_spawned"],self.config.alerts.orb.duration, self.config.alerts.orb.color)
+            self.core:ShowAlert("ORB"..tostring(nId), self.L["alert.orb_spawned"],self.config.alerts.orb.duration, self.config.alerts.orb.color)
         end
 
         if self.config.sounds.orb.enable == true then
@@ -261,7 +261,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
     if nSpellId == DEBUFF_KINETIC_LINK then
         if tData.tUnit:IsThePlayer() then
             if self.config.alerts.kinetic_link.enable == true then
-                self.core:ShowAlert(nId, self.L["alert.kinetic_link"],self.config.alerts.kinetic_link.duration, self.config.alerts.kinetic_link.color)
+                self.core:ShowAlert("KL"..tostring(nId), self.L["alert.kinetic_link"],self.config.alerts.kinetic_link.duration, self.config.alerts.kinetic_link.color)
             end
 
             if self.config.sounds.kinetic_link.enable == true then
@@ -275,7 +275,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
     elseif nSpellId == DEBUFF_KINETIC_FIXATION then
         if tData.tUnit:IsThePlayer() then
             if self.config.alerts.kinetic_fixation.enable == true then
-                self.core:ShowAlert(nId, self.L["alert.kinetic_fixation"],self.config.alerts.kinetic_fixation.duration, self.config.alerts.kinetic_fixation.color)
+                self.core:ShowAlert("KF"..tostring(nId), self.L["alert.kinetic_fixation"],self.config.alerts.kinetic_fixation.duration, self.config.alerts.kinetic_fixation.color)
             end
 
             if self.config.sounds.kinetic_fixation.enable == true then
@@ -289,10 +289,10 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
     elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
         if tData.tUnit:IsThePlayer() then
             if self.config.alerts.shocking_attraction_right.enable == true then
-                self.core:ShowAlert(nId, self.L["alert.shocking_attraction_right"],self.config.alerts.shocking_attraction_right.duration, self.config.alerts.shocking_attraction_right.color)
+                self.core:ShowAlert("SA"..tostring(nId), self.L["alert.shocking_attraction_right"],self.config.alerts.shocking_attraction_right.duration, self.config.alerts.shocking_attraction_right.color)
             else
                 if self.config.alerts.shocking_attraction_left.enable == true then
-                    self.core:ShowAlert(nId, self.L["alert.shocking_attraction_left"],self.config.alerts.shocking_attraction_left.duration, self.config.alerts.shocking_attraction_left.color)
+                    self.core:ShowAlert("SA"..tostring(nId), self.L["alert.shocking_attraction_left"],self.config.alerts.shocking_attraction_left.duration, self.config.alerts.shocking_attraction_left.color)
                 end
             end
 
@@ -319,7 +319,7 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName, nDuration)
     if sName == self.L["Mordechai Redmoon"] then
 		if sCastName == self.L["cast.shatter_shock"] then
             if self.config.timers.shuriken.enable == true then
-                self.core:AddTimer("NEXT_SHURIKEN", self.L["message.shuriken_next"], 22, self.config.timers.shuriken.color)
+                self.core:AddTimer("NEXT_SHURIKEN", self.L["message.shuriken_next"], 22, self.config.timers.shuriken.color, self.config.timers.shuriken.sound, self.config.timers.shuriken.alert)
             end
 		end
 	end
@@ -330,15 +330,15 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
         self:AddMarkerLines()
 
         if self.config.timers.shuriken.enable == true then
-            self.core:AddTimer("NEXT_SHURIKEN", self.L["message.shuriken_next"], 12, self.config.timers.shuriken.color)
+            self.core:AddTimer("NEXT_SHURIKEN", self.L["message.shuriken_next"], 12, self.config.timers.shuriken.color, self.config.timers.shuriken.sound, self.config.timers.shuriken.alert)
         end
 
         if self.config.timers.orb.enable == true then
-            self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 18.5, self.config.timers.orb.color)
+            self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 18.5, self.config.timers.orb.color, self.config.timers.orb.sound, self.config.timers.orb.alert)
         end
     elseif sMessage:find(self.L["datachron.airlock_opened"]) then
         if self.config.timers.airlock.enable == true then
-            self.core:AddTimer("AIRLOCK", self.L["label.airlock"], 20, self.config.timers.airlock.color)
+            self.core:AddTimer("AIRLOCK", self.L["label.airlock"], 20, self.config.timers.airlock.color, self.config.timers.airlock.sound, self.config.timers.airlock.alert)
         end
 	end
 end
@@ -375,7 +375,7 @@ function Mod:OnEnable()
     self.tUnitOrb = nil
 
     if self.config.timers.orb.enable == true then
-        self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 26, self.config.timers.orb.color)
+        self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 26, self.config.timers.orb.color, self.config.timers.orb.sound, self.config.timers.orb.alert)
     end
 end
 

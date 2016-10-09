@@ -110,16 +110,19 @@ function Mod:new(o)
         casts = {
             necrotic_lash = {
                 enable = true,
+                priority = 1,
                 color = "ff9932cc",
                 label = "cast.necrotic_lash",
             },
             deathwail = {
                 enable = true,
+                priority = 2,
                 color = "ff9932cc",
                 label = "cast.deathwail",
             },
             gravedigger = {
                 enable = true,
+                priority = 3,
                 color = "ff9932cc",
                 label = "cast.gravedigger",
             },
@@ -133,43 +136,49 @@ function Mod:new(o)
             },
         },
         alerts = {
-            oozing_bile = {
-                enable = true,
-                label = "debuff.oozing_bile",
-            },
             necrotic_lash = {
                 enable = true,
+                priority = 1,
                 label = "cast.necrotic_lash",
+            },
+            oozing_bile = {
+                enable = true,
+                priority = 2,
+                label = "debuff.oozing_bile",
             },
             deathwail = {
                 enable = true,
+                priority = 3,
                 label = "cast.deathwail",
-                duration = 3,
             },
             gravedigger = {
                 enable = true,
+                priority = 4,
                 label = "cast.gravedigger",
-                duration = 3,
             },
         },
         sounds = {
-            oozing_bile = {
-                enable = true,
-                file = "alert",
-                label = "debuff.oozing_bile",
-            },
             necrotic_lash = {
                 enable = true,
+                priority = 1,
                 file = "alert",
                 label = "cast.necrotic_lash",
             },
+            oozing_bile = {
+                enable = true,
+                priority = 2,
+                file = "alert",
+                label = "debuff.oozing_bile",
+            },
             deathwail = {
                 enable = true,
+                priority = 3,
                 file = "alert",
                 label = "cast.deathwail",
             },
             gravedigger = {
                 enable = true,
+                priority = 4,
                 file = "alert",
                 label = "cast.gravedigger",
             },

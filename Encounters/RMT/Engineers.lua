@@ -120,23 +120,27 @@ function Mod:new(o)
         timers = {
             electroshock = {
                 enable = true,
+                priority = 1,
                 color = "ade91dfb",
                 label = "cast.electroshock",
             },
             liquidate = {
                 enable = true,
+                priority = 2,
                 color = "afb0ff2f",
                 label = "cast.liquidate",
             },
-            vulnerability = {
-                enable = false,
-                color = "aaee94fd",
-                label = "debuff.electroshock_vulnerability",
-            },
             atomic_attraction = {
                 enable = true,
+                priority = 3,
                 color = "afff4500",
                 label = "debuff.atomic_attraction",
+            },
+            vulnerability = {
+                enable = false,
+                priority = 4,
+                color = "aaee94fd",
+                label = "debuff.electroshock_vulnerability",
             },
         },
         casts = {
@@ -152,74 +156,80 @@ function Mod:new(o)
             },
         },
         alerts = {
-            pillar = {
-                enable = true,
-                duration = 3,
-                label = "label.pillar",
-            },
-            atomic_attraction = {
-                enable = true,
-                color = "ffff4500",
-                duration = 3,
-                label = "debuff.atomic_attraction",
-            },
             electroshock = {
                 enable = false,
-                duration = 3,
+                priority = 1,
                 label = "cast.electroshock",
             },
             liquidate = {
                 enable = false,
-                duration = 3,
+                priority = 2,
                 label = "cast.liquidate",
             },
-            vulnerability = {
+            atomic_attraction = {
                 enable = true,
-                duration = 3,
-                label = "debuff.electroshock_vulnerability",
+                priority = 3,
+                color = "ffff4500",
+                label = "debuff.atomic_attraction",
+            },
+            pillar = {
+                enable = true,
+                priority = 4,
+                label = "label.pillar",
             },
             sword_jump = {
                 enable = true,
-                duration = 3,
+                priority = 5,
                 label = "label.sword_jump",
             },
             gun_jump = {
                 enable = true,
-                duration = 3,
+                priority = 6,
                 label = "label.gun_jump",
+            },
+            vulnerability = {
+                enable = true,
+                priority = 7,
+                label = "debuff.electroshock_vulnerability",
             },
             gun_return = {
                 enable = true,
-                duration = 3,
+                priority = 8,
                 label = "label.gun_return",
             },
         },
         sounds = {
-            pillar = {
-                enable = true,
-                file = "alert",
-                label = "label.pillar",
-            },
-            atomic_attraction = {
-                enable = true,
-                file = "run-away",
-                label = "debuff.atomic_attraction",
-            },
             electroshock = {
                 enable = false,
+                priority = 1,
                 label = "cast.electroshock",
             },
             liquidate = {
                 enable = false,
+                priority = 2,
                 label = "cast.liquidate",
+            },
+            atomic_attraction = {
+                enable = true,
+                priority = 3,
+                file = "run-away",
+                label = "debuff.atomic_attraction",
+            },
+            pillar = {
+                enable = true,
+                priority = 4,
+                file = "alert",
+                label = "label.pillar",
             },
             sword_jump = {
                 enable = true,
+                priority = 5,
                 file = "info",
                 label = "label.sword_jump",
             },
             gun_jump = {
                 enable = true,
+                priority = 6,
                 file = "info",
                 label = "label.gun_jump",
             },
@@ -282,7 +292,7 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
     if self.config.timers.vulnerability.enable == true then
         local strPlayer = sMessage:match(self.L["datachron.electroshock"])
         if strPlayer then
-            self.core:AddTimer("ElectroshockTimer_"..strPlayer, strPlayer, 60, self.config.timers.vulnerability.color)
+            self.core:AddTimer("ElectroshockTimer_"..strPlayer, strPlayer, 60, self.config.timers.vulnerability.color, self.config.timers.vulnerability.sound, self.config.timers.vulnerability.alert)
         end
     end
 end
@@ -408,7 +418,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         end
 
         if self.config.timers.atomic_attraction.enable == true then
-            self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction.color)
+            self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction.color, self.config.timers.atomic_attraction.sound, self.config.timers.atomic_attraction.alert)
         end
 
         if self.config.sounds.atomic_attraction.enable == true then
@@ -432,7 +442,7 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
         self.core:RemoveIcon("atomic_attraction_"..tostring(nId))
     elseif nSpellId == BUFF_INSULATION and sUnitName == self.L["unit.fusion_core"] then
         if self.config.timers.atomic_attraction.enable == true then
-            self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction.color)
+            self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction.color, self.config.timers.atomic_attraction.sound, self.config.timers.atomic_attraction.alert)
         end
     end
 end
@@ -500,12 +510,12 @@ end
 function Mod:OnCastEnd(nId, sCastName, tCast, sName)
     if sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.electroshock"] then
         if self.config.timers.electroshock.enable == true then
-            self.core:AddTimer("cast.electroshock", sCastName, 18.5, self.config.timers.electroshock.color)
+            self.core:AddTimer("cast.electroshock", sCastName, 18.5, self.config.timers.electroshock.color, self.config.timers.electroshock.sound, self.config.timers.electroshock.alert)
         end
         self.electroshock = Apollo.GetTickCount()
     elseif sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.liquidate"] then
         if self.config.timers.liquidate.enable == true then
-            self.core:AddTimer("cast.liquidate", sCastName, 21.5, self.config.timers.liquidate.color)
+            self.core:AddTimer("cast.liquidate", sCastName, 21.5, self.config.timers.liquidate.color, self.config.timers.liquidate.sound, self.config.timers.liquidate.alert)
         end
         self.liquidate = Apollo.GetTickCount()
     end
@@ -535,11 +545,11 @@ function Mod:OnEnable()
     self.unitPlayer = GameLib.GetPlayerUnit()
 
     if self.config.timers.electroshock.enable == true then
-        self.core:AddTimer("cast.electroshock", self.L["cast.electroshock"], 11, self.config.timers.electroshock.color)
+        self.core:AddTimer("cast.electroshock", self.L["cast.electroshock"], 11, self.config.timers.electroshock.color, self.config.timers.electroshock.sound, self.config.timers.electroshock.alert)
     end
 
     if self.config.timers.liquidate.enable == true then
-        self.core:AddTimer("cast.liquidate", self.L["cast.liquidate"], 12, self.config.timers.liquidate.color)
+        self.core:AddTimer("cast.liquidate", self.L["cast.liquidate"], 12, self.config.timers.liquidate.color, self.config.timers.liquidate.sound, self.config.timers.liquidate.alert)
     end
 
     self.liquidate = Apollo.GetTickCount()

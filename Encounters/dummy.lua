@@ -23,12 +23,14 @@ require "Apollo"
         Removes the unit completely.
         @param nId              - Unique ID of unit
 
-    AddTimer(sName, sText, nDuration, sColor, fHandler, tData)
+    AddTimer(sName, sText, nDuration, sColor, bSound, bAlert, fHandler, tData)
         Creates a timer bar
         @param sName            - Unique ID
         @param sText            - Text displayed on the timer bar
         @param nDuration        - Duration in Seconds
         @param sColor           - Bar Color (ARGB String)
+        @param bSound           - Play Countdown Sound (boolean)
+        @param bAlert           - Show Countdown Messages (boolean)
         @param fHandler         - Callback function
         @param tData            - Data forwarded by callback function
 
@@ -229,6 +231,8 @@ function Mod:new(o)
                 priority = 1,           -- Priority in Option Panel (Top to Bottom)
                 color = "ade91dfb",     -- Color (Default: Global Setting)
                 label = "timer.a",      -- Text in Option Panel (Text or Locale Key)
+                sound = true,           -- Play Countdown Sound? (Boolean)
+                alert = true,           -- Show Countdown Messages? (Boolean)
             },
         },
         casts = {

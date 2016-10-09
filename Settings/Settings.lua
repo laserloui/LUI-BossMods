@@ -426,6 +426,14 @@ function Settings:BuildRightPanel()
             wnd:FindChild("ColorText"):SetText(timer.color or self.config.timer.barColor)
             wnd:FindChild("BG"):SetBGColor(timer.color or self.config.timer.barColor)
 
+            -- Alert Checkbox
+            wnd:FindChild("AlertCheckbox"):SetData({"timers",nId,"alert"})
+            wnd:FindChild("AlertCheckbox"):SetCheck(timer.alert or false)
+
+            -- Sound Checkbox
+            wnd:FindChild("SoundCheckbox"):SetData({"timers",nId,"sound"})
+            wnd:FindChild("SoundCheckbox"):SetCheck(timer.sound or false)
+
             -- Enable Checkbox
             wnd:FindChild("EnableCheckbox"):SetData({"timers",nId,"enable"})
             wnd:FindChild("EnableCheckbox"):SetCheck(timer.enable or false)

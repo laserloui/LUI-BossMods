@@ -128,6 +128,7 @@ function LUI_BossMods:new(o)
         alerts = {
             color = "ffff00ff",
             font = "CRB_Header20",
+            duration = 3,
             size = 20,
             offsets = {
                 left = -300,
@@ -1225,7 +1226,7 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:AddTimer(sName,sText,nDuration,sColor,fHandler,tData)
+function LUI_BossMods:AddTimer(sName, sText, nDuration, sColor, bSound, bAlert, fHandler, tData)
     if not sName or not nDuration then
         return
     end
@@ -1252,6 +1253,8 @@ function LUI_BossMods:AddTimer(sName,sText,nDuration,sColor,fHandler,tData)
     self.runtime.timer[sName].nTick = GetTickCount()
     self.runtime.timer[sName].sText = sText or sName
     self.runtime.timer[sName].nDuration = nDuration
+    self.runtime.timer[sName].bSound = bSound or false
+    self.runtime.timer[sName].bAlert = bAlert or false
     self.runtime.timer[sName].sColor = sColor or self.config.timer.barColor
     self.runtime.timer[sName].fHandler = fHandler or nil
     self.runtime.timer[sName].tData = tData or nil
@@ -1272,6 +1275,28 @@ function LUI_BossMods:UpdateTimer(tTimer)
     local nTick = GetTickCount()
     local nElapsed = (nTick - tTimer.nTick) / 1000
     local nRemaining = tTimer.nDuration - nElapsed
+    local nPrevCountdown = tTimer.nCountDown or 4
+    local nCountDown = -1
+
+    if nRemaining < 3.4 and nPrevCountdown == 4 then
+        nCountDown = 3
+    elseif nRemaining < 2.4 and nPrevCountdown == 3 then
+        nCountDown = 2
+    elseif nRemaining < 1.4 and nPrevCountdown == 2 then
+        nCountDown = 1
+    elseif nRemaining < 0.4 and nPrevCountdown == 1 then
+        nCountDown = 0
+    end
+
+    if tTimer.bAlert and nCountDown >= 0 then
+        self:ShowAlert("COUNTDOWN", nCountDown, 1, self.config.alerts.color)
+        tTimer.nCountDown = nCountDown
+    end
+
+    if tTimer.bSound and nCountDown >= 0 then
+        self:PlaySound(tostring(nCountDown))
+        tTimer.nCountDown = nCountDown
+    end
 
     if tTimer.nRemaining and (nElapsed >= tTimer.nDuration) then
         self:RemoveTimer(tTimer.sName)
@@ -1673,7 +1698,7 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, fHandler, tData
     end
 
     self.runtime.alerts[sName].nTick = GetTickCount()
-    self.runtime.alerts[sName].nDuration = nDuration or 5
+    self.runtime.alerts[sName].nDuration = nDuration or self.config.alerts.duration
     self.runtime.alerts[sName].fHandler = fHandler or nil
     self.runtime.alerts[sName].tData = tData or nil
 
@@ -2907,7 +2932,7 @@ function LUI_BossMods:OnSlashCommand(cmd, args)
     end
 
     if strName and nDuration then
-        self:AddTimer("break", "Break", nDuration, nil, LUI_BossMods.OnBreakFinished, "break")
+        self:AddTimer("break", "Break", nDuration, nil, false, false, LUI_BossMods.OnBreakFinished, "break")
 
         if not self.breakTimer then
             self.breakTimer = ApolloTimer.Create(0.1, true, "OnBreakTimer", self)
