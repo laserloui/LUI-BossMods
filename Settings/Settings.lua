@@ -1250,6 +1250,16 @@ function Settings:OnToggleSprites(wndHandler, wndControl)
         if self.wndSprites:IsShown() then
             self.wndSprites:Close()
         else
+            local wndText = wndControl:GetParent():FindChild("SpriteText")
+
+            for _,wndSprite in pairs(self.wndSprites:FindChild("Container"):FindChild("List"):GetChildren()) do
+                if wndText and wndSprite:FindChild("SelectBtn"):GetData() == wndText:GetText() then
+                    wndSprite:FindChild("SelectBtn"):SetCheck(true)
+                else
+                    wndSprite:FindChild("SelectBtn"):SetCheck(false)
+                end
+            end
+
             self.wndSprites:SetData(wndControl:GetData())
             self.wndSprites:Invoke()
         end
@@ -1257,13 +1267,20 @@ function Settings:OnToggleSprites(wndHandler, wndControl)
         self.wndSprites = Apollo.LoadForm(self.xmlDoc, "BrowseForm", nil, self)
         self.wndSprites:SetData(wndControl:GetData())
 
-        local wndSpriteList = self.wndSprites:FindChild("Container"):FindChild("Sprites")
+        local wndSpriteList = self.wndSprites:FindChild("Container"):FindChild("List")
+        local wndText = wndControl:GetParent():FindChild("SpriteText")
 
         for idx = 1, #self.tSprites do
             local wndSprite = Apollo.LoadForm(self.xmlDoc, "Items:SpriteItem", wndSpriteList, self)
             wndSprite:FindChild("Sprite"):SetSprite(self.tSprites[idx])
             wndSprite:FindChild("Sprite"):SetBGColor("ffffffff")
             wndSprite:FindChild("SelectBtn"):SetData(self.tSprites[idx])
+
+            if wndText and wndSprite:FindChild("SelectBtn"):GetData() == wndText:GetText() then
+                wndSprite:FindChild("SelectBtn"):SetCheck(true)
+            else
+                wndSprite:FindChild("SelectBtn"):SetCheck(false)
+            end
         end
 
         -- LUI Media
@@ -1275,6 +1292,12 @@ function Settings:OnToggleSprites(wndHandler, wndControl)
                     local wndIcon = Apollo.LoadForm(self.xmlDoc, "Items:SpriteItem", wndSpriteList, self)
                     wndIcon:FindChild("Sprite"):SetSprite("LUI_Media:"..tostring(icons[idx]))
                     wndIcon:FindChild("SelectBtn"):SetData("LUI_Media:"..tostring(icons[idx]))
+
+                    if wndText and wndIcon:FindChild("SelectBtn"):GetData() == wndText:GetText() then
+                        wndIcon:FindChild("SelectBtn"):SetCheck(true)
+                    else
+                        wndIcon:FindChild("SelectBtn"):SetCheck(false)
+                    end
                 end
             end
         end
@@ -1321,6 +1344,16 @@ function Settings:OnToggleFonts(wndHandler, wndControl)
         if self.wndFonts:IsShown() then
             self.wndFonts:Close()
         else
+            local wndText = wndControl:GetParent():FindChild("FontText")
+
+            for _,wndFont in pairs(self.wndFonts:FindChild("Container"):FindChild("List"):GetChildren()) do
+                if wndText and wndFont:FindChild("SelectBtn"):GetData().sFont == wndText:GetText() then
+                    wndFont:FindChild("SelectBtn"):SetCheck(true)
+                else
+                    wndFont:FindChild("SelectBtn"):SetCheck(false)
+                end
+            end
+
             self.wndFonts:SetData(wndControl:GetData())
             self.wndFonts:Invoke()
         end
@@ -1334,16 +1367,25 @@ function Settings:OnToggleFonts(wndHandler, wndControl)
         self.wndFonts:SetData(wndControl:GetData())
 
         local wndFontList = self.wndFonts:FindChild("Container"):FindChild("List")
+        local wndText = wndControl:GetParent():FindChild("FontText")
+        local tFonts = {}
 
         for _, font in ipairs(Apollo.GetGameFonts()) do
-            if not string.match(font.name,"Alien") then
+            if not string.match(font.name,"Alien") and not tFonts[font.name] then
                 local wndFont = Apollo.LoadForm(self.xmlDoc, "Items:FontItem", wndFontList, self)
                 local nFontSize = font.size * 2
+                tFonts[font.name] = true
 
                 wndFont:SetAnchorOffsets(0,0,0,(nFontSize > 50 and nFontSize or 50))
                 wndFont:FindChild("SelectBtn"):SetText("This is a dummy message!")
                 wndFont:FindChild("SelectBtn"):SetFont(font.name)
                 wndFont:FindChild("SelectBtn"):SetData({sFont = font.name, nSize = font.size})
+
+                if wndText and font.name == wndText:GetText() then
+                    wndFont:FindChild("SelectBtn"):SetCheck(true)
+                else
+                    wndFont:FindChild("SelectBtn"):SetCheck(false)
+                end
             end
         end
 
