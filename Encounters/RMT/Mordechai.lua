@@ -9,16 +9,16 @@ local Locales = {
     ["enUS"] = {
         -- Units
         ["unit.boss"] = "Mordechai Redmoon",
-    	["unit.kinetic_orb"] = "Kinetic Orb",
+        ["unit.kinetic_orb"] = "Kinetic Orb",
         -- Debuffs
         ["debuff.kinetic_link"] = "Kinetic Link",
         ["debuff.kinetic_fixation"] = "Kinetic Fixation",
         ["debuff.shocking_attraction"] = "Shocking Attraction",
         -- Datachron
         ["datachron.airlock_opened"] = "The airlock has been opened!",
-    	["datachron.airlock_closed"] = "The airlock has been closed!",
+        ["datachron.airlock_closed"] = "The airlock has been closed!",
         -- Casts
-    	["cast.shatter_shock"] = "Shatter Shock",
+        ["cast.shatter_shock"] = "Shatter Shock",
         ["cast.vicious_barrage"] = "Vicious Barrage",
         -- Alerts
         ["alert.orb_spawned"] = "Orb spawned!",
@@ -47,10 +47,10 @@ local DEBUFF_KINETIC_LINK = 86797
 local DEBUFF_KINETIC_FIXATION = 85566
 local DEBUFF_SHOCKING_ATTRACTION = 86861
 local CLEAVE_OFFSETS = {
-	["FRONT_LEFT"] = Vector3.New(3.25, 0, 0),
-	["FRONT_RIGHT"] = Vector3.New(-3.25, 0, 0),
-	["BACK_LEFT"] = Vector3.New(-3.25, 0, 0),
-	["BACK_RIGHT"] = Vector3.New(3.25, 0, 0),
+    ["FRONT_LEFT"] = Vector3.New(3.25, 0, 0),
+    ["FRONT_RIGHT"] = Vector3.New(-3.25, 0, 0),
+    ["BACK_LEFT"] = Vector3.New(-3.25, 0, 0),
+    ["BACK_RIGHT"] = Vector3.New(3.25, 0, 0),
 }
 
 function Mod:new(o)
@@ -225,34 +225,34 @@ function Mod:Init(parent)
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
-    if not self.run == true then
+    if not self.run then
         return
     end
 
-    if sName == self.L["unit.boss"] and bInCombat == true then
+    if sName == self.L["unit.boss"] and bInCombat then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,true,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
         self.tUnitBoss = tUnit
         self:AddMarkerLines()
-    elseif sName == self.L["unit.kinetic_orb"] and bInCombat == true then
+    elseif sName == self.L["unit.kinetic_orb"] and bInCombat then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.orb.enable,false,false,false,nil,self.config.units.orb.color, self.config.units.orb.priority)
         self.tUnitOrb = tUnit
 
-        if self.config.timers.orb.enable == true then
+        if self.config.timers.orb.enable then
             self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 26, self.config.timers.orb.color, self.config.timers.orb.sound, self.config.timers.orb.alert)
         end
 
-        if self.config.timers.orb_active.enable == true then
+        if self.config.timers.orb_active.enable then
             self.core:AddTimer("ORB_ACTIVE", self.L["message.orb_active"], 4.5, self.config.timers.orb_active.color, self.config.timers.orb_active.sound, self.config.timers.orb_active.alert)
         end
 
-        if self.config.alerts.orb.enable == true then
+        if self.config.alerts.orb.enable then
             self.core:ShowAlert("ORB"..tostring(nId), self.L["alert.orb_spawned"],self.config.alerts.orb.duration, self.config.alerts.orb.color)
         end
 
-        if self.config.sounds.orb.enable == true then
+        if self.config.sounds.orb.enable then
             self.core:PlaySound(self.config.sounds.orb.file)
         end
-	end
+    end
 end
 
 function Mod:OnUnitDestroyed(nId, tUnit, sName)
@@ -264,48 +264,48 @@ end
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if nSpellId == DEBUFF_KINETIC_LINK then
         if tData.tUnit:IsThePlayer() then
-            if self.config.alerts.kinetic_link.enable == true then
+            if self.config.alerts.kinetic_link.enable then
                 self.core:ShowAlert("KL"..tostring(nId), self.L["alert.kinetic_link"],self.config.alerts.kinetic_link.duration, self.config.alerts.kinetic_link.color)
             end
 
-            if self.config.sounds.kinetic_link.enable == true then
+            if self.config.sounds.kinetic_link.enable then
                 self.core:PlaySound(self.config.sounds.kinetic_link.file)
             end
         end
 
-        if self.config.icons.kinetic_link.enable == true then
+        if self.config.icons.kinetic_link.enable then
             self.core:DrawIcon("KL"..tostring(nId), tData.tUnit, self.config.icons.kinetic_link.sprite, self.config.icons.kinetic_link.size, nil, self.config.icons.kinetic_link.color, nDuration)
         end
     elseif nSpellId == DEBUFF_KINETIC_FIXATION then
         if tData.tUnit:IsThePlayer() then
-            if self.config.alerts.kinetic_fixation.enable == true then
+            if self.config.alerts.kinetic_fixation.enable then
                 self.core:ShowAlert("KF"..tostring(nId), self.L["alert.kinetic_fixation"],self.config.alerts.kinetic_fixation.duration, self.config.alerts.kinetic_fixation.color)
             end
 
-            if self.config.sounds.kinetic_fixation.enable == true then
+            if self.config.sounds.kinetic_fixation.enable then
                 self.core:PlaySound(self.config.sounds.kinetic_fixation.file)
             end
         end
 
-        if self.config.lines.kinetic_fixation.enable == true and self.tUnitOrb then
+        if self.config.lines.kinetic_fixation.enable and self.tUnitOrb then
             self.core:DrawLineBetween("ORB", tData.tUnit, self.tUnitOrb, self.config.lines.kinetic_fixation.color, self.config.lines.kinetic_fixation.thickness)
         end
     elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
         if tData.tUnit:IsThePlayer() then
-            if self.config.alerts.shocking_attraction_right.enable == true then
+            if self.config.alerts.shocking_attraction_right.enable then
                 self.core:ShowAlert("SA"..tostring(nId), self.L["alert.shocking_attraction_right"],self.config.alerts.shocking_attraction_right.duration, self.config.alerts.shocking_attraction_right.color)
             else
-                if self.config.alerts.shocking_attraction_left.enable == true then
+                if self.config.alerts.shocking_attraction_left.enable then
                     self.core:ShowAlert("SA"..tostring(nId), self.L["alert.shocking_attraction_left"],self.config.alerts.shocking_attraction_left.duration, self.config.alerts.shocking_attraction_left.color)
                 end
             end
 
-            if self.config.sounds.shocking_attraction.enable == true then
+            if self.config.sounds.shocking_attraction.enable then
                 self.core:PlaySound(self.config.sounds.shocking_attraction.file)
             end
         end
 
-        if self.config.icons.shocking_attraction.enable == true then
+        if self.config.icons.shocking_attraction.enable then
             self.core:DrawIcon("SA"..tostring(nId), tData.tUnit, self.config.icons.shocking_attraction.sprite, self.config.icons.shocking_attraction.size, nil, self.config.icons.shocking_attraction.color, nDuration)
         end
     end
@@ -313,39 +313,39 @@ end
 
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if nSpellId == DEBUFF_KINETIC_LINK then
-		self.core:RemoveIcon("KL" .. nId)
-	elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
-		self.core:RemoveIcon("SA" .. nId)
-	end
+        self.core:RemoveIcon("KL" .. nId)
+    elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
+        self.core:RemoveIcon("SA" .. nId)
+    end
 end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName, nDuration)
     if sName == self.L["Mordechai Redmoon"] then
-		if sCastName == self.L["cast.shatter_shock"] then
-            if self.config.timers.shuriken.enable == true then
+        if sCastName == self.L["cast.shatter_shock"] then
+            if self.config.timers.shuriken.enable then
                 self.core:AddTimer("NEXT_SHURIKEN", self.L["message.shuriken_next"], 22, self.config.timers.shuriken.color, self.config.timers.shuriken.sound, self.config.timers.shuriken.alert)
             end
         elseif sCastName == self.L["cast.vicious_barrage"] then
-            if self.config.timers.barrage.enable == true then
+            if self.config.timers.barrage.enable then
                 self.core:AddTimer("NEXT_BARRAGE", self.L["message.barrage_next"], 33, self.config.timers.barrage.color, self.config.timers.barrage.sound, self.config.timers.barrage.alert)
             end
-		end
-	end
+        end
+    end
 end
 
 function Mod:OnDatachron(sMessage, sSender, sHandler)
     if sMessage:find(self.L["datachron.airlock_closed"]) then
         self:AddMarkerLines()
 
-        if self.config.timers.shuriken.enable == true then
+        if self.config.timers.shuriken.enable then
             self.core:AddTimer("NEXT_SHURIKEN", self.L["message.shuriken_next"], 10, self.config.timers.shuriken.color, self.config.timers.shuriken.sound, self.config.timers.shuriken.alert)
         end
 
-        if self.config.timers.orb.enable == true then
+        if self.config.timers.orb.enable then
             self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 15, self.config.timers.orb.color, self.config.timers.orb.sound, self.config.timers.orb.alert)
         end
 
-        if self.config.timers.barrage.enable == true and self.bViciousBarrage == true then
+        if self.config.timers.barrage.enable and self.bViciousBarrage then
             self.core:AddTimer("NEXT_BARRAGE", self.L["message.barrage_next"], 19, self.config.timers.barrage.color, self.config.timers.barrage.sound, self.config.timers.barrage.alert)
         end
 
@@ -356,14 +356,14 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
         self.core:RemoveTimer("NEXT_SHURIKEN")
         self.core:RemoveTimer("NEXT_BARRAGE")
 
-        if self.config.timers.airlock.enable == true then
+        if self.config.timers.airlock.enable then
             self.core:AddTimer("AIRLOCK", self.L["label.airlock"], 25, self.config.timers.airlock.color, self.config.timers.airlock.sound, self.config.timers.airlock.alert)
         end
-	end
+    end
 end
 
 function Mod:AddMarkerLines()
-    if self.tUnitBoss and self.config.lines.boss.enable == true then
+    if self.tUnitBoss and self.config.lines.boss.enable then
         self.core:DrawLine("Cleave_1", self.tUnitBoss, self.config.lines.boss.color, self.config.lines.boss.thickness, 60, -23.5, 0, CLEAVE_OFFSETS["FRONT_LEFT"])
         self.core:DrawLine("Cleave_2", self.tUnitBoss, self.config.lines.boss.color, self.config.lines.boss.thickness, 60, 23.5, 0, CLEAVE_OFFSETS["FRONT_RIGHT"])
         self.core:DrawLine("Cleave_3", self.tUnitBoss, self.config.lines.boss.color, self.config.lines.boss.thickness, -60, -23.5, 0, CLEAVE_OFFSETS["BACK_LEFT"])
@@ -372,7 +372,7 @@ function Mod:AddMarkerLines()
 end
 
 function Mod:RemoveMarkerLines()
-    if self.config.lines.boss.enable == true then
+    if self.config.lines.boss.enable then
         self.core:RemoveLine("Cleave_1")
         self.core:RemoveLine("Cleave_2")
         self.core:RemoveLine("Cleave_3")
@@ -394,7 +394,7 @@ function Mod:OnEnable()
     self.tUnitOrb = nil
     self.bViciousBarrage = false
 
-    if self.config.timers.orb.enable == true then
+    if self.config.timers.orb.enable then
         self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 22, self.config.timers.orb.color, self.config.timers.orb.sound, self.config.timers.orb.alert)
     end
 end

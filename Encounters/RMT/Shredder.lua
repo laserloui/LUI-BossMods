@@ -215,14 +215,14 @@ function Mod:Init(parent)
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
-    if not self.run == true then
+    if not self.run then
         return
     end
 
-    if sName == self.L["unit.boss"] and bInCombat == true then
+    if sName == self.L["unit.boss"] and bInCombat then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
 
-        if self.config.lines.room.enable == true then
+        if self.config.lines.room.enable then
             self.core:DrawLineBetween("ExitLine", EXITLINE_A, EXITLINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
             self.core:DrawLineBetween("CenterLine", CENTERLINE_A, CENTERLINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
             self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
@@ -234,11 +234,11 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     elseif sName == self.L["unit.braugh_the_bloodied"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.braugh_the_bloodied.enable,true,false,false,nil,self.config.units.braugh_the_bloodied.color, self.config.units.braugh_the_bloodied.priority)
     elseif sName == self.L["unit.sawblade"] then
-        if self.config.lines.sawblade.enable == true then
+        if self.config.lines.sawblade.enable then
             self.core:DrawLine(nId, tUnit, self.config.lines.sawblade.color, self.config.lines.sawblade.thickness, 60, 0, 0)
         end
     elseif sName == self.L["unit.circle_telegraph"] then
-        if self.config.lines.circle_telegraph.enable == true then
+        if self.config.lines.circle_telegraph.enable then
             self.core:DrawPolygon(nId, tUnit, 6.7, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
         end
     end
@@ -264,16 +264,16 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
     if DEBUFF_OOZING_BILE == nSpellId then
         if tData.tUnit:IsThePlayer() then
             if nStack >= 8 then
-                if self.config.auras.oozing_bile.enable == true then
+                if self.config.auras.oozing_bile.enable then
                     self.core:ShowAura("OOZE",self.config.auras.oozing_bile.sprite,self.config.auras.oozing_bile.color,nDuration)
                 end
 
                 if not self.warned then
-                    if self.config.sounds.oozing_bile.enable == true then
+                    if self.config.sounds.oozing_bile.enable then
                         self.core:PlaySound(self.config.sounds.oozing_bile.file)
                     end
 
-                    if self.config.alerts.oozing_bile.enable == true then
+                    if self.config.alerts.oozing_bile.enable then
                         self.core:ShowAlert("OOZE", self.L["alert.oozing_bile"], self.config.alerts.oozing_bile.duration, self.config.alerts.oozing_bile.color)
                     end
 
@@ -291,7 +291,7 @@ end
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if DEBUFF_OOZING_BILE == nSpellId then
         if tData.tUnit:IsThePlayer() then
-            if self.config.auras.oozing_bile.enable == true then
+            if self.config.auras.oozing_bile.enable then
                 self.core:HideAura("OOZE")
             end
 
@@ -304,42 +304,42 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if sName == self.L["unit.noxious_nabber"] then
         if sCastName == self.L["cast.necrotic_lash"] then
             if self.core:GetDistance(tCast.tUnit) < 30 then
-                if self.config.alerts.necrotic_lash.enable == true then
+                if self.config.alerts.necrotic_lash.enable then
                     self.core:ShowAlert("necrotic_lash_"..tostring(nId), self.L["alert.interrupt"], self.config.alerts.necrotic_lash.duration, self.config.alerts.necrotic_lash.color)
                 end
 
-                if self.config.sounds.necrotic_lash.enable == true then
+                if self.config.sounds.necrotic_lash.enable then
                     self.core:PlaySound(self.config.sounds.necrotic_lash.file)
                 end
 
-                if self.config.casts.necrotic_lash.enable == true then
+                if self.config.casts.necrotic_lash.enable then
                     self.core:ShowCast(tCast,sCastName,self.config.casts.necrotic_lash.color)
                 end
             end
         end
     elseif sName == self.L["unit.regor_the_rancid"] or sName == self.L["unit.braugh_the_bloodied"] then
         if sCastName == self.L["cast.deathwail"]  then
-            if self.config.alerts.deathwail.enable == true then
+            if self.config.alerts.deathwail.enable then
                 self.core:ShowAlert("deathwail", self.L["alert.interrupt"], self.config.alerts.deathwail.duration, self.config.alerts.deathwail.color)
             end
 
-            if self.config.sounds.deathwail.enable == true then
+            if self.config.sounds.deathwail.enable then
                 self.core:PlaySound(self.config.sounds.deathwail.file)
             end
 
-            if self.config.casts.deathwail.enable == true then
+            if self.config.casts.deathwail.enable then
                 self.core:ShowCast(tCast,sCastName,self.config.casts.deathwail.color)
             end
         elseif sCastName == self.L["cast.gravedigger"] then
-            if self.config.alerts.gravedigger.enable == true then
+            if self.config.alerts.gravedigger.enable then
                 self.core:ShowAlert("gravedigger", self.L["alert.interrupt"], self.config.alerts.gravedigger.duration, self.config.alerts.gravedigger.color)
             end
 
-            if self.config.sounds.gravedigger.enable == true then
+            if self.config.sounds.gravedigger.enable then
                 self.core:PlaySound(self.config.sounds.gravedigger.file)
             end
 
-            if self.config.casts.gravedigger.enable == true then
+            if self.config.casts.gravedigger.enable then
                 self.core:ShowCast(tCast,sCastName,self.config.casts.gravedigger.color)
             end
         end

@@ -249,27 +249,27 @@ function Mod:Init(parent)
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
-    if sName == self.L["unit.boss"] and bInCombat == true then
+    if sName == self.L["unit.boss"] and bInCombat then
         self.boss = tUnit
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,true,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
     elseif sName == self.L["unit.cannon_arm"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.cannon_arm.enable,true,false,false,nil,self.config.units.cannon_arm.color, self.config.units.cannon_arm.priority)
 
-        if not self.bIsMidPhase and self.config.timers.arms.enable == true then
+        if not self.bIsMidPhase and self.config.timers.arms.enable then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color, self.config.timers.arms.sound, self.config.timers.arms.alert)
         end
 
-        if self.config.lines.cannon_arm.enable == true then
+        if self.config.lines.cannon_arm.enable then
             self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.cannon_arm.color, self.config.lines.cannon_arm.thickness)
         end
     elseif sName == self.L["unit.flailing_arm"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.flailing_arm.enable,true,false,false,nil,self.config.units.flailing_arm.color, self.config.units.flailing_arm.priority)
 
-        if self.config.lines.flailing_arm.enable == true then
+        if self.config.lines.flailing_arm.enable then
             self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.flailing_arm.color, self.config.lines.flailing_arm.thickness)
         end
     elseif sName == self.L["unit.scanning_eye"] then
-        if self.config.lines.scanning_eye.enable == true then
+        if self.config.lines.scanning_eye.enable then
             self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.scanning_eye.color, self.config.lines.scanning_eye.thickness)
         end
     end
@@ -286,7 +286,7 @@ function Mod:OnUnitDestroyed(nId, tUnit, sName)
 end
 
 function Mod:OnHealthChanged(nId, nHealthPercent, sName, tUnit)
-    if self.config.alerts.midphase.enable == true then
+    if self.config.alerts.midphase.enable then
         if sName == self.L["unit.boss"] then
             if nHealthPercent <= 77 and self.nMidphaseWarnings == 0 then
                 self.core:ShowAlert("Midphase",self.L["alert.midphase"],self.config.alerts.midphase.duration, self.config.alerts.midphase.color)
@@ -301,23 +301,23 @@ function Mod:OnHealthChanged(nId, nHealthPercent, sName, tUnit)
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if self.L["unit.boss"] == sName and self.L["cast.noxious_belch"] == sCastName then
-        if self.config.casts.noxious_belch.enable == true then
+        if self.config.casts.noxious_belch.enable then
             self.core:ShowCast(tCast,sCastName,self.config.casts.noxious_belch.color)
         end
 
-        if self.config.timers.noxious_belch.enable == true then
+        if self.config.timers.noxious_belch.enable then
             self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 31, self.config.timers.noxious_belch.color, self.config.timers.noxious_belch.sound, self.config.timers.noxious_belch.alert)
         end
 
-        if self.config.alerts.lasers.enable == true then
+        if self.config.alerts.lasers.enable then
             self.core:ShowAlert(sCastName,self.L["alert.lasers"],self.config.alerts.lasers.duration, self.config.alerts.lasers.color)
         end
     elseif self.L["unit.cannon_arm"] == sName and self.L["cast.cannon_fire"] == sCastName then
-        if self.config.casts.cannon_fire.enable == true then
+        if self.config.casts.cannon_fire.enable then
             self.core:ShowCast(tCast,sCastName,self.config.casts.cannon_fire.color)
         end
 
-        if self.config.sounds.cannon_fire.enable == true then
+        if self.config.sounds.cannon_fire.enable then
             self.core:PlaySound(self.config.sounds.cannon_fire.file)
         end
     end
@@ -325,32 +325,32 @@ end
 
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if DEBUFF_THE_SKY_IS_FALLING == nSpellId then
-        if self.config.timers.crush.enable == true then
+        if self.config.timers.crush.enable then
             self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 17, self.config.timers.crush.color, self.config.timers.crush.sound, self.config.timers.crush.alert)
         end
 
         if tData.tUnit:IsThePlayer() then
-            if self.config.auras.crush_player.enable == true then
+            if self.config.auras.crush_player.enable then
                 self.core:ShowAura("Aura_Crush",self.config.auras.crush_player.sprite,self.config.auras.crush_player.color,nDuration)
             end
 
-            if self.config.alerts.crush_player.enable == true then
+            if self.config.alerts.crush_player.enable then
                 self.core:ShowAlert("Alert_Crush", self.L["alert.crush_player"],self.config.alerts.crush_player.duration, self.config.alerts.crush_player.color)
             end
 
-            if self.config.sounds.crush_player.enable == true then
+            if self.config.sounds.crush_player.enable then
                 self.core:PlaySound(self.config.sounds.crush_player.file)
             end
         else
-            if self.config.sounds.crush.enable == true then
+            if self.config.sounds.crush.enable then
                 self.core:PlaySound(self.config.sounds.crush.file)
             end
 
-            if self.config.alerts.crush.enable == true then
+            if self.config.alerts.crush.enable then
                 self.core:ShowAlert("Alert_Crush", self.L["alert.crush"]:format(sUnitName),self.config.alerts.crush.duration, self.config.alerts.crush.color)
             end
 
-            if self.config.icons.crush.enable == true then
+            if self.config.icons.crush.enable then
                 self.core:DrawIcon("Icon_Crush", tData.tUnit, self.config.icons.crush.sprite, self.config.icons.crush.size, nil, self.config.icons.crush.color, nDuration)
             end
         end
@@ -376,19 +376,19 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
     elseif sMessage:match(self.L["datachron.midphase_end"]) then
         self.bIsMidPhase = nil
 
-        if self.config.timers.arms.enable == true then
+        if self.config.timers.arms.enable then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color, self.config.timers.arms.sound, self.config.timers.arms.alert)
         end
 
-        if self.config.timers.crush.enable == true then
+        if self.config.timers.crush.enable then
             self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color, self.config.timers.crush.sound, self.config.timers.crush.alert)
         end
 
-        if self.config.timers.noxious_belch.enable == true then
+        if self.config.timers.noxious_belch.enable then
             self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 14, self.config.timers.noxious_belch.color, self.config.timers.noxious_belch.sound, self.config.timers.noxious_belch.alert)
         end
 
-        if self.config.timers.incineration.enable == true then
+        if self.config.timers.incineration.enable then
             self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 20, self.config.timers.incineration.color, self.config.timers.incineration.sound, self.config.timers.incineration.alert)
         end
     else
@@ -397,28 +397,28 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
             local tFocusedUnit = GameLib.GetPlayerUnitByName(strPlayerLaserFocused)
 
             if tFocusedUnit:IsThePlayer() then
-                if self.config.alerts.incineration.enable == true then
+                if self.config.alerts.incineration.enable then
                     self.core:ShowAlert("Incineration", self.L["alert.incineration_player"],self.config.alerts.incineration.duration, self.config.alerts.incineration.color)
                 end
 
-                if self.config.sounds.incineration.enable == true then
+                if self.config.sounds.incineration.enable then
                     self.core:PlaySound(self.config.sounds.incineration.file)
                 end
             else
-                if self.config.alerts.incineration.enable == true then
+                if self.config.alerts.incineration.enable then
                     self.core:ShowAlert("Incineration", self.L["alert.incineration"]:format(tFocusedUnit:GetName()),self.config.alerts.incineration.duration, self.config.alerts.incineration.color)
                 end
             end
 
-            if self.config.timers.incineration.enable == true then
+            if self.config.timers.incineration.enable then
                 self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 40, self.config.timers.incineration.color, self.config.timers.incineration.sound, self.config.timers.incineration.alert)
             end
 
-            if self.config.icons.incineration.enable == true then
+            if self.config.icons.incineration.enable then
                 self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration.sprite, self.config.icons.incineration.size, nil, self.config.icons.incineration.color, 10)
             end
 
-            if self.boss and self.config.lines.incineration.enable == true then
+            if self.boss and self.config.lines.incineration.enable then
                 self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration.color, self.config.lines.incineration.thickness, 10)
             end
         end
@@ -439,15 +439,15 @@ function Mod:OnEnable()
     self.bIsMidPhase = nil
     self.nMidphaseWarnings = 0
 
-    if self.config.timers.arms.enable == true then
+    if self.config.timers.arms.enable then
         self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms.color, self.config.timers.arms.sound, self.config.timers.arms.alert)
     end
 
-    if self.config.timers.crush.enable == true then
+    if self.config.timers.crush.enable then
         self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush.color, self.config.timers.crush.sound, self.config.timers.crush.alert)
     end
 
-    if self.config.timers.noxious_belch.enable == true then
+    if self.config.timers.noxious_belch.enable then
         self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 16, self.config.timers.noxious_belch.color, self.config.timers.noxious_belch.sound, self.config.timers.noxious_belch.alert)
     end
 end
