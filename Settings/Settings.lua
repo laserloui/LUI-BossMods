@@ -89,6 +89,7 @@ function Settings:OnDocLoaded()
             tModule.OnBtnChooseColor = self.OnBtnChooseColor
             tModule.OnColorPicker = self.OnColorPicker
             tModule.ToggleSettings = self.ToggleSettings
+            tModule.OnResetModuleBtn = self.OnResetModuleBtn
         end
     end
 end
@@ -1383,6 +1384,25 @@ function Settings:OnSaveFont(wndHandler, wndControl)
     self:SetVar({"alerts","size"},tData.nSize)
 
     self.wndFonts:Close()
+end
+
+function Settings:OnResetModuleBtn(wndHandler, wndControl)
+    if wndHandler ~= wndControl then
+        return
+    end
+
+    if not self.current or not self.current.encounter then
+        return
+    end
+
+    local module = self.core.modules[self.current.encounter]
+
+    if not module then
+        return
+    end
+
+    module.config = nil
+    RequestReloadUI()
 end
 
 function Settings:OnResetBtn(wndHandler, wndControl)
