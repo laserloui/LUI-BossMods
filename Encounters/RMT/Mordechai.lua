@@ -10,7 +10,6 @@ local Locales = {
         -- Units
         ["unit.boss"] = "Mordechai Redmoon",
     	["unit.kinetic_orb"] = "Kinetic Orb",
-    	["unit.airlock_anchor"] = "Airlock Anchor",
         -- Debuffs
         ["debuff.kinetic_link"] = "Kinetic Link",
         ["debuff.kinetic_fixation"] = "Kinetic Fixation",
@@ -20,6 +19,7 @@ local Locales = {
     	["datachron.airlock_closed"] = "The airlock has been closed!",
         -- Casts
     	["cast.shatter_shock"] = "Shatter Shock",
+        ["cast.vicious_barrage"] = "Vicious Barrage",
         -- Alerts
         ["alert.orb_spawned"] = "Orb spawned!",
         ["alert.kinetic_link"] = "HIT THE ORB!",
@@ -27,6 +27,7 @@ local Locales = {
         ["alert.shocking_attraction_left"] = "MOVE TO THE LEFT!",
         ["alert.shocking_attraction_right"] = "MOVE TO THE RIGHT!",
         -- Messages
+        ["message.barrage_next"] = "Next Barrage",
         ["message.shuriken_next"] = "Next Shuriken",
         ["message.orb_next"] = "Next Orb",
         ["message.orb_active"] = "Orb start moving",
@@ -72,6 +73,7 @@ function Mod:new(o)
         },
     }
     self.run = false
+    self.bViciousBarrage = false
     self.runtime = {}
     self.config = {
         enable = true,
@@ -113,6 +115,12 @@ function Mod:new(o)
                 priority = 4,
                 color = "afb0ff2f",
                 label = "label.airlock",
+            },
+            barrage = {
+                enable = true,
+                priority = 5,
+                color = "afff00ff",
+                label = "cast.vicious_barrage",
             },
         },
         alerts = {
@@ -244,10 +252,6 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         if self.config.sounds.orb.enable == true then
             self.core:PlaySound(self.config.sounds.orb.file)
         end
-	elseif sName == self.L["unit.airlock_anchor"] then
-		self:RemoveMarkerLines()
-        self.core:RemoveTimer("NEXT_ORB")
-        self.core:RemoveTimer("NEXT_SHURIKEN")
 	end
 end
 
@@ -321,6 +325,10 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName, nDuration)
             if self.config.timers.shuriken.enable == true then
                 self.core:AddTimer("NEXT_SHURIKEN", self.L["message.shuriken_next"], 22, self.config.timers.shuriken.color, self.config.timers.shuriken.sound, self.config.timers.shuriken.alert)
             end
+        elseif sCastName == self.L["cast.vicious_barrage"] then
+            if self.config.timers.barrage.enable == true then
+                self.core:AddTimer("NEXT_BARRAGE", self.L["message.barrage_next"], 33, self.config.timers.barrage.color, self.config.timers.barrage.sound, self.config.timers.barrage.alert)
+            end
 		end
 	end
 end
@@ -330,15 +338,26 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
         self:AddMarkerLines()
 
         if self.config.timers.shuriken.enable == true then
-            self.core:AddTimer("NEXT_SHURIKEN", self.L["message.shuriken_next"], 12, self.config.timers.shuriken.color, self.config.timers.shuriken.sound, self.config.timers.shuriken.alert)
+            self.core:AddTimer("NEXT_SHURIKEN", self.L["message.shuriken_next"], 10, self.config.timers.shuriken.color, self.config.timers.shuriken.sound, self.config.timers.shuriken.alert)
         end
 
         if self.config.timers.orb.enable == true then
-            self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 18.5, self.config.timers.orb.color, self.config.timers.orb.sound, self.config.timers.orb.alert)
+            self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 15, self.config.timers.orb.color, self.config.timers.orb.sound, self.config.timers.orb.alert)
         end
+
+        if self.config.timers.barrage.enable == true and self.bViciousBarrage == true then
+            self.core:AddTimer("NEXT_BARRAGE", self.L["message.barrage_next"], 19, self.config.timers.barrage.color, self.config.timers.barrage.sound, self.config.timers.barrage.alert)
+        end
+
+        self.bViciousBarrage = true
     elseif sMessage:find(self.L["datachron.airlock_opened"]) then
+        self:RemoveMarkerLines()
+        self.core:RemoveTimer("NEXT_ORB")
+        self.core:RemoveTimer("NEXT_SHURIKEN")
+        self.core:RemoveTimer("NEXT_BARRAGE")
+
         if self.config.timers.airlock.enable == true then
-            self.core:AddTimer("AIRLOCK", self.L["label.airlock"], 20, self.config.timers.airlock.color, self.config.timers.airlock.sound, self.config.timers.airlock.alert)
+            self.core:AddTimer("AIRLOCK", self.L["label.airlock"], 25, self.config.timers.airlock.color, self.config.timers.airlock.sound, self.config.timers.airlock.alert)
         end
 	end
 end
@@ -373,9 +392,10 @@ function Mod:OnEnable()
     self.run = true
     self.tUnitBoss = nil
     self.tUnitOrb = nil
+    self.bViciousBarrage = false
 
     if self.config.timers.orb.enable == true then
-        self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 26, self.config.timers.orb.color, self.config.timers.orb.sound, self.config.timers.orb.alert)
+        self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 22, self.config.timers.orb.color, self.config.timers.orb.sound, self.config.timers.orb.alert)
     end
 end
 
