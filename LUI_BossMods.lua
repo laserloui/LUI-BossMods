@@ -100,6 +100,8 @@ function LUI_BossMods:new(o)
             barHeight = 32,
             barColor = "9600ffff",
             textColor = "ffebebeb",
+            soundPack = "male",
+            countdown = "long1",
             offsets = {
                 left = -660,
                 top = -230,
@@ -1275,17 +1277,29 @@ function LUI_BossMods:UpdateTimer(tTimer)
     local nTick = GetTickCount()
     local nElapsed = (nTick - tTimer.nTick) / 1000
     local nRemaining = tTimer.nDuration - nElapsed
-    local nPrevCountdown = tTimer.nCountDown or 4
+    local nPrevCountdown = tTimer.nCountDown or 6
     local nCountDown = -1
 
-    if nRemaining < 3.4 and nPrevCountdown == 4 then
+    if string.match(self.config.timer.countdown,"long") then
+        if nRemaining < 5.4 and nPrevCountdown > 5 then
+            nCountDown = 5
+        elseif nRemaining < 4.4 and nPrevCountdown == 5 then
+            nCountDown = 4
+        end
+    end
+
+    if nRemaining < 3.4 and nPrevCountdown >= 4 then
         nCountDown = 3
     elseif nRemaining < 2.4 and nPrevCountdown == 3 then
         nCountDown = 2
     elseif nRemaining < 1.4 and nPrevCountdown == 2 then
         nCountDown = 1
-    elseif nRemaining < 0.4 and nPrevCountdown == 1 then
-        nCountDown = 0
+    end
+
+    if string.match(self.config.timer.countdown,"1") then
+        if nRemaining < 0.4 and nPrevCountdown == 1 then
+            nCountDown = 0
+        end
     end
 
     if tTimer.bAlert and nCountDown >= 0 then
@@ -1294,7 +1308,7 @@ function LUI_BossMods:UpdateTimer(tTimer)
     end
 
     if tTimer.bSound and nCountDown >= 0 then
-        self:PlaySound(tostring(nCountDown))
+        self:PlaySound(tostring(nCountDown),self.config.timer.soundPack)
         tTimer.nCountDown = nCountDown
     end
 
@@ -1762,7 +1776,7 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:PlaySound(sound)
+function LUI_BossMods:PlaySound(sound,folder)
     if not sound or sound == "" then
         return
     end
@@ -1770,7 +1784,11 @@ function LUI_BossMods:PlaySound(sound)
     self:SetVolume()
 
     if type(sound) == "string" then
-        Sound.PlayFile("Sounds\\"..sound..".wav")
+        if folder ~= nil and folder ~= "" then
+            Sound.PlayFile("Sounds\\"..folder.."\\"..sound..".wav")
+        else
+            Sound.PlayFile("Sounds\\"..sound..".wav")
+        end
     else
         Sound.Play(sound)
     end

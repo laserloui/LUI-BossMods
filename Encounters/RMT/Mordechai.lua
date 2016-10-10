@@ -177,7 +177,7 @@ function Mod:new(o)
             boss = {
                 enable = true,
                 priority = 1,
-                thickness = 10,
+                thickness = 6,
                 color = "ffffffff",
                 label = "unit.boss",
             },

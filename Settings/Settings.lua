@@ -979,6 +979,36 @@ function Settings:BuildGlobalSettings()
 
     local wndTimer = self.wndSettings:FindChild("Global"):FindChild("Timer")
 
+    -- Countdown Voice
+    wndTimer:FindChild("SoundPackSetting"):FindChild("Dropdown"):AttachWindow(wndTimer:FindChild("SoundPackSetting"):FindChild("ChoiceContainer"))
+    wndTimer:FindChild("SoundPackSetting"):FindChild("ChoiceContainer"):Show(false)
+    wndTimer:FindChild("SoundPackSetting"):FindChild("Dropdown"):SetText("Choose")
+    wndTimer:FindChild("SoundPackSetting"):FindChild("Dropdown"):SetData({"timer","soundPack"})
+
+    for _,button in pairs(wndTimer:FindChild("SoundPackSetting"):FindChild("ChoiceContainer"):GetChildren()) do
+        if button:GetName() == self.config.timer.soundPack then
+            button:SetCheck(true)
+            wndTimer:FindChild("SoundPackSetting"):FindChild("Dropdown"):SetText(button:GetText())
+        else
+            button:SetCheck(false)
+        end
+    end
+
+    -- Countdown Length
+    wndTimer:FindChild("SoundLengthSetting"):FindChild("Dropdown"):AttachWindow(wndTimer:FindChild("SoundLengthSetting"):FindChild("ChoiceContainer"))
+    wndTimer:FindChild("SoundLengthSetting"):FindChild("ChoiceContainer"):Show(false)
+    wndTimer:FindChild("SoundLengthSetting"):FindChild("Dropdown"):SetText("Choose")
+    wndTimer:FindChild("SoundLengthSetting"):FindChild("Dropdown"):SetData({"timer","countdown"})
+
+    for _,button in pairs(wndTimer:FindChild("SoundLengthSetting"):FindChild("ChoiceContainer"):GetChildren()) do
+        if button:GetName() == self.config.timer.countdown then
+            button:SetCheck(true)
+            wndTimer:FindChild("SoundLengthSetting"):FindChild("Dropdown"):SetText(button:GetText())
+        else
+            button:SetCheck(false)
+        end
+    end
+
     -- Bar Color
     wndTimer:FindChild("BarColorSetting"):FindChild("Color"):SetData({"timer","barColor"})
     wndTimer:FindChild("BarColorSetting"):FindChild("ColorText"):SetText(self.config.timer.barColor or "")
