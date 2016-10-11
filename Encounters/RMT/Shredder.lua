@@ -91,12 +91,12 @@ function Mod:new(o)
             boss = {
                 enable = true,
                 label = "unit.boss",
-                priority = 1,
+                position = 1,
             },
             noxious_nabber = {
                 enable = true,
                 label = "unit.noxious_nabber",
-                priority = 2,
+                position = 2,
             },
             regor_the_rancid = {
                 enable = true,
@@ -110,19 +110,19 @@ function Mod:new(o)
         casts = {
             necrotic_lash = {
                 enable = true,
-                priority = 1,
+                position = 1,
                 color = "ff9932cc",
                 label = "cast.necrotic_lash",
             },
             deathwail = {
                 enable = true,
-                priority = 2,
+                position = 2,
                 color = "ff9932cc",
                 label = "cast.deathwail",
             },
             gravedigger = {
                 enable = true,
-                priority = 3,
+                position = 3,
                 color = "ff9932cc",
                 label = "cast.gravedigger",
             },
@@ -138,47 +138,47 @@ function Mod:new(o)
         alerts = {
             necrotic_lash = {
                 enable = true,
-                priority = 1,
+                position = 1,
                 label = "cast.necrotic_lash",
             },
             oozing_bile = {
                 enable = true,
-                priority = 2,
+                position = 2,
                 label = "debuff.oozing_bile",
             },
             deathwail = {
                 enable = true,
-                priority = 3,
+                position = 3,
                 label = "cast.deathwail",
             },
             gravedigger = {
                 enable = true,
-                priority = 4,
+                position = 4,
                 label = "cast.gravedigger",
             },
         },
         sounds = {
             necrotic_lash = {
                 enable = true,
-                priority = 1,
+                position = 1,
                 file = "alert",
                 label = "cast.necrotic_lash",
             },
             oozing_bile = {
                 enable = true,
-                priority = 2,
+                position = 2,
                 file = "alert",
                 label = "debuff.oozing_bile",
             },
             deathwail = {
                 enable = true,
-                priority = 3,
+                position = 3,
                 file = "alert",
                 label = "cast.deathwail",
             },
             gravedigger = {
                 enable = true,
-                priority = 4,
+                position = 4,
                 file = "alert",
                 label = "cast.gravedigger",
             },
@@ -220,27 +220,20 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss"] and bInCombat then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color, self.config.units.boss.priority)
-
-        if self.config.lines.room.enable then
-            self.core:DrawLineBetween("ExitLine", EXITLINE_A, EXITLINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
-            self.core:DrawLineBetween("CenterLine", CENTERLINE_A, CENTERLINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
-            self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, self.config.lines.room.color, self.config.lines.room.thickness)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
+        self.core:DrawLineBetween("ExitLine", EXITLINE_A, EXITLINE_B, self.config.lines.room)
+        self.core:DrawLineBetween("CenterLine", CENTERLINE_A, CENTERLINE_B, self.config.lines.room)
+        self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, self.config.lines.room)
     elseif sName == self.L["unit.noxious_nabber"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.noxious_nabber.enable,true,false,false,nil,self.config.units.noxious_nabber.color, self.config.units.noxious_nabber.priority)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.noxious_nabber)
     elseif sName == self.L["unit.regor_the_rancid"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.regor_the_rancid.enable,true,false,false,nil,self.config.units.regor_the_rancid.color, self.config.units.regor_the_rancid.priority)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.regor_the_rancid)
     elseif sName == self.L["unit.braugh_the_bloodied"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.braugh_the_bloodied.enable,true,false,false,nil,self.config.units.braugh_the_bloodied.color, self.config.units.braugh_the_bloodied.priority)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.braugh_the_bloodied)
     elseif sName == self.L["unit.sawblade"] then
-        if self.config.lines.sawblade.enable then
-            self.core:DrawLine(nId, tUnit, self.config.lines.sawblade.color, self.config.lines.sawblade.thickness, 60, 0, 0)
-        end
+        self.core:DrawLine(nId, tUnit, self.config.lines.sawblade, 60)
     elseif sName == self.L["unit.circle_telegraph"] then
-        if self.config.lines.circle_telegraph.enable then
-            self.core:DrawPolygon(nId, tUnit, 6.7, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
-        end
+        self.core:DrawPolygon(nId, tUnit, self.config.lines.circle_telegraph, 6.7, 0, 20)
     end
 end
 
@@ -264,19 +257,11 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
     if DEBUFF_OOZING_BILE == nSpellId then
         if tData.tUnit:IsThePlayer() then
             if nStack >= 8 then
-                if self.config.auras.oozing_bile.enable then
-                    self.core:ShowAura("OOZE",self.config.auras.oozing_bile.sprite,self.config.auras.oozing_bile.color,nDuration)
-                end
+                self.core:ShowAura("OOZE", self.config.auras.oozing_bile, nDuration)
 
                 if not self.warned then
-                    if self.config.sounds.oozing_bile.enable then
-                        self.core:PlaySound(self.config.sounds.oozing_bile.file)
-                    end
-
-                    if self.config.alerts.oozing_bile.enable then
-                        self.core:ShowAlert("OOZE", self.L["alert.oozing_bile"], self.config.alerts.oozing_bile.duration, self.config.alerts.oozing_bile.color)
-                    end
-
+                    self.core:PlaySound(self.config.sounds.oozing_bile)
+                    self.core:ShowAlert("OOZE", self.L["alert.oozing_bile"], self.config.alerts.oozing_bile)
                     self.warned = true
                 end
             end
@@ -291,10 +276,7 @@ end
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if DEBUFF_OOZING_BILE == nSpellId then
         if tData.tUnit:IsThePlayer() then
-            if self.config.auras.oozing_bile.enable then
-                self.core:HideAura("OOZE")
-            end
-
+            self.core:HideAura("OOZE")
             self.warned = nil
         end
     end
@@ -304,44 +286,20 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if sName == self.L["unit.noxious_nabber"] then
         if sCastName == self.L["cast.necrotic_lash"] then
             if self.core:GetDistance(tCast.tUnit) < 30 then
-                if self.config.alerts.necrotic_lash.enable then
-                    self.core:ShowAlert("necrotic_lash_"..tostring(nId), self.L["alert.interrupt"], self.config.alerts.necrotic_lash.duration, self.config.alerts.necrotic_lash.color)
-                end
-
-                if self.config.sounds.necrotic_lash.enable then
-                    self.core:PlaySound(self.config.sounds.necrotic_lash.file)
-                end
-
-                if self.config.casts.necrotic_lash.enable then
-                    self.core:ShowCast(tCast,sCastName,self.config.casts.necrotic_lash.color)
-                end
+                self.core:ShowAlert("necrotic_lash_"..tostring(nId), self.L["alert.interrupt"], self.config.alerts.necrotic_lash)
+                self.core:PlaySound(self.config.sounds.necrotic_lash)
+                self.core:ShowCast(tCast,sCastName,self.config.casts.necrotic_lash)
             end
         end
     elseif sName == self.L["unit.regor_the_rancid"] or sName == self.L["unit.braugh_the_bloodied"] then
         if sCastName == self.L["cast.deathwail"]  then
-            if self.config.alerts.deathwail.enable then
-                self.core:ShowAlert("deathwail", self.L["alert.interrupt"], self.config.alerts.deathwail.duration, self.config.alerts.deathwail.color)
-            end
-
-            if self.config.sounds.deathwail.enable then
-                self.core:PlaySound(self.config.sounds.deathwail.file)
-            end
-
-            if self.config.casts.deathwail.enable then
-                self.core:ShowCast(tCast,sCastName,self.config.casts.deathwail.color)
-            end
+            self.core:ShowAlert("deathwail", self.L["alert.interrupt"], self.config.alerts.deathwail)
+            self.core:PlaySound(self.config.sounds.deathwail)
+            self.core:ShowCast(tCast,sCastName,self.config.casts.deathwail)
         elseif sCastName == self.L["cast.gravedigger"] then
-            if self.config.alerts.gravedigger.enable then
-                self.core:ShowAlert("gravedigger", self.L["alert.interrupt"], self.config.alerts.gravedigger.duration, self.config.alerts.gravedigger.color)
-            end
-
-            if self.config.sounds.gravedigger.enable then
-                self.core:PlaySound(self.config.sounds.gravedigger.file)
-            end
-
-            if self.config.casts.gravedigger.enable then
-                self.core:ShowCast(tCast,sCastName,self.config.casts.gravedigger.color)
-            end
+            self.core:ShowAlert("gravedigger", self.L["alert.interrupt"], self.config.alerts.gravedigger)
+            self.core:PlaySound(self.config.sounds.gravedigger)
+            self.core:ShowCast(tCast,sCastName,self.config.casts.gravedigger)
         end
     end
 end

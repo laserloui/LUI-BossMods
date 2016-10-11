@@ -69,16 +69,14 @@ function Mod:Init(parent)
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
-    if not self.run == true then
+    if not self.run then
         return
     end
 
-    if sName == self.L["unit.boss"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color)
+    if sName == self.L["unit.boss"] and bInCombat then
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
     elseif sName == self.L["unit.circle_telegraph"] then
-        if self.config.lines.circle_telegraph.enable == true then
-            self.core:DrawPolygon(nId, tUnit, 6.5, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
-        end
+        self.core:DrawPolygon(nId, tUnit, self.config.lines.circle_telegraph, 6.5, 0, 20)
     end
 end
 

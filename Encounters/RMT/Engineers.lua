@@ -82,37 +82,37 @@ function Mod:new(o)
         units = {
             gun = {
                 enable = true,
-                priority = 1,
+                position = 1,
                 label = "unit.boss_gun",
                 color = "afafafaf",
             },
             sword = {
                 enable = true,
-                priority = 2,
+                position = 2,
                 label = "unit.boss_sword",
                 color = "afafafaf",
             },
             spark = {
                 enable = true,
-                priority = 3,
+                position = 3,
                 label = "unit.spark_plug",
                 color = "afb0ff2f",
             },
             fusion = {
                 enable = true,
-                priority = 4,
+                position = 4,
                 label = "unit.fusion_core",
                 color = "afb0ff2f",
             },
             cooling = {
                 enable = true,
-                priority = 5,
+                position = 5,
                 label = "unit.cooling_turbine",
                 color = "afb0ff2f",
             },
             lubricant = {
                 enable = true,
-                priority = 6,
+                position = 6,
                 label = "unit.lubricant_nozzle",
                 color = "afb0ff2f",
             },
@@ -120,25 +120,25 @@ function Mod:new(o)
         timers = {
             electroshock = {
                 enable = true,
-                priority = 1,
+                position = 1,
                 color = "ade91dfb",
                 label = "cast.electroshock",
             },
             liquidate = {
                 enable = true,
-                priority = 2,
+                position = 2,
                 color = "afb0ff2f",
                 label = "cast.liquidate",
             },
             atomic_attraction = {
                 enable = true,
-                priority = 3,
+                position = 3,
                 color = "afff4500",
                 label = "debuff.atomic_attraction",
             },
             vulnerability = {
                 enable = false,
-                priority = 4,
+                position = 4,
                 color = "aaee94fd",
                 label = "debuff.electroshock_vulnerability",
             },
@@ -158,78 +158,78 @@ function Mod:new(o)
         alerts = {
             electroshock = {
                 enable = false,
-                priority = 1,
+                position = 1,
                 label = "cast.electroshock",
             },
             liquidate = {
                 enable = false,
-                priority = 2,
+                position = 2,
                 label = "cast.liquidate",
             },
             atomic_attraction = {
                 enable = true,
-                priority = 3,
+                position = 3,
                 color = "ffff4500",
                 label = "debuff.atomic_attraction",
             },
             pillar = {
                 enable = true,
-                priority = 4,
+                position = 4,
                 label = "label.pillar",
             },
             sword_jump = {
                 enable = true,
-                priority = 5,
+                position = 5,
                 label = "label.sword_jump",
             },
             gun_jump = {
                 enable = true,
-                priority = 6,
+                position = 6,
                 label = "label.gun_jump",
             },
             vulnerability = {
                 enable = true,
-                priority = 7,
+                position = 7,
                 label = "debuff.electroshock_vulnerability",
             },
             gun_return = {
                 enable = true,
-                priority = 8,
+                position = 8,
                 label = "label.gun_return",
             },
         },
         sounds = {
             electroshock = {
                 enable = false,
-                priority = 1,
+                position = 1,
                 label = "cast.electroshock",
             },
             liquidate = {
                 enable = false,
-                priority = 2,
+                position = 2,
                 label = "cast.liquidate",
             },
             atomic_attraction = {
                 enable = true,
-                priority = 3,
+                position = 3,
                 file = "run-away",
                 label = "debuff.atomic_attraction",
             },
             pillar = {
                 enable = true,
-                priority = 4,
+                position = 4,
                 file = "alert",
                 label = "label.pillar",
             },
             sword_jump = {
                 enable = true,
-                priority = 5,
+                position = 5,
                 file = "info",
                 label = "label.sword_jump",
             },
             gun_jump = {
                 enable = true,
-                priority = 6,
+                position = 6,
                 file = "info",
                 label = "label.gun_jump",
             },
@@ -251,9 +251,8 @@ function Mod:new(o)
             },
             pillar = {
                 enable = true,
-                size = false,
+                size = 300,
                 sprite = false,
-                color = false,
                 label = "label.pillar_health",
             },
         },
@@ -289,11 +288,10 @@ function Mod:Init(parent)
 end
 
 function Mod:OnDatachron(sMessage, sSender, sHandler)
-    if self.config.timers.vulnerability.enable then
-        local strPlayer = sMessage:match(self.L["datachron.electroshock"])
-        if strPlayer then
-            self.core:AddTimer("ElectroshockTimer_"..strPlayer, strPlayer, 60, self.config.timers.vulnerability.color, self.config.timers.vulnerability.sound, self.config.timers.vulnerability.alert)
-        end
+    local strPlayer = sMessage:match(self.L["datachron.electroshock"])
+
+    if strPlayer then
+        self.core:AddTimer("ElectroshockTimer_"..strPlayer, strPlayer, 60, self.config.timers.vulnerability)
     end
 end
 
@@ -303,46 +301,26 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss_gun"] and bInCombat then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.gun.enable,true,false,false,nil,self.config.units.gun.color, self.config.units.gun.priority)
-
-        if self.config.lines.gun.enable then
-            self.core:DrawLine(nId, tUnit, self.config.lines.gun.color, self.config.lines.gun.thickness, 30)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.gun)
+        self.core:DrawLine(nId, tUnit, self.config.lines.gun, 30)
     elseif sName == self.L["unit.boss_sword"] and bInCombat then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.sword.enable,true,false,false,nil,self.config.units.sword.color, self.config.units.sword.priority)
-
-        if self.config.lines.sword.enable then
-            self.core:DrawLine("CleaveA", tUnit, self.config.lines.sword.color, self.config.lines.sword.thickness, 15, -50, 0, Vector3.New(2,0,-1.5))
-            self.core:DrawLine("CleaveB", tUnit, self.config.lines.sword.color, self.config.lines.sword.thickness, 15, 50, 0, Vector3.New(-2,0,-1.5))
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.sword)
+        self.core:DrawLine("CleaveA", tUnit, self.config.lines.sword, 15, -50, 0, Vector3.New(2,0,-1.5))
+        self.core:DrawLine("CleaveB", tUnit, self.config.lines.sword, 15, 50, 0, Vector3.New(-2,0,-1.5))
     elseif sName == self.L["unit.fusion_core"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion.enable,false,true,false,nil,self.config.units.fusion.color, self.config.units.fusion.priority)
-
-        if self.config.icons.pillar.enable then
-            self.core:DrawIcon(nId, tUnit, "", 300, -275)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion)
+        self.core:DrawIcon(nId, tUnit, self.config.icons.pillar, -275)
     elseif sName == self.L["unit.lubricant_nozzle"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.lubricant.enable,false,false,false,nil,self.config.units.lubricant.color, self.config.units.lubricant.priority)
-
-        if self.config.icons.pillar.enable then
-            self.core:DrawIcon(nId, tUnit, "", 300, -275)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.lubricant)
+        self.core:DrawIcon(nId, tUnit, self.config.icons.pillar, -275)
     elseif sName == self.L["unit.spark_plug"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.spark.enable,false,false,false,nil,self.config.units.spark.color, self.config.units.spark.priority)
-
-        if self.config.icons.pillar.enable then
-            self.core:DrawIcon(nId, tUnit, "", 300, -275)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.spark)
+        self.core:DrawIcon(nId, tUnit, self.config.icons.pillar, -275)
     elseif sName == self.L["unit.cooling_turbine"] then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.cooling.enable,false,false,false,nil,self.config.units.cooling.color, self.config.units.cooling.priority)
-
-        if self.config.icons.pillar.enable then
-            self.core:DrawIcon(nId, tUnit, "", 300, -275)
-        end
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.cooling)
+        self.core:DrawIcon(nId, tUnit, self.config.icons.pillar, -275)
     elseif sName == self.L["unit.circle_telegraph"] then
-        if self.config.lines.circle_telegraph.enable then
-            self.core:DrawPolygon(nId, tUnit, 6.3, 0, self.config.lines.circle_telegraph.thickness, self.config.lines.circle_telegraph.color, 20)
-        end
+        self.core:DrawPolygon(nId, tUnit, self.config.lines.circle_telegraph, 6.3, 0, 20)
     end
 end
 
@@ -379,14 +357,8 @@ function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
 
                 if sCurrentPlatform and sName == self.L[sCurrentPlatform] then
                     if not self.warned or self.warned ~= sName then
-                        if self.config.sounds.pillar.enable then
-                            self.core:PlaySound(self.config.sounds.pillar.file)
-                        end
-
-                        if self.config.alerts.pillar.enable then
-                            self.core:ShowAlert("Pillar", sName..self.L["alert.pillar"],self.config.alerts.pillar.duration, self.config.alerts.pillar.color)
-                        end
-
+                        self.core:PlaySound(self.config.sounds.pillar)
+                        self.core:ShowAlert("Pillar", sName..self.L["alert.pillar"], self.config.alerts.pillar)
                         self.warned = sName
                     end
                 end
@@ -397,34 +369,20 @@ end
 
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if nSpellId == DEBUFF_ELECTROSHOCK_VULNERABILITY then
-        if self.config.icons.vulnerability.enable then
-            self.core:DrawIcon("Electroshock_"..tostring(nId), tData.tUnit, self.config.icons.vulnerability.sprite, self.config.icons.vulnerability.size, nil, self.config.icons.vulnerability.color, nDuration)
-        end
+        self.core:DrawIcon("Electroshock_"..tostring(nId), tData.tUnit, self.config.icons.vulnerability, nil, nDuration)
 
-        if self.config.alerts.vulnerability.enable then
-            if tData.tUnit:IsThePlayer() then
-                self.core:ShowAlert("Vulnerability_"..tostring(nId), self.L["alert.vulnerability_player"],self.config.alerts.vulnerability.duration, self.config.alerts.vulnerability.color)
-            else
-                self.core:ShowAlert("Vulnerability_"..tostring(nId), sUnitName..self.L["alert.vulnerability"],self.config.alerts.vulnerability.duration, self.config.alerts.vulnerability.color)
-            end
+        if tData.tUnit:IsThePlayer() then
+            self.core:ShowAlert("Vulnerability_"..tostring(nId), self.L["alert.vulnerability_player"], self.config.alerts.vulnerability)
+        else
+            self.core:ShowAlert("Vulnerability_"..tostring(nId), sUnitName..self.L["alert.vulnerability"], self.config.alerts.vulnerability)
         end
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
-        if self.config.icons.atomic_attraction.enable then
-            self.core:DrawIcon("atomic_attraction_"..tostring(nId), tData.tUnit, self.config.icons.atomic_attraction.sprite, self.config.icons.atomic_attraction.size, nil, self.config.icons.atomic_attraction.color, nDuration)
-        end
+        self.core:DrawIcon("atomic_attraction_"..tostring(nId), tData.tUnit, self.config.icons.atomic_attraction, nil, nDuration)
+        self.core:ShowAlert("atomic_attraction_"..tostring(nId), self.L["alert.atomic_attraction"]..sUnitName, self.config.alerts.atomic_attraction)
+        self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction)
 
-        if self.config.alerts.atomic_attraction.enable then
-            self.core:ShowAlert("atomic_attraction_"..tostring(nId), self.L["alert.atomic_attraction"]..sUnitName, self.config.alerts.atomic_attraction.duration, self.config.alerts.atomic_attraction.color)
-        end
-
-        if self.config.timers.atomic_attraction.enable then
-            self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction.color, self.config.timers.atomic_attraction.sound, self.config.timers.atomic_attraction.alert)
-        end
-
-        if self.config.sounds.atomic_attraction.enable then
-            if tData.tUnit:IsThePlayer() then
-                self.core:PlaySound(self.config.sounds.atomic_attraction.file)
-            end
+        if tData.tUnit:IsThePlayer() then
+            self.core:PlaySound(self.config.sounds.atomic_attraction)
         end
     end
 end
@@ -433,86 +391,62 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if nSpellId == DEBUFF_ELECTROSHOCK_VULNERABILITY then
         self.core:RemoveIcon("Electroshock_"..tostring(nId))
 
-        if self.config.alerts.gun_return.enable then
-            if tData.tUnit:IsThePlayer() then
-                self.core:ShowAlert("GunReturn_"..tostring(nId), self.L["alert.gun_return"],self.config.alerts.gun_return.duration, self.config.alerts.gun_return.color)
-            end
+        if tData.tUnit:IsThePlayer() then
+            self.core:ShowAlert("GunReturn_"..tostring(nId), self.L["alert.gun_return"], self.config.alerts.gun_return)
         end
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
         self.core:RemoveIcon("atomic_attraction_"..tostring(nId))
     elseif nSpellId == BUFF_INSULATION and sUnitName == self.L["unit.fusion_core"] then
-        if self.config.timers.atomic_attraction.enable then
-            self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction.color, self.config.timers.atomic_attraction.sound, self.config.timers.atomic_attraction.alert)
-        end
+        self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction)
     end
 end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.rocket_jump"] then
-        if self.config.casts.sword_jump.enable then
-            self.core:ShowCast(tCast,sCastName,self.config.casts.sword_jump.color)
-        end
+        self.core:ShowCast(tCast, sCastName, self.config.casts.sword_jump)
+        self.core:PlaySound(self.config.sounds.sword_jump)
 
-        if self.config.sounds.sword_jump.enable then
-            self.core:PlaySound(self.config.sounds.sword_jump.file)
-        end
-
-        local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
-        if sCurrentPlatform and self.config.alerts.sword_jump.enable then
-            self.core:ShowAlert("sword_jump", self.L["alert.sword_jump"] .. self.L[sCurrentPlatform], self.config.alerts.sword_jump.duration, self.config.alerts.sword_jump.color)
+        if self.config.alerts.sword_jump.enable then
+            local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
+            if sCurrentPlatform then
+                self.core:ShowAlert("sword_jump", self.L["alert.sword_jump"] .. self.L[sCurrentPlatform], self.config.alerts.sword_jump)
+            end
         end
     elseif sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.rocket_jump"] then
-        if self.config.casts.gun_jump.enable then
-            self.core:ShowCast(tCast,sCastName,self.config.casts.gun_jump.color)
-        end
+        self.core:ShowCast(tCast, sCastName, self.config.casts.gun_jump)
+        self.core:PlaySound(self.config.sounds.gun_jump)
 
-        if self.config.sounds.gun_jump.enable then
-            self.core:PlaySound(self.config.sounds.gun_jump.file)
-        end
-
-        local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
-        if sCurrentPlatform and self.config.alerts.gun_jump.enable then
-            self.core:ShowAlert("gun_jump", self.L["alert.gun_jump"] .. self.L[sCurrentPlatform], self.config.alerts.gun_jump.duration, self.config.alerts.gun_jump.color)
+        if self.config.alerts.gun_jump.enable then
+            local sCurrentPlatform = self:GetPlatform(tCast.tUnit)
+            if sCurrentPlatform then
+                self.core:ShowAlert("gun_jump", self.L["alert.gun_jump"] .. self.L[sCurrentPlatform], self.config.alerts.gun_jump)
+            end
         end
     elseif sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.electroshock"] then
         local sPlatformPlayer = self:GetPlatform(self.unitPlayer)
         local sPlatformGun = self:GetPlatform(tCast.tUnit)
 
         if sPlatformPlayer == sPlatformGun then
-            if self.config.alerts.electroshock.enable then
-                self.core:ShowAlert("electroshock", self.L["alert.electroshock"], self.config.alerts.electroshock.duration, self.config.alerts.electroshock.color)
-            end
-
-            if self.config.sounds.electroshock.enable then
-                self.core:PlaySound(self.config.sounds.electroshock.file)
-            end
+            self.core:ShowAlert("electroshock", self.L["alert.electroshock"], self.config.alerts.electroshock)
+            self.core:PlaySound(self.config.sounds.electroshock)
         end
     elseif sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.liquidate"] then
         local sPlatformPlayer = self:GetPlatform(self.unitPlayer)
         local sPlatformSword = self:GetPlatform(tCast.tUnit)
 
         if sPlatformPlayer == sPlatformSword then
-            if self.config.alerts.liquidate.enable then
-                self.core:ShowAlert("liquidate", self.L["alert.liquidate"], self.config.alerts.liquidate.duration, self.config.alerts.liquidate.color)
-            end
-
-            if self.config.sounds.liquidate.enable then
-                self.core:PlaySound(self.config.sounds.liquidate.file)
-            end
+            self.core:ShowAlert("liquidate", self.L["alert.liquidate"], self.config.alerts.liquidate)
+            self.core:PlaySound(self.config.sounds.liquidate)
         end
     end
 end
 
 function Mod:OnCastEnd(nId, sCastName, tCast, sName)
     if sName == self.L["unit.boss_gun"] and sCastName == self.L["cast.electroshock"] then
-        if self.config.timers.electroshock.enable then
-            self.core:AddTimer("cast.electroshock", sCastName, 18.5, self.config.timers.electroshock.color, self.config.timers.electroshock.sound, self.config.timers.electroshock.alert)
-        end
+        self.core:AddTimer("cast.electroshock", sCastName, 18.5, self.config.timers.electroshock)
         self.electroshock = Apollo.GetTickCount()
     elseif sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.liquidate"] then
-        if self.config.timers.liquidate.enable then
-            self.core:AddTimer("cast.liquidate", sCastName, 21.5, self.config.timers.liquidate.color, self.config.timers.liquidate.sound, self.config.timers.liquidate.alert)
-        end
+        self.core:AddTimer("cast.liquidate", sCastName, 21.5, self.config.timers.liquidate)
         self.liquidate = Apollo.GetTickCount()
     end
 end
@@ -540,13 +474,8 @@ function Mod:OnEnable()
     self.run = true
     self.unitPlayer = GameLib.GetPlayerUnit()
 
-    if self.config.timers.electroshock.enable then
-        self.core:AddTimer("cast.electroshock", self.L["cast.electroshock"], 11, self.config.timers.electroshock.color, self.config.timers.electroshock.sound, self.config.timers.electroshock.alert)
-    end
-
-    if self.config.timers.liquidate.enable then
-        self.core:AddTimer("cast.liquidate", self.L["cast.liquidate"], 12, self.config.timers.liquidate.color, self.config.timers.liquidate.sound, self.config.timers.liquidate.alert)
-    end
+    self.core:AddTimer("cast.electroshock", self.L["cast.electroshock"], 11, self.config.timers.electroshock)
+    self.core:AddTimer("cast.liquidate", self.L["cast.liquidate"], 12, self.config.timers.liquidate)
 
     self.liquidate = Apollo.GetTickCount()
     self.electroshock = Apollo.GetTickCount()

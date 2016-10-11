@@ -190,7 +190,7 @@ function Settings:BuildTree()
             local wndEncounterBtn = wndEncounter:FindChild("EncounterBtn")
             wndEncounterBtn:SetText(strEncounter)
 
-            if bEncounterHasChildren == true then
+            if bEncounterHasChildren then
                 wndEncounterBtn:RemoveEventHandler("ButtonCheck")
                 wndEncounterBtn:RemoveEventHandler("ButtonUncheck")
                 wndEncounterBtn:AddEventHandler("ButtonCheck", "OnInstanceBtn", self)
@@ -355,12 +355,12 @@ function Settings:BuildRightPanel()
         for nId,unit in pairs(config.units) do
             tSortedUnits[#tSortedUnits+1] = {
                 nId = nId,
-                priority = unit.priority or 99
+                position = unit.position or 99
             }
         end
 
         table.sort(tSortedUnits, function(a, b)
-            return a.priority < b.priority
+            return a.position < b.position
         end)
 
         for i=1,#tSortedUnits do
@@ -377,6 +377,8 @@ function Settings:BuildRightPanel()
             wnd:FindChild("EnableCheckbox"):SetData({"units",nId,"enable"})
             wnd:FindChild("EnableCheckbox"):SetCheck(tUnit.enable or false)
             wnd:FindChild("EnableCheckbox"):SetText(L[tUnit.label] or tUnit.label)
+            wnd:SetTooltip(tUnit.tooltip and (L[tUnit.tooltip] or tUnit.tooltip) or "")
+
             self:ToggleSettings(wnd,tUnit.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
@@ -409,12 +411,12 @@ function Settings:BuildRightPanel()
         for nId,timer in pairs(config.timers) do
             tSortedTimers[#tSortedTimers+1] = {
                 nId = nId,
-                priority = timer.priority or 99
+                position = timer.position or 99
             }
         end
 
         table.sort(tSortedTimers, function(a, b)
-            return a.priority < b.priority
+            return a.position < b.position
         end)
 
         for i=1,#tSortedTimers do
@@ -439,6 +441,8 @@ function Settings:BuildRightPanel()
             wnd:FindChild("EnableCheckbox"):SetData({"timers",nId,"enable"})
             wnd:FindChild("EnableCheckbox"):SetCheck(timer.enable or false)
             wnd:FindChild("EnableCheckbox"):SetText(L[timer.label] or timer.label)
+            wnd:SetTooltip(timer.tooltip and (L[timer.tooltip] or timer.tooltip) or "")
+
             self:ToggleSettings(wnd,timer.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
@@ -471,12 +475,12 @@ function Settings:BuildRightPanel()
         for nId,cast in pairs(config.casts) do
             tSortedCasts[#tSortedCasts+1] = {
                 nId = nId,
-                priority = cast.priority or 99
+                position = cast.position or 99
             }
         end
 
         table.sort(tSortedCasts, function(a, b)
-            return a.priority < b.priority
+            return a.position < b.position
         end)
 
         for i=1,#tSortedCasts do
@@ -493,6 +497,8 @@ function Settings:BuildRightPanel()
             wnd:FindChild("EnableCheckbox"):SetData({"casts",nId,"enable"})
             wnd:FindChild("EnableCheckbox"):SetCheck(cast.enable or false)
             wnd:FindChild("EnableCheckbox"):SetText(L[cast.label] or cast.label)
+            wnd:SetTooltip(cast.tooltip and (L[cast.tooltip] or cast.tooltip) or "")
+
             self:ToggleSettings(wnd,cast.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
@@ -525,12 +531,12 @@ function Settings:BuildRightPanel()
         for nId,alert in pairs(config.alerts) do
             tSortedAlerts[#tSortedAlerts+1] = {
                 nId = nId,
-                priority = alert.priority or 99
+                position = alert.position or 99
             }
         end
 
         table.sort(tSortedAlerts, function(a, b)
-            return a.priority < b.priority
+            return a.position < b.position
         end)
 
         for i=1,#tSortedAlerts do
@@ -547,6 +553,8 @@ function Settings:BuildRightPanel()
             wnd:FindChild("EnableCheckbox"):SetData({"alerts",nId,"enable"})
             wnd:FindChild("EnableCheckbox"):SetCheck(alert.enable or false)
             wnd:FindChild("EnableCheckbox"):SetText(L[alert.label] or alert.label)
+            wnd:SetTooltip(alert.tooltip and (L[alert.tooltip] or alert.tooltip) or "")
+
             self:ToggleSettings(wnd,alert.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
@@ -579,12 +587,12 @@ function Settings:BuildRightPanel()
         for nId,sound in pairs(config.sounds) do
             tSortedSounds[#tSortedSounds+1] = {
                 nId = nId,
-                priority = sound.priority or 99
+                position = sound.position or 99
             }
         end
 
         table.sort(tSortedSounds, function(a, b)
-            return a.priority < b.priority
+            return a.position < b.position
         end)
 
         for i=1,#tSortedSounds do
@@ -599,6 +607,8 @@ function Settings:BuildRightPanel()
             wnd:FindChild("EnableCheckbox"):SetData({"sounds",nId,"enable"})
             wnd:FindChild("EnableCheckbox"):SetCheck(sound.enable or false)
             wnd:FindChild("EnableCheckbox"):SetText(L[sound.label] or sound.label)
+            wnd:SetTooltip(sound.tooltip and (L[sound.tooltip] or sound.tooltip) or "")
+
             self:ToggleSettings(wnd,sound.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
@@ -630,12 +640,12 @@ function Settings:BuildRightPanel()
         for nId,icon in pairs(config.icons) do
             tSortedIcons[#tSortedIcons+1] = {
                 nId = nId,
-                priority = icon.priority or 99
+                position = icon.position or 99
             }
         end
 
         table.sort(tSortedIcons, function(a, b)
-            return a.priority < b.priority
+            return a.position < b.position
         end)
 
         for i=1,#tSortedIcons do
@@ -646,32 +656,31 @@ function Settings:BuildRightPanel()
             -- Label
             wnd:FindChild("Label"):SetText(L[icon.label] or icon.label)
 
-            -- Sprite
             if icon.sprite ~= false then
+                -- Sprite
                 wnd:FindChild("SpriteText"):SetText((icon.sprite ~= nil) and icon.sprite or self.config.icon.sprite)
                 wnd:FindChild("SpriteText"):SetData({"icons",nId,"sprite"})
                 wnd:FindChild("BrowseBtn"):SetData({{"icons",nId,"sprite"},wnd:FindChild("SpriteText")})
-            else
-                wnd:FindChild("SpriteSetting"):SetData("ignore")
-                self:ToggleSettings(wnd:FindChild("SpriteSetting"),false)
-            end
 
-            -- Color
-            if icon.color ~= false then
+                -- Color
                 wnd:FindChild("Color"):SetData({"icons",nId,"color"})
                 wnd:FindChild("ColorText"):SetText(icon.color or self.config.icon.color)
                 wnd:FindChild("Color"):FindChild("BG"):SetBGColor(icon.color or self.config.icon.color)
-            else
-                wnd:FindChild("ColorSetting"):SetData("ignore")
-                self:ToggleSettings(wnd:FindChild("ColorSetting"),false)
-            end
 
-            -- Size
-            if icon.color ~= false then
+                -- Size
                 wnd:FindChild("Slider"):SetData({"icons",nId,"size"})
                 wnd:FindChild("Slider"):SetValue(icon.size or self.config.icon.size)
                 wnd:FindChild("SliderText"):SetText(icon.size or self.config.icon.size)
             else
+                -- Sprite
+                wnd:FindChild("SpriteSetting"):SetData("ignore")
+                self:ToggleSettings(wnd:FindChild("SpriteSetting"),false)
+
+                -- Color
+                wnd:FindChild("ColorSetting"):SetData("ignore")
+                self:ToggleSettings(wnd:FindChild("ColorSetting"),false)
+
+                -- Size
                 wnd:FindChild("SizeSetting"):SetData("ignore")
                 self:ToggleSettings(wnd:FindChild("SizeSetting"),false)
             end
@@ -679,6 +688,8 @@ function Settings:BuildRightPanel()
             -- Enable Checkbox
             wnd:FindChild("EnableCheckbox"):SetData({"icons",nId,"enable"})
             wnd:FindChild("EnableCheckbox"):SetCheck(icon.enable or false)
+            wnd:SetTooltip(icon.tooltip and (L[icon.tooltip] or icon.tooltip) or "")
+
             self:ToggleSettings(wnd,icon.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
@@ -702,12 +713,12 @@ function Settings:BuildRightPanel()
         for nId,aura in pairs(config.auras) do
             tSortedAuras[#tSortedAuras+1] = {
                 nId = nId,
-                priority = aura.priority or 99
+                position = aura.position or 99
             }
         end
 
         table.sort(tSortedAuras, function(a, b)
-            return a.priority < b.priority
+            return a.position < b.position
         end)
 
         for i=1,#tSortedAuras do
@@ -718,22 +729,22 @@ function Settings:BuildRightPanel()
             -- Label
             wnd:FindChild("Label"):SetText(L[aura.label] or aura.label)
 
-            -- Sprite
             if aura.sprite ~= false then
+                -- Sprite
                 wnd:FindChild("SpriteText"):SetText(aura.sprite or self.config.aura.sprite)
                 wnd:FindChild("SpriteText"):SetData({"auras",nId,"sprite"})
                 wnd:FindChild("BrowseBtn"):SetData({{"auras",nId,"sprite"},wnd:FindChild("SpriteText")})
-            else
-                wnd:FindChild("SpriteSetting"):SetData("ignore")
-                self:ToggleSettings(wnd:FindChild("SpriteSetting"),false)
-            end
 
-            -- Color
-            if aura.color ~= false then
+                -- Color
                 wnd:FindChild("Color"):SetData({"auras",nId,"color"})
                 wnd:FindChild("ColorText"):SetText(aura.color or self.config.aura.color)
                 wnd:FindChild("Color"):FindChild("BG"):SetBGColor(aura.color or self.config.aura.color)
             else
+                -- Sprite
+                wnd:FindChild("SpriteSetting"):SetData("ignore")
+                self:ToggleSettings(wnd:FindChild("SpriteSetting"),false)
+
+                -- Color
                 wnd:FindChild("ColorSetting"):SetData("ignore")
                 self:ToggleSettings(wnd:FindChild("ColorSetting"),false)
             end
@@ -741,6 +752,8 @@ function Settings:BuildRightPanel()
             -- Enable Checkbox
             wnd:FindChild("EnableCheckbox"):SetData({"auras",nId,"enable"})
             wnd:FindChild("EnableCheckbox"):SetCheck(aura.enable or false)
+            wnd:SetTooltip(aura.tooltip and (L[aura.tooltip] or aura.tooltip) or "")
+
             self:ToggleSettings(wnd,aura.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
@@ -764,12 +777,12 @@ function Settings:BuildRightPanel()
         for nId,line in pairs(config.lines) do
             tSortedLines[#tSortedLines+1] = {
                 nId = nId,
-                priority = line.priority or 99
+                position = line.position or 99
             }
         end
 
         table.sort(tSortedLines, function(a, b)
-            return a.priority < b.priority
+            return a.position < b.position
         end)
 
         for i=1,#tSortedLines do
@@ -803,6 +816,8 @@ function Settings:BuildRightPanel()
             -- Enable Checkbox
             wnd:FindChild("EnableCheckbox"):SetData({"lines",nId,"enable"})
             wnd:FindChild("EnableCheckbox"):SetCheck(line.enable or false)
+            wnd:SetTooltip(line.tooltip and (L[line.tooltip] or line.tooltip) or "")
+
             self:ToggleSettings(wnd,line.enable or false)
 
             nHeight = nHeight + wnd:GetHeight()
@@ -1175,7 +1190,7 @@ end
 
 function Settings:ToggleSettings(wnd,state,bIsChild)
     local enable = (state ~= nil and state == true) and true or false
-    local opacity = enable == true and 1 or 0.5
+    local opacity = enable and 1 or 0.5
 
     if bIsChild and wnd:GetData() == "ignore" then
         return
@@ -1195,7 +1210,7 @@ function Settings:ToggleSettings(wnd,state,bIsChild)
             wnd:SetOpacity(opacity)
         end
 
-        if enable == true and wnd:GetOpacity() == 0.5 then
+        if enable and wnd:GetOpacity() == 0.5 then
             wnd:SetStyle("BlockOutIfDisabled",true)
             wnd:SetOpacity(opacity)
         end
@@ -1558,7 +1573,7 @@ function Settings:OnLock(state)
         self.core.wndAura:SetStyle("Sizable", state)
         self.core.wndAura:SetStyle("Picture", state)
         self.core.wndAura:SetStyle("IgnoreMouse", not state)
-        self.core.wndAura:SetText(state == true and "AURA" or "")
+        self.core.wndAura:SetText(state and "AURA" or "")
         self.core.wndAura:Show(state,true)
     end
 
@@ -1568,7 +1583,7 @@ function Settings:OnLock(state)
         self.core.wndAlerts:Show(state,true)
     end
 
-    if state == true then
+    if state then
         if not self.wndLock then
             self.wndLock = Apollo.LoadForm(self.xmlDoc, "Lock", nil, self)
             self.wndLock:Show(true,true)

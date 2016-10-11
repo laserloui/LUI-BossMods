@@ -9,6 +9,8 @@ local Locales = {
     ["enUS"] = {
         -- Unit names
         ["unit.boss"] = "Hyper-Accelerated Skeledroid",
+        -- Labels
+        ["label.cleave"] = "Boss Cleave",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -44,6 +46,14 @@ function Mod:new(o)
                 label = "unit.boss",
             },
         },
+        lines = {
+            boss = {
+                enable = true,
+                color = "ffff0000",
+                thickness = 6,
+                label = "labe.cleave",
+            },
+        },
     }
     return o
 end
@@ -61,9 +71,9 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color)
-        self.core:DrawLine("CleaveA", tUnit, "ffff0000", 10, 15, -50, 0, Vector3.New(2.25,0,-1.5))
-        self.core:DrawLine("CleaveB", tUnit, "ffff0000", 10, 15, 50, 0, Vector3.New(-2.25,0,-1.5))
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
+        self.core:DrawLine("CleaveA", tUnit, self.config.lines.boss, 20, -50, 0, Vector3.New(2.3,0,-2.65))
+        self.core:DrawLine("CleaveB", tUnit, self.config.lines.boss, 20, 50, 0, Vector3.New(-2.3,0,-2.65))
     end
 end
 

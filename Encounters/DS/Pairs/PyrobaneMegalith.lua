@@ -68,9 +68,9 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss_fire"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_fire.enable,false,false,false,nil,self.config.units.boss_fire.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_fire)
     elseif sName == self.L["unit.boss_earth"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_earth.enable,false,false,false,nil,self.config.units.boss_earth.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_earth)
     end
 end
 

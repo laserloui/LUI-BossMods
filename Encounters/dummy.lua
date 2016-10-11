@@ -6,31 +6,24 @@ require "Apollo"
     ####    USEFUL FUNCTIONS (LUI_BossMods // self.core)
     #########################################################################################################################################
 
-    AddUnit(nId, sName, tUnit, bShowUnit, bOnCast, bOnBuff, bOnDebuff, sMark, sColor, nPriority)
+    AddUnit(nId, sName, tUnit, tConfig, sMark)
         Adds a unit to the list of tracked units.
         @param nId              - Unique ID of unit
         @param sName            - Name of the unit
         @param tUnit            - Unit Object from carbine
-        @param bShowUnit        - Boolean whether or not unit should be displayed (boss frames)
-        @parem bOnCast          - Track Casts of this unit
-        @param bOnBuff          - Track Buffs of this unit
-        @param bOnDebuff        - Track Debuffs of this unit
+        @param tConfig          - Unit Settings
         @param sMark            - Letter in Front of UnitFrame
-        @param sColor           - Health Bar Color (ARGB String)
-        @param nPriority        - Priority in UnitFrame and Option Panel (Top to Bottom)
 
     RemoveUnit(nId)
         Removes the unit completely.
         @param nId              - Unique ID of unit
 
-    AddTimer(sName, sText, nDuration, sColor, bSound, bAlert, fHandler, tData)
+    AddTimer(sName, sText, nDuration, tConfig, fHandler, tData)
         Creates a timer bar
         @param sName            - Unique ID
         @param sText            - Text displayed on the timer bar
         @param nDuration        - Duration in Seconds
-        @param sColor           - Bar Color (ARGB String)
-        @param bSound           - Play Countdown Sound (boolean)
-        @param bAlert           - Show Countdown Messages (boolean)
+        @param tConfig          - Timer Settings
         @param fHandler         - Callback function
         @param tData            - Data forwarded by callback function
 
@@ -38,20 +31,21 @@ require "Apollo"
         Hides the Timer
         @param sName            - Name of the Timer
 
-    ShowCast(tCast, sName, sColor)
+    ShowCast(tCast, sName, tConfig, fHandler, tData)
         Shows Castbar
         @param tCast            - Cast Object
         @param sName            - Text shown on the Castbar
-        @param sColor           - Cast Bar Color (ARGB String)
+        @param tConfig          - Cast Settings
+        @param fHandler         - Callback function
+        @param tData            - Data forwarded by callback function
 
     HideCast()
         Hides the Castbar
 
-    ShowAura(sName, sSprite, sColor, nDuration, bShowDuration, fHandler, tData)
+    ShowAura(sName, tConfig, nDuration, bShowDuration, fHandler, tData)
         Creates an Aura on your screen (like LUI Aura)
         @param sName            - Unique ID
-        @param sSprite          - Sprite of Aura (all sprites are located in LUI_BossMods/Sprites)
-        @param sColor           - Sprite Color (ARGB String)
+        @param tConfig          - Aura Settings
         @param nDuration        - Duration in Seconds (optional)
         @param bShowDuration    - Show Duration Text
         @param fHandler         - Callback function
@@ -61,12 +55,11 @@ require "Apollo"
         Hides the Aura
         @param sName            - Name of the Aura
 
-    ShowAlert(sName, sText, nDuration, sColor, fHandler, tData)
+    ShowAlert(sName, sText, tConfig, fHandler, tData)
         Shows a Text Notification on your screen
         @param sName            - Unique ID
         @param sText            - Text displayed
-        @param nDuration        - Duration in Seconds
-        @param sColor           - Text Color (ARGB String)
+        @param tConfig          - Alert Settings
         @param fHandler         - Callback function
         @param tData            - Data forwarded by callback function
 
@@ -74,18 +67,16 @@ require "Apollo"
         Hides the Alert
         @param sName            - Name of the Alert
 
-    PlaySound(sound)
+    PlaySound(tConfig)
         Plays a soundfile
-        @param sound            - Name of Soundfile (can be either string of filename or number of carbine sound)
+        @param tConfig            - Sound Settings
 
-    DrawIcon(Key, Origin, sSprite, nSpriteSize, nHeight, sColor, nDuration, bShowOverlay, fHandler, tData)
+    DrawIcon(Key, Origin, tConfig, nHeight, nDuration, bShowOverlay, fHandler, tData)
         Draw Icon on top of unit
         @param Key              - Unique ID
         @param Origin           - Unit Object
-        @param sSprite          - Sprite of Pixie (all sprites are located in LUI_BossMods/Sprites)
-        @param nSpriteSize      - Size of Pixie
+        @param tConfig          - Icon Settings
         @param nHeight          - Height of Icon from bottom
-        @param sColor           - Text Color (ARGB String)
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param bShowOverlay     - Show Duration Overlay (boolean)
         @param fHandler         - Callback function
@@ -95,16 +86,14 @@ require "Apollo"
         Removes Icon from Screen
         @param Key              - Unique ID
 
-    DrawPixie(Key, Origin, sSprite, nSpriteSize, nRotation, nDistance, nHeight, sColor, nDuration, fHandler, tData)
+    DrawPixie(Key, Origin, tConfig, nRotation, nDistance, nHeight, nDuration, fHandler, tData)
         Draw Pixie on top of unit or coordinate
         @param Key              - Unique ID
         @param Origin           - Unit Object / UnitId or Coordinates
-        @param sSprite          - Sprite of Pixie (all sprites are located in LUI_BossMods/Sprites)
-        @param nSpriteSize      - Size of Pixie
+        @param tConfig          - Pixie Settings
         @param nRotation        - Rotation in degrees
         @param nDistance        - Offset to the front of origin
         @param nHeight          - Height of Pixie from bottom
-        @param sColor           - Text Color (ARGB String)
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param fHandler         - Callback function
         @param tData            - Data forwarded by callback function
@@ -113,13 +102,13 @@ require "Apollo"
         Removes Pixie from Screen
         @param Key              - Unique ID
 
-    DrawPolygon(Key, Origin, nRadius, nRotation, nWidth, sColor, nSide, nDuration, fHandler, tData)
+    DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSide, nDuration, fHandler, tData)
         Draws a polyon on the ground at unit or position
         @param Key              - Unique ID
         @param Origin           - Unit Object / UnitId or Coordinates
+        @param tConfig          - Polygon Settings
         @param nRadius          - Radius of Polygon
-        @param nWidth           - Thickness
-        @param sColor           - Text Color (ARGB String)
+        @param nRotation        - Rotation of Polygon
         @param nSides           - Amount of Sides of the Polygon
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param fHandler         - Callback function
@@ -129,12 +118,11 @@ require "Apollo"
         Removes Polygon from Screen
         @param Key              - Unique ID
 
-    DrawLine(Key, Origin, sColor, nWidth, nLength, nRotation, nOffset, tVectorOffset, nDuration, nNumberOfDot, fHandler, tData)
+    DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffset, nDuration, nNumberOfDot, fHandler, tData)
         Draws a line from unit/coordinate into certain direction (unit facing/north by default)
         @param Key              - Unique ID
         @param Origin           - Unit Object / UnitId or Coordinates
-        @param sColor           - Text Color (ARGB String)
-        @param nWidth           - Thickness
+        @param tConfig          - Line Settings
         @param nLength          - Length
         @param nRotation        - Rotation in degrees
         @param nOffset          - Offset to Origin
@@ -148,12 +136,11 @@ require "Apollo"
         Removes Lines from Screen
         @param Key              - Unique ID
 
-    DrawLineBetween(Key, FromOrigin, ToOrigin, sColor, nWidth, nDuration, nNumberOfDot, fHandler, tData)
+    DrawLineBetween(Key, FromOrigin, ToOrigin, tConfig, nDuration, nNumberOfDot, fHandler, tData)
         @param Key              - Unique ID
         @param FromOrigin       - Unit Object / UnitId or Coordinates
         @param ToOrigin         - Unit Object / UnitId or Coordinates (PlayerUnit if nil)
-        @param sColor           - Text Color (ARGB String)
-        @param nWidth           - Thickness
+        @param tConfig          - Line Settings
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param nNumberOfDot     - Amount of dots (1 = default)
         @param fHandler         - Callback function
@@ -220,7 +207,8 @@ function Mod:new(o)
         units = {                       -- List of all units used in this module
             unitA = {
                 enable = true,          -- Show this unit in UnitFrame?
-                priority = 1,           -- Priority in UnitFrame and Option Panel (Top to Bottom)
+                position = 1,           -- Position in UnitFrame and Option Panel (Top to Bottom)
+                tooltip = "",           -- Tooltip in Option Panel
                 color = "96adff2f",     -- Health Bar Color (Default: Global Setting)
                 label = "unit.a",       -- Text in Option Panel (Text or Locale Key)
             },
@@ -228,7 +216,8 @@ function Mod:new(o)
         timers = {
             timerA = {
                 enable = true,          -- Enable/Disable timer
-                priority = 1,           -- Priority in Option Panel (Top to Bottom)
+                position = 1,           -- Position in Option Panel (Top to Bottom)
+                tooltip = "",           -- Tooltip in Option Panel
                 color = "ade91dfb",     -- Color (Default: Global Setting)
                 label = "timer.a",      -- Text in Option Panel (Text or Locale Key)
                 sound = true,           -- Play Countdown Sound? (Boolean)
@@ -238,7 +227,8 @@ function Mod:new(o)
         casts = {
             castA = {
                 enable = true,          -- Enable/Disable cast
-                priority = 1,           -- Priority in Option Panel (Top to Bottom)
+                position = 1,           -- Position in Option Panel (Top to Bottom)
+                tooltip = "",           -- Tooltip in Option Panel
                 color = "ffb22222",     -- Color (Default: Global Setting)
                 label = "cast.a"        -- Text in Option Panel (Text or Locale Key)
             },
@@ -246,7 +236,8 @@ function Mod:new(o)
         alerts = {
             alertA = {
                 enable = true,          -- Enable/Disable alert
-                priority = 1,           -- Priority in Option Panel (Top to Bottom)
+                position = 1,           -- Position in Option Panel (Top to Bottom)
+                tooltip = "",           -- Tooltip in Option Panel
                 color = "ffff4500",     -- Text Color (Default: Global Setting)
                 duration = 5,           -- Duration (Default: Global Setting)
                 label = "alert.a"       -- Text in Option Panel (Text or Locale Key)
@@ -255,7 +246,8 @@ function Mod:new(o)
         sounds = {
             soundA = {
                 enable = true,          -- Enable/Disable sound
-                priority = 1,           -- Priority in Option Panel (Top to Bottom)
+                position = 1,           -- Position in Option Panel (Top to Bottom)
+                tooltip = "",           -- Tooltip in Option Panel
                 file = "alert",         -- Sound File
                 label = "sound.a"       -- Text in Option Panel (Text or Locale Key)
             },
@@ -263,7 +255,8 @@ function Mod:new(o)
         icons = {                       -- Icons / Pixies
             iconA = {
                 enable = true,          -- Enable/Disable icon
-                priority = 1,           -- Priority in Option Panel (Top to Bottom)
+                position = 1,           -- Position in Option Panel (Top to Bottom)
+                tooltip = "",           -- Tooltip in Option Panel
                 sprite = "target2",     -- Icon Sprite
                 size = 20,              -- Icon Size (Default: Global Setting)
                 color = "ff40e0d0",     -- Icon Color (Default: Global Setting)
@@ -273,7 +266,8 @@ function Mod:new(o)
         auras = {                       -- Auras
             auraA = {
                 enable = true,          -- Enable/Disable icon
-                priority = 1,           -- Priority in Option Panel (Top to Bottom)
+                position = 1,           -- Position in Option Panel (Top to Bottom)
+                tooltip = "",           -- Tooltip in Option Panel
                 sprite = "bomb",        -- Icon Sprite
                 color = "ff40e0d0",     -- Icon Color (Default: Global Setting)
                 label = "aura.a"        -- Text in Option Panel (Text or Locale Key)
@@ -282,7 +276,8 @@ function Mod:new(o)
         lines = {                       -- Line / LineBetween / Polygon
             lineA = {
                 enable = true,          -- Enable/Disable line
-                priority = 1,           -- Priority in Option Panel (Top to Bottom)
+                position = 1,           -- Position in Option Panel (Top to Bottom)
+                tooltip = "",           -- Tooltip in Option Panel
                 color = "ffff0000",     -- Color (Default: Global Setting)
                 thickness = 10,         -- Thickness (Default: Global Setting)
                 label = "line.a"        -- Text in Option Panel (Text or Locale Key)

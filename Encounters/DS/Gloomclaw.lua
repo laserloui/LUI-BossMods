@@ -47,12 +47,25 @@ function Mod:new(o)
                 label = "unit.boss",
             }
         },
-        rupture = {
-            enable = true,
-            cast = true,
-            alert = "Large",
-            sound = "alert",
-            color = "ffff4500",
+        casts = {
+            rupture = {
+                enable = true,
+                color = "ffff4500",
+                label = "cast.rupture",
+            },
+        },
+        alerts = {
+            rupture = {
+                enable = true,
+                label = "cast.rupture",
+            },
+        },
+        sounds = {
+            rupture = {
+                enable = true,
+                file = "alert",
+                label = "cast.rupture",
+            },
         },
     }
     return o
@@ -71,25 +84,15 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,true,false,false,nil,self.config.units.boss.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
     end
 end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
-    if self.config.rupture.enable == true then
-        if sName == self.L["unit.boss"] and sCastName == self.L["cast.rupture"] then
-            if self.config.rupture.sound ~= "None" then
-                self.core:PlaySound(self.config.rupture.sound)
-            end
-
-            if self.config.rupture.cast == true then
-                self.core:ShowCast(tCast,sCastName,self.config.rupture.color)
-            end
-
-            if self.config.rupture.alert ~= "None" then
-                self.core:ShowAlert(sCastName, self.L["alert.interrupt_rupture"])
-            end
-        end
+    if sName == self.L["unit.boss"] and sCastName == self.L["cast.rupture"] then
+        self.core:PlaySound(self.config.sounds.rupture)
+        self.core:ShowCast(tCast,sCastName,self.config.casts.rupture)
+        self.core:ShowAlert(sCastName, self.L["alert.interrupt_rupture"], self.config.alerts.rupture)
     end
 end
 

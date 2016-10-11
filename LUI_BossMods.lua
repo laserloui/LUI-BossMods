@@ -57,7 +57,6 @@ function LUI_BossMods:new(o)
         modules = {},
         interval = 100,
         aura = {
-            sprite = "attention",
             color = "ff7fff00",
             offsets = {
                 left = -120,
@@ -67,7 +66,6 @@ function LUI_BossMods:new(o)
             },
         },
         icon = {
-            sprite = "attention",
             color = "ff7fff00",
             size = 60,
         },
@@ -426,9 +424,7 @@ function LUI_BossMods:OnUpdate()
                 self:UpdateUnit(tUnit)
 
                 -- Check Casts
-                if tUnit.bOnCast then
-                    self:CheckCast(tUnit)
-                end
+                self:CheckCast(tUnit)
             end
         end
 
@@ -756,8 +752,8 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuff,sMark,sColor,nPriority)
-    if not nId or not sName or not tUnit then
+function LUI_BossMods:AddUnit(nId,sName,tUnit,tConfig,sMark)
+    if not nId or not sName or not tUnit or not tConfig or not tUnit:IsValid() then
         return
     end
 
@@ -771,31 +767,24 @@ function LUI_BossMods:AddUnit(nId,sName,tUnit,bShowUnit,bOnCast,bOnBuff,bOnDebuf
             sName = sName,
             tUnit = tUnit,
             sMark = sMark or nil,
-            sColor = sColor or nil,
-            nPriority = nPriority or 99,
-            bShowUnit = bShowUnit or false,
-            bOnCast = bOnCast or false,
-            bOnBuff = bOnBuff or false,
-            bOnDebuff = bOnDebuff or false,
+            sColor = tConfig.color or nil,
+            nPosition = tConfig.position or 99,
+            bShowUnit = tConfig.enable or false,
         }
 
-        if ((bOnBuff ~= nil and bOnBuff) or (bOnDebuff ~= nil and bOnDebuff)) then
-            self:CheckBuffs(nId)
-        end
+        self:CheckBuffs(nId)
 
-        if (bShowUnit ~= nil and bShowUnit) and self.config.units.enable then
-            if tUnit:IsValid() then
-                if not self.wndUnits then
-                    self:LoadWindows()
-                end
-
-                if not self.wndUnits:IsShown() then
-                    self.wndUnits:Show(true,true)
-                end
-
-                self.runtime.units[nId].wnd = self:StyleUnit(Apollo.LoadForm(self.xmlDoc, "Unit", self.wndUnits, self),self.runtime.units[nId])
-                self:SortUnits()
+        if tConfig.enable and self.config.units.enable then
+            if not self.wndUnits then
+                self:LoadWindows()
             end
+
+            if not self.wndUnits:IsShown() then
+                self.wndUnits:Show(true,true)
+            end
+
+            self.runtime.units[nId].wnd = self:StyleUnit(Apollo.LoadForm(self.xmlDoc, "Unit", self.wndUnits, self),self.runtime.units[nId])
+            self:SortUnits()
         end
     end
 end
@@ -844,12 +833,12 @@ function LUI_BossMods:SortUnits()
     for nId,unit in pairs(self.runtime.units) do
         tSorted[#tSorted+1] = {
             nId = nId,
-            nPriority = unit.nPriority or 99
+            nPosition = unit.nPosition or 99
         }
     end
 
     table.sort(tSorted, function(a, b)
-        return a.nPriority < b.nPriority
+        return a.nPosition < b.nPosition
     end)
 
     for i=1,#tSorted do
@@ -858,15 +847,15 @@ function LUI_BossMods:SortUnits()
         if tUnit.wnd then
             local tOffsets = {0,(height * (i-1)),0,(height * i)}
 
-            if tUnit.nPosition then
-                if tUnit.nPosition ~= i then
+            if tUnit.nCurrentPosition then
+                if tUnit.nCurrentPosition ~= i then
                     tUnit.wnd:TransitionMove(WindowLocation.new({fPoints = {0,0,1,0}, nOffsets = tOffsets}), .25)
                 end
             else
                 tUnit.wnd:SetAnchorOffsets(unpack(tOffsets))
             end
 
-            tUnit.nPosition = i
+            tUnit.nCurrentPosition = i
         end
     end
 end
@@ -1039,24 +1028,21 @@ function LUI_BossMods:CheckBuffs(nId)
         return
     end
 
-    if self.runtime.units[nId] ~= nil and (self.runtime.units[nId].bOnBuff or self.runtime.units[nId].bOnDebuff) then
+    if self.runtime.units[nId] ~= nil then
         local tBuffs = self.runtime.units[nId].tUnit:GetBuffs()
 
         -- Process Buffs
-        if self.runtime.units[nId].bOnBuff then
-            if tBuffs ~= nil and tBuffs.arBeneficial ~= nil then
-                for i=1, #tBuffs.arBeneficial do
-                    self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arBeneficial[i])
-                end
+        if tBuffs ~= nil and tBuffs.arBeneficial ~= nil then
+            for i=1, #tBuffs.arBeneficial do
+                self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arBeneficial[i])
             end
         end
 
+
         -- Process Debuffs
-        if self.runtime.units[nId].bOnDebuff then
-            if tBuffs ~= nil and tBuffs.arHarmful ~= nil then
-                for i=1, #tBuffs.arHarmful do
-                    self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arHarmful[i])
-                end
+        if tBuffs ~= nil and tBuffs.arHarmful ~= nil then
+            for i=1, #tBuffs.arHarmful do
+                self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arHarmful[i])
             end
         end
     end
@@ -1085,23 +1071,21 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
     end
 
     if self.runtime.units[nUnitId] ~= nil then
-        if (buff and self.runtime.units[nUnitId].bOnBuff) or (not buff and self.runtime.units[nUnitId].bOnDebuff) then
-            local tData = {
-                nId = nSpellId,
-                sName = spell.splEffect:GetName(),
-                nDuration = spell.fTimeRemaining,
-                nTick = GetTickCount(),
-                nCount = spell.nCount,
-                nUnitId = nUnitId,
-                sUnitName = unit:GetName(),
-                tUnit = unit,
-                tSpell = spell,
-            }
+        local tData = {
+            nId = nSpellId,
+            sName = spell.splEffect:GetName(),
+            nDuration = spell.fTimeRemaining,
+            nTick = GetTickCount(),
+            nCount = spell.nCount,
+            nUnitId = nUnitId,
+            sUnitName = unit:GetName(),
+            tUnit = unit,
+            tSpell = spell,
+        }
 
-            if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffAdded then
-                self.runtime.buffs[nUnitId][nSpellId] = tData
-                self.tCurrentEncounter:OnBuffAdded(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
-            end
+        if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffAdded then
+            self.runtime.buffs[nUnitId][nSpellId] = tData
+            self.tCurrentEncounter:OnBuffAdded(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
         end
     elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and not buff then
         local tData = {
@@ -1138,22 +1122,20 @@ function LUI_BossMods:OnBuffUpdated(unit,spell)
     end
 
     if self.runtime.units[nUnitId] ~= nil then
-        if (buff and self.runtime.units[nUnitId].bOnBuff) or (not buff and self.runtime.units[nUnitId].bOnDebuff) then
-            local tData = {
-                nId = nSpellId,
-                sName = spell.splEffect:GetName(),
-                nDuration = spell.fTimeRemaining,
-                nTick = GetTickCount(),
-                nCount = spell.nCount,
-                nUnitId = nUnitId,
-                sUnitName = unit:GetName(),
-                tUnit = unit,
-                tSpell = spell,
-            }
+        local tData = {
+            nId = nSpellId,
+            sName = spell.splEffect:GetName(),
+            nDuration = spell.fTimeRemaining,
+            nTick = GetTickCount(),
+            nCount = spell.nCount,
+            nUnitId = nUnitId,
+            sUnitName = unit:GetName(),
+            tUnit = unit,
+            tSpell = spell,
+        }
 
-            if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffUpdated then
-                self.tCurrentEncounter:OnBuffUpdated(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
-            end
+        if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffUpdated then
+            self.tCurrentEncounter:OnBuffUpdated(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
         end
     elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and not buff then
         local tData = {
@@ -1188,20 +1170,18 @@ function LUI_BossMods:OnBuffRemoved(unit,spell)
     end
 
     if self.runtime.units[nUnitId] ~= nil then
-        if (buff and self.runtime.units[nUnitId].bOnBuff) or (not buff and self.runtime.units[nUnitId].bOnDebuff) then
-            local tData = {
-                nId = nSpellId,
-                sName = spell.splEffect:GetName(),
-                nUnitId = nUnitId,
-                sUnitName = unit:GetName(),
-                tUnit = unit,
-                tSpell = spell,
-            }
+        local tData = {
+            nId = nSpellId,
+            sName = spell.splEffect:GetName(),
+            nUnitId = nUnitId,
+            sUnitName = unit:GetName(),
+            tUnit = unit,
+            tSpell = spell,
+        }
 
-            if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffRemoved then
-                self.runtime.buffs[nUnitId][nSpellId] = nil
-                self.tCurrentEncounter:OnBuffRemoved(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName)
-            end
+        if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffRemoved then
+            self.runtime.buffs[nUnitId][nSpellId] = nil
+            self.tCurrentEncounter:OnBuffRemoved(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName)
         end
     elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and not buff then
         local tData = {
@@ -1228,8 +1208,8 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:AddTimer(sName, sText, nDuration, sColor, bSound, bAlert, fHandler, tData)
-    if not sName or not nDuration then
+function LUI_BossMods:AddTimer(sName, sText, nDuration, tConfig, fHandler, tData)
+    if not sName or not nDuration or not tConfig or not tConfig.enable then
         return
     end
 
@@ -1255,16 +1235,16 @@ function LUI_BossMods:AddTimer(sName, sText, nDuration, sColor, bSound, bAlert, 
     self.runtime.timer[sName].nTick = GetTickCount()
     self.runtime.timer[sName].sText = sText or sName
     self.runtime.timer[sName].nDuration = nDuration
-    self.runtime.timer[sName].bSound = bSound or false
-    self.runtime.timer[sName].bAlert = bAlert or false
-    self.runtime.timer[sName].sColor = sColor or self.config.timer.barColor
+    self.runtime.timer[sName].bSound = tConfig.sound or false
+    self.runtime.timer[sName].bAlert = tConfig.alert or false
+    self.runtime.timer[sName].sColor = tConfig.color or self.config.timer.barColor
     self.runtime.timer[sName].fHandler = fHandler or nil
     self.runtime.timer[sName].tData = tData or nil
 
     self.runtime.timer[sName].wnd:FindChild("Name"):SetText(sText or sName)
     self.runtime.timer[sName].wnd:FindChild("Duration"):SetTextColor(self.config.timer.textColor)
     self.runtime.timer[sName].wnd:FindChild("Duration"):SetText(Apollo.FormatNumber(nDuration,1,true))
-    self.runtime.timer[sName].wnd:FindChild("Progress"):SetBGColor(sColor or self.config.timer.barColor)
+    self.runtime.timer[sName].wnd:FindChild("Progress"):SetBGColor(tConfig.color or self.config.timer.barColor)
     self.runtime.timer[sName].wnd:FindChild("Progress"):SetAnchorPoints(0,0,1,1)
     self.runtime.timer[sName].wnd:Show(false,true)
 end
@@ -1310,6 +1290,10 @@ function LUI_BossMods:UpdateTimer(tTimer)
     if tTimer.bSound and nCountDown >= 0 then
         self:PlaySound(tostring(nCountDown),self.config.timer.soundPack)
         tTimer.nCountDown = nCountDown
+    end
+
+    if tTimer.nRemaining and (nRemaining > tTimer.nRemaining) then
+        tTimer.nCountDown = nil
     end
 
     if tTimer.nRemaining and (nElapsed >= tTimer.nDuration) then
@@ -1494,8 +1478,8 @@ function LUI_BossMods:CheckCast(tData)
     end
 end
 
-function LUI_BossMods:ShowCast(tCast,sName,sColor,fHandler,tData)
-    if not tCast then
+function LUI_BossMods:ShowCast(tCast,sName,tConfig,fHandler,tData)
+    if not tCast or not tConfig or not tConfig.enable then
         return
     end
 
@@ -1517,7 +1501,7 @@ function LUI_BossMods:ShowCast(tCast,sName,sColor,fHandler,tData)
         self.wndCastbar:FindChild("Progress"):SetBGColor(self.config.castbar.mooColor)
         self.wndCastbar:FindChild("Duration"):SetText()
     else
-        self.wndCastbar:FindChild("Progress"):SetBGColor(sColor or self.config.castbar.barColor)
+        self.wndCastbar:FindChild("Progress"):SetBGColor(tConfig.color or self.config.castbar.barColor)
         self.wndCastbar:FindChild("Duration"):SetTextColor(self.config.castbar.textColor)
         self.wndCastbar:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
     end
@@ -1587,8 +1571,8 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:ShowAura(sName,sSprite,sColor,nDuration,bShowDuration,fHandler,tData)
-    if not sName then
+function LUI_BossMods:ShowAura(sName,tConfig,nDuration,bShowDuration,fHandler,tData)
+    if not sName or not tConfig or not tConfig.enable then
         return
     end
 
@@ -1597,7 +1581,7 @@ function LUI_BossMods:ShowAura(sName,sSprite,sColor,nDuration,bShowDuration,fHan
     end
 
     if nDuration then
-        self.wndAura:FindChild("Overlay"):SetFullSprite(sSprite or self.config.aura.sprite)
+        self.wndAura:FindChild("Overlay"):SetFullSprite(tConfig.sprite or "")
         self.wndAura:FindChild("Overlay"):SetBarColor("a0000000")
         self.wndAura:FindChild("Overlay"):SetBGColor("a0000000")
         self.wndAura:FindChild("Overlay"):SetMax(100)
@@ -1630,8 +1614,8 @@ function LUI_BossMods:ShowAura(sName,sSprite,sColor,nDuration,bShowDuration,fHan
         end
     end
 
-    self.wndAura:FindChild("Icon"):SetSprite(sSprite or self.config.aura.sprite)
-    self.wndAura:FindChild("Icon"):SetBGColor(sColor or self.config.aura.color)
+    self.wndAura:FindChild("Icon"):SetSprite(tConfig.sprite or "")
+    self.wndAura:FindChild("Icon"):SetBGColor(tConfig.color or self.config.aura.color)
 
     if not self.wndAura:FindChild("Icon"):IsShown() then
         self.wndAura:FindChild("Icon"):Show(true,true)
@@ -1691,8 +1675,8 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, fHandler, tData)
-    if not sName or not sText then
+function LUI_BossMods:ShowAlert(sName, sText, tConfig, fHandler, tData)
+    if not sName or not sText or not tConfig or not tConfig.enable then
         return
     end
 
@@ -1712,14 +1696,14 @@ function LUI_BossMods:ShowAlert(sName, sText, nDuration, sColor, fHandler, tData
     end
 
     self.runtime.alerts[sName].nTick = GetTickCount()
-    self.runtime.alerts[sName].nDuration = nDuration or self.config.alerts.duration
+    self.runtime.alerts[sName].nDuration = tConfig.duration or self.config.alerts.duration
     self.runtime.alerts[sName].fHandler = fHandler or nil
     self.runtime.alerts[sName].tData = tData or nil
 
     local nHeight = self.config.alerts.size * 2
     self.runtime.alerts[sName].wnd:SetText(sText or "")
     self.runtime.alerts[sName].wnd:SetFont(self.config.alerts.font)
-    self.runtime.alerts[sName].wnd:SetTextColor(sColor or self.config.alerts.color)
+    self.runtime.alerts[sName].wnd:SetTextColor(tConfig.color or self.config.alerts.color)
     self.runtime.alerts[sName].wnd:SetAnchorOffsets(0,0,0,nHeight)
 
     for id,alert in pairs(self.runtime.alerts) do
@@ -1777,20 +1761,23 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:PlaySound(sound,folder)
-    if not sound or sound == "" then
+    if not sound then
         return
     end
 
-    self:SetVolume()
+    if type(sound) == "string" and sound ~= "" then
+        self:SetVolume()
 
-    if type(sound) == "string" then
         if folder ~= nil and folder ~= "" then
             Sound.PlayFile("Sounds\\"..folder.."\\"..sound..".wav")
         else
             Sound.PlayFile("Sounds\\"..sound..".wav")
         end
+    elseif type(sound) == "table" and sound.enable then
+        self:SetVolume()
+        Sound.PlayFile("Sounds\\"..sound.file..".wav")
     else
-        Sound.Play(sound)
+        return
     end
 
     if self.config.sound.force then
@@ -1864,8 +1851,8 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nSpriteHeight, sColor, nDuration, bShowOverlay, fHandler, tData)
-    if not Key or not Origin or not type(Origin) == "userdata" or not Origin:IsValid() then
+function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, nDuration, bShowOverlay, fHandler, tData)
+    if not Key or not Origin or not type(Origin) == "userdata" or not Origin:IsValid() or not tConfig or not tConfig.enable then
         return
     end
 
@@ -1886,18 +1873,18 @@ function LUI_BossMods:DrawIcon(Key, Origin, sSprite, nSpriteSize, nSpriteHeight,
         self.tDraws[Key] = nil
     end
 
-    local nSize = (nSpriteSize/2) or self.config.icon.size
+    local nSize = (tConfig.size/2) or self.config.icon.size
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
     local nHeight = (nSpriteHeight ~= nil) and nSpriteHeight or 40
 
     wnd:SetAnchorOffsets((nSize*-1),(nSize*-1),nSize,nSize)
-    wnd:SetSprite(sSprite or self.config.icon.sprite)
-    wnd:SetBGColor(sColor or self.config.icon.color)
+    wnd:SetSprite(tConfig.sprite or "")
+    wnd:SetBGColor(tConfig.color or self.config.icon.color)
     wnd:SetUnit(Origin,nHeight)
 
     if nDuration ~= nil and nDuration > 0 then
         if bShowOverlay then
-            wnd:FindChild("Overlay"):SetFullSprite(sSprite or self.config.icon.sprite)
+            wnd:FindChild("Overlay"):SetFullSprite(tConfig.sprite or "")
             wnd:FindChild("Overlay"):SetBarColor("a0000000")
             wnd:FindChild("Overlay"):SetBGColor("a0000000")
             wnd:FindChild("Overlay"):SetMax(100)
@@ -1977,8 +1964,8 @@ function LUI_BossMods:RemoveIcon(Key)
     end
 end
 
-function LUI_BossMods:DrawPixie(Key, Origin, sSprite, nSpriteSize, nRotation, nDistance, nHeight, sColor, nDuration, fHandler, tData)
-    if not Key or not Origin then
+function LUI_BossMods:DrawPixie(Key, Origin, tConfig, nRotation, nDistance, nHeight, nDuration, fHandler, tData)
+    if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
 
@@ -1999,14 +1986,14 @@ function LUI_BossMods:DrawPixie(Key, Origin, sSprite, nSpriteSize, nRotation, nD
     -- Register a new object to manage.
     local tDraw = self.tDraws[Key] or self:NewDraw()
     tDraw.sType = "Pixie"
-    tDraw.sSprite = sSprite or tDraw.sSprite
+    tDraw.sSprite = tConfig.sprite or tDraw.sSprite
     tDraw.nDuration = nDuration or 0
     tDraw.nTick = GetTickCount()
     tDraw.nRotation = nRotation or 0
     tDraw.nDistance = nDistance or 0
     tDraw.nHeight = nHeight or 0
-    tDraw.nSpriteSize = nSpriteSize or 30
-    tDraw.sColor = sColor or "white"
+    tDraw.nSpriteSize = tConfig.size or 30
+    tDraw.sColor = tConfig.color or "white"
     tDraw.fHandler = fHandler or nil
     tDraw.tData = tData or nil
 
@@ -2134,8 +2121,8 @@ function LUI_BossMods:RemovePixie(Key)
     end
 end
 
-function LUI_BossMods:DrawPolygon(Key, Origin, nRadius, nRotation, nWidth, sColor, nSide, nDuration, fHandler, tData)
-    if not Key or not Origin then
+function LUI_BossMods:DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSide, nDuration, fHandler, tData)
+    if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
 
@@ -2161,11 +2148,11 @@ function LUI_BossMods:DrawPolygon(Key, Origin, nRadius, nRotation, nWidth, sColo
     local tDraw = self.tDraws[Key] or self:NewDraw()
     tDraw.sType = "Polygon"
     tDraw.nRadius = nRadius or 10
-    tDraw.nWidth = nWidth or 4
+    tDraw.nWidth = tConfig.thickness or self.config.line.thickness
     tDraw.nDuration = nDuration or 0
     tDraw.nTick = GetTickCount()
     tDraw.nRotation = nRotation or 0
-    tDraw.sColor = sColor or tDraw.sColor
+    tDraw.sColor = tConfig.color or tDraw.sColor
     tDraw.nSide = nSide or 5
     tDraw.nPixieIds = tDraw.nPixieIds or {}
     tDraw.tVectors = tDraw.tVectors or {}
@@ -2316,8 +2303,8 @@ function LUI_BossMods:RemovePolygon(Key)
     end
 end
 
-function LUI_BossMods:DrawLine(Key, Origin, sColor, nWidth, nLength, nRotation, nOffset, tVectorOffset, nDuration, nNumberOfDot, fHandler, tData)
-    if not Key or not Origin then
+function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffset, nDuration, nNumberOfDot, fHandler, tData)
+    if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
 
@@ -2344,8 +2331,8 @@ function LUI_BossMods:DrawLine(Key, Origin, sColor, nWidth, nLength, nRotation, 
     tDraw.nLength = nLength or 10
     tDraw.sType = "Line"
     tDraw.nDuration = nDuration or 0
-    tDraw.nWidth = nWidth or self.config.line.thickness
-    tDraw.sColor = sColor or self.config.line.color
+    tDraw.nWidth = tConfig.thickness or self.config.line.thickness
+    tDraw.sColor = tConfig.color or self.config.line.color
     tDraw.nNumberOfDot = nNumberOfDot or 1
     tDraw.nPixieIdDot = tDraw.nPixieIdDot or {}
     tDraw.tVectorOffset = tVectorOffset or nil
@@ -2503,7 +2490,11 @@ function LUI_BossMods:RemoveLine(Key)
     end
 end
 
-function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, sColor, nWidth, nDuration, nNumberOfDot, fHandler, tData)
+function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, tConfig, nDuration, nNumberOfDot, fHandler, tData)
+    if not Key or not FromOrigin or not tConfig or not tConfig.enable then
+        return
+    end
+
     if not self.wndOverlay then
         self:LoadWindows()
     end
@@ -2521,8 +2512,8 @@ function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, sColor, nWidth,
     tDraw.sType = "LineBetween"
     tDraw.nDuration = nDuration or 0
     tDraw.nTick = GetTickCount()
-    tDraw.nWidth = nWidth or self.config.line.thickness
-    tDraw.sColor = sColor or self.config.line.color
+    tDraw.nWidth = tConfig.thickness or self.config.line.thickness
+    tDraw.sColor = tConfig.color or self.config.line.color
     tDraw.nNumberOfDot = nNumberOfDot or 1
     tDraw.nPixieIdDot = tDraw.nPixieIdDot or {}
     tDraw.fHandler = fHandler or nil
@@ -2950,7 +2941,7 @@ function LUI_BossMods:OnSlashCommand(cmd, args)
     end
 
     if strName and nDuration then
-        self:AddTimer("break", "Break", nDuration, nil, false, false, LUI_BossMods.OnBreakFinished, "break")
+        self:AddTimer("break", "Break", nDuration, {enable=true}, LUI_BossMods.OnBreakFinished, "break")
 
         if not self.breakTimer then
             self.breakTimer = ApolloTimer.Create(0.1, true, "OnBreakTimer", self)
