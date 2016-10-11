@@ -1494,14 +1494,14 @@ end
 
 function Settings:OnRefresh(sId)
     if sId:match("timer") then
-        self.core:AddTimer(sId, "60 Second Timer", 60, nil, Settings.OnRefresh, sId)
+        self.core:AddTimer(sId, "60 Second Timer", 60, {enable=true}, Settings.OnRefresh, sId)
     elseif sId == "cast" then
         self.core:ShowCast({
             sName = "cast",
             nDuration = 20,
             nElapsed = 0,
             nTick = Apollo.GetTickCount()
-        },"Castbar", nil, Settings.OnRefresh, "cast")
+        },"Castbar", {enable=true}, Settings.OnRefresh, "cast")
     end
 end
 
@@ -1515,22 +1515,22 @@ function Settings:OnLock(state)
     if state then
         Apollo.RegisterEventHandler("FrameCount", "OnUpdate", self.core)
 
-        self.core:AddTimer("timer_1", "60 Second Timer", 60, nil, Settings.OnRefresh, "timer_1")
-        self.core:AddTimer("timer_2", "45 Second Timer", 45, nil, Settings.OnRefresh, "timer_2")
-        self.core:AddTimer("timer_3", "30 Second Timer", 30, nil, Settings.OnRefresh, "timer_3")
-        self.core:AddTimer("timer_4", "15 Second Timer", 15, nil, Settings.OnRefresh, "timer_4")
+        self.core:AddTimer("timer_1", "60 Second Timer", 60, {enable=true}, Settings.OnRefresh, "timer_1")
+        self.core:AddTimer("timer_2", "45 Second Timer", 45, {enable=true}, Settings.OnRefresh, "timer_2")
+        self.core:AddTimer("timer_3", "30 Second Timer", 30, {enable=true}, Settings.OnRefresh, "timer_3")
+        self.core:AddTimer("timer_4", "15 Second Timer", 15, {enable=true}, Settings.OnRefresh, "timer_4")
 
-        self.core:AddUnit("unit_1", "Unit A", self.core.unitPlayer, true, false, false, false, nil, nil, 1)
-        self.core:AddUnit("unit_2", "Unit B", self.core.unitPlayer, true, false, false, false, nil, nil, 2)
-        self.core:AddUnit("unit_3", "Unit C", self.core.unitPlayer, true, false, false, false, nil, nil, 3)
+        self.core:AddUnit("unit_1", "Unit A", self.core.unitPlayer, {enable=true})
+        self.core:AddUnit("unit_2", "Unit B", self.core.unitPlayer, {enable=true})
+        self.core:AddUnit("unit_3", "Unit C", self.core.unitPlayer, {enable=true})
 
-        self.core:ShowAlert("alert", "This is a dummy message!", 60)
+        self.core:ShowAlert("alert", "This is a dummy message!", {enable=true, duration=600})
         self.core:ShowCast({
             sName = "cast",
             nDuration = 20,
             nElapsed = 0,
             nTick = Apollo.GetTickCount()
-        },"Castbar", nil, Settings.OnRefresh, "cast")
+        },"Castbar", {enable=true}, Settings.OnRefresh, "cast")
     else
         Apollo.RemoveEventHandler("FrameCount",self.core)
 

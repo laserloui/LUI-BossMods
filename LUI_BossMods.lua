@@ -801,7 +801,7 @@ function LUI_BossMods:StyleUnit(wnd,tData)
     childHealthBar:FindChild("Text"):SetTextColor(self.config.units.textColor)
 
     local childShieldBar = wnd:FindChild("ShieldBar")
-    childShieldBar:SetAnchorOffsets(4,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
+    childShieldBar:SetAnchorOffsets(4,(((self.config.units.shieldHeight/2)+15)*-1),0,((self.config.units.shieldHeight/2)-15))
     childShieldBar:FindChild("Progress"):SetBGColor(self.config.units.shieldColor)
     childShieldBar:FindChild("Text"):SetTextColor(self.config.units.textColor)
     childShieldBar:FindChild("Text"):Show(self.config.units.showText,true)
@@ -815,7 +815,7 @@ function LUI_BossMods:StyleUnit(wnd,tData)
     childMark:Show(tData.sMark ~= nil,true)
 
     local childCastBar = wnd:FindChild("CastBar")
-    childCastBar:SetAnchorOffsets(0,(((self.config.units.shieldHeight/2)+15)*-1),0,(((self.config.units.shieldHeight/2)+5)*-1))
+    childCastBar:SetAnchorOffsets(0,(((self.config.units.shieldHeight/2)+15)*-1),0,((self.config.units.shieldHeight/2)-15))
     childCastBar:FindChild("Progress"):SetBGColor(self.config.units.castColor)
     childCastBar:FindChild("Text"):SetTextColor(self.config.units.textColor)
 
