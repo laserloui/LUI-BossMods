@@ -148,13 +148,13 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         local nCurrentTime = GameLib.GetGameTime()
         if nCurrentTime - nLastBombTime > 10 then
             nLastBombTime = nCurrentTime
-            self:AddTimer("bombs",30)
+            self.core:AddTimer("BOMBS", self.L["message.bombs"], 30, self.config.timers.bombs)
         end
     elseif nSpellId == DEBUFF_ICE_TOMB then
         local nCurrentTime = GameLib.GetGameTime()
         if nCurrentTime - nLastIceTombTime > 5 then
             nLastIceTombTime = nCurrentTime
-            self:AddTimer("ice_tomb",15)
+            self.core:AddTimer("ICE_TOMB", self.L["message.ice_tomb"], 15, self.config.timers.ice_tomb)
         end
     end
 end
@@ -172,129 +172,12 @@ function Mod:OnEnable()
     nLastIceTombTime = 0
     nLastBombTime = 0
 
-    if self.config.timers.bombs.enable == true then
-        self.core:AddTimer("BOMBS", self.L["message.bombs"], 30, self.config.timers.bombs.color)
-    end
-
-    if self.config.timers.ice_tomb.enable == true then
-        self.core:AddTimer("ICE_TOMB", self.L["message.ice_tomb"], 26, self.config.timers.ice_tomb.color)
-    end
+    self.core:AddTimer("BOMBS", self.L["message.bombs"], 30, self.config.timers.bombs)
+    self.core:AddTimer("ICE_TOMB", self.L["message.ice_tomb"], 26, self.config.timers.ice_tomb)
 end
 
 function Mod:OnDisable()
     self.run = false
-end
-
--------- ### HELPER METHODS ### ------
-
-function Mod:AddUnit(key, unit, uniqueID, bShowUnit, bOnCast, bOnBuff, bOnDebuff, sMark, sText)
-    if self.config.units and self.config.units[key] and self.config.units[key].enable then
-        local txt = sText or (self.L[self.config.units[key].label] or self.config.units[key].label)
-        self.core:AddUnit(uniqueID or key, txt, unit, bShowUnit, bOnCast, bOnBuff, bOnDebuff, sMark, self.config.units[key].color, self.config.units[key].priority)
-    end
-end
-
-function Mod:AddTimer(key, time, uniqueID, text, fHandler, tData)
-    if self.config.timers and self.config.timers[key] and self.config.timers[key].enable then
-        local txt = text or (self.L[self.config.timers[key].label] or self.config.timers[key].label)
-        self.core:AddTimer(uniqueID or key, txt, time, self.config.timers[key].color, fHandler, tData)
-    end
-end
-
-function Mod:ShowCast(key, cast, text)
-    if self.config.casts and self.config.casts[key] and self.config.casts[key].enable then
-        local txt = text or (self.L[self.config.casts[key].label] or self.config.casts[key].label)
-        self.core:ShowCast(cast, txt, self.config.casts[key].color)
-    end
-end
-
-function Mod:ShowAlert(key, time, uniqueID, text)
-    if self.config.alerts and self.config.alerts[key] and self.config.alerts[key].enable then
-        local txt = text or (self.L[self.config.alerts[key].label] or self.config.alerts[key].label)
-        self.core:ShowAlert(uniqueID or key, txt, time, self.config.alerts[key].color)
-    end
-end
-
-function Mod:ShowAura(key, uniqueID, nDuration, bShowDuration, fHandler, tData)
-    if self.config.auras and self.config.auras[key] and self.config.auras[key].enable then
-        self.core:ShowAura(uniqueID or key, self.config.auras[key].sprite, self.config.auras[key].color, nDuration, bShowDuration, fHandler, tData)
-    end
-end
-
-function Mod:PlaySound(key)
-    if self.config.sounds and self.config.sounds[key] and self.config.sounds[key].enable then
-        self.core:PlaySound(self.config.sounds[key].file)
-    end
-end
-
-function Mod:DrawIcon(key, unit, uniqueID, nDuration, nHeight, bShowOverlay, fHandler, tData)
-    if self.config.icons and self.config.icons[key] and self.config.icons[key].enable then
-        self.core:DrawIcon(uniqueID or key, unit, self.config.icons[key].sprite, self.config.icons[key].size, nHeight, self.config.icons[key].color, nDuration, bShowOverlay, fHandler, tData)
-    end
-end
-
-function Mod:DrawPixie(key, origin, uniqueID, nDuration, nRotation, nDistance, nHeight, fHandler, tData)
-    if self.config.icons and self.config.icons[key] and self.config.icons[key].enable then
-        self.core:DrawPixie(uniqueID or key, origin, self.config.icons[key].sprite, self.config.icons[key].size, nRotation, nDistance, nHeight, self.config.icons[key].color, nDuration, fHandler, tData)
-    end
-end
-
-function Mod:DrawPolygon(key, origin, uniqueID, nRadius, nDuration, nRotation, nSide, fHandler, tData)
-    if self.config.lines and self.config.lines[key] and self.config.lines[key].enable then
-        self.core:DrawPolygon(uniqueID or key, origin, nRadius, nRotation, self.config.lines[key].thickness, self.config.lines[key].color, nSide, nDuration, fHandler, tData)
-    end
-end
-
-function Mod:DrawLine(key, origin, uniqueID, nLength, nDuration, nRotation, nOffset, tVectorOffset, nNumberOfDot, fHandler, tData)
-    if self.config.lines and self.config.lines[key] and self.config.lines[key].enable then
-        self.core:DrawLine(uniqueID or key, origin, self.config.lines[key].color, self.config.lines[key].thickness, nLength, nRotation, nOffset, tVectorOffset, nDuration, nNumberOfDot, fHandler, tData)
-    end
-end
-
-function Mod:DrawLineBetween(key, from, to, uniqueID, nDuration, nNumberOfDot, fHandler, tData)
-    if self.config.lines and self.config.lines[key] and self.config.lines[key].enable then
-        self.core:DrawLineBetween(uniqueID or key, from, to, self.config.lines[key].color, self.config.lines[key].thickness, nDuration, nNumberOfDot, fHandler, tData)
-    end
-end
-
-function Mod:RemoveUnit(nId)
-    self.core:RemoveUnit(nId)
-end
-
-function Mod:RemoveTimer(key, callback)
-    self.core:RemoveTimer(key, callback)
-end
-
-function Mod:HideAura(key, callback)
-    self.core:HideAura(key, callback)
-end
-
-function Mod:RemoveIcon(key, callback)
-    self.core:RemoveIcon(key, callback)
-end
-
-function Mod:RemovePixie(key, callback)
-    self.core:RemovePixie(key, callback)
-end
-
-function Mod:RemovePolygon(key, callback)
-    self.core:RemovePolygon(key, callback)
-end
-
-function Mod:RemoveLine(key, callback)
-    self.core:RemoveLine(key, callback)
-end
-
-function Mod:RemoveLineBetween(key, callback)
-    self.core:RemoveLineBetween(key, callback)
-end
-
-function Mod:GetDraw(key)
-    return self.core:GetDraw(key)
-end
-
-function Mod:GetDistance(from, to)
-    return self.core:GetDistance(from, to)
 end
 
 local ModInst = Mod:new()
