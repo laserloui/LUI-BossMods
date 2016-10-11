@@ -107,6 +107,7 @@ function Mod:new(o)
             shuriken = {
                 enable = true,
                 position = 3,
+                sound = true,
                 color = "afb0ff2f",
                 label = "label.shuriken",
             },
@@ -119,7 +120,7 @@ function Mod:new(o)
             barrage = {
                 enable = true,
                 position = 5,
-                color = "afff00ff",
+                color = "afff4500",
                 label = "cast.vicious_barrage",
             },
         },
@@ -177,7 +178,7 @@ function Mod:new(o)
             shocking_attraction = {
                 enable = true,
                 position = 4,
-                file = "alert",
+                file = "beware",
                 label = "debuff.shocking_attraction",
             },
         },
