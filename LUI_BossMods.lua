@@ -67,7 +67,7 @@ function LUI_BossMods:new(o)
         },
         icon = {
             color = "ff7fff00",
-            size = 60,
+            size = 300,
         },
         line = {
             color = "ffff0000",
@@ -1873,7 +1873,7 @@ function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, nDuration, b
         self.tDraws[Key] = nil
     end
 
-    local nSize = (tConfig.size/2) or self.config.icon.size
+    local nSize = (tConfig.size or self.config.icon.size) / 2
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
     local nHeight = (nSpriteHeight ~= nil) and nSpriteHeight or 40
 
