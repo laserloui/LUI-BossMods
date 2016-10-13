@@ -60,7 +60,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss.enable,false,false,false,nil,self.config.units.boss.color)
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
     end
 end
 
