@@ -2121,7 +2121,7 @@ function LUI_BossMods:RemovePixie(Key)
     end
 end
 
-function LUI_BossMods:DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSide, nDuration, fHandler, tData)
+function LUI_BossMods:DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSide, nDuration, tVectorOffsets, fHandler, tData)
     if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
@@ -2156,6 +2156,7 @@ function LUI_BossMods:DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSid
     tDraw.nSide = nSide or 5
     tDraw.nPixieIds = tDraw.nPixieIds or {}
     tDraw.tVectors = tDraw.tVectors or {}
+    tDraw.tVectorOffsets = tVectorOffsets or nil
     tDraw.fHandler = fHandler or nil
     tDraw.tData = tData or nil
 
@@ -2175,7 +2176,25 @@ function LUI_BossMods:DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSid
                 y = NewVector3({ 0, 1, 0 }),
                 z = NewVector3({ nSin, 0, nCos }),
             }
-            tDraw.tVectors[i] = tOriginVector + self:Rotation(tRefVector, CornerRotate)
+
+            if tDraw.tVectorOffsets then
+                if type(tDraw.tVectorOffsets) == "table" then
+                    tDraw.tVectorOffsets = NewVector3(tDraw.tVectorOffsets)
+                end
+
+                local nRad2 = -math.atan2(tFacingVector.x, tFacingVector.z)
+                local nCos2 = math.cos(nRad2)
+                local nSin2 = math.sin(nRad2)
+                local RotationMatrix = {
+                    x = NewVector3({ nCos2, 0, -nSin2 }),
+                    y = NewVector3({ 0, 1, 0 }),
+                    z = NewVector3({ nSin2, 0, nCos2 }),
+                }
+
+                tDraw.tVectors[i] = tOriginVector + self:Rotation(tRefVector, CornerRotate) + self:Rotation(tDraw.tVectorOffsets, RotationMatrix)
+            else
+                tDraw.tVectors[i] = tOriginVector + self:Rotation(tRefVector, CornerRotate)
+            end
         end
     elseif OriginType == "userdata" then
         tDraw.tOriginUnit = Origin
@@ -2215,7 +2234,25 @@ function LUI_BossMods:UpdatePolygon(Key,tDraw)
                         y = NewVector3({ 0, 1, 0 }),
                         z = NewVector3({ nSin, 0, nCos }),
                     }
-                    tDraw.tVectors[i] = tOriginVector + self:Rotation(tRefVector, CornerRotate)
+
+                    if tDraw.tVectorOffsets then
+                        if type(tDraw.tVectorOffsets) == "table" then
+                            tDraw.tVectorOffsets = NewVector3(tDraw.tVectorOffsets)
+                        end
+
+                        local nRad2 = -math.atan2(tFacingVector.x, tFacingVector.z)
+                        local nCos2 = math.cos(nRad2)
+                        local nSin2 = math.sin(nRad2)
+                        local RotationMatrix = {
+                            x = NewVector3({ nCos2, 0, -nSin2 }),
+                            y = NewVector3({ 0, 1, 0 }),
+                            z = NewVector3({ nSin2, 0, nCos2 }),
+                        }
+
+                        tDraw.tVectors[i] = tOriginVector + self:Rotation(tRefVector, CornerRotate) + self:Rotation(tDraw.tVectorOffsets, RotationMatrix)
+                    else
+                        tDraw.tVectors[i] = tOriginVector + self:Rotation(tRefVector, CornerRotate)
+                    end
                 end
 
                 tDraw.tOriginVector = tOriginVector
@@ -2303,7 +2340,7 @@ function LUI_BossMods:RemovePolygon(Key)
     end
 end
 
-function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffset, nDuration, nNumberOfDot, fHandler, tData)
+function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffsets, nDuration, nNumberOfDot, fHandler, tData)
     if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
@@ -2335,7 +2372,7 @@ function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset
     tDraw.sColor = tConfig.color or self.config.line.color
     tDraw.nNumberOfDot = nNumberOfDot or 1
     tDraw.nPixieIdDot = tDraw.nPixieIdDot or {}
-    tDraw.tVectorOffset = tVectorOffset or nil
+    tDraw.tVectorOffsets = tVectorOffsets or nil
     tDraw.fHandler = fHandler or nil
     tDraw.tData = tData or nil
 
@@ -2366,9 +2403,9 @@ function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset
         tDraw.tVectorFrom = tOriginVector + tVectorA
         tDraw.tVectorTo = tOriginVector + tVectorB
 
-        if tDraw.tVectorOffset then
-            if type(tDraw.tVectorOffset) == "table" then
-                tDraw.tVectorOffset = NewVector3(tDraw.tVectorOffset)
+        if tDraw.tVectorOffsets then
+            if type(tDraw.tVectorOffsets) == "table" then
+                tDraw.tVectorOffsets = NewVector3(tDraw.tVectorOffsets)
             end
 
             local nRad2 = -math.atan2(tFacingVector.x, tFacingVector.z)
@@ -2380,7 +2417,7 @@ function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset
                 z = NewVector3({ nSin2, 0, nCos2 }),
             }
 
-            local tVectorC = self:Rotation(tDraw.tVectorOffset, RotationMatrix2)
+            local tVectorC = self:Rotation(tDraw.tVectorOffsets, RotationMatrix2)
 
             tDraw.tVectorFrom = tDraw.tVectorFrom + tVectorC
             tDraw.tVectorTo = tDraw.tVectorTo + tVectorC
@@ -2426,7 +2463,7 @@ function LUI_BossMods:UpdateLine(Key,tDraw)
                 tDraw.tVectorFrom = tOriginVector + tVectorA
                 tDraw.tVectorTo = tOriginVector + tVectorB
 
-                if tDraw.tVectorOffset then
+                if tDraw.tVectorOffsets then
                     local nRad = -math.atan2(tFacingVector.x, tFacingVector.z)
                     local nCos = math.cos(nRad)
                     local nSin = math.sin(nRad)
@@ -2436,7 +2473,7 @@ function LUI_BossMods:UpdateLine(Key,tDraw)
                         z = NewVector3({ nSin, 0, nCos }),
                     }
 
-                    local tVectorC = self:Rotation(tDraw.tVectorOffset, RotationMatrix)
+                    local tVectorC = self:Rotation(tDraw.tVectorOffsets, RotationMatrix)
 
                     tDraw.tVectorFrom = tDraw.tVectorFrom + tVectorC
                     tDraw.tVectorTo = tDraw.tVectorTo + tVectorC

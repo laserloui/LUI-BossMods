@@ -102,7 +102,7 @@ require "Apollo"
         Removes Pixie from Screen
         @param Key              - Unique ID
 
-    DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSide, nDuration, fHandler, tData)
+    DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSide, nDuration, tVectorOffsets, fHandler, tData)
         Draws a polyon on the ground at unit or position
         @param Key              - Unique ID
         @param Origin           - Unit Object / UnitId or Coordinates
@@ -111,6 +111,7 @@ require "Apollo"
         @param nRotation        - Rotation of Polygon
         @param nSides           - Amount of Sides of the Polygon
         @param nDuration        - Duration in seconds before getting removed (optional)
+        @param tVectorOffsets    - Offset to Origin (table or vector3)
         @param fHandler         - Callback function
         @param tData            - Data forwarded by callback function
 
@@ -118,7 +119,7 @@ require "Apollo"
         Removes Polygon from Screen
         @param Key              - Unique ID
 
-    DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffset, nDuration, nNumberOfDot, fHandler, tData)
+    DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffsets, nDuration, nNumberOfDot, fHandler, tData)
         Draws a line from unit/coordinate into certain direction (unit facing/north by default)
         @param Key              - Unique ID
         @param Origin           - Unit Object / UnitId or Coordinates
@@ -126,7 +127,7 @@ require "Apollo"
         @param nLength          - Length
         @param nRotation        - Rotation in degrees
         @param nOffset          - Offset to Origin
-        @param tVectorOffset    - Offset to Origin (table or vector3)
+        @param tVectorOffsets    - Offset to Origin (table or vector3)
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param nNumberOfDot     - Amount of dots (1 = default)
         @param fHandler         - Callback function
