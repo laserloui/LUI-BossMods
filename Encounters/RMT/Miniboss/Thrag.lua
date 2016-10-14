@@ -3,17 +3,13 @@ require "Apollo"
 
 local Mod = {}
 local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
-local Encounter = "ChiefWardenLockjaw"
+local Encounter = "Thrag"
 
 local Locales = {
     ["enUS"] = {
-        -- Units
-        ["unit.boss"] = "Chief Warden Lockjaw",
-        ["unit.circle_telegraph"] = "Hostile Invisible Unit for Fields (0 hit radius)",
-        -- Casts
-        ["cast.blaze_shackles"] = "Blaze Shackles",
-        -- Labels
-        ["label.circle_telegraph"] = "Circle Telegraphs",
+        ["unit.boss"] = "Chief Enginer Scrubber Thrag",
+        ["unit.bomb"] = "Jumpstart Charge",
+        ["label.bomb"] = "Bombs",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -24,7 +20,7 @@ function Mod:new(o)
     setmetatable(o, self)
     self.__index = self
     self.instance = "Redmoon Terror"
-    self.displayName = "Lockjaw"
+    self.displayName = "Thrag"
     self.groupName = "Minibosses"
     self.tTrigger = {
         sType = "ANY",
@@ -32,11 +28,11 @@ function Mod:new(o)
             [1] = {
                 continentId = 104,
                 parentZoneId = 548,
-                mapId = 550,
+                mapId = 552,
             },
         },
         tNames = {
-            ["enUS"] = {"Chief Warden Lockjaw"},
+            ["enUS"] = {"Chief Enginer Scrubber Thrag"},
         },
     }
     self.run = false
@@ -47,14 +43,14 @@ function Mod:new(o)
             boss = {
                 enable = true,
                 label = "unit.boss",
-            },
+            }
         },
         lines = {
-            circle_telegraph = {
+            bomb = {
                 enable = true,
-                thickness = 7,
-                color = "ffff1493",
-                label = "label.circle_telegraph",
+                thickness = 4,
+                color = "afff4500",
+                label = "label.bomb",
             },
         },
     }
@@ -69,20 +65,20 @@ function Mod:Init(parent)
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
-    if not self.run then
+    if not self.run == true then
         return
     end
 
-    if sName == self.L["unit.boss"] and bInCombat then
+    if sName == self.L["unit.boss"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
-    elseif sName == self.L["unit.circle_telegraph"] then
-        self.core:DrawPolygon(nId, tUnit, self.config.lines.circle_telegraph, 6.5, 0, 20)
+    elseif sName == self.L["unit.bomb"] then
+        self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.bomb)
     end
 end
 
 function Mod:OnUnitDestroyed(nId, tUnit, sName)
-    if sName == self.L["unit.circle_telegraph"] then
-        self.core:RemovePolygon(nId)
+    if sName == self.L["unit.bomb"] then
+        self.core:RemoveLineBetween(nId)
     end
 end
 

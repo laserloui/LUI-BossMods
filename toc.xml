@@ -46,9 +46,9 @@
 	<!-- Encounters: Initialization Core Y-83 -->
 	<Script Name="Encounters\Y83\Augmentors.lua"/>
 	<!-- Encounters: Redmoon Terror -->
-	<Script Name="Encounters\RMT\Miniboss\ChiefWardenLockjaw.lua"/>
-	<Script Name="Encounters\RMT\Miniboss\AssistantTechnicianSkooty.lua"/>
-	<Script Name="Encounters\RMT\Miniboss\ChiefEnginerScrubberThrag.lua"/>
+	<Script Name="Encounters\RMT\Miniboss\Lockjaw.lua"/>
+	<Script Name="Encounters\RMT\Miniboss\Skooty.lua"/>
+	<Script Name="Encounters\RMT\Miniboss\Thrag.lua"/>
 	<Script Name="Encounters\RMT\Shredder.lua"/>
 	<Script Name="Encounters\RMT\Robomination.lua"/>
 	<Script Name="Encounters\RMT\Engineers.lua"/>

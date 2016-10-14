@@ -3,7 +3,7 @@ require "Apollo"
 
 local Mod = {}
 local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
-local Encounter = "AssistantTechnicianSkooty"
+local Encounter = "Skooty"
 
 local Locales = {
     ["enUS"] = {
