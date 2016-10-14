@@ -8,6 +8,8 @@ local Encounter = "AssistantTechnicianSkooty"
 local Locales = {
     ["enUS"] = {
         ["unit.boss"] = "Assistant Technician Skooty",
+        ["unit.bomb"] = "Jumpstart Charge",
+        ["label.bomb"] = "Bombs",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -18,7 +20,7 @@ function Mod:new(o)
     setmetatable(o, self)
     self.__index = self
     self.instance = "Redmoon Terror"
-    self.displayName = "Assistant Technician Skooty"
+    self.displayName = "Skooty"
     self.groupName = "Minibosses"
     self.tTrigger = {
         sType = "ANY",
@@ -42,7 +44,15 @@ function Mod:new(o)
                 enable = true,
                 label = "unit.boss",
             }
-        }
+        },
+        lines = {
+            bomb = {
+                enable = true,
+                thickness = 4,
+                color = "afff4500",
+                label = "label.bomb",
+            },
+        },
     }
     return o
 end
@@ -61,6 +71,14 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 
     if sName == self.L["unit.boss"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
+    elseif sName == self.L["unit.bomb"] then
+        self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.bomb)
+    end
+end
+
+function Mod:OnUnitDestroyed(nId, tUnit, sName)
+    if sName == self.L["unit.bomb"] then
+        self.core:RemoveLineBetween(nId)
     end
 end
 

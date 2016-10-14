@@ -24,7 +24,7 @@ function Mod:new(o)
     setmetatable(o, self)
     self.__index = self
     self.instance = "Redmoon Terror"
-    self.displayName = "Chief Warden Lockjaw"
+    self.displayName = "Lockjaw"
     self.groupName = "Minibosses"
     self.tTrigger = {
         sType = "ANY",
