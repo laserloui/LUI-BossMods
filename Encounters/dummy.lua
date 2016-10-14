@@ -74,7 +74,7 @@ require "Apollo"
     DrawIcon(Key, Origin, tConfig, nHeight, nDuration, bShowOverlay, fHandler, tData)
         Draw Icon on top of unit
         @param Key              - Unique ID
-        @param Origin           - Unit Object
+        @param Origin           - Unit Object / UnitId or Coordinates
         @param tConfig          - Icon Settings
         @param nHeight          - Height of Icon from bottom
         @param nDuration        - Duration in seconds before getting removed (optional)
@@ -259,6 +259,7 @@ function Mod:new(o)
                 position = 1,           -- Position in Option Panel (Top to Bottom)
                 tooltip = "",           -- Tooltip in Option Panel
                 sprite = "target2",     -- Icon Sprite
+                text = "",              -- Icon Text
                 size = 20,              -- Icon Size (Default: Global Setting)
                 color = "ff40e0d0",     -- Icon Color (Default: Global Setting)
                 label = "icon.a"        -- Text in Option Panel (Text or Locale Key)

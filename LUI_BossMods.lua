@@ -177,7 +177,7 @@ function LUI_BossMods:OnLoad()
 end
 
 function LUI_BossMods:OnDocLoaded()
-    if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() then
+    if not self.xmlDoc or not self.xmlDoc:IsLoaded() then
         return
     end
 
@@ -194,7 +194,7 @@ function LUI_BossMods:OnDocLoaded()
     self.CheckVolumeTimer = ApolloTimer.Create(3, false, "CheckVolume", self)
     self.CheckVolumeTimer:Start()
 
-    if self.tPreloadUnits ~= nil then
+    if self.tPreloadUnits then
         self:CreateUnitsFromPreload()
     end
 
@@ -685,7 +685,11 @@ function LUI_BossMods:OnUnitDestroyed(unit)
         end
     end
 
-    if self.tSavedUnits ~= nil and self.tSavedUnits[unit:GetName()] ~= nil and self.tSavedUnits[unit:GetName()][unit:GetId()] ~= nil then
+    if self.runtime.buffs and self.runtime.buffs[unit:GetId()] then
+        self.runtime.buffs[unit:GetId()] = nil
+    end
+
+    if self.tSavedUnits and self.tSavedUnits[unit:GetName()] and self.tSavedUnits[unit:GetName()][unit:GetId()] then
         self.tSavedUnits[unit:GetName()][unit:GetId()] = nil
     end
 end
@@ -1028,19 +1032,18 @@ function LUI_BossMods:CheckBuffs(nId)
         return
     end
 
-    if self.runtime.units[nId] ~= nil then
+    if self.runtime.units[nId] then
         local tBuffs = self.runtime.units[nId].tUnit:GetBuffs()
 
         -- Process Buffs
-        if tBuffs ~= nil and tBuffs.arBeneficial ~= nil then
+        if tBuffs and tBuffs.arBeneficial then
             for i=1, #tBuffs.arBeneficial do
                 self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arBeneficial[i])
             end
         end
 
-
         -- Process Debuffs
-        if tBuffs ~= nil and tBuffs.arHarmful ~= nil then
+        if tBuffs and tBuffs.arHarmful then
             for i=1, #tBuffs.arHarmful do
                 self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arHarmful[i])
             end
@@ -1065,12 +1068,12 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
         self.runtime.buffs[nUnitId] = {}
     end
 
-    if self.runtime.buffs[nUnitId][nSpellId] ~= nil then
+    if self.runtime.buffs[nUnitId][nSpellId] then
         self:OnBuffUpdated(unit,spell)
         return
     end
 
-    if self.runtime.units[nUnitId] ~= nil then
+    if self.runtime.units[nUnitId] then
         local tData = {
             nId = nSpellId,
             sName = spell.splEffect:GetName(),
@@ -1084,9 +1087,10 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
         }
 
         if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffAdded then
-            self.runtime.buffs[nUnitId][nSpellId] = tData
             self.tCurrentEncounter:OnBuffAdded(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
         end
+
+        self.runtime.buffs[nUnitId][nSpellId] = tData
     elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and not buff then
         local tData = {
             nId = nSpellId,
@@ -1101,9 +1105,10 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
         }
 
         if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffAdded then
-            self.runtime.buffs[nUnitId][nSpellId] = tData
             self.tCurrentEncounter:OnBuffAdded(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName, spell.nCount, spell.fTimeRemaining)
         end
+
+        self.runtime.buffs[nUnitId][nSpellId] = tData
     end
 end
 
@@ -1121,7 +1126,7 @@ function LUI_BossMods:OnBuffUpdated(unit,spell)
         return
     end
 
-    if self.runtime.units[nUnitId] ~= nil then
+    if self.runtime.units[nUnitId] then
         local tData = {
             nId = nSpellId,
             sName = spell.splEffect:GetName(),
@@ -1169,7 +1174,7 @@ function LUI_BossMods:OnBuffRemoved(unit,spell)
         return
     end
 
-    if self.runtime.units[nUnitId] ~= nil then
+    if self.runtime.units[nUnitId] then
         local tData = {
             nId = nSpellId,
             sName = spell.splEffect:GetName(),
@@ -1180,9 +1185,10 @@ function LUI_BossMods:OnBuffRemoved(unit,spell)
         }
 
         if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffRemoved then
-            self.runtime.buffs[nUnitId][nSpellId] = nil
             self.tCurrentEncounter:OnBuffRemoved(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName)
         end
+
+        self.runtime.buffs[nUnitId][nSpellId] = nil
     elseif (unit:IsInYourGroup() or unit:IsThePlayer()) and not buff then
         local tData = {
             nId = nSpellId,
@@ -1194,9 +1200,10 @@ function LUI_BossMods:OnBuffRemoved(unit,spell)
         }
 
         if self.tCurrentEncounter and self.tCurrentEncounter.OnBuffRemoved then
-            self.runtime.buffs[nUnitId][nSpellId] = nil
             self.tCurrentEncounter:OnBuffRemoved(tData.nUnitId, tData.nId, tData.sName, tData, tData.sUnitName)
         end
+
+        self.runtime.buffs[nUnitId][nSpellId] = nil
     end
 end
 
@@ -1466,7 +1473,7 @@ function LUI_BossMods:CheckCast(tData)
             self:HideCast()
         end
 
-        if tData.tCast ~= nil then
+        if tData.tCast then
             if self.tCurrentEncounter and self.tCurrentEncounter.OnCastEnd then
                 self.tCurrentEncounter:OnCastEnd(tData.nId, tData.tCast.sName, tData.tCast, tData.sName)
             end
@@ -1768,7 +1775,7 @@ function LUI_BossMods:PlaySound(sound,folder)
     if type(sound) == "string" and sound ~= "" then
         self:SetVolume()
 
-        if folder ~= nil and folder ~= "" then
+        if folder and folder ~= "" then
             Sound.PlayFile("Sounds\\"..folder.."\\"..sound..".wav")
         else
             Sound.PlayFile("Sounds\\"..sound..".wav")
@@ -1781,7 +1788,7 @@ function LUI_BossMods:PlaySound(sound,folder)
     end
 
     if self.config.sound.force then
-        if self.VolumeTimer == nil then
+        if not self.VolumeTimer then
             self.VolumeTimer = ApolloTimer.Create(3, false, "RestoreVolume", self)
             self.VolumeTimer:Start()
         else
@@ -1852,7 +1859,7 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, nDuration, bShowOverlay, fHandler, tData)
-    if not Key or not Origin or not type(Origin) == "userdata" or not Origin:IsValid() or not tConfig or not tConfig.enable then
+    if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
 
@@ -1864,7 +1871,7 @@ function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, nDuration, b
         self.tDraws = {}
     end
 
-    if self.tDraws[Key] ~= nil then
+    if self.tDraws[Key] then
         if self.tDraws[Key].wnd then
             self.tDraws[Key].wnd:Show(false,true)
             self.tDraws[Key].wnd:Destroy()
@@ -1873,14 +1880,28 @@ function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, nDuration, b
         self.tDraws[Key] = nil
     end
 
+    local OriginType = type(Origin)
     local nSize = (tConfig.size or self.config.icon.size) / 2
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
     local nHeight = (nSpriteHeight ~= nil) and nSpriteHeight or 40
 
+    if (not tConfig.sprite or tConfig.sprite == "") and tConfig.text then
+        nSize = Apollo.GetTextWidth("Subtitle", tConfig.text or "") + 20
+    end
+
     wnd:SetAnchorOffsets((nSize*-1),(nSize*-1),nSize,nSize)
     wnd:SetSprite(tConfig.sprite or "")
     wnd:SetBGColor(tConfig.color or self.config.icon.color)
-    wnd:SetUnit(Origin,nHeight)
+    wnd:SetText(tConfig.text or "")
+
+    if OriginType == "userdata" and Origin:IsValid() then
+        wnd:SetUnit(Origin,nHeight)
+    elseif OriginType == "table" then
+        wnd:SetWorldLocation(Origin)
+    elseif OriginType == "number" then
+        Origin = GetUnitById(Origin)
+        wnd:SetUnit(Origin,nHeight)
+    end
 
     if nDuration ~= nil and nDuration > 0 then
         if bShowOverlay then
@@ -2570,7 +2591,7 @@ function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, tConfig, nDurat
     local ToOrigin = OriginTo
 
     if not ToOrigin then
-        ToOrigin = (self.unitPlayer ~= nil) and self.unitPlayer or GetPlayerUnit()
+        ToOrigin = self.unitPlayer or GetPlayerUnit()
     end
 
     if type(ToOrigin) == "number" then
@@ -2843,7 +2864,7 @@ function LUI_BossMods:GetDistance(FromOrigin, OriginTo)
     end
 
     if not ToOrigin then
-        ToOrigin = (self.unitPlayer ~= nil) and self.unitPlayer or GetPlayerUnit()
+        ToOrigin = self.unitPlayer or GetPlayerUnit()
     end
 
     if type(ToOrigin) == "number" then
@@ -3021,7 +3042,7 @@ function LUI_BossMods:OnSave(eType)
         return
     end
 
-    if self.config.modules ~= nil then
+    if self.config.modules then
         for sName,tModule in pairs(self.modules) do
             self.config.modules[sName] = tModule.config
         end
@@ -3035,7 +3056,7 @@ function LUI_BossMods:OnRestore(eLevel, tSavedData)
         return
     end
 
-    if tSavedData ~= nil and tSavedData ~= "" then
+    if tSavedData and tSavedData ~= "" then
         self.config = self:InsertDefaults(tSavedData,self.config)
 
         for sName,tModule in pairs(self.modules) do

@@ -337,7 +337,6 @@ function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
 
             if tIcon and tIcon.wnd then
                 tIcon.wnd:SetText(string.format("%.0f%%", nPercent))
-                tIcon.wnd:SetFont("Subtitle")
 
                 if nPercent > 20 then
                     tIcon.wnd:SetTextColor("ffadff2f")
