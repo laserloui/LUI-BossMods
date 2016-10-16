@@ -10,6 +10,7 @@ local Locales = {
         -- Units
         ["unit.boss"] = "Mordechai Redmoon",
         ["unit.kinetic_orb"] = "Kinetic Orb",
+        ["unit.airlock_anchor"] = "Airlock Anchor",
         -- Debuffs
         ["debuff.kinetic_link"] = "Kinetic Link",
         ["debuff.kinetic_fixation"] = "Kinetic Fixation",
@@ -38,6 +39,7 @@ local Locales = {
         ["label.shocking_attraction_right"] = "Shocking Attraction (Right)",
         ["label.shuriken"] = "Shuriken",
         ["label.airlock"] = "Airlock",
+        ["label.stack_point"] = "Barrage Stack Point",
     },
     ["deDE"] = {},
     ["frFR"] = {},
@@ -46,6 +48,9 @@ local Locales = {
 local DEBUFF_KINETIC_LINK = 86797
 local DEBUFF_KINETIC_FIXATION = 85566
 local DEBUFF_SHOCKING_ATTRACTION = 86861
+local STACK_POINT_MID = Vector3.New(108.63, 353.87, 175.49)
+local AIRLOCK_ANCHOR_LEFT = Vector3.New(123.85, 353.874, 179.71)
+local AIRLOCK_ANCHOR_RIGHT = Vector3.New(93.85, 353.874, 179.71)
 local CLEAVE_OFFSETS = {
     ["FRONT_LEFT"] = Vector3.New(3.25, 0, 0),
     ["FRONT_RIGHT"] = Vector3.New(-3.25, 0, 0),
@@ -68,9 +73,7 @@ function Mod:new(o)
                 mapId = 548,
             },
         },
-        tNames = {
-            ["enUS"] = {"Mordechai Redmoon"},
-        },
+        tNames = {"unit.boss"},
     }
     self.run = false
     self.bViciousBarrage = false
@@ -213,7 +216,21 @@ function Mod:new(o)
                 color = "ffb0ff2f",
                 label = "debuff.shocking_attraction",
             },
-        }
+        },
+        texts = {
+            airlock_anchor = {
+                enable = true,
+                font = "CRB_FloaterMedium",
+                color = "ff00ff00",
+                label = "unit.airlock_anchor",
+            },
+            stack_point = {
+                enable = true,
+                font = "CRB_FloaterMedium",
+                color = "ffff00ff",
+                label = "label.stack_point",
+            },
+        },
     }
     return o
 end
@@ -323,6 +340,10 @@ function Mod:AddMarkerLines()
         self.core:DrawLine("Cleave_3", self.tUnitBoss, self.config.lines.boss, -60, -23.5, 0, CLEAVE_OFFSETS["BACK_LEFT"])
         self.core:DrawLine("Cleave_4", self.tUnitBoss, self.config.lines.boss, -60, 23.5, 0, CLEAVE_OFFSETS["BACK_RIGHT"])
     end
+
+    self.core:DrawText("AnchorLeft", AIRLOCK_ANCHOR_LEFT, self.config.texts.airlock_anchor, "LEFT")
+    self.core:DrawText("AnchorRight", AIRLOCK_ANCHOR_RIGHT, self.config.texts.airlock_anchor, "RIGHT")
+    self.core:DrawText("StackPoint", STACK_POINT_MID, self.config.texts.stack_point, "STACK")
 end
 
 function Mod:RemoveMarkerLines()
@@ -330,6 +351,10 @@ function Mod:RemoveMarkerLines()
     self.core:RemoveLine("Cleave_2")
     self.core:RemoveLine("Cleave_3")
     self.core:RemoveLine("Cleave_4")
+
+    self.core:RemoveText("AnchorLeft")
+    self.core:RemoveText("AnchorRight")
+    self.core:RemoveText("StackPoint")
 end
 
 function Mod:IsRunning()
