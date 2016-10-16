@@ -52,6 +52,7 @@ function Mod:new(o)
     self.displayName = "Robomination"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.boss"},
         tZones = {
             [1] = {
                 continentId = 104,
@@ -63,9 +64,6 @@ function Mod:new(o)
                 parentZoneId = 0,
                 mapId = 548,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Robomination"},
         },
     }
     self.run = false

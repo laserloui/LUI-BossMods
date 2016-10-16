@@ -22,15 +22,13 @@ function Mod:new(o)
     self.displayName = "Avatus"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.boss"},
         tZones = {
             [1] = {
                 continentId = 52,
                 parentZoneId = 98,
                 mapId = 104,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Avatus"},
         },
     }
     self.run = false

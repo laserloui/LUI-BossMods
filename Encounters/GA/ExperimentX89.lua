@@ -82,6 +82,7 @@ function Mod:new(o)
     self.displayName = "Experiment X-89"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.boss"},
         tZones = {
             [1] = {
                 continentId = 67,
@@ -89,7 +90,6 @@ function Mod:new(o)
                 mapId = 148,
             },
         },
-        tNames = {"unit.boss"},
     }
     self.run = false
     self.runtime = {}

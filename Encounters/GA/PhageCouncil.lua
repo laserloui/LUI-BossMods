@@ -6,7 +6,13 @@ local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
 local Encounter = "PhageCouncil"
 
 local Locales = {
-    ["enUS"] = {},
+    ["enUS"] = {
+        ["unit.golgox"] = "Golgox the Lifecrusher",
+        ["unit.terax"] = "Terax Blightweaver",
+        ["unit.ersoth"] = "Ersoth Curseform",
+        ["unit.noxmind"] = "Noxmind the Insidious",
+        ["unit.vratorg"] = "Fleshmonger Vratorg",
+    },
     ["deDE"] = {},
     ["frFR"] = {},
 }
@@ -19,15 +25,13 @@ function Mod:new(o)
     self.displayName = "Phageborn Convergence"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.golgox", "unit.terax", "unit.ersoth", "unit.noxmind", "unit.vratorg"},
         tZones = {
             [1] = {
                 continentId = 67,
                 parentZoneId = 147,
                 mapId = 149,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Golgox the Lifecrusher", "Terax Blightweaver", "Ersoth Curseform", "Noxmind the Insidious","Fleshmonger Vratorg"},
         },
     }
     self.run = false

@@ -26,15 +26,13 @@ function Mod:new(o)
     self.displayName = "Gloomclaw"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.boss"},
         tZones = {
             [1] = {
                 continentId = 52,
                 parentZoneId = 98,
                 mapId = 115,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Gloomclaw"},
         },
     }
     self.run = false

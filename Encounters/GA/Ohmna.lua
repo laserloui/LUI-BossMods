@@ -6,7 +6,9 @@ local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
 local Encounter = "Ohmna"
 
 local Locales = {
-    ["enUS"] = {},
+    ["enUS"] = {
+        ["unit.boss"] = "Dreadphage Ohmna",
+    },
     ["deDE"] = {},
     ["frFR"] = {},
 }
@@ -19,15 +21,13 @@ function Mod:new(o)
     self.displayName = "Ohmna"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.boss"},
         tZones = {
             [1] = {
                 continentId = 67,
                 parentZoneId = 147,
                 mapId = 149,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Dreadphage Ohmna"},
         },
     }
     self.run = false

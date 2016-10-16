@@ -6,7 +6,9 @@ local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
 local Encounter = "Starmap"
 
 local Locales = {
-    ["enUS"] = {},
+    ["enUS"] = {
+        ["unit.boss"] = "Starmap",
+    },
     ["deDE"] = {},
     ["frFR"] = {},
 }
@@ -19,15 +21,13 @@ function Mod:new(o)
     self.displayName = "Starmap"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.boss"},
         tZones = {
             [1] = {
                 continentId = 104,
                 parentZoneId = 548,
                 mapId = 555,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Starmap"},
         },
     }
     self.run = false

@@ -65,6 +65,7 @@ function Mod:new(o)
     self.displayName = "System Daemons"
     self.tTrigger = {
         sType = "ALL",
+        tNames = {"unit.boss_north", "unit.boss_south"},
         tZones = {
             [1] = {
                 continentId = 52,
@@ -76,9 +77,6 @@ function Mod:new(o)
                 parentZoneId = 98,
                 mapId = 107,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Binary System Daemon","Null System Daemon"},
         },
     }
     self.run = false

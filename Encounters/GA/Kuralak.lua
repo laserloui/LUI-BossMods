@@ -6,7 +6,9 @@ local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
 local Encounter = "Kuralak"
 
 local Locales = {
-    ["enUS"] = {},
+    ["enUS"] = {
+        ["unit.boss"] = "Kuralak the Defiler",
+    },
     ["deDE"] = {},
     ["frFR"] = {},
 }
@@ -19,15 +21,13 @@ function Mod:new(o)
     self.displayName = "Kuralak"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.boss"},
         tZones = {
             [1] = {
                 continentId = 67,
                 parentZoneId = 147,
                 mapId = 148,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Kuralak the Defiler"},
         },
     }
     self.run = false

@@ -6,7 +6,12 @@ local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
 local Encounter = "Prototypes"
 
 local Locales = {
-    ["enUS"] = {},
+    ["enUS"] = {
+        ["unit.commander"] = "Phagetech Commander",
+        ["unit.augmentor"] = "Phagetech Augmentor",
+        ["unit.protector"] = "Phagetech Protector",
+        ["unit.fabricator"] = "Phagetech Fabricator",
+    },
     ["deDE"] = {},
     ["frFR"] = {},
 }
@@ -19,15 +24,13 @@ function Mod:new(o)
     self.displayName = "Phagetech Prototypes"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.commander", "unit.augmentor", "unit.protector", "unit.fabricator"},
         tZones = {
             [1] = {
                 continentId = 67,
                 parentZoneId = 147,
                 mapId = 149,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Phagetech Commander", "Phagetech Augmentor", "Phagetech Protector", "Phagetech Fabricator"},
         },
     }
     self.run = false

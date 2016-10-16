@@ -71,16 +71,13 @@ function Mod:new(o)
     self.displayName = "Shredder"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.boss"},
         tZones = {
             [1] = {
                 continentId = 104,
                 parentZoneId = 548,
                 mapId = 549,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Swabbie Ski'Li"},
-            ["deDE"] = {"Swabbie Ski'Li"},
         },
     }
     self.run = false

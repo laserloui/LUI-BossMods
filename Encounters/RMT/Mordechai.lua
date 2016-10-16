@@ -66,6 +66,7 @@ function Mod:new(o)
     self.displayName = "Mordechai"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.boss"},
         tZones = {
             [1] = {
                 continentId = 104,
@@ -73,7 +74,6 @@ function Mod:new(o)
                 mapId = 548,
             },
         },
-        tNames = {"unit.boss"},
     }
     self.run = false
     self.bViciousBarrage = false

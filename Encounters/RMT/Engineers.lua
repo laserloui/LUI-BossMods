@@ -64,15 +64,13 @@ function Mod:new(o)
     self.displayName = "Engineers"
     self.tTrigger = {
         sType = "ALL",
+        tNames = {"unit.boss_gun", "unit.boss_sword"},
         tZones = {
             [1] = {
                 continentId = 104,
                 parentZoneId = 548,
                 mapId = 552,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Head Engineer Orvulgh","Chief Engineer Wilbargh"},
         },
     }
     self.run = false

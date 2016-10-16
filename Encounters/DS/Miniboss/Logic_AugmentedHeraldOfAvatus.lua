@@ -23,15 +23,13 @@ function Mod:new(o)
     self.groupName = "Minibosses"
     self.tTrigger = {
         sType = "ANY",
+        tNames = {"unit.boss"},
         tZones = {
             [1] = {
                 continentId = 52,
                 parentZoneId = 98,
                 mapId = 112,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Augmented Herald of Avatus"},
         },
     }
     self.run = false

@@ -24,15 +24,13 @@ function Mod:new(o)
     self.groupName = "Elemental Pairs"
     self.tTrigger = {
         sType = "ALL",
+        tNames = {"unit.boss_logic", "unit.boss_water"},
         tZones = {
             [1] = {
                 continentId = 52,
                 parentZoneId = 98,
                 mapId = 118,
             },
-        },
-        tNames = {
-            ["enUS"] = {"Mnemesis","Hydroflux"},
         },
     }
     self.run = false
