@@ -71,12 +71,28 @@ require "Apollo"
         Plays a soundfile
         @param tConfig            - Sound Settings
 
-    DrawIcon(Key, Origin, tConfig, nHeight, nDuration, bShowOverlay, fHandler, tData)
-        Draw Icon on top of unit
+    DrawText(Key, Origin, tConfig, sText, nHeight, nDuration, fHandler, tData)
+        Draw Text on top of unit or coordinate
+        @param Key              - Unique ID
+        @param Origin           - Unit Object / UnitId or Coordinates
+        @param tConfig          - Text Settings
+        @param sText            - Text
+        @param nHeight          - Height of Text from bottom
+        @param nDuration        - Duration in seconds before getting removed (optional)
+        @param fHandler         - Callback function
+        @param tData            - Data forwarded by callback function
+
+    RemoveText(Key)
+        Removes Text from Screen
+        @param Key              - Unique ID
+
+    DrawIcon(Key, Origin, tConfig, nHeight, sText, nDuration, bShowOverlay, fHandler, tData)
+        Draw Icon on top of unit or coordinate
         @param Key              - Unique ID
         @param Origin           - Unit Object / UnitId or Coordinates
         @param tConfig          - Icon Settings
         @param nHeight          - Height of Icon from bottom
+        @param sText            - Icon Text
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param bShowOverlay     - Show Duration Overlay (boolean)
         @param fHandler         - Callback function
@@ -188,7 +204,7 @@ function Mod:new(o)
     self.groupName = nil                -- Name of the Group under which this Module will appear in Option Panel (e.g.: Minibosses)
     self.bHasSettings = true            -- Do Settings for the Option Panel exist?
     self.tTrigger = {
-        sType = "ANY",
+        sType = "ANY",                  -- Choose whether "ALL" or "ANY" unit out of tNames must exist and be in combat.
         tZones = {                      -- Zones in which module gets activated. Use GameLib.GetCurrentZoneMap() to retrieve current zone map.
             [1] = {                     -- When having multiple trigger zones, behavior is always "ANY".
                 continentId = 104,      -- Continent Id
@@ -197,8 +213,8 @@ function Mod:new(o)
             },
         },
         tNames = {                      -- Table of Units that have to exist and be in combat. Use sType to change between behavior "ANY" or "ALL".
-            ["enUS"] = {"Swabbie Ski'Li"},
-        },
+            "unit.boss"                 -- Can be either string or Locale Key
+        }
     }
     self.run = false
     self.runtime = {}
@@ -259,10 +275,19 @@ function Mod:new(o)
                 position = 1,           -- Position in Option Panel (Top to Bottom)
                 tooltip = "",           -- Tooltip in Option Panel
                 sprite = "target2",     -- Icon Sprite
-                text = "",              -- Icon Text
                 size = 20,              -- Icon Size (Default: Global Setting)
                 color = "ff40e0d0",     -- Icon Color (Default: Global Setting)
                 label = "icon.a"        -- Text in Option Panel (Text or Locale Key)
+            },
+        },
+        texts = {                       -- Texts
+            textA = {
+                enable = true,          -- Enable/Disable text
+                position = 1,           -- Position in Option Panel (Top to Bottom)
+                tooltip = "",           -- Tooltip in Option Panel
+                color = "ffffffff",     -- Color (Default: Global Setting)
+                font = "Subtitle",      -- Font (Default: Global Setting)
+                label = "text.a",       -- Text in Option Panel (Text or Locale Key)
             },
         },
         auras = {                       -- Auras

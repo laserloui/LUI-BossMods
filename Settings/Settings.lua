@@ -5,6 +5,215 @@ local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
 local GeminiColor = Apollo.GetPackage("GeminiColor").tPackage
 
 local Settings = {}
+local Locales = {
+    ["enUS"] = {
+        -- Headers
+        ["header.general"] = "General",
+        ["header.units"] = "Units",
+        ["header.timers"] = "Timers",
+        ["header.casts"] = "Casts",
+        ["header.alerts"] = "Alerts",
+        ["header.sounds"] = "Sounds",
+        ["header.icons"] = "Icons",
+        ["header.auras"] = "Auras",
+        ["header.texts"] = "Texts",
+        ["header.lines"] = "Lines",
+        ["header.castbar"] = "Castbar",
+        ["header.sprites"] = "Sprites",
+        ["header.fonts"] = "Fonts",
+        -- Labels
+        ["label.enable_module"] = "Enable Boss Module",
+        ["label.enable"] = "Enable",
+        ["label.interval"] = "Update Interval",
+        ["label.thickness"] = "Thickness",
+        ["label.color"] = "Color",
+        ["label.size"] = "Size",
+        -- Units
+        ["global.show_text"] = "Show Absorb/Shield Text",
+        ["global.health_color"] = "Health Color",
+        ["global.shield_color"] = "Shield Color",
+        ["global.absorb_color"] = "Absorb Color",
+        ["global.cast_color"] = "Cast Color",
+        ["global.moo_color"] = "MOO Color",
+        ["global.text_color"] = "Text Color",
+        ["global.bar_color"] = "Bar Color",
+        ["global.bar_height"] = "Bar Height",
+        ["global.health_height"] = "Health Height",
+        ["global.shield_height"] = "Shield Height",
+        ["global.font_size"] = "Font size",
+        -- Voice
+        ["voice.pack"] = "Countdown Voice",
+        ["voice.length"] = "Countdown Length",
+        ["voice.male"] = "Male",
+        ["voice.female"] = "Female",
+        ["voice.short"] = "Short",
+        ["voice.short_skip"] = "Short (skip zero)",
+        ["voice.long"] = "Long",
+        ["voice.long_skip"] = "Long (skip zero)",
+        -- Volume
+        ["volume.force"] = "Adjust Volume",
+        ["volume.master"] = "Master Volume",
+        ["volume.music"] = "Music Volume",
+        ["volume.ui"] = "UI Sounds Volume",
+        ["volume.sfx"] = "Sound FX Volume",
+        ["volume.ambient"] = "Ambient Volume",
+        ["volume.voice"] = "Voice Volume",
+        -- Buttons
+        ["button.choose"] = "Choose",
+        ["button.browse"] = "Browse",
+        ["button.unlock"] = "Unlock Frames",
+        ["button.reset"] = "Restore Defaults",
+        ["button.reset_module"] = "Reset Module",
+        -- Tooltips
+        ["tooltip.sounds"] = "Enable/Disable all sounds.",
+        ["tooltip.sounds_force"] = "Automatically unmute and adjust volume when playing sound.",
+        ["tooltip.countdown_alert"] = "Show Countdown Messages?",
+        ["tooltip.countdown_sound"] = "Play Countdown Sound?",
+        -- Donation
+        ["donate.button"] = "Make a donation",
+        ["donate.headline"] = "Making this Addon was a lot of work!",
+        ["donate.text"] = "Please consider supporting the continued development and maintenance of LUI BossMods with an ingame gold donation. Thank you very much in advance! <3",
+        ["donate.submit"] = "Donate",
+    },
+    ["deDE"] = {
+        -- Headers
+        ["header.general"] = "Allgemein",
+        ["header.units"] = "Units",
+        ["header.timers"] = "Timers",
+        ["header.casts"] = "Casts",
+        ["header.alerts"] = "Warnungen",
+        ["header.sounds"] = "Töne",
+        ["header.icons"] = "Icons",
+        ["header.auras"] = "Auren",
+        ["header.texts"] = "Texte",
+        ["header.lines"] = "Linien",
+        ["header.castbar"] = "Castbar",
+        ["header.sprites"] = "Texturen",
+        ["header.fonts"] = "Schriftarten",
+        -- Labels
+        ["label.enable_module"] = "Boss Modul einschalten",
+        ["label.enable"] = "Einschalten",
+        ["label.interval"] = "Aktualisierungsintervall",
+        ["label.thickness"] = "Dicke",
+        ["label.color"] = "Farbe",
+        ["label.size"] = "Größe",
+        -- Units
+        ["global.show_text"] = "Zeige Absorb/Schild Text",
+        ["global.health_color"] = "Health Color",
+        ["global.shield_color"] = "Shield Color",
+        ["global.absorb_color"] = "Absorb Color",
+        ["global.cast_color"] = "Cast Color",
+        ["global.moo_color"] = "MOO Color",
+        ["global.text_color"] = "Text Color",
+        ["global.bar_color"] = "Bar Color",
+        ["global.bar_height"] = "Bar Height",
+        ["global.health_height"] = "Health Height",
+        ["global.shield_height"] = "Shield Height",
+        ["global.font_size"] = "Schriftgröße",
+        -- Voice
+        ["voice.pack"] = "Countdown Stimme",
+        ["voice.length"] = "Countdown Länge",
+        ["voice.male"] = "Männlich",
+        ["voice.female"] = "Weiblich",
+        ["voice.short"] = "Kurz",
+        ["voice.short_skip"] = "Kurz (ohne null)",
+        ["voice.long"] = "Lang",
+        ["voice.long_skip"] = "Lang (ohne null)",
+        -- Volume
+        ["volume.force"] = "Laustärke anpassen",
+        ["volume.master"] = "Gesamtlautstärke",
+        ["volume.music"] = "Musiklautstärke",
+        ["volume.ui"] = "UI-Soundlautstärke",
+        ["volume.sfx"] = "Soundeffektlautstärke",
+        ["volume.ambient"] = "Hintergrundlautstärke",
+        ["volume.voice"] = "Sprachlautstärke",
+        -- Buttons
+        ["button.choose"] = "Auswählen",
+        ["button.browse"] = "Durchsuchen",
+        ["button.unlock"] = "Fenster entsperren",
+        ["button.reset"] = "Einstellungen zurücksetzen",
+        ["button.reset_module"] = "Modul zurücksetzen",
+        -- Tooltips
+        ["tooltip.sounds"] = "Alle Töne Ein/Aus",
+        ["tooltip.sounds_force"] = "Unmute und automatische Anpassung der Lautstärke wenn Töne abgespielt werden.",
+        ["tooltip.countdown_alert"] = "Zeige Countdown Nachrichten?",
+        ["tooltip.countdown_sound"] = "Spiele Countdown Töne?",
+        -- Donation
+        ["donate.button"] = "Mache eine Spende",
+        ["donate.headline"] = "Making this Addon was a lot of work!",
+        ["donate.text"] = "Please consider supporting the continued development and maintenance of LUI BossMods with an ingame gold donation. Thank you very much in advance! <3",
+        ["donate.submit"] = "Spenden",
+    },
+    ["frFR"] = {
+        -- Headers
+        ["header.general"] = "header.general",
+        ["header.units"] = "header.units",
+        ["header.timers"] = "header.timers",
+        ["header.casts"] = "header.casts",
+        ["header.alerts"] = "header.alerts",
+        ["header.sounds"] = "header.sounds",
+        ["header.icons"] = "header.icons",
+        ["header.auras"] = "header.auras",
+        ["header.texts"] = "header.texts",
+        ["header.lines"] = "header.lines",
+        ["header.castbar"] = "header.castbar",
+        ["header.sprites"] = "header.sprites",
+        ["header.fonts"] = "header.fonts",
+        -- Labels
+        ["label.enable_module"] = "label.enable_module",
+        ["label.enable"] = "label.enable",
+        ["label.interval"] = "label.interval",
+        ["label.thickness"] = "label.thickness",
+        ["label.color"] = "label.color",
+        ["label.size"] = "label.size",
+        -- Units
+        ["global.show_text"] = "global.show_text",
+        ["global.health_color"] = "global.health_color",
+        ["global.shield_color"] = "global.shield_color",
+        ["global.absorb_color"] = "global.absorb_color",
+        ["global.cast_color"] = "global.cast_color",
+        ["global.moo_color"] = "global.moo_color",
+        ["global.text_color"] = "global.text_color",
+        ["global.bar_color"] = "global.bar_color",
+        ["global.bar_height"] = "global.bar_height",
+        ["global.health_height"] = "global.health_height",
+        ["global.shield_height"] = "global.shield_height",
+        ["global.font_size"] = "global.font_size",
+        -- Voice
+        ["voice.pack"] = "voice.pack",
+        ["voice.length"] = "voice.length",
+        ["voice.male"] = "voice.male",
+        ["voice.female"] = "voice.female",
+        ["voice.short"] = "voice.short",
+        ["voice.short_skip"] = "voice.short_skip",
+        ["voice.long"] = "voice.long",
+        ["voice.long_skip"] = "voice.long_skip",
+        -- Volume
+        ["volume.force"] = "volume.force",
+        ["volume.master"] = "Volume principal",
+        ["volume.music"] = "Volume de la musique",
+        ["volume.ui"] = "Volume du son IU",
+        ["volume.sfx"] = "Volume des effets sonores",
+        ["volume.ambient"] = "Volume ambiant",
+        ["volume.voice"] = "Volume des voix",
+        -- Buttons
+        ["button.choose"] = "button.choose",
+        ["button.browse"] = "button.browse",
+        ["button.unlock"] = "button.unlock",
+        ["button.reset"] = "button.reset",
+        ["button.reset_module"] = "button.reset_module",
+        -- Tooltips
+        ["tooltip.sounds"] = "tooltip.sounds",
+        ["tooltip.sounds_force"] = "tooltip.sounds_force",
+        ["tooltip.countdown_alert"] = "tooltip.countdown_alert",
+        ["tooltip.countdown_sound"] = "tooltip.countdown_sound",
+        -- Donation
+        ["donate.button"] = "donate.button",
+        ["donate.headline"] = "donate.headline",
+        ["donate.text"] = "donate.text",
+        ["donate.submit"] = "donate.submit",
+    },
+}
 
 function Settings:new(o)
     o = o or {}
@@ -57,6 +266,7 @@ function Settings:Init(parent)
 
     self.core = parent
     self.config = parent.config
+    self.L = parent:GetLocale("Settings",Locales)
 
     local strPrefix = Apollo.GetAssetFolder()
     local tToc = XmlDoc.CreateFromFile("toc.xml"):ToTable()
@@ -118,6 +328,12 @@ function Settings:OnLoad()
     self.wndSettings:FindChild("DonateSeperator"):Show(false,true)
     self.wndSettings:FindChild("DonateBtn"):Show((GameLib.GetRealmName() == "Jabbit"),true)
     self.wndSettings:FindChild("DonateForm"):FindChild("DonateSendBtn"):Enable(false)
+
+    -- Localize Settings Form
+    self.wndSettings:FindChild("DonateBtn"):SetTooltip(self.L["donate.button"])
+    self.wndSettings:FindChild("DonateForm"):FindChild("TextLine1"):SetText(self.L["donate.headline"])
+    self.wndSettings:FindChild("DonateForm"):FindChild("TextLine2"):SetText(self.L["donate.text"])
+    self.wndSettings:FindChild("DonateSendBtn"):FindChild("BtnText"):SetText(self.L["donate.submit"])
 
     self.media = Apollo.GetAddon("LUI_Media")
 
@@ -324,7 +540,7 @@ function Settings:BuildRightPanel()
 
     if config.enable ~= nil then
         local wndGeneral = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
-        wndGeneral:FindChild("Label"):SetText("General")
+        wndGeneral:FindChild("Label"):SetText(self.L["header.general"])
         wndGeneral:FindChild("Settings"):SetStyle("Picture",true)
 
         local nHeight = 84
@@ -334,7 +550,10 @@ function Settings:BuildRightPanel()
         -- Enable Checkbox
         wnd:FindChild("EnableCheckbox"):SetData("enable")
         wnd:FindChild("EnableCheckbox"):SetCheck(config.enable or false)
-        wnd:FindChild("EnableCheckbox"):SetText("Enable Boss Module")
+        wnd:FindChild("EnableCheckbox"):SetText(self.L["label.enable_module"])
+
+        -- Reset Button
+        wnd:FindChild("ResetBtn"):SetText(self.L["button.reset_module"])
 
         wndGeneral:FindChild("Settings"):ArrangeChildrenVert()
         wndGeneral:SetAnchorOffsets(0,0,0,nHeight)
@@ -346,7 +565,7 @@ function Settings:BuildRightPanel()
 
     if config.units ~= nil then
         local wndUnits = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
-        wndUnits:FindChild("Label"):SetText("Units")
+        wndUnits:FindChild("Label"):SetText(self.L["header.units"])
         wndUnits:FindChild("Settings"):SetStyle("Picture",true)
 
         local tSortedUnits = {}
@@ -402,7 +621,7 @@ function Settings:BuildRightPanel()
 
     if config.timers ~= nil then
         local wndTimers = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
-        wndTimers:FindChild("Label"):SetText("Timers")
+        wndTimers:FindChild("Label"):SetText(self.L["header.timers"])
         wndTimers:FindChild("Settings"):SetStyle("Picture",true)
 
         local tSortedTimers = {}
@@ -423,6 +642,9 @@ function Settings:BuildRightPanel()
             local wnd = Apollo.LoadForm(self.xmlDoc, "Items:TimerSetting", wndTimers:FindChild("Settings"), self)
             local timer = config.timers[tSortedTimers[i].nId]
             local nId = tSortedTimers[i].nId
+
+            wnd:FindChild("AlertCheckbox"):SetTooltip(self.L["tooltip.countdown_alert"])
+            wnd:FindChild("SoundCheckbox"):SetTooltip(self.L["tooltip.countdown_sound"])
 
             -- Color
             wnd:FindChild("Color"):SetData({"timers",nId,"color"})
@@ -466,7 +688,7 @@ function Settings:BuildRightPanel()
 
     if config.casts ~= nil then
         local wndCasts = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
-        wndCasts:FindChild("Label"):SetText("Casts")
+        wndCasts:FindChild("Label"):SetText(self.L["header.casts"])
         wndCasts:FindChild("Settings"):SetStyle("Picture",true)
 
         local tSortedCasts = {}
@@ -522,7 +744,7 @@ function Settings:BuildRightPanel()
 
     if config.alerts ~= nil then
         local wndAlerts = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
-        wndAlerts:FindChild("Label"):SetText("Alerts")
+        wndAlerts:FindChild("Label"):SetText(self.L["header.alerts"])
         wndAlerts:FindChild("Settings"):SetStyle("Picture",true)
 
         local tSortedAlerts = {}
@@ -578,7 +800,7 @@ function Settings:BuildRightPanel()
 
     if config.sounds ~= nil then
         local wndSounds = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
-        wndSounds:FindChild("Label"):SetText("Sounds")
+        wndSounds:FindChild("Label"):SetText(self.L["header.sounds"])
         wndSounds:FindChild("Settings"):SetStyle("Picture",true)
 
         local tSortedSounds = {}
@@ -632,7 +854,7 @@ function Settings:BuildRightPanel()
 
     if config.icons ~= nil then
         local wndIcons = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
-        wndIcons:FindChild("Label"):SetText("Icons")
+        wndIcons:FindChild("Label"):SetText(self.L["header.icons"])
 
         local tSortedIcons = {}
         local nHeight = 75
@@ -655,6 +877,10 @@ function Settings:BuildRightPanel()
 
             -- Label
             wnd:FindChild("Label"):SetText(L[icon.label] or icon.label)
+            wnd:FindChild("EnableCheckbox"):SetText(self.L["label.enable"])
+            wnd:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
+            wnd:FindChild("ColorSetting"):FindChild("Label"):SetText(self.L["label.color"])
+            wnd:FindChild("SizeSetting"):FindChild("Label"):SetText(self.L["label.size"])
 
             if icon.sprite ~= false then
                 -- Sprite
@@ -700,12 +926,68 @@ function Settings:BuildRightPanel()
     end
 
     -- #########################################################################################################################################
+    -- # TEXTS
+    -- #########################################################################################################################################
+
+    if config.texts ~= nil then
+        local wndTexts = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndTexts:FindChild("Label"):SetText(self.L["header.texts"])
+
+        local tSortedTexts = {}
+        local nHeight = 75
+
+        for nId,text in pairs(config.texts) do
+            tSortedTexts[#tSortedTexts+1] = {
+                nId = nId,
+                position = text.position or 99
+            }
+        end
+
+        table.sort(tSortedTexts, function(a, b)
+            return a.position < b.position
+        end)
+
+        for i=1,#tSortedTexts do
+            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:TextSetting", wndTexts:FindChild("Settings"), self)
+            local text = config.texts[tSortedTexts[i].nId]
+            local nId = tSortedTexts[i].nId
+
+            -- Label
+            wnd:FindChild("Label"):SetText(L[text.label] or text.label)
+
+            -- Font
+            wnd:FindChild("FontSetting"):FindChild("FontText"):SetText(text.font or self.config.text.font)
+            wnd:FindChild("FontSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
+            wnd:FindChild("FontSetting"):FindChild("BrowseBtn"):SetData({{"texts",nId,"font"}, wnd:FindChild("FontText")})
+
+            -- Color
+            wnd:FindChild("ColorSetting"):FindChild("Label"):SetText(self.L["label.color"])
+            wnd:FindChild("ColorSetting"):FindChild("Color"):SetData({"texts",nId,"color"})
+            wnd:FindChild("ColorSetting"):FindChild("ColorText"):SetText(text.color or self.config.text.color)
+            wnd:FindChild("ColorSetting"):FindChild("Color"):FindChild("BG"):SetBGColor(text.color or self.config.text.color)
+
+            -- Enable Checkbox
+            wnd:FindChild("EnableCheckbox"):SetText(self.L["label.enable"])
+            wnd:FindChild("EnableCheckbox"):SetData({"texts",nId,"enable"})
+            wnd:FindChild("EnableCheckbox"):SetCheck(text.enable or false)
+            wnd:SetTooltip(text.tooltip and (L[text.tooltip] or text.tooltip) or "")
+
+            self:ToggleSettings(wnd,text.enable or false)
+
+            nHeight = nHeight + wnd:GetHeight()
+        end
+
+        wndTexts:FindChild("Settings"):ArrangeChildrenVert()
+        wndTexts:SetAnchorOffsets(0,0,0,(nHeight-10))
+    end
+
+    -- #########################################################################################################################################
     -- # AURAS
     -- #########################################################################################################################################
 
     if config.auras ~= nil then
         local wndAuras = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
-        wndAuras:FindChild("Label"):SetText("Auras")
+        wndAuras:FindChild("Label"):SetText(self.L["header.auras"])
 
         local tSortedAuras = {}
         local nHeight = 75
@@ -728,6 +1010,9 @@ function Settings:BuildRightPanel()
 
             -- Label
             wnd:FindChild("Label"):SetText(L[aura.label] or aura.label)
+            wnd:FindChild("EnableCheckbox"):SetText(self.L["label.enable"])
+            wnd:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
+            wnd:FindChild("ColorSetting"):FindChild("Label"):SetText(self.L["label.color"])
 
             if aura.sprite ~= false then
                 -- Sprite
@@ -769,7 +1054,7 @@ function Settings:BuildRightPanel()
 
     if config.lines ~= nil then
         local wndLines = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
-        wndLines:FindChild("Label"):SetText("Lines")
+        wndLines:FindChild("Label"):SetText(self.L["header.lines"])
 
         local tSortedLines = {}
         local nHeight = 75
@@ -792,6 +1077,8 @@ function Settings:BuildRightPanel()
 
             -- Label
             wnd:FindChild("Label"):SetText(L[line.label] or line.label)
+            wnd:FindChild("EnableCheckbox"):SetText(self.L["label.enable"])
+            wnd:FindChild("ThicknessSetting"):FindChild("Label"):SetText(self.L["label.thickness"])
 
             -- Color
             if line.color ~= false then
@@ -840,13 +1127,18 @@ end
 
 function Settings:BuildGlobalSettings()
 
+    self.wndSettings:FindChild("Global"):FindChild("UnlockBtn"):SetText(self.L["button.unlock"])
+    self.wndSettings:FindChild("Global"):FindChild("ResetBtn"):SetText(self.L["button.reset"])
+
     -- #########################################################################################################################################
     -- # GENERAL
     -- #########################################################################################################################################
 
     local wndGeneral = self.wndSettings:FindChild("Global"):FindChild("General")
+    wndGeneral:FindChild("Frame"):FindChild("Label"):SetText(self.L["header.general"])
 
     -- Update Interval
+    wndGeneral:FindChild("IntervalSetting"):FindChild("Label"):SetText(self.L["label.interval"])
     wndGeneral:FindChild("IntervalSetting"):FindChild("Slider"):SetData("interval")
     wndGeneral:FindChild("IntervalSetting"):FindChild("Slider"):SetValue(self.config.interval or 0)
     wndGeneral:FindChild("IntervalSetting"):FindChild("SliderText"):SetText(self.config.interval or 0)
@@ -856,43 +1148,55 @@ function Settings:BuildGlobalSettings()
     -- #########################################################################################################################################
 
     local wndSounds = self.wndSettings:FindChild("Global"):FindChild("Sounds")
+    wndSounds:FindChild("Frame"):FindChild("Label"):SetText(self.L["header.sounds"])
+
     self:ToggleSettings(wndSounds:FindChild("Container"),(self.config.sound.enable and self.config.sound.force) or false)
     self:ToggleSettings(wndSounds:FindChild("ForceCheckbox"),self.config.sound.enable or false)
 
     -- Enable Checkbox
+    wndSounds:FindChild("EnableCheckbox"):SetText(self.L["label.enable"])
     wndSounds:FindChild("EnableCheckbox"):SetData({"sound","enable"})
     wndSounds:FindChild("EnableCheckbox"):SetCheck(self.config.sound.enable or false)
+    wndSounds:FindChild("EnableCheckbox"):SetTooltip(self.L["tooltip.sounds"])
 
     -- Adjust Volume Checkbox
+    wndSounds:FindChild("ForceCheckbox"):SetText(self.L["volume.force"])
     wndSounds:FindChild("ForceCheckbox"):SetData({"sound","force"})
     wndSounds:FindChild("ForceCheckbox"):SetCheck(self.config.sound.force or false)
+    wndSounds:FindChild("ForceCheckbox"):SetTooltip(self.L["tooltip.sounds_force"])
 
     -- Volume Master
+    wndSounds:FindChild("VolumeMasterSetting"):FindChild("Label"):SetText(self.L["volume.master"])
     wndSounds:FindChild("VolumeMasterSetting"):FindChild("Slider"):SetData({"sound","volumeMaster"})
     wndSounds:FindChild("VolumeMasterSetting"):FindChild("Slider"):SetValue(self.config.sound.volumeMaster or 0)
     wndSounds:FindChild("VolumeMasterSetting"):FindChild("SliderText"):SetText(self.config.sound.volumeMaster or 0)
 
     -- Volume Music
+    wndSounds:FindChild("VolumeMusicSetting"):FindChild("Label"):SetText(self.L["volume.music"])
     wndSounds:FindChild("VolumeMusicSetting"):FindChild("Slider"):SetData({"sound","volumeMusic"})
     wndSounds:FindChild("VolumeMusicSetting"):FindChild("Slider"):SetValue(self.config.sound.volumeMusic or 0)
     wndSounds:FindChild("VolumeMusicSetting"):FindChild("SliderText"):SetText(self.config.sound.volumeMusic or 0)
 
     -- Volume UI
+    wndSounds:FindChild("VolumeUISetting"):FindChild("Label"):SetText(self.L["volume.ui"])
     wndSounds:FindChild("VolumeUISetting"):FindChild("Slider"):SetData({"sound","volumeUI"})
     wndSounds:FindChild("VolumeUISetting"):FindChild("Slider"):SetValue(self.config.sound.volumeUI or 0)
     wndSounds:FindChild("VolumeUISetting"):FindChild("SliderText"):SetText(self.config.sound.volumeUI or 0)
 
     -- Volume SFX
+    wndSounds:FindChild("VolumeSFXSetting"):FindChild("Label"):SetText(self.L["volume.sfx"])
     wndSounds:FindChild("VolumeSFXSetting"):FindChild("Slider"):SetData({"sound","volumeSFX"})
     wndSounds:FindChild("VolumeSFXSetting"):FindChild("Slider"):SetValue(self.config.sound.volumeSFX or 0)
     wndSounds:FindChild("VolumeSFXSetting"):FindChild("SliderText"):SetText(self.config.sound.volumeSFX or 0)
 
     -- Volume Ambient
+    wndSounds:FindChild("VolumeAmbientSetting"):FindChild("Label"):SetText(self.L["volume.ambient"])
     wndSounds:FindChild("VolumeAmbientSetting"):FindChild("Slider"):SetData({"sound","volumeAmbient"})
     wndSounds:FindChild("VolumeAmbientSetting"):FindChild("Slider"):SetValue(self.config.sound.volumeAmbient or 0)
     wndSounds:FindChild("VolumeAmbientSetting"):FindChild("SliderText"):SetText(self.config.sound.volumeAmbient or 0)
 
     -- Volume Voice
+    wndSounds:FindChild("VolumeVoiceSetting"):FindChild("Label"):SetText(self.L["volume.voice"])
     wndSounds:FindChild("VolumeVoiceSetting"):FindChild("Slider"):SetData({"sound","volumeVoice"})
     wndSounds:FindChild("VolumeVoiceSetting"):FindChild("Slider"):SetValue(self.config.sound.volumeVoice or 0)
     wndSounds:FindChild("VolumeVoiceSetting"):FindChild("SliderText"):SetText(self.config.sound.volumeVoice or 0)
@@ -902,52 +1206,64 @@ function Settings:BuildGlobalSettings()
     -- #########################################################################################################################################
 
     local wndUnit = self.wndSettings:FindChild("Global"):FindChild("Units")
+    wndUnit:FindChild("Frame"):FindChild("Label"):SetText(self.L["header.units"])
+
     self:ToggleSettings(wndUnit:FindChild("Container"),self.config.units.enable or false)
 
     -- Enable Checkbox
+    wndUnit:FindChild("EnableCheckbox"):SetText(self.L["label.enable"])
     wndUnit:FindChild("EnableCheckbox"):SetData({"units","enable"})
     wndUnit:FindChild("EnableCheckbox"):SetCheck(self.config.units.enable or false)
 
     -- Show Text Checkbox
+    wndUnit:FindChild("TextCheckbox"):SetText(self.L["global.show_text"])
     wndUnit:FindChild("TextCheckbox"):SetData({"units","showText"})
     wndUnit:FindChild("TextCheckbox"):SetCheck(self.config.units.showText or false)
 
     -- Health Color
+    wndUnit:FindChild("HealthColorSetting"):FindChild("Label"):SetText(self.L["global.health_color"])
     wndUnit:FindChild("HealthColorSetting"):FindChild("Color"):SetData({"units","healthColor"})
     wndUnit:FindChild("HealthColorSetting"):FindChild("ColorText"):SetText(self.config.units.healthColor or "")
     wndUnit:FindChild("HealthColorSetting"):FindChild("BG"):SetBGColor(self.config.units.healthColor)
 
     -- Shield Color
+    wndUnit:FindChild("ShieldColorSetting"):FindChild("Label"):SetText(self.L["global.shield_color"])
     wndUnit:FindChild("ShieldColorSetting"):FindChild("Color"):SetData({"units","shieldColor"})
     wndUnit:FindChild("ShieldColorSetting"):FindChild("ColorText"):SetText(self.config.units.shieldColor or "")
     wndUnit:FindChild("ShieldColorSetting"):FindChild("BG"):SetBGColor(self.config.units.shieldColor)
 
     -- Absorb Color
+    wndUnit:FindChild("AbsorbColorSetting"):FindChild("Label"):SetText(self.L["global.absorb_color"])
     wndUnit:FindChild("AbsorbColorSetting"):FindChild("Color"):SetData({"units","absorbColor"})
     wndUnit:FindChild("AbsorbColorSetting"):FindChild("ColorText"):SetText(self.config.units.absorbColor or "")
     wndUnit:FindChild("AbsorbColorSetting"):FindChild("BG"):SetBGColor(self.config.units.absorbColor)
 
     -- Cast Color
+    wndUnit:FindChild("CastColorSetting"):FindChild("Label"):SetText(self.L["global.cast_color"])
     wndUnit:FindChild("CastColorSetting"):FindChild("Color"):SetData({"units","castColor"})
     wndUnit:FindChild("CastColorSetting"):FindChild("ColorText"):SetText(self.config.units.castColor or "")
     wndUnit:FindChild("CastColorSetting"):FindChild("BG"):SetBGColor(self.config.units.castColor)
 
     -- MOO Color
+    wndUnit:FindChild("MooColorSetting"):FindChild("Label"):SetText(self.L["global.moo_color"])
     wndUnit:FindChild("MooColorSetting"):FindChild("Color"):SetData({"units","mooColor"})
     wndUnit:FindChild("MooColorSetting"):FindChild("ColorText"):SetText(self.config.units.mooColor or "")
     wndUnit:FindChild("MooColorSetting"):FindChild("BG"):SetBGColor(self.config.units.mooColor)
 
     -- Text Color
+    wndUnit:FindChild("TextColorSetting"):FindChild("Label"):SetText(self.L["global.text_color"])
     wndUnit:FindChild("TextColorSetting"):FindChild("Color"):SetData({"units","textColor"})
     wndUnit:FindChild("TextColorSetting"):FindChild("ColorText"):SetText(self.config.units.textColor or "")
     wndUnit:FindChild("TextColorSetting"):FindChild("BG"):SetBGColor(self.config.units.textColor)
 
     -- Health Height
+    wndUnit:FindChild("HealthHeightSetting"):FindChild("Label"):SetText(self.L["global.health_height"])
     wndUnit:FindChild("HealthHeightSetting"):FindChild("Slider"):SetData({"units","healthHeight"})
     wndUnit:FindChild("HealthHeightSetting"):FindChild("Slider"):SetValue(self.config.units.healthHeight or 0)
     wndUnit:FindChild("HealthHeightSetting"):FindChild("SliderText"):SetText(self.config.units.healthHeight or 0)
 
     -- Shield Height
+    wndUnit:FindChild("ShieldHeightSetting"):FindChild("Label"):SetText(self.L["global.shield_height"])
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("Slider"):SetData({"units","shieldHeight"})
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("Slider"):SetValue(self.config.units.shieldHeight or 0)
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("SliderText"):SetText(self.config.units.shieldHeight or 0)
@@ -957,13 +1273,18 @@ function Settings:BuildGlobalSettings()
     -- #########################################################################################################################################
 
     local wndAlerts = self.wndSettings:FindChild("Global"):FindChild("Alerts")
+    wndAlerts:FindChild("Frame"):FindChild("Label"):SetText(self.L["header.alerts"])
 
     -- Font
+    wndAlerts:FindChild("FontSetting"):FindChild("Label"):SetText(self.L["global.font_size"])
     wndAlerts:FindChild("FontSetting"):FindChild("FontText"):SetText(self.config.alerts.font or "")
     wndAlerts:FindChild("FontSetting"):FindChild("FontText"):SetData({"alerts","font"})
+
+    wndAlerts:FindChild("FontSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
     wndAlerts:FindChild("FontSetting"):FindChild("BrowseBtn"):SetData({{"alerts","font"},wndAlerts:FindChild("FontText")})
 
     -- Text Color
+    wndAlerts:FindChild("TextColorSetting"):FindChild("Label"):SetText(self.L["global.text_color"])
     wndAlerts:FindChild("TextColorSetting"):FindChild("Color"):SetData({"alerts","color"})
     wndAlerts:FindChild("TextColorSetting"):FindChild("ColorText"):SetText(self.config.alerts.color or "")
     wndAlerts:FindChild("TextColorSetting"):FindChild("BG"):SetBGColor(self.config.alerts.color)
@@ -973,18 +1294,22 @@ function Settings:BuildGlobalSettings()
     -- #########################################################################################################################################
 
     local wndCastbar = self.wndSettings:FindChild("Global"):FindChild("Castbar")
+    wndCastbar:FindChild("Frame"):FindChild("Label"):SetText(self.L["header.castbar"])
 
     -- Bar Color
+    wndCastbar:FindChild("BarColorSetting"):FindChild("Label"):SetText(self.L["global.bar_color"])
     wndCastbar:FindChild("BarColorSetting"):FindChild("Color"):SetData({"castbar","barColor"})
     wndCastbar:FindChild("BarColorSetting"):FindChild("ColorText"):SetText(self.config.castbar.barColor or "")
     wndCastbar:FindChild("BarColorSetting"):FindChild("BG"):SetBGColor(self.config.castbar.barColor)
 
     -- MoO Color
+    wndCastbar:FindChild("MooColorSetting"):FindChild("Label"):SetText(self.L["global.moo_color"])
     wndCastbar:FindChild("MooColorSetting"):FindChild("Color"):SetData({"castbar","mooColor"})
     wndCastbar:FindChild("MooColorSetting"):FindChild("ColorText"):SetText(self.config.castbar.mooColor or "")
     wndCastbar:FindChild("MooColorSetting"):FindChild("BG"):SetBGColor(self.config.castbar.mooColor)
 
     -- Text Color
+    wndCastbar:FindChild("TextColorSetting"):FindChild("Label"):SetText(self.L["global.text_color"])
     wndCastbar:FindChild("TextColorSetting"):FindChild("Color"):SetData({"castbar","textColor"})
     wndCastbar:FindChild("TextColorSetting"):FindChild("ColorText"):SetText(self.config.castbar.textColor or "")
     wndCastbar:FindChild("TextColorSetting"):FindChild("BG"):SetBGColor(self.config.castbar.textColor)
@@ -994,12 +1319,17 @@ function Settings:BuildGlobalSettings()
     -- #########################################################################################################################################
 
     local wndTimer = self.wndSettings:FindChild("Global"):FindChild("Timer")
+    wndTimer:FindChild("Frame"):FindChild("Label"):SetText(self.L["header.timers"])
 
     -- Countdown Voice
+    wndTimer:FindChild("SoundPackSetting"):FindChild("Label"):SetText(self.L["voice.pack"])
     wndTimer:FindChild("SoundPackSetting"):FindChild("Dropdown"):AttachWindow(wndTimer:FindChild("SoundPackSetting"):FindChild("ChoiceContainer"))
     wndTimer:FindChild("SoundPackSetting"):FindChild("ChoiceContainer"):Show(false)
-    wndTimer:FindChild("SoundPackSetting"):FindChild("Dropdown"):SetText("Choose")
+    wndTimer:FindChild("SoundPackSetting"):FindChild("Dropdown"):SetText(self.L["button.choose"])
     wndTimer:FindChild("SoundPackSetting"):FindChild("Dropdown"):SetData({"timer","soundPack"})
+
+    wndTimer:FindChild("SoundPackSetting"):FindChild("ChoiceContainer"):FindChild("male"):SetText(self.L["voice.male"])
+    wndTimer:FindChild("SoundPackSetting"):FindChild("ChoiceContainer"):FindChild("female"):SetText(self.L["voice.female"])
 
     for _,button in pairs(wndTimer:FindChild("SoundPackSetting"):FindChild("ChoiceContainer"):GetChildren()) do
         if button:GetName() == self.config.timer.soundPack then
@@ -1011,10 +1341,16 @@ function Settings:BuildGlobalSettings()
     end
 
     -- Countdown Length
+    wndTimer:FindChild("SoundLengthSetting"):FindChild("Label"):SetText(self.L["voice.length"])
     wndTimer:FindChild("SoundLengthSetting"):FindChild("Dropdown"):AttachWindow(wndTimer:FindChild("SoundLengthSetting"):FindChild("ChoiceContainer"))
     wndTimer:FindChild("SoundLengthSetting"):FindChild("ChoiceContainer"):Show(false)
-    wndTimer:FindChild("SoundLengthSetting"):FindChild("Dropdown"):SetText("Choose")
+    wndTimer:FindChild("SoundLengthSetting"):FindChild("Dropdown"):SetText(self.L["button.choose"])
     wndTimer:FindChild("SoundLengthSetting"):FindChild("Dropdown"):SetData({"timer","countdown"})
+
+    wndTimer:FindChild("SoundLengthSetting"):FindChild("ChoiceContainer"):FindChild("short1"):SetText(self.L["voice.short"])
+    wndTimer:FindChild("SoundLengthSetting"):FindChild("ChoiceContainer"):FindChild("short2"):SetText(self.L["voice.short_skip"])
+    wndTimer:FindChild("SoundLengthSetting"):FindChild("ChoiceContainer"):FindChild("long1"):SetText(self.L["voice.long"])
+    wndTimer:FindChild("SoundLengthSetting"):FindChild("ChoiceContainer"):FindChild("long2"):SetText(self.L["voice.long_skip"])
 
     for _,button in pairs(wndTimer:FindChild("SoundLengthSetting"):FindChild("ChoiceContainer"):GetChildren()) do
         if button:GetName() == self.config.timer.countdown then
@@ -1026,16 +1362,19 @@ function Settings:BuildGlobalSettings()
     end
 
     -- Bar Color
+    wndTimer:FindChild("BarColorSetting"):FindChild("Label"):SetText(self.L["global.bar_color"])
     wndTimer:FindChild("BarColorSetting"):FindChild("Color"):SetData({"timer","barColor"})
     wndTimer:FindChild("BarColorSetting"):FindChild("ColorText"):SetText(self.config.timer.barColor or "")
     wndTimer:FindChild("BarColorSetting"):FindChild("BG"):SetBGColor(self.config.timer.barColor)
 
     -- Text Color
+    wndTimer:FindChild("TextColorSetting"):FindChild("Label"):SetText(self.L["global.text_color"])
     wndTimer:FindChild("TextColorSetting"):FindChild("Color"):SetData({"timer","textColor"})
     wndTimer:FindChild("TextColorSetting"):FindChild("ColorText"):SetText(self.config.timer.textColor or "")
     wndTimer:FindChild("TextColorSetting"):FindChild("BG"):SetBGColor(self.config.timer.textColor)
 
     -- Bar Height
+    wndTimer:FindChild("BarHeightSetting"):FindChild("Label"):SetText(self.L["global.bar_height"])
     wndTimer:FindChild("BarHeightSetting"):FindChild("Slider"):SetData({"timer","barHeight"})
     wndTimer:FindChild("BarHeightSetting"):FindChild("Slider"):SetValue(self.config.timer.barHeight or 0)
     wndTimer:FindChild("BarHeightSetting"):FindChild("SliderText"):SetText(self.config.timer.barHeight or 0)
@@ -1281,6 +1620,8 @@ function Settings:OnToggleSprites(wndHandler, wndControl)
     else
         self.wndSprites = Apollo.LoadForm(self.xmlDoc, "BrowseForm", nil, self)
         self.wndSprites:SetData(wndControl:GetData())
+        self.wndSprites:FindChild("TitleText"):SetText(self.L["header.sprites"])
+        self.wndSprites:FindChild("ChooseBtn"):SetText(self.L["button.choose"])
 
         local wndSpriteList = self.wndSprites:FindChild("Container"):FindChild("List")
         local wndText = wndControl:GetParent():FindChild("SpriteText")
@@ -1374,7 +1715,9 @@ function Settings:OnToggleFonts(wndHandler, wndControl)
         end
     else
         self.wndFonts = Apollo.LoadForm(self.xmlDoc, "BrowseForm", nil, self)
-        self.wndFonts:FindChild("TitleText"):SetText("Fonts")
+        self.wndFonts:FindChild("TitleText"):SetText(self.L["header.fonts"])
+        self.wndFonts:FindChild("ChooseBtn"):SetText(self.L["button.choose"])
+
         self.wndFonts:FindChild("ChooseBtn"):RemoveEventHandler("ButtonSignal")
         self.wndFonts:FindChild("CloseButton"):RemoveEventHandler("ButtonSignal")
         self.wndFonts:FindChild("ChooseBtn"):AddEventHandler("ButtonSignal", "OnSaveFont", self)
@@ -1438,7 +1781,10 @@ function Settings:OnSaveFont(wndHandler, wndControl)
     end
 
     self:SetVar(setting,tData.sFont)
-    self:SetVar({"alerts","size"},tData.nSize)
+
+    if not self.current then
+        self:SetVar({"alerts","size"},tData.nSize)
+    end
 
     self.wndFonts:Close()
 end

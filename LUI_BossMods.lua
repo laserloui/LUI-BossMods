@@ -69,6 +69,10 @@ function LUI_BossMods:new(o)
             color = "ff7fff00",
             size = 300,
         },
+        text = {
+            color = "ffdbdbdb",
+            font = "Subtitle",
+        },
         line = {
             color = "ffff0000",
             thickness = 10,
@@ -331,18 +335,20 @@ function LUI_BossMods:CheckTrigger(tModule)
         return false
     end
 
-    if not tModule.tTrigger.tNames or not tModule.tTrigger.tNames[self.language] then
+    if not tModule.tTrigger.sType or not tModule.tTrigger.tNames or not type(tModule.tTrigger.tNames) == "table" or not #tModule.tTrigger.tNames then
         return true
     end
 
-    if not self.tSavedUnits then
+    if not self.tSavedUnits or not tModule.L then
         return false
     end
 
     if tModule.tTrigger.sType == "ANY" then
-        for _,sName in ipairs(tModule.tTrigger.tNames[self.language]) do
-            if self.tSavedUnits[sName] then
-                for nId, unit in pairs(self.tSavedUnits[sName]) do
+        for _,sName in ipairs(tModule.tTrigger.tNames) do
+            local unitName = tModule.L[sName] or sName
+
+            if self.tSavedUnits[unitName] then
+                for nId, unit in pairs(self.tSavedUnits[unitName]) do
                     if unit:IsInCombat() then
                         return true
                     end
@@ -352,11 +358,13 @@ function LUI_BossMods:CheckTrigger(tModule)
 
         return false
     elseif tModule.tTrigger.sType == "ALL" then
-        for _,sName in ipairs(tModule.tTrigger.tNames[self.language]) do
-            if not self.tSavedUnits[sName] then
+        for _,sName in ipairs(tModule.tTrigger.tNames) do
+            local unitName = tModule.L[sName] or sName
+
+            if not self.tSavedUnits[unitName] then
                 return false
             else
-                for nId, unit in pairs(self.tSavedUnits[sName]) do
+                for nId, unit in pairs(self.tSavedUnits[unitName]) do
                     if not unit:IsInCombat() then
                         return false
                     end
@@ -388,6 +396,8 @@ function LUI_BossMods:OnFrame()
             for key,draw in pairs(self.tDraws) do
                 if draw.sType == "Icon" then
                     self:UpdateIcon(key,draw)
+                elseif draw.sType == "Text" then
+                    self:UpdateText(key,draw)
                 elseif draw.sType == "Pixie" then
                     self:UpdatePixie(key,draw)
                 elseif draw.sType == "Polygon" then
@@ -507,6 +517,8 @@ function LUI_BossMods:ResetFight()
             if draw.sType then
                 if draw.sType == "Icon" then
                     self:RemoveIcon(key)
+                elseif draw.sType == "Text" then
+                    self:RemoveText(key)
                 elseif draw.sType == "Pixie" then
                     self:RemovePixie(key)
                 elseif draw.sType == "Polygon" then
@@ -1853,12 +1865,133 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 -- #
--- # PIXIES (Where the magic happens!) - Thanks to author(s) of RaidCore
+-- # ONSCREEN DRAWINGS (Where the magic happens!) - Thanks to author(s) of RaidCore
 -- #
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, nDuration, bShowOverlay, fHandler, tData)
+-- #########################################################################################################################################
+-- # TEXT
+-- #########################################################################################################################################
+
+function LUI_BossMods:DrawText(Key, Origin, tConfig, sText, nHeight, nDuration, fHandler, tData)
+    if not Key or not Origin or not tConfig or not tConfig.enable then
+        return
+    end
+
+    if not self.wndOverlay then
+        self:LoadWindows()
+    end
+
+    if not self.tDraws then
+        self.tDraws = {}
+    end
+
+    if self.tDraws[Key] then
+        if self.tDraws[Key].wnd then
+            self.tDraws[Key].wnd:Show(false,true)
+            self.tDraws[Key].wnd:Destroy()
+        end
+
+        self.tDraws[Key] = nil
+    end
+
+    local OriginType = type(Origin)
+    local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
+    local width = Apollo.GetTextWidth(tConfig.font or self.config.text.font, sText or "") + 20
+
+    wnd:SetAnchorOffsets((width*-1),-50,width,50)
+    wnd:SetSprite("")
+    wnd:SetFont(tConfig.font or self.config.text.font)
+    wnd:SetText(sText or "")
+    wnd:SetTextColor(tConfig.color or self.config.text.color)
+
+    if OriginType == "number" then
+        Origin = GetUnitById(Origin)
+        wnd:SetUnit(Origin,nHeight or 0)
+    elseif OriginType == "table" or Vector3.Is(Origin) then
+        wnd:SetWorldLocation(Origin)
+    elseif OriginType == "userdata" and Origin:IsValid() then
+        wnd:SetUnit(Origin,nHeight or 0)
+    end
+
+    if nDuration ~= nil and nDuration > 0 then
+        self.tDraws[Key] = {
+            nTick = GetTickCount(),
+            nDuration = nDuration,
+            tOrigin = Origin,
+            sType = "Text",
+            fHandler = fHandler,
+            tData = tData,
+            wnd = wnd
+        }
+    else
+        self.tDraws[Key] = {
+            tOrigin = Origin,
+            sType = "Text",
+            fHandler = fHandler,
+            tData = tData,
+            wnd = wnd,
+        }
+    end
+end
+
+function LUI_BossMods:UpdateText(Key,tDraw)
+    if tDraw.wnd:IsOnScreen() then
+        if not tDraw.wnd:IsShown() then
+            tDraw.wnd:Show(true,true)
+        end
+    else
+        if tDraw.wnd:IsShown() then
+            tDraw.wnd:Show(true,true)
+        end
+    end
+
+    if tDraw.nDuration ~= nil and tDraw.nDuration > 0 then
+        local nTick = GetTickCount()
+        local nTotal = tDraw.nDuration
+        local nElapsed = (nTick - tDraw.nTick) / 1000
+
+        if nElapsed > nTotal then
+            self:RemoveText(Key)
+            return
+        end
+    end
+
+    if tDraw.tOrigin and type(tDraw.tOrigin) == "userdata" and not Vector3.Is(tDraw.tOrigin) then
+        if tDraw.tOrigin:IsDead() then
+            self:RemoveText(Key)
+            return
+        end
+    end
+end
+
+function LUI_BossMods:RemoveText(Key)
+    if not self.tDraws then
+        return
+    end
+
+    if self.tDraws[Key] then
+        if self.tDraws[Key].wnd then
+            self.tDraws[Key].wnd:Show(false,true)
+            self.tDraws[Key].wnd:Destroy()
+        end
+
+        local tCallback = {
+            fHandler = self.tDraws[Key].fHandler,
+            tData = self.tDraws[Key].tData
+        }
+
+        self.tDraws[Key] = nil
+        self:Callback(tCallback.fHandler, tCallback.tData)
+    end
+end
+
+-- #########################################################################################################################################
+-- # ICONS
+-- #########################################################################################################################################
+
+function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, sText, nDuration, bShowOverlay, fHandler, tData)
     if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
@@ -1885,21 +2018,22 @@ function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, nDuration, b
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
     local nHeight = (nSpriteHeight ~= nil) and nSpriteHeight or 40
 
-    if (not tConfig.sprite or tConfig.sprite == "") and tConfig.text then
-        nSize = Apollo.GetTextWidth("Subtitle", tConfig.text or "") + 20
+    if (not tConfig.sprite or tConfig.sprite == "") and (sText and sText ~= "") then
+        nSize = Apollo.GetTextWidth("Subtitle", sText) + 20
     end
 
     wnd:SetAnchorOffsets((nSize*-1),(nSize*-1),nSize,nSize)
     wnd:SetSprite(tConfig.sprite or "")
     wnd:SetBGColor(tConfig.color or self.config.icon.color)
-    wnd:SetText(tConfig.text or "")
+    wnd:SetText(sText or "")
+    wnd:SetTextColor(tConfig.color or self.config.icon.color)
 
-    if OriginType == "userdata" and Origin:IsValid() then
-        wnd:SetUnit(Origin,nHeight)
-    elseif OriginType == "table" then
-        wnd:SetWorldLocation(Origin)
-    elseif OriginType == "number" then
+    if OriginType == "number" then
         Origin = GetUnitById(Origin)
+        wnd:SetUnit(Origin,nHeight)
+    elseif OriginType == "table" or Vector3.Is(Origin) then
+        wnd:SetWorldLocation(Origin)
+    elseif OriginType == "userdata" and Origin:IsValid() then
         wnd:SetUnit(Origin,nHeight)
     end
 
@@ -1956,7 +2090,7 @@ function LUI_BossMods:UpdateIcon(Key,tDraw)
         end
     end
 
-    if tDraw.tOrigin and type(tDraw.tOrigin) == "userdata" then
+    if tDraw.tOrigin and type(tDraw.tOrigin) == "userdata" and not Vector3.Is(tDraw.tOrigin) then
         if tDraw.tOrigin:IsDead() then
             self:RemoveIcon(Key)
             return
@@ -1984,6 +2118,10 @@ function LUI_BossMods:RemoveIcon(Key)
         self:Callback(tCallback.fHandler, tCallback.tData)
     end
 end
+
+-- #########################################################################################################################################
+-- # PIXIES
+-- #########################################################################################################################################
 
 function LUI_BossMods:DrawPixie(Key, Origin, tConfig, nRotation, nDistance, nHeight, nDuration, fHandler, tData)
     if not Key or not Origin or not tConfig or not tConfig.enable then
@@ -2141,6 +2279,10 @@ function LUI_BossMods:RemovePixie(Key)
         self:Callback(tCallback.fHandler, tCallback.tData)
     end
 end
+
+-- #########################################################################################################################################
+-- # POLYGONS
+-- #########################################################################################################################################
 
 function LUI_BossMods:DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSide, nDuration, tVectorOffsets, fHandler, tData)
     if not Key or not Origin or not tConfig or not tConfig.enable then
@@ -2361,6 +2503,10 @@ function LUI_BossMods:RemovePolygon(Key)
     end
 end
 
+-- #########################################################################################################################################
+-- # LINES
+-- #########################################################################################################################################
+
 function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffsets, nDuration, nNumberOfDot, fHandler, tData)
     if not Key or not Origin or not tConfig or not tConfig.enable then
         return
@@ -2548,6 +2694,10 @@ function LUI_BossMods:RemoveLine(Key)
     end
 end
 
+-- #########################################################################################################################################
+-- # LINE BETWEEN
+-- #########################################################################################################################################
+
 function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, tConfig, nDuration, nNumberOfDot, fHandler, tData)
     if not Key or not FromOrigin or not tConfig or not tConfig.enable then
         return
@@ -2608,6 +2758,10 @@ function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, tConfig, nDurat
     self.tDraws[Key] = tDraw
 end
 
+-- #########################################################################################################################################
+-- # HELPER
+-- #########################################################################################################################################
+
 function LUI_BossMods:UpdateLineBetween(Key,tDraw)
     if tDraw.nDuration ~= nil and tDraw.nDuration > 0 then
         local nTick = GetTickCount()
@@ -2639,6 +2793,36 @@ function LUI_BossMods:UpdateLineBetween(Key,tDraw)
     end
 
     self:UpdateDraw(tDraw,tVectorFrom,tVectorTo)
+end
+
+function LUI_BossMods:RemoveLineBetween(Key)
+    if not self.tDraws then
+        return
+    end
+
+    local tDraw = self.tDraws[Key]
+
+    if tDraw then
+        if tDraw.nPixieIdFull then
+            self.wndOverlay:DestroyPixie(tDraw.nPixieIdFull)
+            tDraw.nPixieIdFull = nil
+        end
+
+        if next(tDraw.nPixieIdDot) then
+            for _, nPixieIdDot in next, tDraw.nPixieIdDot do
+                self.wndOverlay:DestroyPixie(nPixieIdDot)
+            end
+            tDraw.nPixieIdDot = {}
+        end
+
+        local tCallback = {
+            fHandler = tDraw.fHandler,
+            tData = tDraw.tData
+        }
+
+        self.tDraws[Key] = nil
+        self:Callback(tCallback.fHandler, tCallback.tData)
+    end
 end
 
 function LUI_BossMods:UpdateDraw(tDraw, tVectorFrom, tVectorTo)
@@ -2740,36 +2924,6 @@ function LUI_BossMods:UpdateDraw(tDraw, tVectorFrom, tVectorTo)
     end
 end
 
-function LUI_BossMods:RemoveLineBetween(Key)
-    if not self.tDraws then
-        return
-    end
-
-    local tDraw = self.tDraws[Key]
-
-    if tDraw then
-        if tDraw.nPixieIdFull then
-            self.wndOverlay:DestroyPixie(tDraw.nPixieIdFull)
-            tDraw.nPixieIdFull = nil
-        end
-
-        if next(tDraw.nPixieIdDot) then
-            for _, nPixieIdDot in next, tDraw.nPixieIdDot do
-                self.wndOverlay:DestroyPixie(nPixieIdDot)
-            end
-            tDraw.nPixieIdDot = {}
-        end
-
-        local tCallback = {
-            fHandler = tDraw.fHandler,
-            tData = tDraw.tData
-        }
-
-        self.tDraws[Key] = nil
-        self:Callback(tCallback.fHandler, tCallback.tData)
-    end
-end
-
 function LUI_BossMods:GetDraw(Key)
     if not self.tDraws then
         return
@@ -2777,14 +2931,6 @@ function LUI_BossMods:GetDraw(Key)
 
     return self.tDraws[Key]
 end
-
--- #########################################################################################################################################
--- #########################################################################################################################################
--- #
--- # TEMPLATES
--- #
--- #########################################################################################################################################
--- #########################################################################################################################################
 
 function LUI_BossMods:NewDraw()
     local new = {
