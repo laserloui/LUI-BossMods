@@ -32,9 +32,9 @@ local Locales = {
         ["alert.gun_jump"] = "Gun is leaving ",
         ["alert.gun_return"] = "RETURN TO GUN!",
         ["alert.pillar"] = " at 20%!",
-        -- datachron
+        -- Datachron
         ["datachron.electroshock"] = "(.*) suffers from Electroshock",
-        -- labels
+        -- Labels
         ["label.pillar"] = "20% Health Warning",
         ["label.pillar_health"] = "Pillar Health",
         ["label.circle_telegraph"] = "Circle Telegraphs",
@@ -247,12 +247,6 @@ function Mod:new(o)
                 color = "ffff4500",
                 label = "debuff.atomic_attraction",
             },
-            pillar = {
-                enable = true,
-                size = 300,
-                sprite = false,
-                label = "label.pillar_health",
-            },
         },
         lines = {
             gun = {
@@ -272,6 +266,14 @@ function Mod:new(o)
                 thickness = 7,
                 color = "ffff4500",
                 label = "label.circle_telegraph",
+            },
+        },
+        texts = {
+            pillar = {
+                enable = true,
+                font = "Subtitle",
+                color = false,
+                label = "label.pillar_health",
             },
         },
     }
@@ -307,16 +309,16 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.core:DrawLine("CleaveB", tUnit, self.config.lines.sword, 15, 50, 0, Vector3.New(-2,0,-1.5))
     elseif sName == self.L["unit.fusion_core"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion)
-        self.core:DrawIcon(nId, tUnit, self.config.icons.pillar, -275)
+        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", -275)
     elseif sName == self.L["unit.lubricant_nozzle"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.lubricant)
-        self.core:DrawIcon(nId, tUnit, self.config.icons.pillar, -275)
+        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", -275)
     elseif sName == self.L["unit.spark_plug"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.spark)
-        self.core:DrawIcon(nId, tUnit, self.config.icons.pillar, -275)
+        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", -275)
     elseif sName == self.L["unit.cooling_turbine"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.cooling)
-        self.core:DrawIcon(nId, tUnit, self.config.icons.pillar, -275)
+        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", -275)
     elseif sName == self.L["unit.circle_telegraph"] then
         self.core:DrawPolygon(nId, tUnit, self.config.lines.circle_telegraph, 6.3, 0, 20)
     end
@@ -330,19 +332,19 @@ end
 
 function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
     if sName == self.L["unit.fusion_core"] or sName == self.L["unit.lubricant_nozzle"] or sName == self.L["unit.spark_plug"] or sName == self.L["unit.cooling_turbine"] then
-        if self.config.icons.pillar.enable then
-            local tIcon = self.core:GetDraw(nId)
+        if self.config.texts.pillar.enable then
+            local tText = self.core:GetDraw(nId)
 
-            if tIcon and tIcon.wnd then
-                tIcon.wnd:SetText(string.format("%.0f%%", nPercent))
+            if tText and tText.wnd then
+                tText.wnd:SetText(string.format("%.0f%%", nPercent))
 
                 if nPercent > 20 then
-                    tIcon.wnd:SetTextColor("ffadff2f")
+                    tText.wnd:SetTextColor("ffadff2f")
                 else
                     if nPercent > 15 then
-                        tIcon.wnd:SetTextColor("ffff8c00")
+                        tText.wnd:SetTextColor("ffff8c00")
                     else
-                        tIcon.wnd:SetTextColor("ffff0000")
+                        tText.wnd:SetTextColor("ffff0000")
                     end
                 end
             end
