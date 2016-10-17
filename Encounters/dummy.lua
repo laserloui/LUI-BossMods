@@ -86,15 +86,13 @@ require "Apollo"
         Removes Text from Screen
         @param Key              - Unique ID
 
-    DrawIcon(Key, Origin, tConfig, nHeight, sText, nDuration, bShowOverlay, fHandler, tData)
+    DrawIcon(Key, Origin, tConfig, nHeight, nDuration, fHandler, tData)
         Draw Icon on top of unit or coordinate
         @param Key              - Unique ID
         @param Origin           - Unit Object / UnitId or Coordinates
         @param tConfig          - Icon Settings
         @param nHeight          - Height of Icon from bottom
-        @param sText            - Icon Text
         @param nDuration        - Duration in seconds before getting removed (optional)
-        @param bShowOverlay     - Show Duration Overlay (boolean)
         @param fHandler         - Callback function
         @param tData            - Data forwarded by callback function
 

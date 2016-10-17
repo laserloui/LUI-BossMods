@@ -1915,25 +1915,15 @@ function LUI_BossMods:DrawText(Key, Origin, tConfig, sText, nHeight, nDuration, 
         wnd:SetUnit(Origin,nHeight or 0)
     end
 
-    if nDuration ~= nil and nDuration > 0 then
-        self.tDraws[Key] = {
-            nTick = GetTickCount(),
-            nDuration = nDuration,
-            tOrigin = Origin,
-            sType = "Text",
-            fHandler = fHandler,
-            tData = tData,
-            wnd = wnd
-        }
-    else
-        self.tDraws[Key] = {
-            tOrigin = Origin,
-            sType = "Text",
-            fHandler = fHandler,
-            tData = tData,
-            wnd = wnd,
-        }
-    end
+    self.tDraws[Key] = {
+        nTick = GetTickCount(),
+        nDuration = nDuration,
+        tOrigin = Origin,
+        sType = "Text",
+        fHandler = fHandler,
+        tData = tData,
+        wnd = wnd
+    }
 end
 
 function LUI_BossMods:UpdateText(Key,tDraw)
@@ -1991,7 +1981,7 @@ end
 -- # ICONS
 -- #########################################################################################################################################
 
-function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, sText, nDuration, bShowOverlay, fHandler, tData)
+function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, nDuration, fHandler, tData)
     if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
@@ -2018,15 +2008,9 @@ function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, sText, nDura
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
     local nHeight = (nSpriteHeight ~= nil) and nSpriteHeight or 40
 
-    if (not tConfig.sprite or tConfig.sprite == "") and (sText and sText ~= "") then
-        nSize = Apollo.GetTextWidth("Subtitle", sText) + 20
-    end
-
     wnd:SetAnchorOffsets((nSize*-1),(nSize*-1),nSize,nSize)
     wnd:SetSprite(tConfig.sprite or "")
     wnd:SetBGColor(tConfig.color or self.config.icon.color)
-    wnd:SetText(sText or "")
-    wnd:SetTextColor(tConfig.color or self.config.icon.color)
 
     if OriginType == "number" then
         Origin = GetUnitById(Origin)
@@ -2037,35 +2021,15 @@ function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, sText, nDura
         wnd:SetUnit(Origin,nHeight)
     end
 
-    if nDuration ~= nil and nDuration > 0 then
-        if bShowOverlay then
-            wnd:FindChild("Overlay"):SetFullSprite(tConfig.sprite or "")
-            wnd:FindChild("Overlay"):SetBarColor("a0000000")
-            wnd:FindChild("Overlay"):SetBGColor("a0000000")
-            wnd:FindChild("Overlay"):SetMax(100)
-            wnd:FindChild("Overlay"):SetProgress(0.001)
-            wnd:FindChild("Overlay"):SetProgress(99.999,(100/nDuration))
-            wnd:FindChild("Overlay"):Show(true,true)
-        end
-
-        self.tDraws[Key] = {
-            nTick = GetTickCount(),
-            nDuration = nDuration,
-            tOrigin = Origin,
-            sType = "Icon",
-            fHandler = fHandler,
-            tData = tData,
-            wnd = wnd
-        }
-    else
-        self.tDraws[Key] = {
-            tOrigin = Origin,
-            sType = "Icon",
-            fHandler = fHandler,
-            tData = tData,
-            wnd = wnd,
-        }
-    end
+    self.tDraws[Key] = {
+        nTick = GetTickCount(),
+        nDuration = nDuration,
+        tOrigin = Origin,
+        sType = "Icon",
+        fHandler = fHandler,
+        tData = tData,
+        wnd = wnd
+    }
 end
 
 function LUI_BossMods:UpdateIcon(Key,tDraw)

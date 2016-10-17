@@ -233,6 +233,8 @@ function Settings:new(o)
         "inferno"
     }
     self.tSprites = {
+        "WhiteFill",
+        "WhiteCircle",
         "angry",
         "attention",
         "attention2",
@@ -882,34 +884,20 @@ function Settings:BuildRightPanel()
             wnd:FindChild("ColorSetting"):FindChild("Label"):SetText(self.L["label.color"])
             wnd:FindChild("SizeSetting"):FindChild("Label"):SetText(self.L["label.size"])
 
-            if icon.sprite ~= false then
-                -- Sprite
-                wnd:FindChild("SpriteText"):SetText((icon.sprite ~= nil) and icon.sprite or self.config.icon.sprite)
-                wnd:FindChild("SpriteText"):SetData({"icons",nId,"sprite"})
-                wnd:FindChild("BrowseBtn"):SetData({{"icons",nId,"sprite"},wnd:FindChild("SpriteText")})
+            -- Sprite
+            wnd:FindChild("SpriteText"):SetText((icon.sprite ~= nil) and icon.sprite or self.config.icon.sprite)
+            wnd:FindChild("SpriteText"):SetData({"icons",nId,"sprite"})
+            wnd:FindChild("BrowseBtn"):SetData({{"icons",nId,"sprite"},wnd:FindChild("SpriteText")})
 
-                -- Color
-                wnd:FindChild("Color"):SetData({"icons",nId,"color"})
-                wnd:FindChild("ColorText"):SetText(icon.color or self.config.icon.color)
-                wnd:FindChild("Color"):FindChild("BG"):SetBGColor(icon.color or self.config.icon.color)
+            -- Color
+            wnd:FindChild("Color"):SetData({"icons",nId,"color"})
+            wnd:FindChild("ColorText"):SetText(icon.color or self.config.icon.color)
+            wnd:FindChild("Color"):FindChild("BG"):SetBGColor(icon.color or self.config.icon.color)
 
-                -- Size
-                wnd:FindChild("Slider"):SetData({"icons",nId,"size"})
-                wnd:FindChild("Slider"):SetValue(icon.size or self.config.icon.size)
-                wnd:FindChild("SliderText"):SetText(icon.size or self.config.icon.size)
-            else
-                -- Sprite
-                wnd:FindChild("SpriteSetting"):SetData("ignore")
-                self:ToggleSettings(wnd:FindChild("SpriteSetting"),false)
-
-                -- Color
-                wnd:FindChild("ColorSetting"):SetData("ignore")
-                self:ToggleSettings(wnd:FindChild("ColorSetting"),false)
-
-                -- Size
-                wnd:FindChild("SizeSetting"):SetData("ignore")
-                self:ToggleSettings(wnd:FindChild("SizeSetting"),false)
-            end
+            -- Size
+            wnd:FindChild("Slider"):SetData({"icons",nId,"size"})
+            wnd:FindChild("Slider"):SetValue(icon.size or self.config.icon.size)
+            wnd:FindChild("SliderText"):SetText(icon.size or self.config.icon.size)
 
             -- Enable Checkbox
             wnd:FindChild("EnableCheckbox"):SetData({"icons",nId,"enable"})
@@ -960,11 +948,17 @@ function Settings:BuildRightPanel()
             wnd:FindChild("FontSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
             wnd:FindChild("FontSetting"):FindChild("BrowseBtn"):SetData({{"texts",nId,"font"}, wnd:FindChild("FontText")})
 
-            -- Color
-            wnd:FindChild("ColorSetting"):FindChild("Label"):SetText(self.L["label.color"])
-            wnd:FindChild("ColorSetting"):FindChild("Color"):SetData({"texts",nId,"color"})
-            wnd:FindChild("ColorSetting"):FindChild("ColorText"):SetText(text.color or self.config.text.color)
-            wnd:FindChild("ColorSetting"):FindChild("Color"):FindChild("BG"):SetBGColor(text.color or self.config.text.color)
+            if text.color ~= false then
+                -- Color
+                wnd:FindChild("ColorSetting"):FindChild("Label"):SetText(self.L["label.color"])
+                wnd:FindChild("ColorSetting"):FindChild("Color"):SetData({"texts",nId,"color"})
+                wnd:FindChild("ColorSetting"):FindChild("ColorText"):SetText(text.color or self.config.text.color)
+                wnd:FindChild("ColorSetting"):FindChild("Color"):FindChild("BG"):SetBGColor(text.color or self.config.text.color)
+            else
+                wnd:SetAnchorOffsets(0,0,0,108)
+                wnd:FindChild("FontSetting"):FindChild("Divider"):Destroy()
+                wnd:FindChild("ColorSetting"):Destroy()
+            end
 
             -- Enable Checkbox
             wnd:FindChild("EnableCheckbox"):SetText(self.L["label.enable"])
@@ -1014,25 +1008,15 @@ function Settings:BuildRightPanel()
             wnd:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
             wnd:FindChild("ColorSetting"):FindChild("Label"):SetText(self.L["label.color"])
 
-            if aura.sprite ~= false then
-                -- Sprite
-                wnd:FindChild("SpriteText"):SetText(aura.sprite or self.config.aura.sprite)
-                wnd:FindChild("SpriteText"):SetData({"auras",nId,"sprite"})
-                wnd:FindChild("BrowseBtn"):SetData({{"auras",nId,"sprite"},wnd:FindChild("SpriteText")})
+            -- Sprite
+            wnd:FindChild("SpriteText"):SetText(aura.sprite or self.config.aura.sprite)
+            wnd:FindChild("SpriteText"):SetData({"auras",nId,"sprite"})
+            wnd:FindChild("BrowseBtn"):SetData({{"auras",nId,"sprite"},wnd:FindChild("SpriteText")})
 
-                -- Color
-                wnd:FindChild("Color"):SetData({"auras",nId,"color"})
-                wnd:FindChild("ColorText"):SetText(aura.color or self.config.aura.color)
-                wnd:FindChild("Color"):FindChild("BG"):SetBGColor(aura.color or self.config.aura.color)
-            else
-                -- Sprite
-                wnd:FindChild("SpriteSetting"):SetData("ignore")
-                self:ToggleSettings(wnd:FindChild("SpriteSetting"),false)
-
-                -- Color
-                wnd:FindChild("ColorSetting"):SetData("ignore")
-                self:ToggleSettings(wnd:FindChild("ColorSetting"),false)
-            end
+            -- Color
+            wnd:FindChild("Color"):SetData({"auras",nId,"color"})
+            wnd:FindChild("ColorText"):SetText(aura.color or self.config.aura.color)
+            wnd:FindChild("Color"):FindChild("BG"):SetBGColor(aura.color or self.config.aura.color)
 
             -- Enable Checkbox
             wnd:FindChild("EnableCheckbox"):SetData({"auras",nId,"enable"})
@@ -1081,24 +1065,14 @@ function Settings:BuildRightPanel()
             wnd:FindChild("ThicknessSetting"):FindChild("Label"):SetText(self.L["label.thickness"])
 
             -- Color
-            if line.color ~= false then
-                wnd:FindChild("Color"):SetData({"lines",nId,"color"})
-                wnd:FindChild("ColorText"):SetText(line.color or self.config.line.color)
-                wnd:FindChild("Color"):FindChild("BG"):SetBGColor(line.color or self.config.line.color)
-            else
-                wnd:FindChild("ColorSetting"):SetData("ignore")
-                self:ToggleSettings(wnd:FindChild("ColorSetting"),false)
-            end
+            wnd:FindChild("Color"):SetData({"lines",nId,"color"})
+            wnd:FindChild("ColorText"):SetText(line.color or self.config.line.color)
+            wnd:FindChild("Color"):FindChild("BG"):SetBGColor(line.color or self.config.line.color)
 
             -- Thickness
-            if line.thickness ~= false then
-                wnd:FindChild("Slider"):SetData({"lines",nId,"thickness"})
-                wnd:FindChild("Slider"):SetValue(line.thickness or self.config.line.thickness)
-                wnd:FindChild("SliderText"):SetText(line.thickness or self.config.line.thickness)
-            else
-                wnd:FindChild("ThicknessSetting"):SetData("ignore")
-                self:ToggleSettings(wnd:FindChild("ThicknessSetting"),false)
-            end
+            wnd:FindChild("Slider"):SetData({"lines",nId,"thickness"})
+            wnd:FindChild("Slider"):SetValue(line.thickness or self.config.line.thickness)
+            wnd:FindChild("SliderText"):SetText(line.thickness or self.config.line.thickness)
 
             -- Enable Checkbox
             wnd:FindChild("EnableCheckbox"):SetData({"lines",nId,"enable"})
