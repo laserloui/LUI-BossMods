@@ -10,7 +10,10 @@ local Locales = {
         ["unit.bossA"] = "Grimhowl Devourer",
         ["unit.bossB"] = "Grimhowl Limbripper",
     },
-    ["deDE"] = {},
+    ["deDE"] = {
+        ["unit.bossA"] = "Grimmheul-Verschlinger",
+        ["unit.bossB"] = "Grimhowl Limbripper",
+    },
     ["frFR"] = {},
 }
 
@@ -42,25 +45,44 @@ function Mod:new(o)
                 parentZoneId = 0,
                 mapId = 0,
             },
+            [5] = {
+                continentId = 61,   -- Crimson Badlands
+                parentZoneId = 0,
+                mapId = 0,
+            },
+            [6] = {
+                continentId = 104,   -- Redmoon
+                parentZoneId = 0,
+                mapId = 0,
+            },
+            [7] = {
+                continentId = 103,   -- Palaver Point
+                parentZoneId = 0,
+                mapId = 0,
+            },
         },
     }
     self.run = false
     self.runtime = {}
     self.config = {
         enable = true,
-        casts = {
-            castA = {
+        units = {
+            boss = {
                 enable = true,
-                color = "ffb22222",
-                label = "cast.a"
+                label = "Boss",
+            },
+            player = {
+                enable = true,
+                color = "FFFF0000",
+                label = "Player",
             },
         },
-        alerts = {
-            alertA = {
+        auras = {
+            atomic_attraction = {
                 enable = true,
+                sprite = "LUIBM_meteor3",
                 color = "ffff4500",
-                duration = 5,
-                label = "alert.a"
+                label = "debuff.atomic_attraction",
             },
         },
     }
@@ -73,32 +95,49 @@ function Mod:Init(parent)
     self.core = parent
     self.L = parent:GetLocale(Encounter,Locales)
 
-    -- self.wndDebug = Apollo.LoadForm(self.core.xmlDoc, "Debug", nil, self)
-    -- self.wndDebug:Show(true,true)
+    --self.wndDebug = Apollo.LoadForm(self.core.xmlDoc, "Debug", nil, self)
+    --self.wndDebug:Show(true,true)
 
-    -- math.randomseed(os.time())
-    -- local id = math.random(6)
+    --math.randomseed(os.time())
+end
+
+function Mod:OnAddDebug()
+    local tTexts = {
+        [1] = "AAAAAAAAAAAAAA",
+        [2] = "BBBBBBBBBBBBBB",
+        [3] = "CCCCCCCCCCCCCC",
+        [4] = "DDDDDDDDDDDDCD",
+        [5] = "EEEEEEEEEEEEEE",
+        [6] = "FFFFFFFFFFFFFF",
+        [7] = "GGGGGGGGGGGGGG",
+        [8] = "HHHHHHHHHHHHHH",
+        [9] = "IIIIIIIIIIIIII",
+        [10] = "KKKKKKKKKKKKK",
+    }
+    local nId = math.random(10)
+    self.core:ShowAlert("TEST"..tostring(nId), tTexts[nId], {enable=true})
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
-    if not self.run == true then
+    if not self.run then
         return
     end
 
-    if (sName == self.L["unit.bossA"] or sName == self.L["unit.bossB"]) and bInCombat == true then
-        self.core:AddUnit(nId, sName, tUnit, true, true, true, true)
+    if (sName == self.L["unit.bossA"] or sName == self.L["unit.bossB"]) and bInCombat then
+        self.core:AddUnit(nId, sName, tUnit, self.config.units.boss)
     end
 end
 
-function Mod:OnCastStart(nId, sCastName, tCast, sName, nDuration)
-    if (sName == self.L["unit.bossA"] or sName == self.L["unit.bossB"]) then
-        self.core:ShowCast(tCast, sCastName)
-        self.core:ShowAlert(sCastName, sCastName, nDuration)
+function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
+    if sName == "Angry Swarm" then
+        self.core:ShowAura("atomic_attraction", self.config.auras.atomic_attraction, nDuration, "Kite the orb!")
     end
 end
 
-function Mod:OnCastEnd(nId, sCastName, tCast, sName)
-
+function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
+    if sName == "Angry Swarm" then
+        self.core:HideAura("atomic_attraction")
+    end
 end
 
 function Mod:IsRunning()
@@ -111,6 +150,9 @@ end
 
 function Mod:OnEnable()
     self.run = true
+    self.unitPlayer = GameLib.GetPlayerUnit()
+
+    self.core:AddUnit("Player", "Loui NaN", self.unitPlayer, self.config.units.player)
 end
 
 function Mod:OnDisable()

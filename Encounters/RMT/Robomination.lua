@@ -223,14 +223,14 @@ function Mod:new(o)
         icons = {
             crush = {
                 enable = true,
-                sprite = "meteor",
+                sprite = "LUIBM_meteor",
                 size = 80,
                 color = "ffff4500",
                 label = "label.crush",
             },
             incineration = {
                 enable = true,
-                sprite = "target",
+                sprite = "LUIBM_ifrit",
                 size = 80,
                 color = "ffff4500",
                 label = "cast.incineration_laser",

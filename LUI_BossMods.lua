@@ -37,15 +37,6 @@ local CHANNEL_HANDLERS = {
     [ChatSystemLib.ChatChannel_NPCWhisper] = "OnNPCWhisper",
     [ChatSystemLib.ChatChannel_Datachron] = "OnDatachron",
 }
-local HEIGHT_PER_RACEID = {
-    [GameLib.CodeEnumRace.Human] = 1.2,
-    [GameLib.CodeEnumRace.Granok] = 1.6,
-    [GameLib.CodeEnumRace.Aurin] = 1.1,
-    [GameLib.CodeEnumRace.Draken] = 1.4,
-    [GameLib.CodeEnumRace.Mechari] = 1.75,
-    [GameLib.CodeEnumRace.Chua] = 1.0,
-    [GameLib.CodeEnumRace.Mordesh] = 1.85,
-}
 
 function LUI_BossMods:new(o)
     o = o or {}
@@ -1070,7 +1061,7 @@ function LUI_BossMods:CheckBuffs(nId)
 end
 
 function LUI_BossMods:OnBuffAdded(unit,spell)
-    if not unit or not spell or not (spell.fTimeRemaining > 0) or not self.tCurrentEncounter or not self.runtime.units then
+    if not unit or not spell or not self.tCurrentEncounter or not self.runtime.units then
         return
     end
 
@@ -1131,7 +1122,7 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
 end
 
 function LUI_BossMods:OnBuffUpdated(unit,spell)
-    if not unit or not spell or not (spell.fTimeRemaining > 0) or not self.tCurrentEncounter or not self.runtime.units then
+    if not unit or not spell or not self.tCurrentEncounter or not self.runtime.units then
         return
     end
 
@@ -1623,20 +1614,23 @@ function LUI_BossMods:ShowAura(sName, tConfig, nDuration, sText, fHandler, tData
     self.wndAura:FindChild("Text"):Show(sText or false,true)
 
     self.wndAura:FindChild("Overlay"):SetBGColor("a0000000")
-    self.wndAura:FindChild("Overlay"):Show(nDuration or false,true)
+    self.wndAura:FindChild("Overlay"):Show(true,true)
+
+    self.wndAura:FindChild("Progress"):SetBGColor("96"..string.sub(tConfig.color or self.config.aura.color,3))
+    self.wndAura:FindChild("Progress"):SetBarColor("96"..string.sub(tConfig.color or self.config.aura.color,3))
+    self.wndAura:FindChild("Progress"):SetMax(100)
 
     if nDuration then
-        self.wndAura:FindChild("Progress"):SetBGColor("96"..string.sub(tConfig.color or self.config.aura.color,3))
-        self.wndAura:FindChild("Progress"):SetBarColor("96"..string.sub(tConfig.color or self.config.aura.color,3))
-        self.wndAura:FindChild("Progress"):SetMax(100)
         self.wndAura:FindChild("Progress"):SetProgress(0.001)
         self.wndAura:FindChild("Progress"):SetProgress(99.999,(100/nDuration))
+    else
+        self.wndAura:FindChild("Progress"):SetProgress(99.999)
     end
 
     self.runtime.aura = {
         sName = sName,
-        nTick = GetTickCount(),
-        nDuration = nDuration,
+        nTick = nDuration and GetTickCount() or nil,
+        nDuration = nDuration or nil,
         fHandler = fHandler or nil,
         tData = tData or nil
     }
@@ -2133,14 +2127,7 @@ function LUI_BossMods:DrawPixie(Key, Origin, tConfig, nRotation, nDistance, nHei
     }
 
     if OriginType == "number" then
-        local tUnit = GetUnitById(Origin)
-        local nRaceId = tUnit and tUnit:GetRaceId()
-
-        tDraw.tOriginUnit = tUnit
-
-        if nRaceId and HEIGHT_PER_RACEID[nRaceId] then
-            tDraw.nHeight = HEIGHT_PER_RACEID[nRaceId]
-        end
+        tDraw.tOriginUnit = GetUnitById(Origin)
     elseif OriginType == "table" or Vector3.Is(Origin) then
         local tOriginVector = NewVector3(Origin)
         local tFacingVector = NewVector3(DEFAULT_NORTH_FACING)
@@ -3151,7 +3138,7 @@ function LUI_BossMods:OnSlashCommand(cmd, args)
 end
 
 function LUI_BossMods:OnICCommSendMessageResult(iccomm, eResult, idMessage)
-	self.busy = false
+    self.busy = false
 end
 
 function LUI_BossMods:OnICCommMessageReceived(channel, strMessage, idMessage)

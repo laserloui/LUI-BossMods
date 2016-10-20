@@ -270,15 +270,15 @@ function Mod:new(o)
         icons = {
             vulnerability = {
                 enable = true,
-                sprite = "target2",
+                sprite = "LUIBM_crosshair",
                 size = 60,
                 color = "ff40e0d0",
                 label = "debuff.electroshock_vulnerability",
             },
             atomic_attraction = {
                 enable = true,
-                sprite = "bomb",
-                size = 60,
+                sprite = "LUIBM_meteor3",
+                size = 80,
                 color = "ffff4500",
                 label = "debuff.atomic_attraction",
             },
@@ -422,10 +422,10 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction)
 
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAura("atomic_attraction", self.config.auras.atomic_attraction, nDuration, "Kite the orb!")
+            self.core:ShowAura("atomic_attraction", self.config.auras.atomic_attraction, 15, "Kite the orb!")
             self.core:PlaySound(self.config.sounds.atomic_attraction)
         else
-            self.core:DrawIcon("atomic_attraction_"..tostring(nId), tData.tUnit, self.config.icons.atomic_attraction, nil, nDuration)
+            self.core:DrawIcon("atomic_attraction_"..tostring(nId), tData.tUnit, self.config.icons.atomic_attraction)
             self.core:ShowAlert("atomic_attraction_"..tostring(nId), self.L["alert.atomic_attraction"]..sUnitName, self.config.alerts.atomic_attraction)
         end
     end

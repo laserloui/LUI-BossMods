@@ -247,7 +247,7 @@ function Mod:new(o)
             kinetic_link = {
                 enable = true,
                 position = 1,
-                sprite = "target2",
+                sprite = "LUIBM_crosshair",
                 size = 80,
                 color = "ffff00ff",
                 label = "debuff.kinetic_link",
@@ -255,7 +255,7 @@ function Mod:new(o)
             shocking_attraction = {
                 enable = true,
                 position = 2,
-                sprite = "target2",
+                sprite = "LUIBM_crosshair",
                 size = 80,
                 color = "ffb0ff2f",
                 label = "debuff.shocking_attraction",
@@ -263,7 +263,7 @@ function Mod:new(o)
             airlock_anchor = {
                 enable = true,
                 position = 3,
-                sprite = "WhiteCircle",
+                sprite = "BasicSprites:WhiteCircle",
                 size = 30,
                 color = "7800ff00",
                 label = "unit.airlock_anchor",
@@ -271,7 +271,7 @@ function Mod:new(o)
             stack_point = {
                 enable = true,
                 position = 4,
-                sprite = "WhiteCircle",
+                sprite = "BasicSprites:WhiteCircle",
                 size = 30,
                 color = "78ff00ff",
                 label = "label.stack_point",
@@ -355,7 +355,10 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
         self.core:RemoveIcon("KL" .. nId)
     elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
         self.core:RemoveIcon("SA" .. nId)
-        self.core:HideAura("SA")
+
+        if tData.tUnit:IsThePlayer() then
+            self.core:HideAura("SA")
+        end
     end
 end
 
