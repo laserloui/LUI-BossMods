@@ -12,7 +12,11 @@ local Locales = {
         ["label.bomb"] = "Bombs",
     },
     ["deDE"] = {},
-    ["frFR"] = {},
+    ["frFR"] = {
+        ["unit.boss"] = "Assistant Technicien Skooty",
+        ["unit.bomb"] = "Jumpstart Charge", -- MISSING
+        ["label.bomb"] = "Bombs", -- MISSING
+    },
 }
 
 function Mod:new(o)

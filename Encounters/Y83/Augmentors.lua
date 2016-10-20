@@ -11,11 +11,7 @@ local Locales = {
         ["Prime Phage Distributor"] = "Prime Phage Distributor",
         ["Organic Incinerator"] = "Organic Incinerator",
     },
-    ["deDE"] = {
-        ["Prime Evolutionary Operant"] = "",
-        ["Prime Phage Distributor"] = "",
-        ["Organic Incinerator"] = "",
-    },
+    ["deDE"] = {},
     ["frFR"] = {
         ["Prime Evolutionary Operant"] = "Opérateur de la Primo Évolution",
         ["Prime Phage Distributor"] = "Distributeur de Primo Phage",

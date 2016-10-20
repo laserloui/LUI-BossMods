@@ -15,7 +15,14 @@ local Locales = {
         ["alert.interrupt_rupture"] = "Interrupt Rupture!",
     },
     ["deDE"] = {},
-    ["frFR"] = {},
+    ["frFR"] = {
+        -- Units
+        ["unit.boss"] = "Serrenox",
+        -- Casts
+        ["cast.rupture"] = "Rupture",
+        -- Alerts
+        ["alert.interrupt_rupture"] = "Interrompre Rupture!",
+    },
 }
 
 function Mod:new(o)

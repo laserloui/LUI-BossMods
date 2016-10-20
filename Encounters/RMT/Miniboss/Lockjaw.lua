@@ -16,7 +16,15 @@ local Locales = {
         ["label.circle_telegraph"] = "Circle Telegraphs",
     },
     ["deDE"] = {},
-    ["frFR"] = {},
+    ["frFR"] = {
+        -- Units
+        ["unit.boss"] = "Chef Directeur Tétanos",
+        ["unit.circle_telegraph"] = "Unité de Champs Hostile Invisible (rayon d'action : 0)",
+        -- Casts
+        ["cast.blaze_shackles"] = "Entrave de Feu",
+        -- Labels
+        ["label.circle_telegraph"] = "Télégraphes Circulaire",
+    },
 }
 
 function Mod:new(o)

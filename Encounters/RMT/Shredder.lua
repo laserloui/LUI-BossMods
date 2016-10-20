@@ -10,14 +10,14 @@ local Locales = {
         -- Units
         ["unit.boss"] = "Swabbie Ski'Li",
         ["unit.noxious_nabber"] = "Noxious Nabber",
-        ["unit.regor_the_rancid"] = "Regor the Rancid", -- Miniboss during Midphase
-        ["unit.braugh_the_bloodied"] = "Braugh the Bloodied", -- Miniboss during Midphase
+        ["unit.regor_the_rancid"] = "Regor the Rancid",
+        ["unit.braugh_the_bloodied"] = "Braugh the Bloodied",
         ["unit.sawblade"] = "Sawblade",
         ["unit.circle_telegraph"] = "Hostile Invisible Unit for Fields (1.2 hit radius)",
         -- Casts
-        ["cast.necrotic_lash"] = "Necrotic Lash", -- Cast by Noxious Nabber (grab and disorient), interruptable
-        ["cast.deathwail"] = "Deathwail", -- Miniboss knockdown, interruptable
-        ["cast.gravedigger"] = "Gravedigger", -- Miniboss cast
+        ["cast.necrotic_lash"] = "Necrotic Lash",
+        ["cast.deathwail"] = "Deathwail",
+        ["cast.gravedigger"] = "Gravedigger",
         -- Alerts
         ["alert.oozing_bile"] = "Oozing Bile - Stop Damage!",
         ["alert.interrupt"] = "Interrupt!",
@@ -32,14 +32,14 @@ local Locales = {
     ["deDE"] = {
         ["unit.boss"] = "Swabbie Ski'Li",
         ["unit.noxious_nabber"] = "Noxious Nabber",
-        ["unit.regor_the_rancid"] = "Regor the Rancid", -- Miniboss during Midphase
-        ["unit.braugh_the_bloodied"] = "Braugh der Blähbauch", -- Miniboss during Midphase
+        ["unit.regor_the_rancid"] = "Regor the Rancid",
+        ["unit.braugh_the_bloodied"] = "Braugh der Blähbauch",
         ["unit.sawblade"] = "Sägeblatt",
         ["unit.circle_telegraph"] = "Feindselige unsichtbare Einheit für Felder (Trefferradius 1.2)",
         -- Casts
-        ["cast.necrotic_lash"] = "Nekrotisches Peitschen", -- Cast by Noxious Nabber (grab and disorient), interruptable
-        ["cast.deathwail"] = "Totenklage", -- Miniboss knockdown, interruptable
-        ["cast.gravedigger"] = "Gravedigger", -- Miniboss cast
+        ["cast.necrotic_lash"] = "Nekrotisches Peitschen",
+        ["cast.deathwail"] = "Totenklage",
+        ["cast.gravedigger"] = "Gravedigger",
         -- Alerts
         ["alert.oozing_bile"] = "Triefende Galle - Stop Damage!",
         ["alert.interrupt"] = "Unterbrechen!",
@@ -51,7 +51,29 @@ local Locales = {
         -- Texts
         ["text.stackmoron"] = "/gr Ich Vollidiot habe %d Stacks erreicht!",
     },
-    ["frFR"] = {},
+    ["frFR"] = {
+        -- Units
+        ["unit.boss"] = "Swabbie Ski'Li",
+        ["unit.noxious_nabber"] = "Harpond Nocif",
+        ["unit.regor_the_rancid"] = "Regor le Rancie",
+        ["unit.braugh_the_bloodied"] = "Braugh le Sanglant",
+        ["unit.sawblade"] = "Scie",
+        ["unit.circle_telegraph"] = "Unité de Champs Hostile Invisible (rayon d'action : 1,2)",
+        -- Casts
+        ["cast.necrotic_lash"] = "Coup de Fouet Nécrotique",
+        ["cast.deathwail"] = "Hulement Mortel",
+        ["cast.gravedigger"] = "Fossoyer",
+        -- Alerts
+        ["alert.oozing_bile"] = "Bile Suintante - Stop DPS!",
+        ["alert.interrupt"] = "Interromps!",
+        -- Debuffs
+        ["debuff.oozing_bile"] = "Bile Suintante",
+        -- Labels
+        ["label.lines_room"] = "Ligne d'ancres",
+        ["label.circle_telegraph"] = "Télégraphes Circulaire",
+        -- Texts
+        ["text.stackmoron"] = "/éq J'ai atteint %d stacks parce que je suis un crétin fini.",
+    },
 }
 
 local DEBUFF_OOZING_BILE = 84321
@@ -127,7 +149,7 @@ function Mod:new(o)
         auras = {
             oozing_bile = {
                 enable = true,
-                sprite = "stop2",
+                sprite = "LUIBM_stop",
                 color = "ffff0000",
                 label = "debuff.oozing_bile",
             },
@@ -254,7 +276,7 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
     if DEBUFF_OOZING_BILE == nSpellId then
         if tData.tUnit:IsThePlayer() then
             if nStack >= 8 then
-                self.core:ShowAura("OOZE", self.config.auras.oozing_bile, nDuration)
+                self.core:ShowAura("OOZE", self.config.auras.oozing_bile, nDuration, "DAMAGE STOP!")
 
                 if not self.warned then
                     self.core:PlaySound(self.config.sounds.oozing_bile)

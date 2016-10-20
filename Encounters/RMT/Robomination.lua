@@ -39,7 +39,38 @@ local Locales = {
         ["label.crush_player"] = "Crush on player",
     },
     ["deDE"] = {},
-    ["frFR"] = {},
+    ["frFR"] = {
+        -- Units
+        ["unit.boss"] = "Robominator",
+        ["unit.cannon_arm"] = "Bras Cannon",
+        ["unit.flailing_arm"] = "Bras Fléau",
+        ["unit.scanning_eye"] = "Oeil Scanneur",
+        -- Casts
+        ["cast.noxious_belch"] = "Rot Nocif",
+        ["cast.incineration_laser"] = "Incinération Laser",
+        ["cast.cannon_fire"] = "Tir de Canon",
+        -- Alerts
+        ["alert.interrupt"] = "Interromps!",
+        ["alert.lasers"] = "Lasers en approche!",
+        ["alert.midphase"] = "Midphase bientôt!",
+        ["alert.crush"] = "ECRASER SUR %s!",
+        ["alert.crush_player"] = "ECRASER SUR TOI!",
+        ["alert.incineration"] = "INCINERATION SUR %s!",
+        ["alert.incineration_player"] = "INCINERATION SUR TOI!",
+        -- Messages
+        ["message.next_arms"] = "Bras suivants",
+        ["message.next_crush"] = "Ecraser suivant",
+        ["message.next_belch"] = "Lasers suivants",
+        ["message.next_incineration"] = "Incineration suivante",
+        -- Datachron messages
+        ["datachron.midphase_start"] = "Robomination s'enfonce",
+        ["datachron.midphase_end"] = "Robomination revient dans la bataille!",
+        ["datachron.incineration"] = "Robomination tente d'incinérer (.*)",
+        -- Labels
+        ["label.arms"] = "Bras",
+        ["label.crush"] = "Ecraser",
+        ["label.crush_player"] = "Ecraser sur le joueur",
+    },
 }
 
 local DEBUFF_THE_SKY_IS_FALLING = 75126 -- Crush target
@@ -119,7 +150,7 @@ function Mod:new(o)
         auras = {
             crush_player = {
                 enable = true,
-                sprite = "run",
+                sprite = "LUIBM_run",
                 color = "ffff00ff",
                 label = "label.crush_player",
             },
@@ -303,7 +334,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 17, self.config.timers.crush)
 
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAura("Aura_Crush", self.config.auras.crush_player, nDuration)
+            self.core:ShowAura("Aura_Crush", self.config.auras.crush_player, nDuration, "Crush on YOU!")
             self.core:ShowAlert("Alert_Crush", self.L["alert.crush_player"], self.config.alerts.crush_player)
             self.core:PlaySound(self.config.sounds.crush_player)
         else

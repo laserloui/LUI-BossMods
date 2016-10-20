@@ -9,8 +9,12 @@ local Locales = {
     ["enUS"] = {
         ["unit.boss"] = "Starmap",
     },
-    ["deDE"] = {},
-    ["frFR"] = {},
+    ["deDE"] = {
+        ["unit.boss"] = "Starmap",
+    },
+    ["frFR"] = {
+        ["unit.boss"] = "Starmap",
+    },
 }
 
 function Mod:new(o)

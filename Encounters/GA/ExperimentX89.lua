@@ -57,16 +57,16 @@ local Locales = {
         ["cast.knockback"] = "Hurlement retentissant",
         -- Alerts
         ["alert.small_bomb"] = "Petite bombe sur %s!",
-        ["alert.small_bomb_player"] = "SMALL BOMB ON YOU! - RUN AWAY!",
+        ["alert.small_bomb_player"] = "Petite bombe sur toi ! - Eloigne toi!",
         ["alert.big_bomb"] = "Grosse bombe sur %s!",
-        ["alert.big_bomb_player"] = "BIG BOMB ON YOU! - JUMP OFF!",
-        ["alert.knockback"] = "KNOCKBACK!",
+        ["alert.big_bomb_player"] = "Grosse Bombe sur toi! - Saute dans le vide!",
+        ["alert.knockback"] = "Repoussement!",
         ["alert.spew"] = "CRACHAT!",
         -- Labels
         ["label.small_bomb"] = "Petite bombe",
         ["label.big_bomb"] = "Grosse bombe",
         ["label.shockwave"] = "Onde de choc",
-        ["label.knockback"] = "Knockback",
+        ["label.knockback"] = "Repoussement",
         ["label.spew"] = "Crachat",
     },
 }
@@ -158,14 +158,14 @@ function Mod:new(o)
             small_bomb = {
                 enable = true,
                 position = 1,
-                sprite = "bomb",
+                sprite = "LUIBM_bomb",
                 color = "ff00ff00",
                 label = "label.small_bomb",
             },
             big_bomb = {
                 enable = true,
                 position = 2,
-                sprite = "bomb",
+                sprite = "LUIBM_bomb",
                 color = "ffff0000",
                 label = "label.big_bomb",
             },
@@ -219,7 +219,7 @@ end
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if DEBUFF_SMALL_BOMB == nSpellId then
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAura("Aura_SmallBomb", self.config.auras.small_bomb, nDuration)
+            self.core:ShowAura("Aura_SmallBomb", self.config.auras.small_bomb, nDuration, "SMALL Bomb on you!")
             self.core:ShowAlert("Alert_SmallBomb", self.L["alert.small_bomb_player"], self.config.alerts.small_bomb)
             self.core:PlaySound(self.config.sounds.small_bomb)
         else
@@ -228,7 +228,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         end
     elseif DEBUFF_BIG_BOMB == nSpellId then
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAura("Aura_BigBomb", self.config.auras.big_bomb, nDuration)
+            self.core:ShowAura("Aura_BigBomb", self.config.auras.big_bomb, nDuration, "BIG Bomb on you!")
             self.core:ShowAlert("Alert_BigBomb", self.L["alert.big_bomb_player"], self.config.alerts.big_bomb)
             self.core:PlaySound(self.config.sounds.big_bomb)
         else
