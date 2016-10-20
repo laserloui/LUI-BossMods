@@ -1064,7 +1064,7 @@ function LUI_BossMods:CheckBuffs(nId)
 end
 
 function LUI_BossMods:OnBuffAdded(unit,spell)
-    if not unit or not spell or not spell.fTimeRemaining > 0 or self.tCurrentEncounter or not self.runtime.units then
+    if not unit or not spell or not (spell.fTimeRemaining > 0) or not self.tCurrentEncounter or not self.runtime.units then
         return
     end
 
@@ -1125,7 +1125,7 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
 end
 
 function LUI_BossMods:OnBuffUpdated(unit,spell)
-    if not unit or not spell or not spell.fTimeRemaining > 0 or not self.tCurrentEncounter or not self.runtime.units then
+    if not unit or not spell or not (spell.fTimeRemaining > 0) or not self.tCurrentEncounter or not self.runtime.units then
         return
     end
 
