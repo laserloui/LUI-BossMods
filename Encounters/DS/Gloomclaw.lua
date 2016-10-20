@@ -22,6 +22,7 @@ local Locales = {
 		["label.essence_left"] = "Left Essence",
 		["label.essence_right"] = "Right Essence",
 		["label.next_rupture"] = "Next Rupture",
+		["label.next_adds"] = "Next Wave",
     },
     ["deDE"] = {
         -- Units
@@ -39,8 +40,26 @@ local Locales = {
 		["label.essence_left"] = "Linke Essenz",
 		["label.essence_right"] = "Rechte Essenz",
 		["label.next_rupture"] = "Nächstes Aufreißen",
+		["label.next_adds"] = "Nächste Welle",
 	},
-    ["frFR"] = {},
+    ["frFR"] = {
+        -- Units
+        ["unit.boss"] = "Serrenox",
+		["unit.essence"] = "Essence de logique",
+		["unit.add1"] = "Parasite de la Souilluree",
+		["unit.add2"] = "Skurge serrenox",
+		["unit.add3"] = "Friz corrompu",
+        -- Casts
+        ["cast.rupture"] = "Rupture",
+		["cast.burrow"] = "Burrow", --NEED TRANSLATION! /eval Print(GameLib.GettargetUnit():GetCastName()) while he is underground.
+        -- Alerts
+        ["alert.interrupt_rupture"] = "Interrompre Rupture!",
+		-- Labels
+		["label.essence_left"] = "Left Essence",
+		["label.essence_right"] = "Right Essence",
+		["label.next_rupture"] = "Prochaine rupture",
+		["label.next_adds"] = "Prochaine wave",
+	},
 }
 
 function Mod:new(o)
@@ -88,6 +107,10 @@ function Mod:new(o)
 				enable = true,
 				label = "label.next_rupture",
 				sound = true, --countdown
+			},
+			adds = {
+				enable = true,
+				label = "label.next_adds",
 			}
 		},
         casts = {
@@ -124,13 +147,16 @@ end
 --Constants
 local nCenterX = 4310 --the X coordinate of the Rooms Center
 local nRoomSouth = -16612 --the Z coordinate we use as the southmost point of the room.
-local nRoomStep = 84 --the distance between two seperators
+local nRoomStep = 84 --the distance between two seperators (seperating two sections)
+local tFirstRuptureTimers = {[0]=30, [1]=32, [2]=28, [3]=26, [5]=30} --the timers for first rupture of each section. No value for section 4.
+local tAddSpawnTimers = { [0]=25, [1]=26, [2]=33, [3]=25} --static times for add-timers for each section. 4 not needed, 5 handled seperatly. 
+local tAddSpawnTotal = {[0]=4,[1]=4, [2]=3, [3]=4} --the amount of add-spawns of each section. 4 not needed, 5 handled seperatly.
 
 --Variables
 local tEssences = {} -- [0-5]["L"/"R"] = tUnit e.g. tEssences[2].L is the left Essence in the 2nd Row
 local nSection = nil --the section the boss is currently in (0-5 or nil)
-
-local TESTTIMER = 0
+local nTimeLastWave = 0 --the timestamp the last wave was detected.
+local nWaveCount = 0 --the amount of waves spawned in this section.
 
 --[[
 L/R		true|false
@@ -190,9 +216,26 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 	
 	if sName == self.L["unit.add1"] or sName == self.L["unit.add2"] or sName == self.L["unit.add3"] then
-		print("new add:", GameLib.GetGameTime()-TESTTIMER, "section:", nSection)	
+		local now = GameLib.GetGameTime()
+		if now - nTimeLastWave > 10 then
+			nTimeLastWave = now
+			nWaveCount = nWaveCount + 1
+			if nSection < 5 then
+				if nWaveCount < tAddSpawnTotal[nSection] then
+					self.core:AddTimer("ADDS", self.L["label.next_adds"], tAddSpawnTimers[nSection], self.config.timers.adds)
+				end
+			else
+				if nWaveCount == 1 then
+					self.core:AddTimer("ADDS", self.L["label.next_adds"], 20.5, self.config.timers.adds)
+				elseif nWaveCount == 2 then
+					self.core:AddTimer("ADDS", self.L["label.next_adds"], 30, self.config.timers.adds)
+				elseif nWaveCount == 3 then
+					self.core:AddTimer("ADDS", self.L["label.next_adds"], 15, self.config.timers.adds)
+				end
+			end
+		end
     elseif sName == self.L["unit.boss"] and bInCombat == true then
-        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss, "25%")
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
 		self:UpdateGloomclawPos(tUnit)
 	elseif sName == self.L["unit.essence"] then
 		self:RegisterEssence(tUnit)
@@ -205,17 +248,18 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
         self.core:ShowCast(tCast,sCastName,self.config.casts.rupture)
         self.core:ShowAlert(sCastName, self.L["alert.interrupt_rupture"], self.config.alerts.rupture)
 		self.core:AddTimer("RUPTURE", self.L["label.next_rupture"], 43, self.config.timers.rupture)
-		print("rupture:", GameLib.GetGameTime()-TESTTIMER, "section:", nSection)	
+	elseif sName == self.L["unit.boss"] and sCastName == "MOO" then
+		self.core:RemoveTimer("RUPTURE")
+		self.core:RemoveTimer("ADDS")
     end
 end
+
 
 function Mod:OnCastEnd(nId, sCastName, tCast, sName)
 	if sCastName == self.L["cast.burrow"] then --the boss 'appeared' at a new Position
 		local section = self:UpdateGloomclawPos(tCast.tUnit)
-		print("new section:", section)
-		TESTTIMER = GameLib.GetGameTime()
 		if section ~= 4 then --this is the collection-section
-			self.core:AddTimer("RUPTURE", self.L["label.next_rupture"], 30, self.config.timers.rupture)
+			self.core:AddTimer("RUPTURE", self.L["label.next_rupture"], tFirstRuptureTimers[section], self.config.timers.rupture)
 		end
 	end
 end
