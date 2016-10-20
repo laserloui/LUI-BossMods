@@ -43,7 +43,42 @@ local Locales = {
         ["label.gun_return"] = "Return to Gun Reminder",
     },
     ["deDE"] = {},
-    ["frFR"] = {},
+    ["frFR"] = {
+        -- Units
+        ["unit.boss_gun"] = "Chef Ingénieur Orvulgh",
+        ["unit.boss_sword"] = "Chef Ingénieur Wilbargh",
+        ["unit.fusion_core"] = "Coeur de Fusion",
+        ["unit.lubricant_nozzle"] = "Buse de Lubrifiant",
+        ["unit.spark_plug"] = "Bougie d'Allumage",
+        ["unit.cooling_turbine"] = "Turbine de Refroidissement",
+        ["unit.circle_telegraph"] = "Unité de Champs Hostile Invisible (rayon d'action : 1,2)",
+        -- Debuffs
+        ["debuff.atomic_attraction"] = "Attraction Atomique",
+        ["debuff.electroshock_vulnerability"] = "Vulnérable aux Electrochocs",
+        -- Casts
+        ["cast.electroshock"] = "Electrochoc",
+        ["cast.liquidate"] = "Liquider",
+        ["cast.rocket_jump"] = "Saut Roquette",
+        -- Alerts
+        ["alert.liquidate"] = "Liquidation!",
+        ["alert.electroshock"] = "Electrochoc!",
+        ["alert.atomic_attraction"] = "Attraction Atomique sur ",
+        ["alert.vulnerability"] = " va sur l'EPEE!",
+        ["alert.vulnerability_player"] = "GO SUR L'EPEE!",
+        ["alert.sword_jump"] = "Epée quitte ",
+        ["alert.gun_jump"] = "Fusil quitte ",
+        ["alert.gun_return"] = "RETOURNE SUR LE FUSIL!",
+        ["alert.pillar"] = " à 20%!",
+        -- Datachron
+        ["datachron.electroshock"] = "(.*) souffre d'Electrochoc",
+        -- Labels
+        ["label.pillar"] = "Attention, vie à 20%",
+        ["label.pillar_health"] = "Vie du Pilier",
+        ["label.circle_telegraph"] = "Télégraphes Circulaire",
+        ["label.sword_jump"] = "Saut Roquette de l'Epée",
+        ["label.gun_jump"] = "Saut Roquette du Fusil",
+        ["label.gun_return"] = "Rappel : Retour sur le Fusil",
+    },
 }
 
 local DEBUFF_ELECTROSHOCK_VULNERABILITY = 83798
@@ -248,6 +283,14 @@ function Mod:new(o)
                 label = "debuff.atomic_attraction",
             },
         },
+        auras = {
+            atomic_attraction = {
+                enable = true,
+                sprite = "LUIBM_meteor3",
+                color = "ffff4500",
+                label = "debuff.atomic_attraction",
+            },
+        },
         lines = {
             gun = {
                 enable = true,
@@ -376,12 +419,14 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:ShowAlert("Vulnerability_"..tostring(nId), sUnitName..self.L["alert.vulnerability"], self.config.alerts.vulnerability)
         end
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
-        self.core:DrawIcon("atomic_attraction_"..tostring(nId), tData.tUnit, self.config.icons.atomic_attraction, nil, nDuration)
-        self.core:ShowAlert("atomic_attraction_"..tostring(nId), self.L["alert.atomic_attraction"]..sUnitName, self.config.alerts.atomic_attraction)
         self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction)
 
         if tData.tUnit:IsThePlayer() then
+            self.core:ShowAura("atomic_attraction", self.config.auras.atomic_attraction, nDuration, "Kite the orb!")
             self.core:PlaySound(self.config.sounds.atomic_attraction)
+        else
+            self.core:DrawIcon("atomic_attraction_"..tostring(nId), tData.tUnit, self.config.icons.atomic_attraction, nil, nDuration)
+            self.core:ShowAlert("atomic_attraction_"..tostring(nId), self.L["alert.atomic_attraction"]..sUnitName, self.config.alerts.atomic_attraction)
         end
     end
 end
@@ -395,6 +440,10 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
         end
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
         self.core:RemoveIcon("atomic_attraction_"..tostring(nId))
+
+        if tData.tUnit:IsThePlayer() then
+            self.core:HideAura("atomic_attraction")
+        end
     elseif nSpellId == BUFF_INSULATION and sUnitName == self.L["unit.fusion_core"] then
         self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction)
     end

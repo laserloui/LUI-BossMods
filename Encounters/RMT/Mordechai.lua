@@ -42,7 +42,41 @@ local Locales = {
         ["label.stack_point"] = "Barrage Stack Point",
     },
     ["deDE"] = {},
-    ["frFR"] = {},
+    ["frFR"] = {
+        -- Units
+        ["unit.boss"] = "Mordechai Rougelune",
+        ["unit.kinetic_orb"] = "Orbe Cinétique",
+        ["unit.airlock_anchor"] = "Airlock Anchor", -- MISSING
+        -- Debuffs
+        ["debuff.kinetic_link"] = "Lien Cinétique",
+        ["debuff.kinetic_fixation"] = "Fixation Cinétique",
+        ["debuff.shocking_attraction"] = "Attraction Choquante",
+        -- Datachron
+        ["datachron.airlock_opened"] = "Le sas a été ouvert!",
+        ["datachron.airlock_closed"] = "Le sas a été fermé!",
+        -- Casts
+        ["cast.shatter_shock"] = "Choc Fracassant",
+        ["cast.vicious_barrage"] = "Barrage Vicieux",
+        -- Alerts
+        ["alert.orb_spawned"] = "Une orbe est apparue",
+        ["alert.kinetic_link"] = "TAPE L'ORBE!",
+        ["alert.kinetic_fixation"] = "ORBE SUR TOI!",
+        ["alert.shocking_attraction_left"] = "BOUGE VERS LA GAUCHE!",
+        ["alert.shocking_attraction_right"] = "BOUGE VERS LA DROITE!",
+        -- Messages
+        ["message.barrage_next"] = "Barrage Suivant",
+        ["message.shuriken_next"] = "Shuriken Suivant",
+        ["message.orb_next"] = "Orbe Suivante",
+        ["message.orb_active"] = "L'orbe commence à bouger",
+        -- Labels
+        ["label.orb_next"] = "Orbe Cinétique (Suivante)",
+        ["label.orb_active"] = "Orbe Cinétique (Active)",
+        ["label.shocking_attraction_left"] = "Attraction Choquante (Gauche)",
+        ["label.shocking_attraction_right"] = "Attraction Choquante (Droite)",
+        ["label.shuriken"] = "Shuriken",
+        ["label.airlock"] = "Aspiration",
+        ["label.stack_point"] = "Point de ralliement du barrage",
+    },
 }
 
 local DEBUFF_KINETIC_LINK = 86797
@@ -185,6 +219,14 @@ function Mod:new(o)
                 label = "debuff.shocking_attraction",
             },
         },
+        auras = {
+            shocking_attraction = {
+                enable = true,
+                sprite = "LUIBM_shuriken",
+                color = "ffb0ff2f",
+                label = "debuff.shocking_attraction",
+            },
+        },
         lines = {
             boss = {
                 enable = true,
@@ -204,31 +246,42 @@ function Mod:new(o)
         icons = {
             kinetic_link = {
                 enable = true,
+                position = 1,
                 sprite = "target2",
-                size = 60,
+                size = 80,
                 color = "ffff00ff",
                 label = "debuff.kinetic_link",
             },
             shocking_attraction = {
                 enable = true,
+                position = 2,
                 sprite = "target2",
-                size = 60,
+                size = 80,
                 color = "ffb0ff2f",
                 label = "debuff.shocking_attraction",
             },
-        },
-        texts = {
             airlock_anchor = {
                 enable = true,
-                font = "CRB_FloaterMedium",
-                color = "ff00ff00",
+                position = 3,
+                sprite = "WhiteCircle",
+                size = 30,
+                color = "7800ff00",
                 label = "unit.airlock_anchor",
             },
             stack_point = {
                 enable = true,
-                font = "CRB_FloaterMedium",
-                color = "ffff00ff",
+                position = 4,
+                sprite = "WhiteCircle",
+                size = 30,
+                color = "78ff00ff",
                 label = "label.stack_point",
+            },
+        },
+        texts = {
+            orb_active = {
+                enable = true,
+                color = "ffb0ff2f",
+                label = "label.orb_active",
             },
         },
     }
@@ -255,7 +308,8 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.tUnitOrb = tUnit
         self.core:AddUnit(nId,sName,tUnit,self.config.units.orb)
         self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 26, self.config.timers.orb)
-        self.core:AddTimer("ORB_ACTIVE", self.L["message.orb_active"], 4.5, self.config.timers.orb_active)
+        self.core:AddTimer("ORB_ACTIVE", self.L["message.orb_active"], 5, self.config.timers.orb_active)
+        self.core:DrawText("ORB_TIMER", tUnit, self.config.texts.orb_active, "", 0, 5)
         self.core:ShowAlert("ORB"..tostring(nId), self.L["alert.orb_spawned"], self.config.alerts.orb)
         self.core:PlaySound(self.config.sounds.orb)
     end
@@ -281,14 +335,15 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:PlaySound(self.config.sounds.kinetic_fixation)
         end
 
-        if self.tUnitOrb then
+        if self.tUnitOrb and self.tUnitOrb:IsValid() then
             self.core:DrawLineBetween("ORB", tData.tUnit, self.tUnitOrb, self.config.lines.kinetic_fixation)
         end
     elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
         if tData.tUnit:IsThePlayer() then
+            self.core:ShowAura("SA", self.config.auras.shocking_attraction, nDuration, "Shurikens on YOU!")
+            self.core:PlaySound(self.config.sounds.shocking_attraction)
             self.core:ShowAlert("SA"..tostring(nId), self.L["alert.shocking_attraction_right"], self.config.alerts.shocking_attraction_right)
             self.core:ShowAlert("SA"..tostring(nId), self.L["alert.shocking_attraction_left"], self.config.alerts.shocking_attraction_left)
-            self.core:PlaySound(self.config.sounds.shocking_attraction)
         end
 
         self.core:DrawIcon("SA"..tostring(nId), tData.tUnit, self.config.icons.shocking_attraction, nil, nDuration)
@@ -300,6 +355,7 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
         self.core:RemoveIcon("KL" .. nId)
     elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
         self.core:RemoveIcon("SA" .. nId)
+        self.core:HideAura("SA")
     end
 end
 
@@ -341,9 +397,9 @@ function Mod:AddMarkerLines()
         self.core:DrawLine("Cleave_4", self.tUnitBoss, self.config.lines.boss, -60, 23.5, 0, CLEAVE_OFFSETS["BACK_RIGHT"])
     end
 
-    self.core:DrawText("AnchorLeft", AIRLOCK_ANCHOR_LEFT, self.config.texts.airlock_anchor, "LEFT")
-    self.core:DrawText("AnchorRight", AIRLOCK_ANCHOR_RIGHT, self.config.texts.airlock_anchor, "RIGHT")
-    self.core:DrawText("StackPoint", STACK_POINT_MID, self.config.texts.stack_point, "STACK")
+    self.core:DrawIcon("AnchorLeft", AIRLOCK_ANCHOR_LEFT, self.config.icons.airlock_anchor, 0)
+    self.core:DrawIcon("AnchorRight", AIRLOCK_ANCHOR_RIGHT, self.config.icons.airlock_anchor, 0)
+    self.core:DrawIcon("StackPoint", STACK_POINT_MID, self.config.icons.stack_point, 0)
 end
 
 function Mod:RemoveMarkerLines()
@@ -352,9 +408,9 @@ function Mod:RemoveMarkerLines()
     self.core:RemoveLine("Cleave_3")
     self.core:RemoveLine("Cleave_4")
 
-    self.core:RemoveText("AnchorLeft")
-    self.core:RemoveText("AnchorRight")
-    self.core:RemoveText("StackPoint")
+    self.core:RemoveIcon("AnchorLeft")
+    self.core:RemoveIcon("AnchorRight")
+    self.core:RemoveIcon("StackPoint")
 end
 
 function Mod:IsRunning()
