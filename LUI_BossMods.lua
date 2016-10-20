@@ -50,19 +50,20 @@ function LUI_BossMods:new(o)
     self.__index = self
     self.bIsLocked = true
     self.bIsRunning = false
-    self.language = "enUS"
     self.runtime = {}
     self.modules = {}
     self.config = {
         modules = {},
         interval = 100,
         aura = {
-            color = "ff7fff00",
+            color = "ff00ffff",
+            font = "CRB_Header18",
+            fontsize = 20,
             offsets = {
-                left = -120,
-                top = -230,
-                right = 120,
-                bottom = 10
+                left = -90,
+                top = -180,
+                right = 90,
+                bottom = 0
             },
         },
         icon = {
@@ -72,6 +73,7 @@ function LUI_BossMods:new(o)
         text = {
             color = "ffdbdbdb",
             font = "Subtitle",
+            fontsize = 40,
         },
         line = {
             color = "ffff0000",
@@ -92,9 +94,9 @@ function LUI_BossMods:new(o)
             barColor = "9600ffff",
             textColor = "ffebebeb",
             offsets = {
-                left = -300,
-                top = -360,
-                right = 300,
+                left = -275,
+                top = -350,
+                right = 275,
                 bottom = -300
             },
         },
@@ -105,10 +107,10 @@ function LUI_BossMods:new(o)
             soundPack = "male",
             countdown = "long1",
             offsets = {
-                left = -660,
-                top = -230,
+                left = -630,
+                top = -300,
                 right = -360,
-                bottom = 40
+                bottom = 0
             },
         },
         units = {
@@ -123,17 +125,17 @@ function LUI_BossMods:new(o)
             absorbColor = "96ffd700",
             textColor = "ffebebeb",
             offsets = {
-                left = 310,
-                top = -230,
-                right = 580,
-                bottom = 40
+                left = 390,
+                top = -150,
+                right = 660,
+                bottom = 150
             },
         },
         alerts = {
-            color = "ffff00ff",
+            color = "ff00ffff",
             font = "CRB_Header20",
+            fontsize = 20,
             duration = 3,
-            size = 20,
             offsets = {
                 left = -300,
                 top = -260,
@@ -188,8 +190,6 @@ function LUI_BossMods:OnDocLoaded()
     Apollo.LoadSprites("Sprites.xml")
     Apollo.RegisterSlashCommand("bossmod", "OnSlashCommand", self)
     Apollo.RegisterSlashCommand("bossmods", "OnSlashCommand", self)
-
-    self:GetLanguage()
 
     self:LoadWindows()
     self:LoadModules()
@@ -1064,7 +1064,7 @@ function LUI_BossMods:CheckBuffs(nId)
 end
 
 function LUI_BossMods:OnBuffAdded(unit,spell)
-    if not unit or not spell or not self.tCurrentEncounter or not self.runtime.units then
+    if not unit or not spell or not spell.fTimeRemaining > 0 or self.tCurrentEncounter or not self.runtime.units then
         return
     end
 
@@ -1125,7 +1125,7 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
 end
 
 function LUI_BossMods:OnBuffUpdated(unit,spell)
-    if not unit or not spell or not self.tCurrentEncounter or not self.runtime.units then
+    if not unit or not spell or not spell.fTimeRemaining > 0 or not self.tCurrentEncounter or not self.runtime.units then
         return
     end
 
@@ -1590,7 +1590,7 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:ShowAura(sName,tConfig,nDuration,bShowDuration,fHandler,tData)
+function LUI_BossMods:ShowAura(sName, tConfig, nDuration, sText, fHandler, tData)
     if not sName or not tConfig or not tConfig.enable then
         return
     end
@@ -1599,46 +1599,36 @@ function LUI_BossMods:ShowAura(sName,tConfig,nDuration,bShowDuration,fHandler,tD
         self:LoadWindows()
     end
 
-    if nDuration then
-        self.wndAura:FindChild("Overlay"):SetFullSprite(tConfig.sprite or "")
-        self.wndAura:FindChild("Overlay"):SetBarColor("a0000000")
-        self.wndAura:FindChild("Overlay"):SetBGColor("a0000000")
-        self.wndAura:FindChild("Overlay"):SetMax(100)
-        self.wndAura:FindChild("Overlay"):SetProgress(0.001)
-        self.wndAura:FindChild("Overlay"):SetProgress(99.999,(100/nDuration))
-        self.wndAura:FindChild("Overlay"):Show(true,true)
-
-        self.wndAura:FindChild("Duration"):SetText()
-        self.wndAura:FindChild("Duration"):Show(bShowDuration or false,true)
-
-        self.runtime.aura = {
-            sName = sName,
-            nTick = GetTickCount(),
-            nDuration = nDuration,
-            bShowDuration = bShowDuration or false,
-            fHandler = fHandler or nil,
-            tData = tData or nil
-        }
-    else
-        self.runtime.aura = {
-            sName = sName
-        }
-
-        if self.wndAura:FindChild("Overlay"):IsShown() then
-            self.wndAura:FindChild("Overlay"):Show(false,true)
-        end
-
-        if self.wndAura:FindChild("Duration"):IsShown() then
-            self.wndAura:FindChild("Duration"):Show(false,true)
-        end
-    end
+    local nWidth = (sText and sText ~= "") and (Apollo.GetTextWidth(self.config.aura.font or "CRB_Header18", sText) + 30) / 2 or 100
+    local nHeight = (self.config.aura.fontsize or 20) + 30
 
     self.wndAura:FindChild("Icon"):SetSprite(tConfig.sprite or "")
     self.wndAura:FindChild("Icon"):SetBGColor(tConfig.color or self.config.aura.color)
 
-    if not self.wndAura:FindChild("Icon"):IsShown() then
-        self.wndAura:FindChild("Icon"):Show(true,true)
+    self.wndAura:FindChild("Text"):SetAnchorOffsets((nWidth*-1),0,nWidth,nHeight)
+    self.wndAura:FindChild("Text"):SetText(sText or "")
+    self.wndAura:FindChild("Text"):SetFont(self.config.aura.font or "CRB_Header18")
+    self.wndAura:FindChild("Text"):SetTextColor(tConfig.color or self.config.aura.color)
+    self.wndAura:FindChild("Text"):Show(sText or false,true)
+
+    self.wndAura:FindChild("Overlay"):SetBGColor("a0000000")
+    self.wndAura:FindChild("Overlay"):Show(nDuration or false,true)
+
+    if nDuration then
+        self.wndAura:FindChild("Progress"):SetBGColor("96"..string.sub(tConfig.color or self.config.aura.color,3))
+        self.wndAura:FindChild("Progress"):SetBarColor("96"..string.sub(tConfig.color or self.config.aura.color,3))
+        self.wndAura:FindChild("Progress"):SetMax(100)
+        self.wndAura:FindChild("Progress"):SetProgress(0.001)
+        self.wndAura:FindChild("Progress"):SetProgress(99.999,(100/nDuration))
     end
+
+    self.runtime.aura = {
+        sName = sName,
+        nTick = GetTickCount(),
+        nDuration = nDuration,
+        fHandler = fHandler or nil,
+        tData = tData or nil
+    }
 
     if not self.wndAura:IsShown() then
         self.wndAura:Show(true,true)
@@ -1654,14 +1644,9 @@ function LUI_BossMods:UpdateAura()
     local nTick = GetTickCount()
     local nTotal = tAura.nDuration
     local nElapsed = (nTick - tAura.nTick) / 1000
-    local nRemaining = (nTotal - nElapsed)
 
     if nElapsed > nTotal then
         self:HideAura(tAura.sName)
-    else
-        if tAura.bShowDuration then
-            self.wndAura:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
-        end
     end
 end
 
@@ -1719,7 +1704,7 @@ function LUI_BossMods:ShowAlert(sName, sText, tConfig, fHandler, tData)
     self.runtime.alerts[sName].fHandler = fHandler or nil
     self.runtime.alerts[sName].tData = tData or nil
 
-    local nHeight = self.config.alerts.size * 2
+    local nHeight = (self.config.alerts.fontsize or 20) * 2
     self.runtime.alerts[sName].wnd:SetText(sText or "")
     self.runtime.alerts[sName].wnd:SetFont(self.config.alerts.font)
     self.runtime.alerts[sName].wnd:SetTextColor(tConfig.color or self.config.alerts.color)
@@ -1898,7 +1883,7 @@ function LUI_BossMods:DrawText(Key, Origin, tConfig, sText, nHeight, nDuration, 
 
     local OriginType = type(Origin)
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
-    local width = Apollo.GetTextWidth(tConfig.font or self.config.text.font, sText or "") + 20
+    local width = (sText and sText ~= "") and (Apollo.GetTextWidth(tConfig.font or self.config.text.font, sText) + 30) / 2 or 100
 
     wnd:SetAnchorOffsets((width*-1),-50,width,50)
     wnd:SetSprite("")
@@ -1920,6 +1905,7 @@ function LUI_BossMods:DrawText(Key, Origin, tConfig, sText, nHeight, nDuration, 
         nDuration = nDuration,
         tOrigin = Origin,
         sType = "Text",
+        bShowTimer = tConfig.timer or false,
         fHandler = fHandler,
         tData = tData,
         wnd = wnd
@@ -1941,10 +1927,15 @@ function LUI_BossMods:UpdateText(Key,tDraw)
         local nTick = GetTickCount()
         local nTotal = tDraw.nDuration
         local nElapsed = (nTick - tDraw.nTick) / 1000
+        local nRemaining = (nTotal - nElapsed)
 
         if nElapsed > nTotal then
             self:RemoveText(Key)
             return
+        else
+            if tDraw.bShowTimer then
+                tDraw.wnd:SetText(Apollo.FormatNumber(nRemaining,1,true))
+            end
         end
     end
 
@@ -3007,6 +2998,8 @@ function LUI_BossMods:LoadWindows()
 
     if not self.wndTimers then
         self.wndTimers = Apollo.LoadForm(self.xmlDoc, "Container", nil, self)
+        self.wndTimers:SetSizingMinimum(200,300)
+        self.wndTimers:SetSizingMaximum(400,300)
         self.wndTimers:SetData("timer")
         self.wndTimers:Show(false,true)
 
@@ -3020,7 +3013,8 @@ function LUI_BossMods:LoadWindows()
 
     if not self.wndUnits and self.config.units.enable then
         self.wndUnits = Apollo.LoadForm(self.xmlDoc, "Container", nil, self)
-        self.wndUnits:SetSizingMinimum(200, 200)
+        self.wndUnits:SetSizingMinimum(200,300)
+        self.wndUnits:SetSizingMaximum(400,300)
         self.wndUnits:SetData("units")
         self.wndUnits:Show(false,true)
 
@@ -3034,6 +3028,8 @@ function LUI_BossMods:LoadWindows()
 
     if not self.wndCastbar then
         self.wndCastbar = Apollo.LoadForm(self.xmlDoc, "Castbar", nil, self)
+        self.wndCastbar:SetSizingMinimum(200,30)
+        self.wndCastbar:SetSizingMaximum(1000,200)
         self.wndCastbar:SetData("castbar")
         self.wndCastbar:Show(false,true)
 
@@ -3047,6 +3043,8 @@ function LUI_BossMods:LoadWindows()
 
     if not self.wndAura then
         self.wndAura = Apollo.LoadForm(self.xmlDoc, "Aura", nil, self)
+        self.wndAura:SetSizingMinimum(125,125)
+        self.wndAura:SetSizingMaximum(300,300)
         self.wndAura:SetData("aura")
         self.wndAura:Show(false,true)
 
@@ -3144,7 +3142,7 @@ function LUI_BossMods:OnBreakEnd()
 end
 
 function LUI_BossMods:OnInterfaceMenuListHasLoaded()
-    Event_FireGenericEvent("InterfaceMenuList_NewAddOn","LUI BossMods", {"LUIBossMods_ToggleMenu", "", "LUI_BossMods:logo" })
+    Event_FireGenericEvent("InterfaceMenuList_NewAddOn","LUI BossMods", {"LUIBossMods_ToggleMenu", "", "LUI_BossMods:LUIBM_logo" })
 end
 
 function LUI_BossMods:OnSave(eType)
@@ -3190,18 +3188,6 @@ function LUI_BossMods:RegisterLocale(strBoss, sLanguage, tLocales)
         for key, val in next, tLocales do
             L[key] = val
         end
-    end
-end
-
-function LUI_BossMods:GetLanguage()
-    local strCancel = Apollo.GetString(1)
-
-    if strCancel == "Abbrechen" then
-        self.language = "deDE"
-    elseif strCancel == "Annuler" then
-        self.language = "frFR"
-    else
-        self.language = "enUS"
     end
 end
 

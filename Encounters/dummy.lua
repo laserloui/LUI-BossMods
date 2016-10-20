@@ -42,12 +42,12 @@ require "Apollo"
     HideCast()
         Hides the Castbar
 
-    ShowAura(sName, tConfig, nDuration, bShowDuration, fHandler, tData)
+    ShowAura(sName, tConfig, nDuration, sText, fHandler, tData)
         Creates an Aura on your screen (like LUI Aura)
         @param sName            - Unique ID
         @param tConfig          - Aura Settings
         @param nDuration        - Duration in Seconds (optional)
-        @param bShowDuration    - Show Duration Text
+        @param sText            - Aura Text (optional)
         @param fHandler         - Callback function
         @param tData            - Data forwarded by callback function
 
@@ -285,6 +285,7 @@ function Mod:new(o)
                 tooltip = "",           -- Tooltip in Option Panel
                 color = "ffffffff",     -- Color (Default: Global Setting)
                 font = "Subtitle",      -- Font (Default: Global Setting)
+                timer = false,          -- Display duration as text
                 label = "text.a",       -- Text in Option Panel (Text or Locale Key)
             },
         },
