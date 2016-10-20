@@ -1,85 +1,250 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Sprites>
-    <Sprite Name="bg" Cycle="1">
+    <Sprite Name="LUIBM_bg" Cycle="1">
         <Frame Texture="LUI_BossMods\Sprites\bg.png" x0="0" x1="0" x2="0" x3="20" x4="80" x5="100" y0="0" y1="2" y2="16" y3="20" y4="34" y5="36" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="border" Cycle="1">
+    <Sprite Name="LUIBM_border" Cycle="1">
         <Frame Texture="LUI_BossMods\Sprites\border.png" x0="0" x1="0" x2="0" x3="1" x4="99" x5="100" y0="0" y1="0" y2="0" y3="1" y4="99" y5="100" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="logo" Cycle="1">
+    <Sprite Name="LUIBM_logo" Cycle="1">
         <Frame Texture="LUI_BossMods\Sprites\logo.png" x0="0" x1="0" x2="0" x3="0" x4="56" x5="56" y0="0" y1="0" y2="0" y3="0" y4="56" y5="56" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <AutoButton Name="button" Texture="LUI_BossMods\Sprites\button.png" x0="0" x1="0" x2="0" x3="15" x4="85" x5="100" y0="0" y1="0" y2="0" y3="15" y4="21" y5="36" Stretchy="1" StateBits="15" Direction="Down"/>
-    <Sprite Name="angry" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\angry.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_circle" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\circle.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="attention" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\attention.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_circle_bg" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\circle_bg.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="attention2" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\attention2.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_run" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\run.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="bomb" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\bomb.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_detonation" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\detonation.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="boss" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\boss.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_eye" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\eye.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="boss2" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\boss2.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_crosshair" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\crosshair.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="boss3" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\boss3.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_radioactive" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\radioactive.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="danger" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\danger.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_atom" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\atom.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="danger2" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\danger2.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_biohazard" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\biohazard.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="danger3" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\danger3.png" x0="0" x1="0" x2="0" x3="0" x4="128" x5="128" y0="0" y1="0" y2="0" y3="0" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_lightning" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\lightning.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="flame" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\flame.png" x0="0" x1="0" x2="0" x3="0" x4="128" x5="128" y0="0" y1="0" y2="0" y3="0" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_sword" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\sword.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="lighting" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\lighting.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_poison" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\poison.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="meteor" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\meteor.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_boots" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\boots.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="run" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\run.png" x0="0" x1="0" x2="0" x3="0" x4="128" x5="128" y0="0" y1="0" y2="0" y3="0" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_diamonds" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\diamonds.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="run2" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\run2.png" x0="0" x1="0" x2="0" x3="0" x4="128" x5="128" y0="0" y1="0" y2="0" y3="0" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_tornado" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\tornado.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="shield" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\shield.png" x0="0" x1="0" x2="0" x3="0" x4="128" x5="128" y0="0" y1="0" y2="0" y3="0" y4="128" y5="128" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_meteor2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\meteor2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="stop" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\stop.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_meteor" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\meteor.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="stop2" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\stop2.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_virus" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\virus.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="stop3" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\stop3.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_star" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\star.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="target" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\target.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_shuriken" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\shuriken.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="target2" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\target2.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_granate" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\granate.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="target3" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\target3.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_pirate" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\pirate.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="target4" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\target4.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_zombiehand" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\zombiehand.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <Sprite Name="virus" Cycle="1">
-        <Frame Texture="LUI_BossMods\Sprites\virus.png" x0="0" x1="0" x2="0" x3="0" x4="256" x5="256" y0="0" y1="0" y2="0" y3="0" y4="256" y5="256" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    <Sprite Name="LUIBM_wave" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\wave.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_twirl" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\twirl.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_air" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\air.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_ghost" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\ghost.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_meteor3" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\meteor3.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_bomb" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\bomb.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_lightning2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\lightning2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_monster" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\monster.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_poo" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\poo.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_air2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\air2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_eye2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\eye2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_stop" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\stop.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_fire" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\fire.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_heat" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\heat.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <AutoButton Name="LUIBM_button" Texture="LUI_BossMods\Sprites\button.png" x0="0" x1="0" x2="0" x3="15" x4="85" x5="100" y0="0" y1="0" y2="0" y3="15" y4="21" y5="36" Stretchy="1" StateBits="15" Direction="Down"/>
+    <Sprite Name="LUIBM_fish" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\fish.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_axe" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\axe.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_axe2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\axe2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_biceps" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\biceps.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_claw" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\claw.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_eye3" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\eye3.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_shield" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\shield.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_boots2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\boots2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_helm" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\helm.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_aim" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\aim.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_fire2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\fire2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_meteor4" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\meteor4.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_crown" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\crown.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_skull3" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\skull3.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_crown2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\crown2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_sword2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\sword2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_tentacle" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\tentacle.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_tree" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\tree.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_team" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\team.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_skull2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\skull2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_hand" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\hand.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_duality" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\duality.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_waterdrop" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\waterdrop.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_waterdrop3" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\waterdrop3.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_waterdrop2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\waterdrop2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_poison2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\poison2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_skull" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\skull.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_ifrit" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\ifrit.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_position" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\position.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_minotaur" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\minotaur.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_spider" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\spider.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_mushroom" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\mushroom.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_sword3" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\sword3.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_quicksand" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\quicksand.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_serpent" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\serpent.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_ghost2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\ghost2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_supersonic" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\supersonic.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_skull4" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\skull4.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_tornado2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\tornado2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_voodoo" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\voodoo.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_sword4" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\sword4.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_stop2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\stop2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
 </Sprites>
