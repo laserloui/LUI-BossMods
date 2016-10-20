@@ -3,6 +3,7 @@
 	<!-- Libraries -->
 	<Script Name="Libs/GeminiColor/GeminiColor.lua"/>
 	<Script Name="Libs/GeminiLocale/GeminiLocale.lua"/>
+	<Script Name="Libs/LibJSON/LibJSON-2.5.lua"/>
 	<!-- Main -->
 	<Script Name="LUI_BossMods.lua"/>
 	<Form Name="LUI_BossMods.xml"/>

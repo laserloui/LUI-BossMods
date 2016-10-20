@@ -1,5 +1,7 @@
 require "Window"
 require "Apollo"
+require "ICCommLib"
+require "ICComm"
 require "Unit"
 require "Sound"
 require "Vector3"
@@ -7,6 +9,7 @@ require "Vector3"
 local LUI_BossMods = {}
 local TemplateDraw = {}
 local GeminiLocale = Apollo.GetPackage("Gemini:Locale-1.0").tPackage
+local JSON = Apollo.GetPackage("Lib:dkJSON-2.5").tPackage
 
 local ipairs, pairs = ipairs, pairs
 local table = table
@@ -197,6 +200,9 @@ function LUI_BossMods:OnDocLoaded()
 
     self.CheckVolumeTimer = ApolloTimer.Create(3, false, "CheckVolume", self)
     self.CheckVolumeTimer:Start()
+
+    self.CheckConnectionTimer = ApolloTimer.Create(1, false, "Connect", self)
+    self.CheckConnectionTimer:Start()
 
     if self.tPreloadUnits then
         self:CreateUnitsFromPreload()
@@ -1319,7 +1325,12 @@ function LUI_BossMods:UpdateTimer(tTimer)
         self:RemoveTimer(tTimer.sName)
     else
         tTimer.nRemaining = nRemaining
-        tTimer.wnd:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
+
+        if nRemaining < 60 then
+            tTimer.wnd:FindChild("Duration"):SetText(Apollo.FormatNumber(nRemaining,1,true))
+        else
+            tTimer.wnd:FindChild("Duration"):SetText(ConvertSecondsToTimer(nRemaining))
+        end
     end
 end
 
@@ -3092,6 +3103,32 @@ function LUI_BossMods:OnConfigure()
     self.settings:OnToggleMenu()
 end
 
+function LUI_BossMods:Connect()
+    if not self.comm then
+        self.comm = ICCommLib.JoinChannel("LUIBossMods", ICCommLib.CodeEnumICCommChannelType.Group)
+    end
+
+    if self.comm:IsReady() then
+        self.comm:SetReceivedMessageFunction("OnICCommMessageReceived", self)
+        self.comm:SetSendMessageResultFunction("OnICCommSendMessageResult", self)
+
+        if self.nBreakDuration then
+            self:OnBreakSet(self.nBreakDuration)
+        end
+
+        if self.CheckConnectionTimer then
+            self.CheckConnectionTimer:Stop()
+            self.CheckConnectionTimer = nil
+        end
+    else
+        if not self.CheckConnectionTimer then
+            self.CheckConnectionTimer = ApolloTimer.Create(1, false, "Connect", self)
+        end
+
+        self.CheckConnectionTimer:Start()
+    end
+end
+
 function LUI_BossMods:OnSlashCommand(cmd, args)
     local tArgc = {}
 
@@ -3107,19 +3144,71 @@ function LUI_BossMods:OnSlashCommand(cmd, args)
     end
 
     if strName and nDuration then
-        self:AddTimer("break", "Break", nDuration, {enable=true}, LUI_BossMods.OnBreakFinished, "break")
-
-        if not self.breakTimer then
-            self.breakTimer = ApolloTimer.Create(0.1, true, "OnBreakTimer", self)
-            self.breakTimer:Start()
-        end
+        self:OnBreakSet(nDuration)
     else
         self.settings:OnToggleMenu()
     end
 end
 
-function LUI_BossMods:OnBreakFinished()
-    GroupLib.ReadyCheck()
+function LUI_BossMods:OnICCommSendMessageResult(iccomm, eResult, idMessage)
+	self.busy = false
+end
+
+function LUI_BossMods:OnICCommMessageReceived(channel, strMessage, idMessage)
+    local tMessage = JSON.decode(strMessage)
+
+    if type(tMessage) ~= "table" then
+        return
+    end
+
+    if not tMessage.action then
+        return
+    end
+
+    if tMessage.action == "break" then
+        self:OnBreakStart(tMessage)
+    end
+end
+
+function LUI_BossMods:OnBreakSet(nDuration)
+    if not nDuration or not self:CheckPermission() then
+        return
+    end
+
+    local tMessage = {
+        action = "break",
+        duration = nDuration
+    }
+
+    local strMsg = JSON.encode(tMessage)
+
+    if self.comm and self.comm:IsReady() and not self.busy then
+        self.busy = true
+        self.nBreakDuration = nil
+
+        self:OnBreakStart(tMessage)
+        self.comm:SendMessage(tostring(strMsg))
+    else
+        if not self.CheckConnectionTimer then
+            self.CheckConnectionTimer = ApolloTimer.Create(1, false, "Connect", self)
+        end
+
+        self.nBreakDuration = nDuration
+        self.CheckConnectionTimer:Start()
+    end
+end
+
+function LUI_BossMods:OnBreakStart(tMessage)
+    if not tMessage or not tMessage.duration then
+        return
+    end
+
+    self:AddTimer("break", "Break", tonumber(tMessage.duration), {enable=true}, LUI_BossMods.OnBreakFinished, "break")
+
+    if not self.breakTimer then
+        self.breakTimer = ApolloTimer.Create(0.1, true, "OnBreakTimer", self)
+        self.breakTimer:Start()
+    end
 end
 
 function LUI_BossMods:OnBreakTimer()
@@ -3129,15 +3218,43 @@ function LUI_BossMods:OnBreakTimer()
     else
         if self.breakTimer then
             self.breakTimer:Stop()
+            self.breakTimer = nil
         end
+    end
+end
 
-        self.breakTimer = nil
+function LUI_BossMods:OnBreakFinished()
+    if self:CheckPermission() then
+        GroupLib.ReadyCheck()
     end
 end
 
 function LUI_BossMods:OnBreakEnd()
     if self.runtime.timer and self.runtime.timer["break"] then
         self:RemoveTimer("break")
+    end
+end
+
+function LUI_BossMods:CheckPermission()
+    local inRaid = GroupLib.InRaid(GetPlayerUnit():GetName())
+    local isLeader = GroupLib.AmILeader()
+    local isAssist = false
+    local nMemberCount = GroupLib.GetMemberCount()
+
+    for nMemberIdx = 1, nMemberCount do
+        local tMember = GroupLib.GetGroupMember(nMemberIdx)
+
+        if tMember.strCharacterName == self.strPlayerName then
+            if tMember.bRaidAssistant then
+                isAssist = true
+            end
+        end
+    end
+
+    if inRaid and (isLeader or isAssist) then
+        return true
+    else
+        return false
     end
 end
 
