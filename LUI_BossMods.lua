@@ -2506,6 +2506,8 @@ function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset
     tDraw.nDuration = nDuration or 0
     tDraw.nWidth = tConfig.thickness or self.config.line.thickness
     tDraw.sColor = tConfig.color or self.config.line.color
+    tDraw.nMaxLengthVisible = tConfig.max or nil
+    tDraw.nMinLengthVisible = tConfig.min or nil
     tDraw.nNumberOfDot = nNumberOfDot or 1
     tDraw.nPixieIdDot = tDraw.nPixieIdDot or {}
     tDraw.tVectorOffsets = tVectorOffsets or nil
@@ -2700,6 +2702,8 @@ function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, tConfig, nDurat
     tDraw.nTick = GetTickCount()
     tDraw.nWidth = tConfig.thickness or self.config.line.thickness
     tDraw.sColor = tConfig.color or self.config.line.color
+    tDraw.nMaxLengthVisible = tConfig.max or nil
+    tDraw.nMinLengthVisible = tConfig.min or nil
     tDraw.nNumberOfDot = nNumberOfDot or 1
     tDraw.nPixieIdDot = tDraw.nPixieIdDot or {}
     tDraw.fHandler = fHandler or nil
@@ -2735,10 +2739,6 @@ function LUI_BossMods:DrawLineBetween(Key, FromOrigin, OriginTo, tConfig, nDurat
 
     self.tDraws[Key] = tDraw
 end
-
--- #########################################################################################################################################
--- # HELPER
--- #########################################################################################################################################
 
 function LUI_BossMods:UpdateLineBetween(Key,tDraw)
     if tDraw.nDuration ~= nil and tDraw.nDuration > 0 then
@@ -2818,6 +2818,10 @@ function LUI_BossMods:RemoveLineBetween(Key)
         self:Callback(tCallback.fHandler, tCallback.tData)
     end
 end
+
+-- #########################################################################################################################################
+-- # HELPER
+-- #########################################################################################################################################
 
 function LUI_BossMods:UpdateDraw(tDraw, tVectorFrom, tVectorTo)
     local tScreenLocTo, tScreenLocFrom = nil, nil

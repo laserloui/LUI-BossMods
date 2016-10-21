@@ -306,6 +306,8 @@ function Mod:new(o)
                 tooltip = "",           -- Tooltip in Option Panel
                 color = "ffff0000",     -- Color (Default: Global Setting)
                 thickness = 10,         -- Thickness (Default: Global Setting)
+                max = 40,               -- Max Line Length (Default: nil)
+                min = 10,               -- Min Line Length (Default: nil)
                 label = "line.a"        -- Text in Option Panel (Text or Locale Key)
             },
         },
