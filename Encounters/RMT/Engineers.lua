@@ -26,6 +26,7 @@ local Locales = {
         ["alert.liquidate"] = "Liquidate!",
         ["alert.electroshock"] = "Electroshock!",
         ["alert.atomic_attraction"] = "Atomic Attraction on ",
+        ["alert.atomic_attraction_player"] = "Kite the Orb!",
         ["alert.vulnerability"] = " swap to SWORD!",
         ["alert.vulnerability_player"] = "SWAP TO SWORD!",
         ["alert.sword_jump"] = "Sword is leaving ",
@@ -63,6 +64,7 @@ local Locales = {
         ["alert.liquidate"] = "Liquidation!",
         ["alert.electroshock"] = "Electrochoc!",
         ["alert.atomic_attraction"] = "Attraction Atomique sur ",
+        ["alert.atomic_attraction_player"] = "Kite the Orb!", -- Missing!
         ["alert.vulnerability"] = " va sur l'EPEE!",
         ["alert.vulnerability_player"] = "GO SUR L'EPEE!",
         ["alert.sword_jump"] = "Epée quitte ",
@@ -129,25 +131,21 @@ function Mod:new(o)
                 enable = true,
                 position = 3,
                 label = "unit.spark_plug",
-                color = "afb0ff2f",
             },
             fusion = {
                 enable = true,
                 position = 4,
                 label = "unit.fusion_core",
-                color = "afb0ff2f",
             },
             cooling = {
                 enable = true,
                 position = 5,
                 label = "unit.cooling_turbine",
-                color = "afb0ff2f",
             },
             lubricant = {
                 enable = true,
                 position = 6,
                 label = "unit.lubricant_nozzle",
-                color = "afb0ff2f",
             },
         },
         timers = {
@@ -179,12 +177,10 @@ function Mod:new(o)
         casts = {
             sword_jump = {
                 enable = false,
-                color = "ffff00ff",
                 label = "label.sword_jump",
             },
             gun_jump = {
                 enable = false,
-                color = "ffff00ff",
                 label = "label.gun_jump",
             },
         },
@@ -202,7 +198,6 @@ function Mod:new(o)
             atomic_attraction = {
                 enable = true,
                 position = 3,
-                color = "ffff4500",
                 label = "debuff.atomic_attraction",
             },
             pillar = {
@@ -422,11 +417,12 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         self.core:AddTimer("atomic_attraction", self.L["debuff.atomic_attraction"], 23, self.config.timers.atomic_attraction)
 
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAura("atomic_attraction", self.config.auras.atomic_attraction, 15, "Kite the orb!")
             self.core:PlaySound(self.config.sounds.atomic_attraction)
+            self.core:ShowAura("atomic_attraction", self.config.auras.atomic_attraction, 15, self.L["alert.atomic_attraction_player"])
+            self.core:ShowAlert("atomic_attraction", self.L["alert.atomic_attraction_player"], self.config.alerts.atomic_attraction)
         else
-            self.core:DrawIcon("atomic_attraction_"..tostring(nId), tData.tUnit, self.config.icons.atomic_attraction)
-            self.core:ShowAlert("atomic_attraction_"..tostring(nId), self.L["alert.atomic_attraction"]..sUnitName, self.config.alerts.atomic_attraction)
+            self.core:DrawIcon("atomic_attraction", tData.tUnit, self.config.icons.atomic_attraction)
+            self.core:ShowAlert("atomic_attraction", self.L["alert.atomic_attraction"]..sUnitName, self.config.alerts.atomic_attraction)
         end
     end
 end
@@ -439,7 +435,7 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
             self.core:ShowAlert("GunReturn_"..tostring(nId), self.L["alert.gun_return"], self.config.alerts.gun_return)
         end
     elseif nSpellId == DEBUFF_ATOMIC_ATTRACTION then
-        self.core:RemoveIcon("atomic_attraction_"..tostring(nId))
+        self.core:RemoveIcon("atomic_attraction")
 
         if tData.tUnit:IsThePlayer() then
             self.core:HideAura("atomic_attraction")

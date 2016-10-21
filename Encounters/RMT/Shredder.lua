@@ -20,6 +20,7 @@ local Locales = {
         ["cast.gravedigger"] = "Gravedigger",
         -- Alerts
         ["alert.oozing_bile"] = "Oozing Bile - Stop Damage!",
+        ["alert.oozing_bile_short"] = "Stop Damage!",
         ["alert.interrupt"] = "Interrupt!",
         -- Debuffs
         ["debuff.oozing_bile"] = "Oozing Bile",
@@ -42,6 +43,7 @@ local Locales = {
         ["cast.gravedigger"] = "Gravedigger",
         -- Alerts
         ["alert.oozing_bile"] = "Triefende Galle - Stop Damage!",
+        ["alert.oozing_bile_short"] = "Stop Damage!",
         ["alert.interrupt"] = "Unterbrechen!",
         -- Debuffs
         ["debuff.oozing_bile"] = "Triefende Galle",
@@ -65,6 +67,7 @@ local Locales = {
         ["cast.gravedigger"] = "Fossoyer",
         -- Alerts
         ["alert.oozing_bile"] = "Bile Suintante - Stop DPS!",
+        ["alert.oozing_bile_short"] = "Stop DPS!",
         ["alert.interrupt"] = "Interromps!",
         -- Debuffs
         ["debuff.oozing_bile"] = "Bile Suintante",
@@ -130,19 +133,16 @@ function Mod:new(o)
             necrotic_lash = {
                 enable = true,
                 position = 1,
-                color = "ff9932cc",
                 label = "cast.necrotic_lash",
             },
             deathwail = {
                 enable = true,
                 position = 2,
-                color = "ff9932cc",
                 label = "cast.deathwail",
             },
             gravedigger = {
                 enable = true,
                 position = 3,
-                color = "ff9932cc",
                 label = "cast.gravedigger",
             },
         },
@@ -276,7 +276,7 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
     if DEBUFF_OOZING_BILE == nSpellId then
         if tData.tUnit:IsThePlayer() then
             if nStack >= 8 then
-                self.core:ShowAura("OOZE", self.config.auras.oozing_bile, nDuration, "DAMAGE STOP!")
+                self.core:ShowAura("OOZE", self.config.auras.oozing_bile, nDuration, self.L["alert.oozing_bile_short"])
 
                 if not self.warned then
                     self.core:PlaySound(self.config.sounds.oozing_bile)

@@ -111,13 +111,11 @@ function Mod:new(o)
             flailing_arm = {
                 enable = true,
                 label = "unit.flailing_arm",
-                color = "ade91dfb",
                 position = 2,
             },
             cannon_arm = {
                 enable = true,
                 label = "unit.cannon_arm",
-                color = "ade91dfb",
                 position = 3,
             },
         },
@@ -125,25 +123,21 @@ function Mod:new(o)
             arms = {
                 enable = true,
                 position = 1,
-                color = "afb0ff2f",
                 label = "label.arms",
             },
             crush = {
                 enable = true,
                 position = 2,
-                color = "afe91dfb",
                 label = "label.crush",
             },
             noxious_belch = {
                 enable = true,
                 position = 3,
-                color = "ad1dfbfb",
                 label = "cast.noxious_belch",
             },
             incineration = {
                 enable = true,
                 position = 4,
-                color = "afff4500",
                 label = "cast.incineration_laser",
             },
         },
@@ -151,19 +145,23 @@ function Mod:new(o)
             crush_player = {
                 enable = true,
                 sprite = "LUIBM_run",
-                color = "ffff00ff",
+                color = "ffff4500",
                 label = "label.crush_player",
+            },
+            incineration = {
+                enable = true,
+                sprite = "LUIBM_ifrit",
+                color = "ffff4500",
+                label = "cast.incineration_laser",
             },
         },
         casts = {
             noxious_belch = {
                 enable = true,
-                color = "afb0ff2f",
                 label = "cast.noxious_belch",
             },
             cannon_fire = {
                 enable = false,
-                color = "ade91dfb",
                 label = "cast.cannon_fire",
             },
         },
@@ -230,7 +228,7 @@ function Mod:new(o)
             },
             incineration = {
                 enable = true,
-                sprite = "LUIBM_ifrit",
+                sprite = "LUIBM_fire",
                 size = 80,
                 color = "ffff4500",
                 label = "cast.incineration_laser",
@@ -309,10 +307,10 @@ end
 function Mod:OnHealthChanged(nId, nHealthPercent, sName, tUnit)
     if sName == self.L["unit.boss"] then
         if nHealthPercent <= 77 and self.nMidphaseWarnings == 0 then
-            self.core:ShowAlert("Midphase", self.L["alert.midphase"], self.config.alerts.midphase)
+            self.core:ShowAlert("Alert_Midphase", self.L["alert.midphase"], self.config.alerts.midphase)
             self.nMidphaseWarnings = 1
         elseif nHealthPercent <= 52 and self.nMidphaseWarnings == 1 then
-            self.core:ShowAlert("Midphase", self.L["alert.midphase"], self.config.alerts.midphase)
+            self.core:ShowAlert("Alert_Midphase", self.L["alert.midphase"], self.config.alerts.midphase)
             self.nMidphaseWarnings = 2
         end
     end
@@ -334,7 +332,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 17, self.config.timers.crush)
 
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAura("Aura_Crush", self.config.auras.crush_player, nDuration, "Crush on YOU!")
+            self.core:ShowAura("Aura_Crush", self.config.auras.crush_player, nDuration, self.L["alert.crush_player"])
             self.core:ShowAlert("Alert_Crush", self.L["alert.crush_player"], self.config.alerts.crush_player)
             self.core:PlaySound(self.config.sounds.crush_player)
         else
@@ -374,14 +372,15 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
             local tFocusedUnit = GameLib.GetPlayerUnitByName(strPlayerLaserFocused)
 
             if tFocusedUnit:IsThePlayer() then
-                self.core:ShowAlert("Incineration", self.L["alert.incineration_player"], self.config.alerts.incineration)
                 self.core:PlaySound(self.config.sounds.incineration)
+                self.core:ShowAura("Aura_Incineration", self.config.auras.incineration, 10, self.L["alert.incineration_player"])
+                self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration_player"], self.config.alerts.incineration)
             else
-                self.core:ShowAlert("Incineration", self.L["alert.incineration"]:format(tFocusedUnit:GetName()), self.config.alerts.incineration)
+                self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration, nil, 10)
+                self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration"]:format(tFocusedUnit:GetName()), self.config.alerts.incineration)
             end
 
             self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 40, self.config.timers.incineration)
-            self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration, nil, 10)
             self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration, 10)
         end
     end

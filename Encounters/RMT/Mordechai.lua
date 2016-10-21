@@ -118,13 +118,11 @@ function Mod:new(o)
             boss = {
                 enable = true,
                 label = "unit.boss",
-                color = "afb0ff2f",
                 position = 1,
             },
             orb = {
                 enable = true,
                 label = "unit.kinetic_orb",
-                color = "afb0ff2f",
                 position = 2,
             },
         },
@@ -132,7 +130,6 @@ function Mod:new(o)
             orb = {
                 enable = true,
                 position = 1,
-                color = "afb0ff2f",
                 label = "label.orb_next",
             },
             orb_active = {
@@ -145,13 +142,11 @@ function Mod:new(o)
                 enable = true,
                 position = 3,
                 sound = true,
-                color = "afb0ff2f",
                 label = "label.shuriken",
             },
             airlock = {
                 enable = true,
                 position = 4,
-                color = "afb0ff2f",
                 label = "label.airlock",
             },
             barrage = {
@@ -235,9 +230,16 @@ function Mod:new(o)
                 color = "ffffffff",
                 label = "unit.boss",
             },
-            kinetic_fixation = {
+            kinetic_link = {
                 enable = true,
                 position = 2,
+                thickness = 6,
+                color = "ffff4500",
+                label = "debuff.kinetic_link",
+            },
+            kinetic_fixation = {
+                enable = true,
+                position = 3,
                 thickness = 6,
                 color = "ffb0ff2f",
                 label = "debuff.kinetic_fixation",
@@ -249,7 +251,7 @@ function Mod:new(o)
                 position = 1,
                 sprite = "LUIBM_crosshair",
                 size = 80,
-                color = "ffff00ff",
+                color = "ffff4500",
                 label = "debuff.kinetic_link",
             },
             shocking_attraction = {
@@ -264,23 +266,24 @@ function Mod:new(o)
                 enable = true,
                 position = 3,
                 sprite = "BasicSprites:WhiteCircle",
-                size = 30,
-                color = "7800ff00",
+                size = 40,
+                color = "9600ff00",
                 label = "unit.airlock_anchor",
             },
             stack_point = {
                 enable = true,
                 position = 4,
                 sprite = "BasicSprites:WhiteCircle",
-                size = 30,
-                color = "78ff00ff",
+                size = 40,
+                color = "96ff00ff",
                 label = "label.stack_point",
             },
         },
         texts = {
             orb_active = {
                 enable = true,
-                color = "ffb0ff2f",
+                color = "ffff4500",
+                timer = true,
                 label = "label.orb_active",
             },
         },
@@ -309,55 +312,62 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.core:AddUnit(nId,sName,tUnit,self.config.units.orb)
         self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 26, self.config.timers.orb)
         self.core:AddTimer("ORB_ACTIVE", self.L["message.orb_active"], 5, self.config.timers.orb_active)
-        self.core:DrawText("ORB_TIMER", tUnit, self.config.texts.orb_active, "", 0, 5)
-        self.core:ShowAlert("ORB"..tostring(nId), self.L["alert.orb_spawned"], self.config.alerts.orb)
+        self.core:DrawText("ORB_ACTIVE", tUnit, self.config.texts.orb_active, "", 0, 5)
+        self.core:ShowAlert("ORB_SPAWNED", self.L["alert.orb_spawned"], self.config.alerts.orb)
         self.core:PlaySound(self.config.sounds.orb)
     end
 end
 
 function Mod:OnUnitDestroyed(nId, tUnit, sName)
     if sName == self.L["unit.kinetic_orb"] then
-        self.core:RemoveLineBetween("ORB")
+        self.core:RemoveLineBetween("Line_Fixation")
+        self.core:RemoveLineBetween("Line_Link")
+        self.tUnitOrb = nil
     end
 end
 
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if nSpellId == DEBUFF_KINETIC_LINK then
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAlert("KL"..tostring(nId), self.L["alert.kinetic_link"], self.config.alerts.kinetic_link)
             self.core:PlaySound(self.config.sounds.kinetic_link)
+            self.core:DrawLineBetween("Line_Link", self.tUnitOrb, tData.tUnit, self.config.lines.kinetic_link)
+            self.core:ShowAlert("Alert_Link", self.L["alert.kinetic_link"], self.config.alerts.kinetic_link)
         end
 
-        self.core:DrawIcon("KL"..tostring(nId), tData.tUnit, self.config.icons.kinetic_link, nil, nDuration)
+        self.core:DrawIcon("Icon_Link"..tostring(nId), tData.tUnit, self.config.icons.kinetic_link, nil, nDuration)
     elseif nSpellId == DEBUFF_KINETIC_FIXATION then
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAlert("KF"..tostring(nId), self.L["alert.kinetic_fixation"], self.config.alerts.kinetic_fixation)
             self.core:PlaySound(self.config.sounds.kinetic_fixation)
+            self.core:ShowAlert("Alert_Fixation", self.L["alert.kinetic_fixation"], self.config.alerts.kinetic_fixation)
         end
 
-        if self.tUnitOrb and self.tUnitOrb:IsValid() then
-            self.core:DrawLineBetween("ORB", tData.tUnit, self.tUnitOrb, self.config.lines.kinetic_fixation)
-        end
+        self.core:DrawLineBetween("Line_Fixation", self.tUnitOrb, tData.tUnit, self.config.lines.kinetic_fixation)
     elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAura("SA", self.config.auras.shocking_attraction, nDuration, "Shurikens on YOU!")
             self.core:PlaySound(self.config.sounds.shocking_attraction)
-            self.core:ShowAlert("SA"..tostring(nId), self.L["alert.shocking_attraction_right"], self.config.alerts.shocking_attraction_right)
-            self.core:ShowAlert("SA"..tostring(nId), self.L["alert.shocking_attraction_left"], self.config.alerts.shocking_attraction_left)
+            self.core:ShowAura("Aura_Shurikens", self.config.auras.shocking_attraction, nDuration, "Shurikens on YOU!")
+            self.core:ShowAlert("Alert_Shurikens"..tostring(nId), self.L["alert.shocking_attraction_right"], self.config.alerts.shocking_attraction_right)
+            self.core:ShowAlert("Alert_Shurikens"..tostring(nId), self.L["alert.shocking_attraction_left"], self.config.alerts.shocking_attraction_left)
         end
 
-        self.core:DrawIcon("SA"..tostring(nId), tData.tUnit, self.config.icons.shocking_attraction, nil, nDuration)
+        self.core:DrawIcon("Icon_Shurikens"..tostring(nId), tData.tUnit, self.config.icons.shocking_attraction, nil, nDuration)
     end
 end
 
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if nSpellId == DEBUFF_KINETIC_LINK then
-        self.core:RemoveIcon("KL" .. nId)
-    elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
-        self.core:RemoveIcon("SA" .. nId)
+        self.core:RemoveIcon("Icon_Link"..tostring(nId))
 
         if tData.tUnit:IsThePlayer() then
-            self.core:HideAura("SA")
+            self.core:RemoveLineBetween("Line_Link")
+        end
+    elseif nSpellId == DEBUFF_KINETIC_FIXATION then
+        self.core:RemoveLineBetween("Line_Fixation")
+    elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
+        self.core:RemoveIcon("Icon_Shurikens"..tostring(nId))
+
+        if tData.tUnit:IsThePlayer() then
+            self.core:HideAura("Aura_Shurikens")
         end
     end
 end

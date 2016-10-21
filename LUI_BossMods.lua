@@ -101,7 +101,7 @@ function LUI_BossMods:new(o)
             soundPack = "male",
             countdown = "long1",
             offsets = {
-                left = -630,
+                left = -650,
                 top = -300,
                 right = -360,
                 bottom = 0
@@ -2158,12 +2158,20 @@ function LUI_BossMods:UpdatePixie(Key,tDraw)
 
     if tDraw.tOriginUnit then
         if tDraw.tOriginUnit:IsValid() then
+            if tDraw.tOriginUnit:IsDead() then
+                self:RemovePixie(Key)
+                return
+            end
+
             local tOriginVector = NewVector3(tDraw.tOriginUnit:GetPosition())
             local tFacingVector = NewVector3(tDraw.tOriginUnit:GetFacing())
             local tRefVector = tFacingVector * tDraw.nDistance
 
             tVector = tOriginVector + self:Rotation(tRefVector, tDraw.RotationMatrix)
             tVector.y = tVector.y + tDraw.nHeight
+        else
+            self:RemovePixie(Key)
+            return
         end
     else
         tVector = tDraw.tVector
@@ -2335,6 +2343,11 @@ function LUI_BossMods:UpdatePolygon(Key,tDraw)
 
     if tDraw.tOriginUnit then
         if tDraw.tOriginUnit:IsValid() then
+            if tDraw.tOriginUnit:IsDead() then
+                self:RemovePolygon(Key)
+                return
+            end
+
             local tOriginVector = NewVector3(tDraw.tOriginUnit:GetPosition())
             local tFacingVector = NewVector3(tDraw.tOriginUnit:GetFacing())
 
@@ -2377,6 +2390,9 @@ function LUI_BossMods:UpdatePolygon(Key,tDraw)
             else
                 tVectors = tDraw.tVectors
             end
+        else
+            self:RemovePolygon(Key)
+            return
         end
     else
         tVectors = tDraw.tVectors
@@ -2567,9 +2583,15 @@ function LUI_BossMods:UpdateLine(Key,tDraw)
         end
     end
 
-    local tVectorTo, tVectorFrom = nil, nil
+    local tVectorTo, tVectorFrom
+
     if tDraw.tOriginUnit then
         if tDraw.tOriginUnit:IsValid() then
+            if tDraw.tOriginUnit:IsDead() then
+                self:RemoveLine(Key)
+                return
+            end
+
             local tOriginVector = NewVector3(tDraw.tOriginUnit:GetPosition())
             local tFacingVector = NewVector3(tDraw.tOriginUnit:GetFacing())
 
@@ -2608,6 +2630,9 @@ function LUI_BossMods:UpdateLine(Key,tDraw)
                 tVectorTo = tDraw.tVectorTo
                 tVectorFrom = tDraw.tVectorFrom
             end
+        else
+            self:RemoveLine(Key)
+            return
         end
     else
         tVectorTo = tDraw.tVectorTo
@@ -2727,11 +2752,19 @@ function LUI_BossMods:UpdateLineBetween(Key,tDraw)
         end
     end
 
-    local tVectorFrom, tVectorTo = nil, nil
+    local tVectorFrom, tVectorTo
 
     if tDraw.tUnitFrom then
         if tDraw.tUnitFrom:IsValid() then
+            if tDraw.tUnitFrom:IsDead() then
+                self:RemoveLineBetween(Key)
+                return
+            end
+
             tVectorFrom = NewVector3(tDraw.tUnitFrom:GetPosition())
+        else
+            self:RemoveLineBetween(Key)
+            return
         end
     else
         tVectorFrom = tDraw.tVectorFrom
@@ -2739,7 +2772,15 @@ function LUI_BossMods:UpdateLineBetween(Key,tDraw)
 
     if tDraw.tUnitTo then
         if tDraw.tUnitTo:IsValid() then
+            if tDraw.tUnitTo:IsDead() then
+                self:RemoveLineBetween(Key)
+                return
+            end
+
             tVectorTo = NewVector3(tDraw.tUnitTo:GetPosition())
+        else
+            self:RemoveLineBetween(Key)
+            return
         end
     else
         tVectorTo = tDraw.tVectorTo
