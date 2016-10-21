@@ -9,9 +9,30 @@ local Locales = {
     ["enUS"] = {
         -- Units
         ["unit.boss"] = "Maelstrom Authority",
+        ["unit.station"] = "Weather Station",
+        -- Messages
+        ["message.station"] = "Next stations",
+        -- Alerts
+        ["alert.station"] = "Weather Stations spawned!"
     },
-    ["deDE"] = {},
-    ["frFR"] = {},
+    ["deDE"] = {
+        -- Units
+        ["unit.boss"] = "Mahlstromgewalt",
+        ["unit.station"] = "Wetterstation",
+        -- Messages
+        ["message.station"] = "Nächste Wetterstation",
+        -- Alerts
+        ["alert.station"] = "Weather Stations spawned!"
+    },
+    ["frFR"] = {
+        -- Units
+        ["unit.boss"] = "Contrôleur du Maelstrom",
+        ["unit.station"] = "Station météorologique",
+        -- Messages
+        ["message.station"] = "Prochaine stations",
+        -- Alerts
+        ["alert.station"] = "Weather Stations spawned!"
+    },
 }
 
 function Mod:new(o)
@@ -40,7 +61,35 @@ function Mod:new(o)
                 enable = true,
                 label = "unit.boss",
             }
-        }
+        },
+        timers = {
+            station = {
+                enable = true,
+                label = "unit.station",
+            },
+        },
+        alerts = {
+            station = {
+                enable = true,
+                label = "unit.station",
+            },
+        },
+        sounds = {
+            station = {
+                enable = true,
+                file = "alert",
+                label = "unit.station",
+            },
+        },
+        lines = {
+            station = {
+                enable = true,
+                priority = 1,
+                thickness = 6,
+                color = "ff00ffff",
+                label = "unit.station",
+            },
+        },
     }
     return o
 end
@@ -59,6 +108,25 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 
     if sName == self.L["unit.boss"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
+    elseif sName == self.L["unit.station"] and bInCombat == true then
+        self.core:PlaySound(self.config.sounds.station)
+        self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.station)
+        self.core:ShowAlert("Alert_Station", self.L["alert.station"], self.config.alerts.station)
+        self.core:AddTimer("Timer_Station", self.L["message.station"], 25, self.config.timers.station)
+    end
+end
+
+function Mod:OnUnitDestroyed(nId, tUnit, sName)
+    if sName == self.L["unit.station"] then
+        self.core:RemoveLineBetween(nId)
+    end
+end
+
+function Mod:OnCastStart(nId, sCastName, tCast, sName)
+    if sName == self.L["Maelstrom Authority"] then
+        if sCastName == self.L["Activate Weather Cycle"] then
+            self.core:AddTimer("Timer_Station", self.L["message.station"], 13, self.config.timers.station)
+        end
     end
 end
 
