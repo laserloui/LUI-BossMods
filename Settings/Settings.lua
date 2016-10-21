@@ -93,7 +93,7 @@ local Locales = {
         -- Labels
         ["label.enable_module"] = "Boss Modul einschalten",
         ["label.enable"] = "Einschalten",
-        ["label.interval"] = "Aktualisierungsintervall",
+        ["label.interval"] = "Aktualisierungs-Intervall",
         ["label.thickness"] = "Dicke",
         ["label.color"] = "Farbe",
         ["label.size"] = "Größe",
@@ -607,6 +607,7 @@ function Settings:BuildRightPanel()
 
         -- Reset Button
         wnd:FindChild("ResetBtn"):SetText(self.L["button.reset_module"])
+        wnd:FindChild("ResetBtn"):SetAnchorOffsets((Apollo.GetTextWidth("DefaultButton", self.L["button.reset_module"]) + 60) * -1,-2,0,8)
 
         wndGeneral:FindChild("Settings"):ArrangeChildrenVert()
         wndGeneral:SetAnchorOffsets(0,0,0,nHeight)
@@ -1151,6 +1152,9 @@ function Settings:BuildGlobalSettings()
     self.wndSettings:FindChild("Global"):FindChild("UnlockBtn"):SetText(self.L["button.unlock"])
     self.wndSettings:FindChild("Global"):FindChild("ResetBtn"):SetText(self.L["button.reset"])
 
+    self.wndSettings:FindChild("Global"):FindChild("Unlock"):SetAnchorOffsets(10,10,Apollo.GetTextWidth("DefaultButton", self.L["button.unlock"]) + 80,60)
+    self.wndSettings:FindChild("Global"):FindChild("Reset"):SetAnchorOffsets(0,10,Apollo.GetTextWidth("DefaultButton", self.L["button.reset"]) + 60,60)
+
     -- #########################################################################################################################################
     -- # GENERAL
     -- #########################################################################################################################################
@@ -1179,6 +1183,7 @@ function Settings:BuildGlobalSettings()
     wndSounds:FindChild("EnableCheckbox"):SetData({"sound","enable"})
     wndSounds:FindChild("EnableCheckbox"):SetCheck(self.config.sound.enable or false)
     wndSounds:FindChild("EnableCheckbox"):SetTooltip(self.L["tooltip.sounds"])
+    wndSounds:FindChild("EnableCheckbox"):SetAnchorOffsets(10,0,Apollo.GetTextWidth("DefaultButton", self.L["label.enable"]) + 60,0)
 
     -- Adjust Volume Checkbox
     wndSounds:FindChild("ForceCheckbox"):SetText(self.L["volume.force"])
@@ -1235,6 +1240,7 @@ function Settings:BuildGlobalSettings()
     wndUnit:FindChild("EnableCheckbox"):SetText(self.L["label.enable"])
     wndUnit:FindChild("EnableCheckbox"):SetData({"units","enable"})
     wndUnit:FindChild("EnableCheckbox"):SetCheck(self.config.units.enable or false)
+    wndUnit:FindChild("EnableCheckbox"):SetAnchorOffsets(10,0,Apollo.GetTextWidth("DefaultButton", self.L["label.enable"]) + 60,0)
 
     -- Show Text Checkbox
     wndUnit:FindChild("TextCheckbox"):SetText(self.L["global.show_text"])
