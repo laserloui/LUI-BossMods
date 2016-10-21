@@ -2143,7 +2143,7 @@ function LUI_BossMods:DrawPixie(Key, Origin, tConfig, nRotation, nDistance, nHei
 end
 
 function LUI_BossMods:UpdatePixie(Key,tDraw)
-    local tVector = nil
+    local tVector
 
     if tDraw.nDuration ~= nil and tDraw.nDuration > 0 then
         local nTick = GetTickCount()
@@ -2328,7 +2328,7 @@ function LUI_BossMods:DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSid
 end
 
 function LUI_BossMods:UpdatePolygon(Key,tDraw)
-    local tVectors = nil
+    local tVectors
 
     if tDraw.nDuration ~= nil and tDraw.nDuration > 0 then
         local nTick = GetTickCount()
@@ -3263,12 +3263,14 @@ end
 
 function LUI_BossMods:OnBreakEnd()
     if self.runtime.timer and self.runtime.timer["break"] then
-        self:RemoveTimer("break")
+        self.runtime.timer["break"].wnd:Destroy()
+        self.runtime.timer["break"] = nil
     end
 end
 
 function LUI_BossMods:CheckPermission()
-    local inRaid = GroupLib.InRaid(GetPlayerUnit():GetName())
+    local sName = GetPlayerUnit():GetName()
+    local inRaid = GroupLib.InRaid(sName)
     local isLeader = GroupLib.AmILeader()
     local isAssist = false
     local nMemberCount = GroupLib.GetMemberCount()
@@ -3276,7 +3278,7 @@ function LUI_BossMods:CheckPermission()
     for nMemberIdx = 1, nMemberCount do
         local tMember = GroupLib.GetGroupMember(nMemberIdx)
 
-        if tMember.strCharacterName == self.strPlayerName then
+        if tMember.strCharacterName == sName then
             if tMember.bRaidAssistant then
                 isAssist = true
             end
