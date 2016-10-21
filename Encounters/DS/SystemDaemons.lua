@@ -46,7 +46,46 @@ local Locales = {
         ["label.waves"] = "Add Waves",
         ["label.probes"] = "Probes",
     },
-    ["deDE"] = {},
+    ["deDE"] = {
+        -- Bosses
+        ["unit.boss_north"] = "Binärsystem-Dämon",
+        ["unit.boss_south"] = "Nullsystem-Dämon",
+        -- Probes
+        ["unit.prope_1"] = "Leistungseinheit V1",
+        ["unit.prope_2"] = "Leistungseinheit V2",
+        ["unit.prope_3"] = "Leistungseinheit V3",
+        -- Adds
+        ["unit.brute_force_algorithm"] = "Brachialgewalt-Algorithmus",
+        ["unit.encryption_program"] = "Verschlüsselungsprogramm",
+        ["unit.radiation_dispersion_unit"] = "Strahlungsverteilungseinheit", --copied from Raidcore
+        ["unit.defragmentation_unit"] = "Defragmentierungseinheit", --copied from Raidcore
+        ["unit.extermination_sequence"] = "Vernichtungssequenz",
+        ["unit.data_compiler"] = "Datenkompilierer",
+        ["unit.viral_diffusion_inhibitor"] = "Virushemmstoff", --copied from Raidcore
+        -- Casts
+        ["cast.disconnect"] = "Trennung",
+        ["cast.power_surge"] = "Energieschweller",
+        -- Alerts
+        ["alert.disconnect_north"] = "Disconnect Norden!",
+        ["alert.disconnect_south"] = "Disconnect Süden!",
+        ["alert.purge_player"] = "Purge auf dir!",
+        ["alert.interrupt"] = "Interrupt!",
+        -- Datachron
+        ["datachron.disconnect"] = "UNGÜLTIGES SIGNAL. VERBINDUNG ZU", --%s WIRD ABGEBROCHEN.
+        ["datachron.enhancement"] = "BEGINNE VERBESSERUNGSSEQUENZ",
+        -- Messages
+        ["message.next_wave_mobs"] = "Nächste Welle: Mobs",
+        ["message.next_wave_boss"] = "Nächste Welle: Miniboss",
+        ["message.next_disconnect"] = "Nächstes Disconnect",
+        ["message.next_probe"] = "Nächste Sonde #%u",
+        -- Labels
+        ["label.disconnect_north"] = "Disconnect Norden",
+        ["label.disconnect_south"] = "Disconnect Süden",
+        ["label.purge"] = "Purge",
+        ["label.disconnect"] = "Disconnect",
+        ["label.waves"] = "Add Wellen",
+        ["label.probes"] = "Sonden",
+    },
     ["frFR"] = {
         -- Bosses
         ["unit.boss_north"] = "Daemon 2.0",
