@@ -371,17 +371,19 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
         if strPlayerLaserFocused then
             local tFocusedUnit = GameLib.GetPlayerUnitByName(strPlayerLaserFocused)
 
-            if tFocusedUnit:IsThePlayer() then
-                self.core:PlaySound(self.config.sounds.incineration)
-                self.core:ShowAura("Aura_Incineration", self.config.auras.incineration, 10, self.L["alert.incineration_player"])
-                self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration_player"], self.config.alerts.incineration)
-            else
-                self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration, nil, 10)
-                self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration"]:format(tFocusedUnit:GetName()), self.config.alerts.incineration)
-            end
+            if tFocusedUnit then
+                if tFocusedUnit:IsThePlayer() then
+                    self.core:PlaySound(self.config.sounds.incineration)
+                    self.core:ShowAura("Aura_Incineration", self.config.auras.incineration, 10, self.L["alert.incineration_player"])
+                    self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration_player"], self.config.alerts.incineration)
+                else
+                    self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration, nil, 10)
+                    self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration"]:format(tFocusedUnit:GetName()), self.config.alerts.incineration)
+                end
 
-            self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 40, self.config.timers.incineration)
-            self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration, 10)
+                self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 40, self.config.timers.incineration)
+                self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration, 10)
+            end
         end
     end
 end

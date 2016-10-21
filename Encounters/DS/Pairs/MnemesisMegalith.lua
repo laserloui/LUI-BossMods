@@ -65,9 +65,9 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         return
     end
 
-    if sName == self.L["unit.boss_logic"] and bInCombat == true then
+    if sName == self.L["unit.boss_logic"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_logic)
-    elseif sName == self.L["unit.boss_earth"] and bInCombat == true then
+    elseif sName == self.L["unit.boss_earth"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_earth)
     end
 end

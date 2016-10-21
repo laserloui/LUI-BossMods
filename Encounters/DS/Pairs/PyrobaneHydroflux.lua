@@ -39,7 +39,7 @@ function Mod:new(o)
     self.groupName = "Elemental Pairs"
     self.tTrigger = {
         sType = "ALL",
-        tNames = {"unit.boss_logic", "unit.boss_water"},
+        tNames = {"unit.boss_fire", "unit.boss_water"},
         tZones = {
             [1] = {
                 continentId = 52,

@@ -21,7 +21,7 @@ local Locales = {
         -- Casts
         ["cast.rupture"] = "Rupture",
         -- Alerts
-        ["alert.interrupt_rupture"] = "Interrompre Rupture!",
+        ["alert.interrupt_rupture"] = "Interrompre Rupture !",
     },
 }
 
