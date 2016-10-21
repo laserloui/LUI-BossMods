@@ -50,13 +50,13 @@ local Locales = {
         ["cast.incineration_laser"] = "Incinération Laser",
         ["cast.cannon_fire"] = "Tir de Canon",
         -- Alerts
-        ["alert.interrupt"] = "Interromps!",
-        ["alert.lasers"] = "Lasers en approche!",
-        ["alert.midphase"] = "Midphase bientôt!",
-        ["alert.crush"] = "ECRASER SUR %s!",
-        ["alert.crush_player"] = "ECRASER SUR TOI!",
-        ["alert.incineration"] = "INCINERATION SUR %s!",
-        ["alert.incineration_player"] = "INCINERATION SUR TOI!",
+        ["alert.interrupt"] = "Interromps !",
+        ["alert.lasers"] = "Lasers en approche !",
+        ["alert.midphase"] = "Midphase bientôt !",
+        ["alert.crush"] = "ECRASER SUR %s !",
+        ["alert.crush_player"] = "ECRASER SUR TOI !",
+        ["alert.incineration"] = "INCINERATION SUR %s !",
+        ["alert.incineration_player"] = "INCINERATION SUR TOI !",
         -- Messages
         ["message.next_arms"] = "Bras suivants",
         ["message.next_crush"] = "Ecraser suivant",
@@ -64,7 +64,7 @@ local Locales = {
         ["message.next_incineration"] = "Incineration suivante",
         -- Datachron messages
         ["datachron.midphase_start"] = "Robomination s'enfonce",
-        ["datachron.midphase_end"] = "Robomination revient dans la bataille!",
+        ["datachron.midphase_end"] = "Robomination revient dans la bataille !",
         ["datachron.incineration"] = "Robomination tente d'incinérer (.*)",
         -- Labels
         ["label.arms"] = "Bras",

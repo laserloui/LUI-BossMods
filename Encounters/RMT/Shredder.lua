@@ -66,9 +66,9 @@ local Locales = {
         ["cast.deathwail"] = "Hulement Mortel",
         ["cast.gravedigger"] = "Fossoyer",
         -- Alerts
-        ["alert.oozing_bile"] = "Bile Suintante - Stop DPS!",
-        ["alert.oozing_bile_short"] = "Stop DPS!",
-        ["alert.interrupt"] = "Interromps!",
+        ["alert.oozing_bile"] = "Bile Suintante - Stop DPS !",
+        ["alert.oozing_bile_short"] = "Stop DPS !",
+        ["alert.interrupt"] = "Interromps !",
         -- Debuffs
         ["debuff.oozing_bile"] = "Bile Suintante",
         -- Labels

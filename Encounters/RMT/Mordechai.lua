@@ -52,17 +52,17 @@ local Locales = {
         ["debuff.kinetic_fixation"] = "Fixation Cinétique",
         ["debuff.shocking_attraction"] = "Attraction Choquante",
         -- Datachron
-        ["datachron.airlock_opened"] = "Le sas a été ouvert!",
-        ["datachron.airlock_closed"] = "Le sas a été fermé!",
+        ["datachron.airlock_opened"] = "Le sas a été ouvert !",
+        ["datachron.airlock_closed"] = "Le sas a été fermé !",
         -- Casts
         ["cast.shatter_shock"] = "Choc Fracassant",
         ["cast.vicious_barrage"] = "Barrage Vicieux",
         -- Alerts
-        ["alert.orb_spawned"] = "Une orbe est apparue",
-        ["alert.kinetic_link"] = "TAPE L'ORBE!",
-        ["alert.kinetic_fixation"] = "ORBE SUR TOI!",
-        ["alert.shocking_attraction_left"] = "BOUGE VERS LA GAUCHE!",
-        ["alert.shocking_attraction_right"] = "BOUGE VERS LA DROITE!",
+        ["alert.orb_spawned"] = "Une orbe est apparue !",
+        ["alert.kinetic_link"] = "TAPE L'ORBE !",
+        ["alert.kinetic_fixation"] = "ORBE SUR TOI !",
+        ["alert.shocking_attraction_left"] = "BOUGE VERS LA GAUCHE !",
+        ["alert.shocking_attraction_right"] = "BOUGE VERS LA DROITE !",
         -- Messages
         ["message.barrage_next"] = "Barrage Suivant",
         ["message.shuriken_next"] = "Shuriken Suivant",

@@ -61,16 +61,16 @@ local Locales = {
         ["cast.liquidate"] = "Liquider",
         ["cast.rocket_jump"] = "Saut Roquette",
         -- Alerts
-        ["alert.liquidate"] = "Liquidation!",
-        ["alert.electroshock"] = "Electrochoc!",
+        ["alert.liquidate"] = "Liquidation !",
+        ["alert.electroshock"] = "Electrochoc !",
         ["alert.atomic_attraction"] = "Attraction Atomique sur ",
-        ["alert.atomic_attraction_player"] = "Kite the Orb!", -- Missing!
-        ["alert.vulnerability"] = " va sur l'EPEE!",
-        ["alert.vulnerability_player"] = "GO SUR L'EPEE!",
+        ["alert.atomic_attraction_player"] = "Kite the Orb !", -- Missing!
+        ["alert.vulnerability"] = " va sur l'EPEE !",
+        ["alert.vulnerability_player"] = "GO SUR L'EPEE !",
         ["alert.sword_jump"] = "Epée quitte ",
         ["alert.gun_jump"] = "Fusil quitte ",
-        ["alert.gun_return"] = "RETOURNE SUR LE FUSIL!",
-        ["alert.pillar"] = " à 20%!",
+        ["alert.gun_return"] = "RETOURNE SUR LE FUSIL !",
+        ["alert.pillar"] = " à 20% !",
         -- Datachron
         ["datachron.electroshock"] = "(.*) souffre d'Electrochoc",
         -- Labels
