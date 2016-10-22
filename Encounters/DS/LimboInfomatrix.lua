@@ -6,9 +6,13 @@ local LUI_BossMods = Apollo.GetAddon("LUI_BossMods")
 local Encounter = "LimboInfomatrix"
 
 local Locales = {
-    ["enUS"] = {},
+    ["enUS"] = {
+        ["unit.antlion"] = "Infomatrix Antlion",
+    },
     ["deDE"] = {},
-    ["frFR"] = {},
+    ["frFR"] = {
+        ["unit.antlion"] = "Fourmilion de l'Infomatrice",
+    },
 }
 
 function Mod:new(o)
@@ -30,6 +34,24 @@ function Mod:new(o)
     self.runtime = {}
     self.config = {
         enable = true,
+        icons = {
+            antlion = {
+                enable = true,
+                sprite = "LUIBM_crosshair",
+                size = 60,
+                color = "ff00ffff",
+                label = "unit.antlion",
+            },
+        },
+        lines = {
+            antlion = {
+                enable = true,
+                thickness = 6,
+                max = 200,
+                color = "ff00ffff",
+                label = "unit.antlion",
+            },
+        },
     }
     return o
 end
@@ -44,6 +66,18 @@ end
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if not self.run == true then
         return
+    end
+
+    if sName == self.L["unit.antlion"] then
+        self.core:DrawLineBetween("Line"..tostring(nId), tUnit, nil, self.config.lines.antlion)
+        self.core:DrawIcon("Icon"..tostring(nId), tUnit, self.config.icons.antlion)
+    end
+end
+
+function Mod:OnUnitDestroyed(nId, tUnit, sName)
+    if sName == self.L["unit.antlion"] then
+        self.core:RemoveLineBetween("Line"..tostring(nId))
+        self.core:RemoveIcon("Icon"..tostring(nId))
     end
 end
 
