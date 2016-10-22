@@ -3316,11 +3316,11 @@ function LUI_BossMods:OnRestore(eLevel, tSavedData)
     end
 
     if tSavedData and tSavedData ~= "" then
-        self.config = self:InsertDefaults(tSavedData,self.config)
+        self.config = self:InsertDefaults(self:CheckSavedData(tSavedData,self.config),self.config)
 
         for sName,tModule in pairs(self.modules) do
-            if self.config.modules[sName] then
-                tModule.config = self:InsertDefaults(self.config.modules[sName], tModule.config)
+            if tSavedData.modules and tSavedData.modules[sName] then
+                tModule.config = self:InsertDefaults(self:CheckSavedData(tSavedData.modules[sName],tModule.config), tModule.config)
             end
         end
     end
@@ -3354,6 +3354,20 @@ function LUI_BossMods:GetLocale(strBoss,tLocales)
     end
 
     return GeminiLocale:GetLocale("LUI_BossMods_" .. strBoss)
+end
+
+function LUI_BossMods:CheckSavedData(tSavedData,tConfig)
+    for k,v in pairs(tSavedData) do
+        if k ~= "modules" and type(v) == "table" then
+            if tConfig[k] == nil then
+                tSavedData[k] = nil
+            else
+                tSavedData[k] = self:CheckSavedData(tSavedData[k],tConfig[k])
+            end
+        end
+    end
+
+    return tSavedData
 end
 
 function LUI_BossMods:InsertDefaults(t,defaults)
