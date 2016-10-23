@@ -2035,7 +2035,7 @@ function LUI_BossMods:UpdateIcon(Key,tDraw)
         end
     else
         if tDraw.wnd:IsShown() then
-            tDraw.wnd:Show(true,true)
+            tDraw.wnd:Show(false,true)
         end
     end
 
