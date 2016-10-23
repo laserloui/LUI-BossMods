@@ -235,7 +235,6 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         end
     elseif sName == self.L["unit.boss"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
-        self.core:AddTimer("RUPTURE", self.L["label.next_rupture"], 35, self.config.timers.rupture)
         self:UpdateGloomclawPos(tUnit)
     elseif sName == self.L["unit.essence"] then
         self:RegisterEssence(tUnit)
