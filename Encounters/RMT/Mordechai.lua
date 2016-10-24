@@ -27,6 +27,7 @@ local Locales = {
         ["alert.kinetic_fixation"] = "ORB ON YOU!",
         ["alert.shocking_attraction_left"] = "MOVE TO THE LEFT!",
         ["alert.shocking_attraction_right"] = "MOVE TO THE RIGHT!",
+        ["alert.midphase"] = "Midphase soon!",
         -- Messages
         ["message.barrage_next"] = "Next Barrage",
         ["message.shuriken_next"] = "Next Shuriken",
@@ -63,6 +64,7 @@ local Locales = {
         ["alert.kinetic_fixation"] = "ORBE SUR TOI !",
         ["alert.shocking_attraction_left"] = "BOUGE VERS LA GAUCHE !",
         ["alert.shocking_attraction_right"] = "BOUGE VERS LA DROITE !",
+        ["alert.midphase"] = "Midphase bientôt !",
         -- Messages
         ["message.barrage_next"] = "Barrage Suivant",
         ["message.shuriken_next"] = "Shuriken Suivant",
@@ -187,6 +189,12 @@ function Mod:new(o)
                 position = 5,
                 label = "label.shocking_attraction_right",
             },
+            midphase = {
+                enable = true,
+                duration = 3,
+                position = 6,
+                label = "alert.midphase",
+            },
         },
         sounds = {
             orb = {
@@ -212,6 +220,12 @@ function Mod:new(o)
                 position = 4,
                 file = "beware",
                 label = "debuff.shocking_attraction",
+            },
+            midphase = {
+                enable = true,
+                position = 5,
+                file = "beware",
+                label = "alert.midphase",
             },
         },
         auras = {
@@ -326,6 +340,28 @@ function Mod:OnUnitDestroyed(nId, tUnit, sName)
     end
 end
 
+function Mod:OnHealthChanged(nId, nHealthPercent, sName, tUnit)
+    if sName == self.L["unit.boss"] then
+        if nHealthPercent <= 88 and self.nMidphaseWarnings == 0 then
+            self.core:PlaySound(self.config.sounds.midphase)
+            self.core:ShowAlert("Alert_Midphase", self.L["alert.midphase"], self.config.alerts.midphase)
+            self.nMidphaseWarnings = 1
+        elseif nHealthPercent <= 63 and self.nMidphaseWarnings == 1 then
+            self.core:PlaySound(self.config.sounds.midphase)
+            self.core:ShowAlert("Alert_Midphase", self.L["alert.midphase"], self.config.alerts.midphase)
+            self.nMidphaseWarnings = 2
+        elseif nHealthPercent <= 38 and self.nMidphaseWarnings == 2 then
+            self.core:PlaySound(self.config.sounds.midphase)
+            self.core:ShowAlert("Alert_Midphase", self.L["alert.midphase"], self.config.alerts.midphase)
+            self.nMidphaseWarnings = 3
+        elseif nHealthPercent <= 13 and self.nMidphaseWarnings == 3 then
+            self.core:PlaySound(self.config.sounds.midphase)
+            self.core:ShowAlert("Alert_Midphase", self.L["alert.midphase"], self.config.alerts.midphase)
+            self.nMidphaseWarnings = 4
+        end
+    end
+ end
+
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if nSpellId == DEBUFF_KINETIC_LINK then
         if tData.tUnit:IsThePlayer() then
@@ -439,6 +475,7 @@ function Mod:OnEnable()
     self.tUnitBoss = nil
     self.tUnitOrb = nil
     self.bViciousBarrage = false
+    self.nMidphaseWarnings = 0
 
     self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 22, self.config.timers.orb)
 end
