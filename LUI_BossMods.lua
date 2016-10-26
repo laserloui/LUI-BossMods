@@ -766,7 +766,7 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:AddUnit(nId,sName,tUnit,tConfig,sMark)
-    if not nId or not sName or not tUnit or not tConfig or not tUnit:IsValid() then
+    if not nId or not sName or not tUnit or not tUnit:IsValid() then
         return
     end
 
@@ -778,26 +778,29 @@ function LUI_BossMods:AddUnit(nId,sName,tUnit,tConfig,sMark)
         self.runtime.units[nId] = {
             nId = nId,
             sName = sName,
-            tUnit = tUnit,
-            sMark = sMark or nil,
-            sColor = tConfig.color or nil,
-            nPosition = tConfig.position or 99,
-            bShowUnit = tConfig.enable or false,
+            tUnit = tUnit
         }
 
         self:CheckBuffs(nId)
 
-        if tConfig.enable and self.config.units.enable then
-            if not self.wndUnits then
-                self:LoadWindows()
-            end
+        if tConfig then
+            self.runtime.units[nId].sMark = sMark or nil
+            self.runtime.units[nId].sColor = tConfig.color or nil
+            self.runtime.units[nId].nPosition = tConfig.position or 99
+            self.runtime.units[nId].bShowUnit = tConfig.enable or false
 
-            if not self.wndUnits:IsShown() then
-                self.wndUnits:Show(true,true)
-            end
+            if tConfig.enable and self.config.units.enable then
+                if not self.wndUnits then
+                    self:LoadWindows()
+                end
 
-            self.runtime.units[nId].wnd = self:StyleUnit(Apollo.LoadForm(self.xmlDoc, "Unit", self.wndUnits, self),self.runtime.units[nId])
-            self:SortUnits()
+                if not self.wndUnits:IsShown() then
+                    self.wndUnits:Show(true,true)
+                end
+
+                self.runtime.units[nId].wnd = self:StyleUnit(Apollo.LoadForm(self.xmlDoc, "Unit", self.wndUnits, self),self.runtime.units[nId])
+                self:SortUnits()
+            end
         end
     end
 end
