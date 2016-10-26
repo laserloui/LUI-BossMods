@@ -361,10 +361,17 @@ function LUI_BossMods:CheckTrigger(tModule)
             if not self.tSavedUnits[unitName] then
                 return false
             else
+                local combat = false
+
                 for nId, unit in pairs(self.tSavedUnits[unitName]) do
-                    if not unit:IsInCombat() then
-                        return false
+                    if unit:IsInCombat() then
+                        combat = true
+                        break
                     end
+                end
+
+                if not combat then
+                    return false
                 end
             end
         end
