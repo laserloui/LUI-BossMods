@@ -663,6 +663,10 @@ end
 
 function LUI_BossMods:OnUnitCreated(unit)
     if self.bIsRunning then
+        if self.runtime.buffs and self.runtime.buffs[unit:GetId()] then
+            self:CheckBuffs(unit)
+        end
+
         if self.tCurrentEncounter and self.tCurrentEncounter.OnUnitCreated then
             self.tCurrentEncounter:OnUnitCreated(unit:GetId(),unit,unit:GetName(),unit:IsInCombat())
         end
@@ -781,7 +785,7 @@ function LUI_BossMods:AddUnit(nId,sName,tUnit,tConfig,sMark)
             tUnit = tUnit
         }
 
-        self:CheckBuffs(nId)
+        self:CheckBuffs(tUnit)
 
         if tConfig then
             self.runtime.units[nId].sMark = sMark or nil
@@ -1039,26 +1043,54 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 
-function LUI_BossMods:CheckBuffs(nId)
-    if not nId or not self.tCurrentEncounter or not self.runtime.units then
+function LUI_BossMods:CheckBuffs(tUnit)
+    if not tUnit or not tUnit:IsValid() or not self.tCurrentEncounter then
         return
     end
 
-    if self.runtime.units[nId] then
-        local tBuffs = self.runtime.units[nId].tUnit:GetBuffs()
+    local nId = tUnit:GetId()
+    local tBuffs = tUnit:GetBuffs()
+    local bMember = tUnit:IsInYourGroup()
+    local tCurrent = (self.runtime.buffs and self.runtime.buffs[nId]) and self:Copy(self.runtime.buffs[nId]) or nil
 
-        -- Process Buffs
-        if tBuffs and tBuffs.arBeneficial then
-            for i=1, #tBuffs.arBeneficial do
-                self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arBeneficial[i])
+    -- Process Buffs
+    if not bMember and tBuffs and tBuffs.arBeneficial then
+        for i=1, #tBuffs.arBeneficial do
+            if tCurrent then
+                local nSpellId = tBuffs.arBeneficial[i].splEffect:GetId()
+
+                if not tCurrent[nSpellId] then
+                    self:OnBuffAdded(tUnit, tBuffs.arBeneficial[i])
+                else
+                    table.remove(tCurrent, nSpellId)
+                end
+            else
+                self:OnBuffAdded(tUnit, tBuffs.arBeneficial[i])
             end
         end
+    end
 
-        -- Process Debuffs
-        if tBuffs and tBuffs.arHarmful then
-            for i=1, #tBuffs.arHarmful do
-                self:OnBuffAdded(self.runtime.units[nId].tUnit,tBuffs.arHarmful[i])
+    -- Process Debuffs
+    if tBuffs and tBuffs.arHarmful then
+        for i=1, #tBuffs.arHarmful do
+            if tCurrent then
+                local nSpellId = tBuffs.arHarmful[i].splEffect:GetId()
+
+                if not tCurrent[nSpellId] then
+                    self:OnBuffAdded(tUnit, tBuffs.arHarmful[i])
+                else
+                    table.remove(tCurrent, nSpellId)
+                end
+            else
+                self:OnBuffAdded(tUnit, tBuffs.arHarmful[i])
             end
+        end
+    end
+
+    -- Process Removed Buffs
+    if tCurrent and #tCurrent then
+        for _,spell in ipairs(tCurrent) do
+            self:OnBuffRemoved(tUnit, spell)
         end
     end
 end
