@@ -19,6 +19,7 @@ local Locales = {
         -- Alerts
         ["alert.interrupt_rupture"] = "Interrupt Rupture!",
         -- Labels
+        ["label.moo"] = "Moment of Opportunity",
         ["label.essence_left"] = "Left Essence",
         ["label.essence_right"] = "Right Essence",
         ["label.next_rupture"] = "Next Rupture",
@@ -37,6 +38,7 @@ local Locales = {
         -- Alerts
         ["alert.interrupt_rupture"] = "Boss Unterbrechen!",
         -- Labels
+        ["label.moo"] = "Moment of Opportunity",
         ["label.essence_left"] = "Linke Essenz",
         ["label.essence_right"] = "Rechte Essenz",
         ["label.next_rupture"] = "Nächstes Aufreißen",
@@ -55,6 +57,7 @@ local Locales = {
         -- Alerts
         ["alert.interrupt_rupture"] = "Interrompre Rupture!",
         -- Labels
+        ["label.moo"] = "Moment d'opportunité",
         ["label.essence_left"] = "Left Essence",
         ["label.essence_right"] = "Right Essence",
         ["label.next_rupture"] = "Prochaine rupture",
@@ -147,6 +150,10 @@ function Mod:new(o)
             rupture = {
                 enable = true,
                 label = "cast.rupture",
+            },
+            moo = {
+                enable = true,
+                label = "label.moo",
             },
         },
         alerts = {
@@ -248,6 +255,7 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
         self.core:ShowAlert(sCastName, self.L["alert.interrupt_rupture"], self.config.alerts.rupture)
         self.core:AddTimer("RUPTURE", self.L["label.next_rupture"], 43, self.config.timers.rupture)
     elseif sName == self.L["unit.boss"] and sCastName == "MOO" then
+        self.core:ShowCast(tCast,sCastName,self.config.casts.moo)
         self.core:RemoveTimer("RUPTURE")
         self.core:RemoveTimer("ADDS")
     end
