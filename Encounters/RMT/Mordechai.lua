@@ -47,7 +47,7 @@ local Locales = {
         -- Units
         ["unit.boss"] = "Mordechai Rougelune",
         ["unit.kinetic_orb"] = "Orbe Cinétique",
-        ["unit.airlock_anchor"] = "Airlock Anchor", -- MISSING
+        ["unit.airlock_anchor"] = "Bride de sas",
         -- Debuffs
         ["debuff.kinetic_link"] = "Lien Cinétique",
         ["debuff.kinetic_fixation"] = "Fixation Cinétique",

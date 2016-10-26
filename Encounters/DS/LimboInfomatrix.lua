@@ -47,7 +47,7 @@ function Mod:new(o)
             antlion = {
                 enable = true,
                 thickness = 6,
-                max = 200,
+                max = 250,
                 color = "ff00ffff",
                 label = "unit.antlion",
             },

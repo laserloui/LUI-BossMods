@@ -15,7 +15,7 @@ local Locales = {
     ["frFR"] = {
         ["unit.boss"] = "Chef Ingénieur Lave-Pont Thrag",
         ["unit.bomb"] = "Jumpstart Charge",
-        ["label.bomb"] = "Bombs",
+        ["label.bomb"] = "Bombes",
     },
 }
 

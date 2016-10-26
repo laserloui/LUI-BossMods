@@ -32,7 +32,7 @@ local Locales = {
         ["unit.boss"] = "Avatus",
         ["unit.devourer"] = "Dévoreur de données",
         -- Datachron
-        ["datachron.laser"] = "Avatus sets his focus on (.*)!", -- Missing!
+        ["datachron.laser"] = "Avatus porte son attention sur (.*) !",
         ["datachron.delete_all"] = "Avatus se prépare à effacer toutes les données !",
         ["datachron.secure_sector"] = "Les ports d'amélioration de secteur sécurisé ont été activés !",
         ["datachron.locomotion"] = "Les ports d'amélioration de locomotion verticale ont été activés !",

@@ -8,7 +8,7 @@ require "Apollo"
 
     AddUnit(nId, sName, tUnit, tConfig, sMark)
         Adds a unit to the list of tracked units.
-        @param nId              - Unique ID of unit
+        @param nId              - Unit Id from carbine
         @param sName            - Name of the unit
         @param tUnit            - Unit Object from carbine
         @param tConfig          - Unit Settings
@@ -16,7 +16,7 @@ require "Apollo"
 
     RemoveUnit(nId)
         Removes the unit completely.
-        @param nId              - Unique ID of unit
+        @param nId              - Unit Id from carbine
 
     AddTimer(sName, sText, nDuration, tConfig, fHandler, tData)
         Creates a timer bar

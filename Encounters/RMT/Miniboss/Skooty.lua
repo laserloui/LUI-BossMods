@@ -15,7 +15,7 @@ local Locales = {
     ["frFR"] = {
         ["unit.boss"] = "Assistant Technicien Skooty",
         ["unit.bomb"] = "Jumpstart Charge", -- MISSING
-        ["label.bomb"] = "Bombs", -- MISSING
+        ["label.bomb"] = "Bombes",
     },
 }
 
