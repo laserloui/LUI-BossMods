@@ -402,8 +402,6 @@ function LUI_BossMods:OnFrame()
                     self:UpdateIcon(key,draw)
                 elseif draw.sType == "Text" then
                     self:UpdateText(key,draw)
-                elseif draw.sType == "Pixie" then
-                    self:UpdatePixie(key,draw)
                 elseif draw.sType == "Polygon" then
                     self:UpdatePolygon(key,draw)
                 elseif draw.sType == "Line" then
@@ -523,8 +521,6 @@ function LUI_BossMods:ResetFight()
                     self:RemoveIcon(key)
                 elseif draw.sType == "Text" then
                     self:RemoveText(key)
-                elseif draw.sType == "Pixie" then
-                    self:RemovePixie(key)
                 elseif draw.sType == "Polygon" then
                     self:RemovePolygon(key)
                 elseif draw.sType == "Line" then
@@ -2113,168 +2109,6 @@ function LUI_BossMods:RemoveIcon(Key)
         local tCallback = {
             fHandler = self.tDraws[Key].fHandler,
             tData = self.tDraws[Key].tData
-        }
-
-        self.tDraws[Key] = nil
-        self:Callback(tCallback.fHandler, tCallback.tData)
-    end
-end
-
--- #########################################################################################################################################
--- # PIXIES
--- #########################################################################################################################################
-
-function LUI_BossMods:DrawPixie(Key, Origin, tConfig, nRotation, nDistance, nHeight, nDuration, fHandler, tData)
-    if not Key or not Origin or not tConfig or not tConfig.enable then
-        return
-    end
-
-    local OriginType = type(Origin)
-
-    if not (OriginType == "number" or OriginType == "table" or OriginType == "userdata") then
-        return
-    end
-
-    if not self.wndOverlay then
-        self:LoadWindows()
-    end
-
-    if not self.tDraws then
-        self.tDraws = {}
-    end
-
-    -- Register a new object to manage.
-    local tDraw = self.tDraws[Key] or self:NewDraw()
-    tDraw.sType = "Pixie"
-    tDraw.sSprite = tConfig.sprite or tDraw.sSprite
-    tDraw.nDuration = nDuration or 0
-    tDraw.nTick = GetTickCount()
-    tDraw.nRotation = nRotation or 0
-    tDraw.nDistance = nDistance or 0
-    tDraw.nHeight = nHeight or 0
-    tDraw.nSpriteSize = tConfig.size or 30
-    tDraw.sColor = tConfig.color or "white"
-    tDraw.fHandler = fHandler or nil
-    tDraw.tData = tData or nil
-
-    local nRad = math.rad(tDraw.nRotation or 0)
-    local nCos = math.cos(nRad)
-    local nSin = math.sin(nRad)
-
-    tDraw.RotationMatrix = {
-        x = NewVector3({ nCos, 0, -nSin }),
-        y = NewVector3({ 0, 1, 0 }),
-        z = NewVector3({ nSin, 0, nCos }),
-    }
-
-    if OriginType == "number" then
-        tDraw.tOriginUnit = GetUnitById(Origin)
-    elseif OriginType == "table" or Vector3.Is(Origin) then
-        local tOriginVector = NewVector3(Origin)
-        local tFacingVector = NewVector3(DEFAULT_NORTH_FACING)
-        local tRefVector = tFacingVector * tDraw.nDistance
-
-        tDraw.tVector = tOriginVector + self:Rotation(tRefVector, tDraw.RotationMatrix)
-        tDraw.tVector.y = tDraw.tVector.y + tDraw.nHeight
-    elseif OriginType == "userdata" then
-        tDraw.tOriginUnit = Origin
-    end
-
-    self.tDraws[Key] = tDraw
-end
-
-function LUI_BossMods:UpdatePixie(Key,tDraw)
-    local tVector
-
-    if tDraw.nDuration ~= nil and tDraw.nDuration > 0 then
-        local nTick = GetTickCount()
-        local nTotal = tDraw.nDuration
-        local nElapsed = (nTick - tDraw.nTick) / 1000
-
-        if nElapsed > nTotal then
-            self:RemovePixie(Key)
-            return
-        end
-    end
-
-    if tDraw.tOriginUnit then
-        if tDraw.tOriginUnit:IsValid() then
-            if tDraw.tOriginUnit:IsDead() then
-                self:RemovePixie(Key)
-                return
-            end
-
-            local tOriginVector = NewVector3(tDraw.tOriginUnit:GetPosition())
-            local tFacingVector = NewVector3(tDraw.tOriginUnit:GetFacing())
-            local tRefVector = tFacingVector * tDraw.nDistance
-
-            tVector = tOriginVector + self:Rotation(tRefVector, tDraw.RotationMatrix)
-            tVector.y = tVector.y + tDraw.nHeight
-        else
-            self:RemovePixie(Key)
-            return
-        end
-    else
-        tVector = tDraw.tVector
-    end
-
-    if tVector then
-        -- Convert the 3D coordonate of game in 2D coordonnate of screen
-        local tScreenLoc = WorldLocToScreenPoint(tVector)
-
-        if tScreenLoc.z > 0 then
-            local tVectorPlayer = NewVector3(self.unitPlayer:GetPosition())
-            local nDistance2Player = (tVectorPlayer - tVector):Length()
-            local nScale = math.min(40 / nDistance2Player, 1)
-
-            nScale = math.max(nScale, 0.5) * tDraw.nSpriteSize
-
-            local tPixieAttributs = {
-                bLine = false,
-                strSprite = tDraw.sSprite,
-                cr = tDraw.sColor,
-                loc = {
-                    fPoints = FPOINT_NULL,
-                    nOffsets = {
-                        tScreenLoc.x - nScale,
-                        tScreenLoc.y - nScale,
-                        tScreenLoc.x + nScale,
-                        tScreenLoc.y + nScale,
-                    },
-                },
-            }
-
-            if tDraw.nPixieId then
-                self.wndOverlay:UpdatePixie(tDraw.nPixieId, tPixieAttributs)
-            else
-                tDraw.nPixieId = self.wndOverlay:AddPixie(tPixieAttributs)
-            end
-        else
-            -- The Line is out of sight.
-            if tDraw.nPixieId then
-                self.wndOverlay:DestroyPixie(tDraw.nPixieId)
-                tDraw.nPixieId = nil
-            end
-        end
-    end
-end
-
-function LUI_BossMods:RemovePixie(Key)
-    if not self.tDraws then
-        return
-    end
-
-    local tDraw = self.tDraws[Key]
-
-    if tDraw then
-        if tDraw.nPixieId then
-            self.wndOverlay:DestroyPixie(tDraw.nPixieId)
-            tDraw.nPixieId = nil
-        end
-
-        local tCallback = {
-            fHandler = tDraw.fHandler,
-            tData = tDraw.tData
         }
 
         self.tDraws[Key] = nil
