@@ -7,14 +7,26 @@ local Encounter = "Thrag"
 
 local Locales = {
     ["enUS"] = {
+        -- Units
         ["unit.boss"] = "Chief Enginer Scrubber Thrag",
         ["unit.bomb"] = "Jumpstart Charge",
+        -- Casts
+        ["cast.gigavolt"] = "Gigavolt",
+        -- Alerts
+        ["alert.gigavolt"] = "GIGAVOLT - SPREAD!",
+        -- Labels
         ["label.bomb"] = "Bombs",
     },
     ["deDE"] = {},
     ["frFR"] = {
+        -- Units
         ["unit.boss"] = "Chef Ingénieur Lave-Pont Thrag",
         ["unit.bomb"] = "Jumpstart Charge",
+        -- Casts
+        ["cast.gigavolt"] = "Gigavolt", -- Translation needed!
+        -- Alerts
+        ["alert.gigavolt"] = "", -- Translation needed!
+        -- Labels
         ["label.bomb"] = "Bombes",
     },
 }
@@ -55,6 +67,25 @@ function Mod:new(o)
                 label = "label.bomb",
             },
         },
+        casts = {
+            gigavolt = {
+                enable = true,
+                label = "cast.gigavolt",
+            },
+        },
+        alerts = {
+            gigavolt = {
+                enable = true,
+                label = "cast.gigavolt",
+            },
+        },
+        sounds = {
+            gigavolt = {
+                enable = true,
+                file = "beware",
+                label = "cast.gigavolt",
+            },
+        },
     }
     return o
 end
@@ -81,6 +112,14 @@ end
 function Mod:OnUnitDestroyed(nId, tUnit, sName)
     if sName == self.L["unit.bomb"] then
         self.core:RemoveLineBetween(nId)
+    end
+end
+
+function Mod:OnCastStart(nId, sCastName, tCast, sName)
+    if sName == self.L["unit.boss"] and sCastName == self.L["cast.gigavolt"] then
+        self.core:ShowAlert("gigavolt", self.L["alert.gigavolt"], self.config.alerts.gigavolt)
+        self.core:PlaySound(self.config.sounds.gigavolt)
+        self.core:ShowCast(tCast,sCastName,self.config.casts.gigavolt)
     end
 end
 
