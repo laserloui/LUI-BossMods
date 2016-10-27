@@ -1099,7 +1099,7 @@ function LUI_BossMods:CheckBuffs(tUnit)
 end
 
 function LUI_BossMods:OnBuffAdded(unit,spell)
-    if not unit or not spell or not self.tCurrentEncounter or not self.runtime.units then
+    if not unit or not spell or not self.tCurrentEncounter then
         return
     end
 
@@ -1120,7 +1120,7 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
         return
     end
 
-    if self.runtime.units[nUnitId] then
+    if self.runtime.units and self.runtime.units[nUnitId] then
         local tData = {
             nId = nSpellId,
             sName = spell.splEffect:GetName(),
@@ -1160,7 +1160,7 @@ function LUI_BossMods:OnBuffAdded(unit,spell)
 end
 
 function LUI_BossMods:OnBuffUpdated(unit,spell)
-    if not unit or not spell or not self.tCurrentEncounter or not self.runtime.units then
+    if not unit or not spell or not self.tCurrentEncounter then
         return
     end
 
@@ -1173,7 +1173,7 @@ function LUI_BossMods:OnBuffUpdated(unit,spell)
         return
     end
 
-    if self.runtime.units[nUnitId] then
+    if self.runtime.units and self.runtime.units[nUnitId] then
         local tData = {
             nId = nSpellId,
             sName = spell.splEffect:GetName(),
@@ -1209,7 +1209,7 @@ function LUI_BossMods:OnBuffUpdated(unit,spell)
 end
 
 function LUI_BossMods:OnBuffRemoved(unit,spell)
-    if not unit or not spell or not self.tCurrentEncounter or not self.runtime.units then
+    if not unit or not spell or not self.tCurrentEncounter then
         return
     end
 
@@ -1221,7 +1221,7 @@ function LUI_BossMods:OnBuffRemoved(unit,spell)
         return
     end
 
-    if self.runtime.units[nUnitId] then
+    if self.runtime.units and self.runtime.units[nUnitId] then
         local tData = {
             nId = nSpellId,
             sName = spell.splEffect:GetName(),
