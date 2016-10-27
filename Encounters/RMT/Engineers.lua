@@ -347,16 +347,16 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.core:DrawLine("CleaveB", tUnit, self.config.lines.sword, 15, 50, 0, Vector3.New(-2,0,-1.5))
     elseif sName == self.L["unit.fusion_core"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.fusion)
-        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", -275)
+        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", false, 50)
     elseif sName == self.L["unit.lubricant_nozzle"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.lubricant)
-        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", -275)
+        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", false, 50)
     elseif sName == self.L["unit.spark_plug"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.spark)
-        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", -275)
+        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", false, 50)
     elseif sName == self.L["unit.cooling_turbine"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.cooling)
-        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", -275)
+        self.core:DrawText(nId, tUnit, self.config.texts.pillar, "", false, 50)
     elseif sName == self.L["unit.circle_telegraph"] then
         self.core:DrawPolygon(nId, tUnit, self.config.lines.circle_telegraph, 6.3, 0, 20)
     end
@@ -406,7 +406,7 @@ end
 
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if nSpellId == DEBUFF_ELECTROSHOCK_VULNERABILITY then
-        self.core:DrawIcon("Electroshock_"..tostring(nId), tData.tUnit, self.config.icons.vulnerability, nil, nDuration)
+        self.core:DrawIcon("Electroshock_"..tostring(nId), tData.tUnit, self.config.icons.vulnerability, true, nil, nDuration)
 
         if tData.tUnit:IsThePlayer() then
             self.core:ShowAlert("Vulnerability_"..tostring(nId), self.L["alert.vulnerability_player"], self.config.alerts.vulnerability)
@@ -421,7 +421,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:ShowAura("atomic_attraction", self.config.auras.atomic_attraction, 15, self.L["alert.atomic_attraction_player"])
             self.core:ShowAlert("atomic_attraction", self.L["alert.atomic_attraction_player"], self.config.alerts.atomic_attraction)
         else
-            self.core:DrawIcon("atomic_attraction", tData.tUnit, self.config.icons.atomic_attraction)
+            self.core:DrawIcon("atomic_attraction", tData.tUnit, self.config.icons.atomic_attraction, true)
             self.core:ShowAlert("atomic_attraction", self.L["alert.atomic_attraction"]..sUnitName, self.config.alerts.atomic_attraction)
         end
     end

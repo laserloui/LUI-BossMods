@@ -70,7 +70,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 
     if sName == self.L["unit.antlion"] then
         self.core:DrawLineBetween("Line"..tostring(nId), tUnit, nil, self.config.lines.antlion)
-        self.core:DrawIcon("Icon"..tostring(nId), tUnit, self.config.icons.antlion)
+        self.core:DrawIcon("Icon"..tostring(nId), tUnit, self.config.icons.antlion, true, -100)
     end
 end
 

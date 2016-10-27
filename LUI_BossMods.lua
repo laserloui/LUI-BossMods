@@ -62,7 +62,7 @@ function LUI_BossMods:new(o)
         },
         icon = {
             color = "ff7fff00",
-            size = 300,
+            size = 160,
         },
         text = {
             color = "ffdbdbdb",
@@ -1906,7 +1906,7 @@ end
 -- # TEXT
 -- #########################################################################################################################################
 
-function LUI_BossMods:DrawText(Key, Origin, tConfig, sText, nHeight, nDuration, fHandler, tData)
+function LUI_BossMods:DrawText(Key, Origin, tConfig, sText, bTop, nOffset, nDuration, fHandler, tData)
     if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
@@ -1932,7 +1932,7 @@ function LUI_BossMods:DrawText(Key, Origin, tConfig, sText, nHeight, nDuration, 
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
     local width = (sText and sText ~= "") and (Apollo.GetTextWidth(tConfig.font or self.config.text.font, sText) + 30) / 2 or 100
 
-    wnd:SetAnchorOffsets((width*-1),-50,width,50)
+    wnd:SetAnchorOffsets((width*-1),(-50 + (nOffset or 0)),width,(50 + (nOffset or 0)))
     wnd:SetSprite("")
     wnd:SetFont(tConfig.font or self.config.text.font)
     wnd:SetText(sText or "")
@@ -1940,11 +1940,11 @@ function LUI_BossMods:DrawText(Key, Origin, tConfig, sText, nHeight, nDuration, 
 
     if OriginType == "number" then
         Origin = GetUnitById(Origin)
-        wnd:SetUnit(Origin,nHeight or 0)
+        wnd:SetUnit(Origin,bTop and 1 or 0)
     elseif OriginType == "table" or Vector3.Is(Origin) then
         wnd:SetWorldLocation(Origin)
     elseif OriginType == "userdata" and Origin:IsValid() then
-        wnd:SetUnit(Origin,nHeight or 0)
+        wnd:SetUnit(Origin,bTop and 1 or 0)
     end
 
     self.tDraws[Key] = {
@@ -1987,7 +1987,7 @@ function LUI_BossMods:UpdateText(Key,tDraw)
     end
 
     if tDraw.tOrigin and type(tDraw.tOrigin) == "userdata" and not Vector3.Is(tDraw.tOrigin) then
-        if tDraw.tOrigin:IsDead() then
+        if tDraw.tOrigin:IsDead() or not tDraw.tOrigin:IsValid() then
             self:RemoveText(Key)
             return
         end
@@ -2019,7 +2019,7 @@ end
 -- # ICONS
 -- #########################################################################################################################################
 
-function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, nDuration, fHandler, tData)
+function LUI_BossMods:DrawIcon(Key, Origin, tConfig, bTop, nOffset, nDuration, fHandler, tData)
     if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
@@ -2044,19 +2044,18 @@ function LUI_BossMods:DrawIcon(Key, Origin, tConfig, nSpriteHeight, nDuration, f
     local OriginType = type(Origin)
     local nSize = (tConfig.size or self.config.icon.size) / 2
     local wnd = Apollo.LoadForm(self.xmlDoc, "Icon", nil, self)
-    local nHeight = (nSpriteHeight ~= nil) and nSpriteHeight or 40
 
-    wnd:SetAnchorOffsets((nSize*-1),(nSize*-1),nSize,nSize)
+    wnd:SetAnchorOffsets((nSize*-1),((nSize*-1)+(nOffset or 0)),nSize,(nSize+(nOffset or 0)))
     wnd:SetSprite(tConfig.sprite or "")
     wnd:SetBGColor(tConfig.color or self.config.icon.color)
 
     if OriginType == "number" then
         Origin = GetUnitById(Origin)
-        wnd:SetUnit(Origin,nHeight)
+        wnd:SetUnit(Origin,bTop and 1 or 0)
     elseif OriginType == "table" or Vector3.Is(Origin) then
         wnd:SetWorldLocation(Origin)
     elseif OriginType == "userdata" and Origin:IsValid() then
-        wnd:SetUnit(Origin,nHeight)
+        wnd:SetUnit(Origin,bTop and 1 or 0)
     end
 
     self.tDraws[Key] = {
@@ -2093,7 +2092,7 @@ function LUI_BossMods:UpdateIcon(Key,tDraw)
     end
 
     if tDraw.tOrigin and type(tDraw.tOrigin) == "userdata" and not Vector3.Is(tDraw.tOrigin) then
-        if tDraw.tOrigin:IsDead() then
+        if tDraw.tOrigin:IsDead() or not tDraw.tOrigin:IsValid() then
             self:RemoveIcon(Key)
             return
         end

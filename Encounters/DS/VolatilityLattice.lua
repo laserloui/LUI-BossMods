@@ -183,7 +183,7 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
                     self.core:ShowAura("Aura_Laser", self.config.auras.laser, 15, self.L["alert.laser_player"])
                     self.core:ShowAlert("Alert_Laser", self.L["alert.laser_player"], self.config.alerts.laser)
                 else
-                    self.core:DrawIcon("Icon_Laser", tFocusedUnit, self.config.icons.laser, nil, 15)
+                    self.core:DrawIcon("Icon_Laser", tFocusedUnit, self.config.icons.laser, true, nil, 15)
                     self.core:ShowAlert("Alert_Laser", self.L["alert.laser"]:format(tFocusedUnit:GetName()), self.config.alerts.laser)
                 end
             end

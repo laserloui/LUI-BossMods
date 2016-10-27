@@ -326,7 +326,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.core:AddUnit(nId,sName,tUnit,self.config.units.orb)
         self.core:AddTimer("NEXT_ORB", self.L["message.orb_next"], 26, self.config.timers.orb)
         self.core:AddTimer("ORB_ACTIVE", self.L["message.orb_active"], 5, self.config.timers.orb_active)
-        self.core:DrawText("ORB_ACTIVE", tUnit, self.config.texts.orb_active, "", 0, 5)
+        self.core:DrawText("ORB_ACTIVE", tUnit, self.config.texts.orb_active, "", false, nil, 5)
         self.core:ShowAlert("ORB_SPAWNED", self.L["alert.orb_spawned"], self.config.alerts.orb)
         self.core:PlaySound(self.config.sounds.orb)
     end
@@ -370,7 +370,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:ShowAlert("Alert_Link", self.L["alert.kinetic_link"], self.config.alerts.kinetic_link)
         end
 
-        self.core:DrawIcon("Icon_Link"..tostring(nId), tData.tUnit, self.config.icons.kinetic_link, nil, nDuration)
+        self.core:DrawIcon("Icon_Link"..tostring(nId), tData.tUnit, self.config.icons.kinetic_link, true, nil, nDuration)
     elseif nSpellId == DEBUFF_KINETIC_FIXATION then
         if tData.tUnit:IsThePlayer() then
             self.core:PlaySound(self.config.sounds.kinetic_fixation)
@@ -386,7 +386,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:ShowAlert("Alert_Shurikens"..tostring(nId), self.L["alert.shocking_attraction_left"], self.config.alerts.shocking_attraction_left)
         end
 
-        self.core:DrawIcon("Icon_Shurikens"..tostring(nId), tData.tUnit, self.config.icons.shocking_attraction, nil, nDuration)
+        self.core:DrawIcon("Icon_Shurikens"..tostring(nId), tData.tUnit, self.config.icons.shocking_attraction, true, nil, nDuration)
     end
 end
 
@@ -446,9 +446,9 @@ function Mod:AddMarkerLines()
         self.core:DrawLine("Cleave_4", self.tUnitBoss, self.config.lines.boss, -60, 23.5, 0, CLEAVE_OFFSETS["BACK_RIGHT"])
     end
 
-    self.core:DrawIcon("AnchorLeft", AIRLOCK_ANCHOR_LEFT, self.config.icons.airlock_anchor, 0)
-    self.core:DrawIcon("AnchorRight", AIRLOCK_ANCHOR_RIGHT, self.config.icons.airlock_anchor, 0)
-    self.core:DrawIcon("StackPoint", STACK_POINT_MID, self.config.icons.stack_point, 0)
+    self.core:DrawIcon("AnchorLeft", AIRLOCK_ANCHOR_LEFT, self.config.icons.airlock_anchor)
+    self.core:DrawIcon("AnchorRight", AIRLOCK_ANCHOR_RIGHT, self.config.icons.airlock_anchor)
+    self.core:DrawIcon("StackPoint", STACK_POINT_MID, self.config.icons.stack_point)
 end
 
 function Mod:RemoveMarkerLines()

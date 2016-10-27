@@ -71,13 +71,14 @@ require "Apollo"
         Plays a soundfile
         @param tConfig            - Sound Settings
 
-    DrawText(Key, Origin, tConfig, sText, nHeight, nDuration, fHandler, tData)
+    DrawText(Key, Origin, tConfig, sText, bTop, nOffset, nDuration, fHandler, tData)
         Draw Text on top of unit or coordinate
         @param Key              - Unique ID
         @param Origin           - Unit Object / UnitId or Coordinates
         @param tConfig          - Text Settings
         @param sText            - Text
-        @param nHeight          - Height of Text from bottom
+        @param bTop             - Set Anchor benieth or above model
+        @param nOffset          - Vertical Offset
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param fHandler         - Callback function
         @param tData            - Data forwarded by callback function
@@ -86,12 +87,13 @@ require "Apollo"
         Removes Text from Screen
         @param Key              - Unique ID
 
-    DrawIcon(Key, Origin, tConfig, nHeight, nDuration, fHandler, tData)
+    DrawIcon(Key, Origin, tConfig, bTop, nOffset, nDuration, fHandler, tData)
         Draw Icon on top of unit or coordinate
         @param Key              - Unique ID
         @param Origin           - Unit Object / UnitId or Coordinates
         @param tConfig          - Icon Settings
-        @param nHeight          - Height of Icon from bottom
+        @param bTop             - Set Anchor benieth or above model
+        @param nOffset          - Vertical Offset
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param fHandler         - Callback function
         @param tData            - Data forwarded by callback function

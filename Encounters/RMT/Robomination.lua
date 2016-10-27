@@ -336,7 +336,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:ShowAlert("Alert_Crush", self.L["alert.crush_player"], self.config.alerts.crush_player)
             self.core:PlaySound(self.config.sounds.crush_player)
         else
-            self.core:DrawIcon("Icon_Crush", tData.tUnit, self.config.icons.crush, nil, nDuration)
+            self.core:DrawIcon("Icon_Crush", tData.tUnit, self.config.icons.crush, true, nil, nDuration)
             self.core:ShowAlert("Alert_Crush", self.L["alert.crush"]:format(sUnitName), self.config.alerts.crush)
             self.core:PlaySound(self.config.sounds.crush)
         end
@@ -377,7 +377,7 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
                     self.core:ShowAura("Aura_Incineration", self.config.auras.incineration, 10, self.L["alert.incineration_player"])
                     self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration_player"], self.config.alerts.incineration)
                 else
-                    self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration, nil, 10)
+                    self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration, true, nil, 10)
                     self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration"]:format(tFocusedUnit:GetName()), self.config.alerts.incineration)
                 end
 
