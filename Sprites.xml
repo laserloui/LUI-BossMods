@@ -120,7 +120,6 @@
     <Sprite Name="LUIBM_heat" Cycle="1">
         <Frame Texture="LUI_BossMods\Sprites\heat.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
-    <AutoButton Name="LUIBM_button" Texture="LUI_BossMods\Sprites\button.png" x0="0" x1="0" x2="0" x3="15" x4="85" x5="100" y0="0" y1="0" y2="0" y3="15" y4="21" y5="36" Stretchy="1" StateBits="15" Direction="Down"/>
     <Sprite Name="LUIBM_fish" Cycle="1">
         <Frame Texture="LUI_BossMods\Sprites\fish.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
@@ -247,4 +246,11 @@
     <Sprite Name="LUIBM_stop2" Cycle="1">
         <Frame Texture="LUI_BossMods\Sprites\stop2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
+    <Sprite Name="LUIBM_circle_full" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\circle_full.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <Sprite Name="LUIBM_circle_bg2" Cycle="1">
+        <Frame Texture="LUI_BossMods\Sprites\circle_bg2.png" x0="0" x1="0" x2="0" x3="0" x4="300" x5="300" y0="0" y1="0" y2="0" y3="0" y4="300" y5="300" Stretchy="1" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+    </Sprite>
+    <AutoButton Name="LUIBM_button" Texture="LUI_BossMods\Sprites\button.png" x0="0" x1="0" x2="0" x3="15" x4="85" x5="100" y0="0" y1="0" y2="0" y3="15" y4="21" y5="36" Stretchy="1" StateBits="15" Direction="Down"/>
 </Sprites>
