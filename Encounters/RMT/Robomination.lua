@@ -336,16 +336,20 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:ShowAlert("Alert_Crush", self.L["alert.crush_player"], self.config.alerts.crush_player)
             self.core:PlaySound(self.config.sounds.crush_player)
         else
-            self.core:DrawIcon("Icon_Crush", tData.tUnit, self.config.icons.crush, true, nil, nDuration)
             self.core:ShowAlert("Alert_Crush", self.L["alert.crush"]:format(sUnitName), self.config.alerts.crush)
             self.core:PlaySound(self.config.sounds.crush)
         end
+
+        self.core:DrawIcon("Icon_Crush", tData.tUnit, self.config.icons.crush, true, nil, nDuration)
     end
 end
 
 function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     if DEBUFF_THE_SKY_IS_FALLING == nSpellId then
-        self.core:HideAura("Aura_Crush")
+        if tData.tUnit:IsThePlayer() then
+            self.core:HideAura("Aura_Crush")
+        end
+
         self.core:RemoveIcon("Icon_Crush")
     end
 end
@@ -377,10 +381,10 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
                     self.core:ShowAura("Aura_Incineration", self.config.auras.incineration, 10, self.L["alert.incineration_player"])
                     self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration_player"], self.config.alerts.incineration)
                 else
-                    self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration, true, nil, 10)
                     self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration"]:format(tFocusedUnit:GetName()), self.config.alerts.incineration)
                 end
 
+                self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration, true, nil, 10)
                 self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 40, self.config.timers.incineration)
                 self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration, 10)
             end
