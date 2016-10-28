@@ -25,6 +25,7 @@ local Locales = {
         ["alert.orb_spawned"] = "Orb spawned!",
         ["alert.kinetic_link"] = "HIT THE ORB!",
         ["alert.kinetic_fixation"] = "ORB ON YOU!",
+        ["alert.shocking_attraction"] = "SHURIKENS ON YOU!",
         ["alert.shocking_attraction_left"] = "MOVE TO THE LEFT!",
         ["alert.shocking_attraction_right"] = "MOVE TO THE RIGHT!",
         ["alert.midphase"] = "Midphase soon!",
@@ -62,6 +63,7 @@ local Locales = {
         ["alert.orb_spawned"] = "Une orbe est apparue !",
         ["alert.kinetic_link"] = "TAPE L'ORBE !",
         ["alert.kinetic_fixation"] = "ORBE SUR TOI !",
+        ["alert.shocking_attraction"] = "SHURIKEN SUR TOI !",
         ["alert.shocking_attraction_left"] = "BOUGE VERS LA GAUCHE !",
         ["alert.shocking_attraction_right"] = "BOUGE VERS LA DROITE !",
         ["alert.midphase"] = "Midphase bientôt !",
@@ -381,7 +383,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
     elseif nSpellId == DEBUFF_SHOCKING_ATTRACTION then
         if tData.tUnit:IsThePlayer() then
             self.core:PlaySound(self.config.sounds.shocking_attraction)
-            self.core:ShowAura("Aura_Shurikens", self.config.auras.shocking_attraction, nDuration, "Shurikens on YOU!")
+            self.core:ShowAura("Aura_Shurikens", self.config.auras.shocking_attraction, nDuration, self.L["alert.shocking_attraction"])
             self.core:ShowAlert("Alert_Shurikens"..tostring(nId), self.L["alert.shocking_attraction_right"], self.config.alerts.shocking_attraction_right)
             self.core:ShowAlert("Alert_Shurikens"..tostring(nId), self.L["alert.shocking_attraction_left"], self.config.alerts.shocking_attraction_left)
         end
