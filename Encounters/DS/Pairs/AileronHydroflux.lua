@@ -41,12 +41,10 @@ function Mod:new(o)
             boss_air = {
                 enable = true,
                 label = "unit.boss_air",
-                color = "af00ffff",
             },
             boss_water = {
                 enable = true,
                 label = "unit.boss_water",
-                color = "af1e90ff",
             },
         },
     }

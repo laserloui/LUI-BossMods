@@ -123,10 +123,12 @@ function Mod:new(o)
             regor_the_rancid = {
                 enable = true,
                 label = "unit.regor_the_rancid",
+                position = 3,
             },
             braugh_the_bloodied = {
                 enable = true,
                 label = "unit.braugh_the_bloodied",
+                position = 4,
             },
         },
         casts = {
@@ -218,7 +220,7 @@ function Mod:new(o)
             circle_telegraph = {
                 enable = true,
                 thickness = 7,
-                color = "ffff4500",
+                color = "ffff0000",
                 label = "label.circle_telegraph",
             },
         },

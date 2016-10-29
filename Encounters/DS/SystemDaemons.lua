@@ -174,41 +174,34 @@ function Mod:new(o)
         timers = {
             disconnect = {
                 enable = true,
-                color = "ade91dfb",
                 label = "label.disconnect",
             },
             adds = {
                 enable = true,
-                color = "ade91dfb",
                 label = "label.waves"
             },
             probes = {
                 enable = true,
-                color = "ade91dfb",
                 label = "label.probes"
             },
         },
         casts = {
             disconnect = {
                 enable = true,
-                color = "ff9932cc",
                 label = "cast.disconnect"
             },
             powersurge = {
                 enable = true,
-                color = "ffff4500",
                 label = "cast.power_surge",
             },
         },
         alerts = {
             disconnect = {
                 enable = true,
-                color = "ff9932cc",
                 label = "cast.disconnect"
             },
             powersurge = {
                 enable = true,
-                color = "ffff4500",
                 label = "cast.power_surge",
             },
             purge = {
@@ -236,7 +229,7 @@ function Mod:new(o)
         lines = {
             purge = {
                 enable = true,
-                color = "ffff4500",
+                color = "ffff0000",
                 thickness = 7,
                 label = "label.purge",
             },

@@ -41,12 +41,10 @@ function Mod:new(o)
             boss_logic = {
                 enable = true,
                 label = "unit.boss_logic",
-                color = "afadff2f",
             },
             boss_earth = {
                 enable = true,
                 label = "unit.boss_earth",
-                color = "afff932f",
             },
         },
     }

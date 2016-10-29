@@ -164,13 +164,12 @@ function Mod:new(o)
             atomic_attraction = {
                 enable = true,
                 position = 3,
-                color = "afff4500",
+                color = "afff0000",
                 label = "debuff.atomic_attraction",
             },
             vulnerability = {
                 enable = false,
                 position = 4,
-                color = "aaee94fd",
                 label = "debuff.electroshock_vulnerability",
             },
         },
@@ -274,7 +273,7 @@ function Mod:new(o)
                 enable = true,
                 sprite = "LUIBM_meteor3",
                 size = 80,
-                color = "ffff4500",
+                color = "ffff0000",
                 label = "debuff.atomic_attraction",
             },
         },
@@ -282,7 +281,7 @@ function Mod:new(o)
             atomic_attraction = {
                 enable = true,
                 sprite = "LUIBM_meteor3",
-                color = "ffff4500",
+                color = "ffff0000",
                 label = "debuff.atomic_attraction",
             },
         },
@@ -302,7 +301,7 @@ function Mod:new(o)
             circle_telegraph = {
                 enable = true,
                 thickness = 7,
-                color = "ffff4500",
+                color = "ffff0000",
                 label = "label.circle_telegraph",
             },
         },

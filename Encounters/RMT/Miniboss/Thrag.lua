@@ -63,7 +63,7 @@ function Mod:new(o)
             bomb = {
                 enable = true,
                 thickness = 4,
-                color = "afff4500",
+                color = "afff0000",
                 label = "label.bomb",
             },
         },

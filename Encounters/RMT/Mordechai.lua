@@ -139,7 +139,7 @@ function Mod:new(o)
             orb_active = {
                 enable = true,
                 position = 2,
-                color = "afff4500",
+                color = "afff0000",
                 label = "label.orb_active",
             },
             shuriken = {
@@ -156,7 +156,7 @@ function Mod:new(o)
             barrage = {
                 enable = true,
                 position = 5,
-                color = "afff4500",
+                color = "afff0000",
                 label = "cast.vicious_barrage",
             },
         },
@@ -250,7 +250,7 @@ function Mod:new(o)
                 enable = true,
                 position = 2,
                 thickness = 6,
-                color = "ffff4500",
+                color = "ffff0000",
                 label = "debuff.kinetic_link",
             },
             kinetic_fixation = {
@@ -267,7 +267,7 @@ function Mod:new(o)
                 position = 1,
                 sprite = "LUIBM_crosshair",
                 size = 80,
-                color = "ffff4500",
+                color = "ffff0000",
                 label = "debuff.kinetic_link",
             },
             shocking_attraction = {
@@ -298,7 +298,7 @@ function Mod:new(o)
         texts = {
             orb_active = {
                 enable = true,
-                color = "ffff4500",
+                color = "ffff0000",
                 timer = true,
                 label = "label.orb_active",
             },

@@ -104,7 +104,7 @@ function Mod:new(o)
             laser = {
                 enable = true,
                 sprite = "LUIBM_run",
-                color = "ffff4500",
+                color = "ffff0000",
                 label = "label.laser",
             },
         },
@@ -113,7 +113,7 @@ function Mod:new(o)
                 enable = true,
                 sprite = "LUIBM_crosshair",
                 size = 80,
-                color = "ffff4500",
+                color = "ffff0000",
                 label = "label.laser",
             },
         },
