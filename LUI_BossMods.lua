@@ -73,6 +73,19 @@ function LUI_BossMods:new(o)
             color = "ffff0000",
             thickness = 10,
         },
+        focus = {
+            line = {
+                enable = true,
+                thickness = 6,
+                color = "ffb0ff2f",
+            },
+            icon = {
+                enable = true,
+                sprite = "LUIBM_star",
+                color = "ffb0ff2f",
+                size = 80,
+            },
+        },
         sound = {
             enable = true,
             force = false,
@@ -233,7 +246,7 @@ end
 
 function LUI_BossMods:Print(message)
     if self.system then
-        ChatSystemLib.PostOnChannel(self.system,message,"")
+        ChatSystemLib.PostOnChannel(self.system,message,"LUI_BossMods")
     else
         Print(message)
     end
@@ -391,6 +404,10 @@ end
 -- #########################################################################################################################################
 
 function LUI_BossMods:OnFrame()
+    if (not self.bIsRunning or not self.tCurrentEncounter) and not self.bHasFocus then
+        return
+    end
+
     local tick = GetTickCount()
 
     if not self.nLastFrameCheck then
@@ -417,7 +434,7 @@ function LUI_BossMods:OnFrame()
 end
 
 function LUI_BossMods:OnUpdate()
-    if (not self.bIsRunning or not self.tCurrentEncounter) and self.bIsLocked then
+    if (not self.bIsRunning or not self.tCurrentEncounter) and self.bIsLocked and not self.bHasFocus then
         return
     end
 
@@ -503,11 +520,14 @@ function LUI_BossMods:ResetFight()
     self.wipeTimer:Stop()
 
     Apollo.RemoveEventHandler("FrameCount",self)
-    Apollo.RemoveEventHandler("NextFrame",self)
     Apollo.RemoveEventHandler("ChatMessage",self)
     Apollo.RemoveEventHandler("BuffAdded",self)
     Apollo.RemoveEventHandler("BuffUpdated",self)
     Apollo.RemoveEventHandler("BuffRemoved",self)
+
+    if not self.bHasFocus then
+        Apollo.RemoveEventHandler("NextFrame",self)
+    end
 
     if self.tCurrentEncounter then
         self.tCurrentEncounter:OnDisable()
@@ -516,7 +536,7 @@ function LUI_BossMods:ResetFight()
 
     if self.tDraws then
         for key,draw in pairs(self.tDraws) do
-            if draw.sType then
+            if draw.sType and key ~= "FOCUS_ICON" and key ~= "FOCUS_LINE" then
                 if draw.sType == "Icon" then
                     self:RemoveIcon(key)
                 elseif draw.sType == "Text" then
@@ -528,6 +548,8 @@ function LUI_BossMods:ResetFight()
                 elseif draw.sType == "LineBetween" then
                     self:RemoveLineBetween(key)
                 end
+
+                self.tDraws[key] = nil
             end
         end
     end
@@ -555,9 +577,12 @@ function LUI_BossMods:ResetFight()
         self.wndAlerts:Show(false,true)
     end
 
-    self.tDraws = nil
+    if not self.bHasFocus then
+        self.tDraws = nil
+        self.wndOverlay:DestroyAllPixies()
+    end
+
     self.runtime = {}
-    self.wndOverlay:DestroyAllPixies()
 end
 
 function LUI_BossMods:CheckForWipe()
@@ -638,6 +663,9 @@ function LUI_BossMods:OnPreloadUnitCreateTimer()
 
         Apollo.RegisterEventHandler("UnitCreated", "OnUnitCreated", self)
         Apollo.RegisterEventHandler("UnitDestroyed", "OnUnitDestroyed", self)
+        Apollo.RegisterEventHandler("AlternateTargetUnitChanged", "OnAlternateTargetUnitChanged", self)
+
+        self:OnAlternateTargetUnitChanged(self.unitPlayer:GetAlternateTarget())
 
         if self.tPreloadUnits then
             local nCurrentTime = GetTickCount()
@@ -760,6 +788,38 @@ function LUI_BossMods:ProcessSavedUnits()
     for _,tUnit in pairs(self.tSavedUnits) do
         for _,unit in pairs(tUnit) do
             self:OnUnitCreated(unit)
+        end
+    end
+end
+
+function LUI_BossMods:OnAlternateTargetUnitChanged(unit)
+    if not self.config.focus or (not self.config.focus.line.enable and not self.config.focus.icon.enable) then
+        return
+    end
+
+    if unit ~= nil and unit ~= self.unitPlayer and unit:GetHealth() ~= nil and unit:GetMaxHealth() > 0 then
+        if self.config.focus.line.enable then
+            self:DrawLineBetween("FOCUS_LINE", unit, nil, self.config.focus.line)
+        end
+
+        if self.config.focus.icon.enable then
+            self:DrawIcon("FOCUS_ICON", unit, self.config.focus.icon, true)
+        end
+
+        if not self.bHasFocus then
+            self.bHasFocus = true
+            Apollo.RemoveEventHandler("NextFrame",self)
+            Apollo.RegisterEventHandler("NextFrame", "OnFrame", self)
+        end
+    else
+        if self.bHasFocus then
+            self.bHasFocus = false
+            self:RemoveLineBetween("FOCUS_LINE")
+            self:RemoveIcon("FOCUS_ICON")
+
+            if not self.bIsRunning then
+                Apollo.RemoveEventHandler("NextFrame",self)
+            end
         end
     end
 end
@@ -1983,7 +2043,7 @@ function LUI_BossMods:UpdateText(Key,tDraw)
     end
 
     if tDraw.tOrigin and type(tDraw.tOrigin) == "userdata" and not Vector3.Is(tDraw.tOrigin) then
-        if tDraw.tOrigin:IsDead() or not tDraw.tOrigin:IsValid() then
+        if not tDraw.tOrigin:IsValid() or tDraw.tOrigin:IsDead() then
             self:RemoveText(Key)
             return
         end
@@ -2115,7 +2175,7 @@ function LUI_BossMods:UpdateIcon(Key,tDraw)
     end
 
     if tDraw.tOrigin and type(tDraw.tOrigin) == "userdata" and not Vector3.Is(tDraw.tOrigin) then
-        if tDraw.tOrigin:IsDead() or not tDraw.tOrigin:IsValid() then
+        if not tDraw.tOrigin:IsValid() or (tDraw.tOrigin:IsDead() and Key ~= "FOCUS_ICON") then
             self:RemoveIcon(Key)
             return
         end
@@ -2244,12 +2304,10 @@ function LUI_BossMods:UpdatePolygon(Key,tDraw)
     end
 
     if tDraw.tOriginUnit then
-        if tDraw.tOriginUnit:IsValid() then
-            if tDraw.tOriginUnit:IsDead() then
-                self:RemovePolygon(Key)
-                return
-            end
-
+        if not tDraw.tOriginUnit:IsValid() or tDraw.tOriginUnit:IsDead() then
+            self:RemovePolygon(Key)
+            return
+        else
             local tOriginVector = NewVector3(tDraw.tOriginUnit:GetPosition())
             local tFacingVector = NewVector3(tDraw.tOriginUnit:GetFacing())
 
@@ -2292,12 +2350,14 @@ function LUI_BossMods:UpdatePolygon(Key,tDraw)
             else
                 tVectors = tDraw.tVectors
             end
+        end
+    else
+        if tDraw.tVectors then
+            tVectors = tDraw.tVectors
         else
             self:RemovePolygon(Key)
             return
         end
-    else
-        tVectors = tDraw.tVectors
     end
 
     if tVectors then
@@ -2490,12 +2550,10 @@ function LUI_BossMods:UpdateLine(Key,tDraw)
     local tVectorTo, tVectorFrom
 
     if tDraw.tOriginUnit then
-        if tDraw.tOriginUnit:IsValid() then
-            if tDraw.tOriginUnit:IsDead() then
-                self:RemoveLine(Key)
-                return
-            end
-
+        if not tDraw.tOriginUnit:IsValid() or tDraw.tOriginUnit:IsDead() then
+            self:RemoveLine(Key)
+            return
+        else
             local tOriginVector = NewVector3(tDraw.tOriginUnit:GetPosition())
             local tFacingVector = NewVector3(tDraw.tOriginUnit:GetFacing())
 
@@ -2534,9 +2592,6 @@ function LUI_BossMods:UpdateLine(Key,tDraw)
                 tVectorTo = tDraw.tVectorTo
                 tVectorFrom = tDraw.tVectorFrom
             end
-        else
-            self:RemoveLine(Key)
-            return
         end
     else
         tVectorTo = tDraw.tVectorTo
@@ -2657,32 +2712,22 @@ function LUI_BossMods:UpdateLineBetween(Key,tDraw)
     local tVectorFrom, tVectorTo
 
     if tDraw.tUnitFrom then
-        if tDraw.tUnitFrom:IsValid() then
-            if tDraw.tUnitFrom:IsDead() then
-                self:RemoveLineBetween(Key)
-                return
-            end
-
-            tVectorFrom = NewVector3(tDraw.tUnitFrom:GetPosition())
-        else
+        if not tDraw.tUnitFrom:IsValid() or (tDraw.tUnitFrom:IsDead() and Key ~= "FOCUS_LINE") then
             self:RemoveLineBetween(Key)
             return
+        else
+            tVectorFrom = NewVector3(tDraw.tUnitFrom:GetPosition())
         end
     else
         tVectorFrom = tDraw.tVectorFrom
     end
 
     if tDraw.tUnitTo then
-        if tDraw.tUnitTo:IsValid() then
-            if tDraw.tUnitTo:IsDead() then
-                self:RemoveLineBetween(Key)
-                return
-            end
-
-            tVectorTo = NewVector3(tDraw.tUnitTo:GetPosition())
-        else
+        if not tDraw.tUnitTo:IsValid() or tDraw.tUnitTo:IsDead() then
             self:RemoveLineBetween(Key)
             return
+        else
+            tVectorTo = NewVector3(tDraw.tUnitTo:GetPosition())
         end
     else
         tVectorTo = tDraw.tVectorTo

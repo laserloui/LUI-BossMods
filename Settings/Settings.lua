@@ -21,6 +21,7 @@ local Locales = {
         ["header.castbar"] = "Castbar",
         ["header.sprites"] = "Sprites",
         ["header.fonts"] = "Fonts",
+        ["header.focus"] = "Focus Target",
         -- Labels
         ["label.enable_module"] = "Enable Boss Module",
         ["label.enable"] = "Enable",
@@ -28,6 +29,8 @@ local Locales = {
         ["label.thickness"] = "Thickness",
         ["label.color"] = "Color",
         ["label.size"] = "Size",
+        ["label.line"] = "Line",
+        ["label.icon"] = "Icon",
         -- Units
         ["global.show_text"] = "Show Absorb/Shield Text",
         ["global.health_color"] = "Health Color",
@@ -90,6 +93,7 @@ local Locales = {
         ["header.castbar"] = "Castbar",
         ["header.sprites"] = "Texturen",
         ["header.fonts"] = "Schriftarten",
+        ["header.focus"] = "Focus Target",
         -- Labels
         ["label.enable_module"] = "Boss Modul einschalten",
         ["label.enable"] = "Einschalten",
@@ -97,6 +101,8 @@ local Locales = {
         ["label.thickness"] = "Dicke",
         ["label.color"] = "Farbe",
         ["label.size"] = "Größe",
+        ["label.line"] = "Linie",
+        ["label.icon"] = "Icon",
         -- Units
         ["global.show_text"] = "Zeige Absorb/Schild Text",
         ["global.health_color"] = "Lebensenergie Farbe",
@@ -159,6 +165,7 @@ local Locales = {
         ["header.castbar"] = "Barre de sorts",
         ["header.sprites"] = "Visuels",
         ["header.fonts"] = "Police",
+        ["header.focus"] = "Focus Target",
         -- Labels
         ["label.enable_module"] = "Activer le module du boss",
         ["label.enable"] = "Activer",
@@ -166,6 +173,8 @@ local Locales = {
         ["label.thickness"] = "Epaisseur",
         ["label.color"] = "Couelur",
         ["label.size"] = "Taille",
+        ["label.line"] = "Ligne",
+        ["label.icon"] = "Icone",
         -- Units
         ["global.show_text"] = "Montrer les absorptions/boucliers",
         ["global.health_color"] = "Couleur de la santé",
@@ -1079,6 +1088,7 @@ function Settings:BuildRightPanel()
             -- Size
             wnd:FindChild("SizeText"):SetData({"icons",nId,"size"})
             wnd:FindChild("SizeText"):SetText(icon.size or self.config.icon.size)
+            wnd:FindChild("SizeText"):SetTooltip(self.L["label.size"])
             wnd:FindChild("SizeText"):SetMaxTextLength(3)
 
             -- Enable Checkbox
@@ -1134,7 +1144,9 @@ function Settings:BuildRightPanel()
             -- Thickness
             wnd:FindChild("ThicknessSetting"):FindChild("Slider"):SetData({"lines",nId,"thickness"})
             wnd:FindChild("ThicknessSetting"):FindChild("Slider"):SetValue(line.thickness or self.config.line.thickness)
+            wnd:FindChild("ThicknessSetting"):FindChild("SliderText"):SetData({"lines",nId,"thickness"})
             wnd:FindChild("ThicknessSetting"):FindChild("SliderText"):SetText(line.thickness or self.config.line.thickness)
+            wnd:FindChild("ThicknessSetting"):FindChild("SliderText"):SetTooltip(self.L["label.thickness"])
 
             -- Color
             wnd:FindChild("ColorSetting"):SetData({"lines",nId,"color"})
@@ -1193,6 +1205,7 @@ function Settings:BuildGlobalSettings()
     -- Update Interval
     wndGeneral:FindChild("IntervalSetting"):FindChild("Label"):SetText(self.L["label.interval"])
     wndGeneral:FindChild("IntervalSetting"):FindChild("Slider"):SetData("interval")
+    wndGeneral:FindChild("IntervalSetting"):FindChild("SliderText"):SetData("interval")
     wndGeneral:FindChild("IntervalSetting"):FindChild("Slider"):SetValue(self.config.interval or 0)
     wndGeneral:FindChild("IntervalSetting"):FindChild("SliderText"):SetText(self.config.interval or 0)
 
@@ -1222,36 +1235,42 @@ function Settings:BuildGlobalSettings()
     -- Volume Master
     wndSounds:FindChild("VolumeMasterSetting"):FindChild("Label"):SetText(self.L["volume.master"])
     wndSounds:FindChild("VolumeMasterSetting"):FindChild("Slider"):SetData({"sound","volumeMaster"})
+    wndSounds:FindChild("VolumeMasterSetting"):FindChild("SliderText"):SetData({"sound","volumeMaster"})
     wndSounds:FindChild("VolumeMasterSetting"):FindChild("Slider"):SetValue(self.config.sound.volumeMaster or 0)
     wndSounds:FindChild("VolumeMasterSetting"):FindChild("SliderText"):SetText(self.config.sound.volumeMaster or 0)
 
     -- Volume Music
     wndSounds:FindChild("VolumeMusicSetting"):FindChild("Label"):SetText(self.L["volume.music"])
     wndSounds:FindChild("VolumeMusicSetting"):FindChild("Slider"):SetData({"sound","volumeMusic"})
+    wndSounds:FindChild("VolumeMusicSetting"):FindChild("SliderText"):SetData({"sound","volumeMusic"})
     wndSounds:FindChild("VolumeMusicSetting"):FindChild("Slider"):SetValue(self.config.sound.volumeMusic or 0)
     wndSounds:FindChild("VolumeMusicSetting"):FindChild("SliderText"):SetText(self.config.sound.volumeMusic or 0)
 
     -- Volume UI
     wndSounds:FindChild("VolumeUISetting"):FindChild("Label"):SetText(self.L["volume.ui"])
     wndSounds:FindChild("VolumeUISetting"):FindChild("Slider"):SetData({"sound","volumeUI"})
+    wndSounds:FindChild("VolumeUISetting"):FindChild("SliderText"):SetData({"sound","volumeUI"})
     wndSounds:FindChild("VolumeUISetting"):FindChild("Slider"):SetValue(self.config.sound.volumeUI or 0)
     wndSounds:FindChild("VolumeUISetting"):FindChild("SliderText"):SetText(self.config.sound.volumeUI or 0)
 
     -- Volume SFX
     wndSounds:FindChild("VolumeSFXSetting"):FindChild("Label"):SetText(self.L["volume.sfx"])
     wndSounds:FindChild("VolumeSFXSetting"):FindChild("Slider"):SetData({"sound","volumeSFX"})
+    wndSounds:FindChild("VolumeSFXSetting"):FindChild("SliderText"):SetData({"sound","volumeSFX"})
     wndSounds:FindChild("VolumeSFXSetting"):FindChild("Slider"):SetValue(self.config.sound.volumeSFX or 0)
     wndSounds:FindChild("VolumeSFXSetting"):FindChild("SliderText"):SetText(self.config.sound.volumeSFX or 0)
 
     -- Volume Ambient
     wndSounds:FindChild("VolumeAmbientSetting"):FindChild("Label"):SetText(self.L["volume.ambient"])
     wndSounds:FindChild("VolumeAmbientSetting"):FindChild("Slider"):SetData({"sound","volumeAmbient"})
+    wndSounds:FindChild("VolumeAmbientSetting"):FindChild("SliderText"):SetData({"sound","volumeAmbient"})
     wndSounds:FindChild("VolumeAmbientSetting"):FindChild("Slider"):SetValue(self.config.sound.volumeAmbient or 0)
     wndSounds:FindChild("VolumeAmbientSetting"):FindChild("SliderText"):SetText(self.config.sound.volumeAmbient or 0)
 
     -- Volume Voice
     wndSounds:FindChild("VolumeVoiceSetting"):FindChild("Label"):SetText(self.L["volume.voice"])
     wndSounds:FindChild("VolumeVoiceSetting"):FindChild("Slider"):SetData({"sound","volumeVoice"})
+    wndSounds:FindChild("VolumeVoiceSetting"):FindChild("SliderText"):SetData({"sound","volumeVoice"})
     wndSounds:FindChild("VolumeVoiceSetting"):FindChild("Slider"):SetValue(self.config.sound.volumeVoice or 0)
     wndSounds:FindChild("VolumeVoiceSetting"):FindChild("SliderText"):SetText(self.config.sound.volumeVoice or 0)
 
@@ -1314,57 +1333,46 @@ function Settings:BuildGlobalSettings()
     -- Health Height
     wndUnit:FindChild("HealthHeightSetting"):FindChild("Label"):SetText(self.L["global.health_height"])
     wndUnit:FindChild("HealthHeightSetting"):FindChild("Slider"):SetData({"units","healthHeight"})
+    wndUnit:FindChild("HealthHeightSetting"):FindChild("SliderText"):SetData({"units","healthHeight"})
     wndUnit:FindChild("HealthHeightSetting"):FindChild("Slider"):SetValue(self.config.units.healthHeight or 0)
     wndUnit:FindChild("HealthHeightSetting"):FindChild("SliderText"):SetText(self.config.units.healthHeight or 0)
 
     -- Shield Height
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("Label"):SetText(self.L["global.shield_height"])
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("Slider"):SetData({"units","shieldHeight"})
+    wndUnit:FindChild("ShieldHeightSetting"):FindChild("SliderText"):SetData({"units","shieldHeight"})
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("Slider"):SetValue(self.config.units.shieldHeight or 0)
     wndUnit:FindChild("ShieldHeightSetting"):FindChild("SliderText"):SetText(self.config.units.shieldHeight or 0)
 
     -- #########################################################################################################################################
-    -- # ALERTS
+    -- # FONTS
     -- #########################################################################################################################################
 
-    local wndAlerts = self.wndSettings:FindChild("Global"):FindChild("Alerts")
-    wndAlerts:FindChild("Frame"):FindChild("Label"):SetText(self.L["header.alerts"])
+    local wndFonts = self.wndSettings:FindChild("Global"):FindChild("Fonts")
+    wndFonts:FindChild("Frame"):FindChild("Label"):SetText(self.L["header.fonts"])
 
-    -- Font
-    wndAlerts:FindChild("FontSetting"):FindChild("Label"):SetText(self.L["global.font_size"])
-    wndAlerts:FindChild("FontSetting"):FindChild("FontText"):SetText(self.config.alerts.font or "")
-    wndAlerts:FindChild("FontSetting"):FindChild("FontText"):SetData({"alerts","font"})
-
-    wndAlerts:FindChild("FontSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
-    wndAlerts:FindChild("FontSetting"):FindChild("BrowseBtn"):SetData({{"alerts","font"},wndAlerts:FindChild("FontText")})
+    -- Alert Font
+    wndFonts:FindChild("AlertSetting"):FindChild("Label"):SetText(self.L["header.alerts"])
+    wndFonts:FindChild("AlertSetting"):FindChild("FontText"):SetText(self.config.alerts.font or "")
+    wndFonts:FindChild("AlertSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
+    wndFonts:FindChild("AlertSetting"):FindChild("BrowseBtn"):SetData({{"alerts","font"}, wndFonts:FindChild("AlertSetting"):FindChild("FontText")})
+    wndFonts:FindChild("AlertSetting"):FindChild("BrowseBtn"):SetAnchorOffsets((Apollo.GetTextWidth("CRB_Button", self.L["button.browse"]) + 90)*-1,-3,0,2)
 
     -- Text Color
-    wndAlerts:FindChild("TextColorSetting"):FindChild("Label"):SetText(self.L["global.text_color"])
-    wndAlerts:FindChild("TextColorSetting"):FindChild("Color"):SetData({"alerts","color"})
-    wndAlerts:FindChild("TextColorSetting"):FindChild("ColorText"):SetText(self.config.alerts.color or "")
-    wndAlerts:FindChild("TextColorSetting"):FindChild("BG"):SetBGColor(self.config.alerts.color)
-
-    -- #########################################################################################################################################
-    -- # AURAS
-    -- #########################################################################################################################################
-
-    local wndAuras = self.wndSettings:FindChild("Global"):FindChild("Auras")
-    wndAuras:FindChild("Frame"):FindChild("Label"):SetText(self.L["header.auras"])
+    wndFonts:FindChild("AlertSetting"):FindChild("ColorSetting"):SetData({"alerts","color"})
+    wndFonts:FindChild("AlertSetting"):FindChild("ColorSetting"):FindChild("BG"):SetBGColor(self.config.alerts.color)
 
     -- Font
-    wndAuras:FindChild("FontSetting"):FindChild("Label"):SetText(self.L["global.font_size"])
-    wndAuras:FindChild("FontSetting"):FindChild("FontText"):SetText(self.config.aura.font or "")
-    wndAuras:FindChild("FontSetting"):FindChild("FontText"):SetData({"aura","font"})
-
-    wndAuras:FindChild("FontSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
-    wndAuras:FindChild("FontSetting"):FindChild("BrowseBtn"):SetData({{"aura","font"},wndAuras:FindChild("FontText")})
+    wndFonts:FindChild("AuraSetting"):FindChild("Label"):SetText(self.L["header.auras"])
+    wndFonts:FindChild("AuraSetting"):FindChild("FontText"):SetText(self.config.aura.font or "")
+    wndFonts:FindChild("AuraSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
+    wndFonts:FindChild("AuraSetting"):FindChild("BrowseBtn"):SetData({{"aura","font"}, wndFonts:FindChild("AuraSetting"):FindChild("FontText")})
+    wndFonts:FindChild("AuraSetting"):FindChild("BrowseBtn"):SetAnchorOffsets((Apollo.GetTextWidth("CRB_Button", self.L["button.browse"]) + 90)*-1,-3,0,2)
 
     -- Color
-    wndAuras:FindChild("ColorSetting"):FindChild("Label"):SetText(self.L["label.color"])
-    wndAuras:FindChild("ColorSetting"):FindChild("Color"):SetData({"aura","color"})
-    wndAuras:FindChild("ColorSetting"):FindChild("ColorText"):SetText(self.config.aura.color or "")
-    wndAuras:FindChild("ColorSetting"):FindChild("BG"):SetBGColor(self.config.aura.color)
-    wndAuras:FindChild("ColorSetting"):FindChild("ColorBtn"):SetData("RGB")
+    wndFonts:FindChild("AuraSetting"):FindChild("ColorSetting"):SetData({"aura","color"})
+    wndFonts:FindChild("AuraSetting"):FindChild("ColorSetting"):FindChild("BG"):SetBGColor(self.config.aura.color)
+    wndFonts:FindChild("AuraSetting"):FindChild("ColorBtn"):SetData("RGB")
 
     -- #########################################################################################################################################
     -- # CASTBAR
@@ -1453,9 +1461,60 @@ function Settings:BuildGlobalSettings()
     -- Bar Height
     wndTimer:FindChild("BarHeightSetting"):FindChild("Label"):SetText(self.L["global.bar_height"])
     wndTimer:FindChild("BarHeightSetting"):FindChild("Slider"):SetData({"timer","barHeight"})
+    wndTimer:FindChild("BarHeightSetting"):FindChild("SliderText"):SetData({"timer","barHeight"})
     wndTimer:FindChild("BarHeightSetting"):FindChild("Slider"):SetValue(self.config.timer.barHeight or 0)
     wndTimer:FindChild("BarHeightSetting"):FindChild("SliderText"):SetText(self.config.timer.barHeight or 0)
 
+    -- #########################################################################################################################################
+    -- # FOCUS TARGET
+    -- #########################################################################################################################################
+
+    local wndFocus = self.wndSettings:FindChild("Global"):FindChild("Focus")
+    local wndFocusIcon = wndFocus:FindChild("IconSetting")
+    local wndFocusLine = wndFocus:FindChild("LineSetting")
+
+    wndFocus:FindChild("Frame"):FindChild("Label"):SetText(self.L["header.focus"])
+
+    -- Enable Icon Checkbox
+    wndFocusIcon:FindChild("EnableCheckbox"):SetText(self.L["label.icon"])
+    wndFocusIcon:FindChild("EnableCheckbox"):SetData({"focus","icon","enable"})
+    wndFocusIcon:FindChild("EnableCheckbox"):SetCheck(self.config.focus.icon.enable or false)
+
+    -- Icon Sprite
+    wndFocusIcon:FindChild("SpriteSetting"):FindChild("SpriteText"):SetText(self.config.focus.icon.sprite or "LUIBM_star")
+    wndFocusIcon:FindChild("SpriteSetting"):FindChild("SpriteText"):SetData({"focus","icon","sprite"})
+    wndFocusIcon:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetAnchorOffsets((Apollo.GetTextWidth("CRB_Button", self.L["button.browse"]) + 90)*-1,-3,0,2)
+    wndFocusIcon:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetData({{"focus","icon","sprite"},wndFocusIcon:FindChild("SpriteText")})
+    wndFocusIcon:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
+
+    -- Icon Color
+    wndFocusIcon:FindChild("ColorSetting"):SetData({"focus","icon","color"})
+    wndFocusIcon:FindChild("ColorSetting"):FindChild("BG"):SetBGColor(self.config.focus.icon.color or "ffb0ff2f")
+
+    -- Icon Size
+    wndFocusIcon:FindChild("SizeText"):SetTooltip(self.L["label.size"])
+    wndFocusIcon:FindChild("SizeText"):SetData({"focus","icon","size"})
+    wndFocusIcon:FindChild("SizeText"):SetText(self.config.focus.icon.size or 80)
+    wndFocusIcon:FindChild("SizeText"):SetMaxTextLength(3)
+
+    -- Enable Line Checkbox
+    wndFocusLine:FindChild("EnableCheckbox"):SetText(self.L["label.line"])
+    wndFocusLine:FindChild("EnableCheckbox"):SetData({"focus","line","enable"})
+    wndFocusLine:FindChild("EnableCheckbox"):SetCheck(self.config.focus.line.enable or false)
+
+    -- Line Thickness
+    wndFocusLine:FindChild("ThicknessSetting"):FindChild("Slider"):SetData({"focus","line","thickness"})
+    wndFocusLine:FindChild("ThicknessSetting"):FindChild("Slider"):SetValue(self.config.focus.line.thickness or 6)
+    wndFocusLine:FindChild("ThicknessSetting"):FindChild("SliderText"):SetData({"focus","line","thickness"})
+    wndFocusLine:FindChild("ThicknessSetting"):FindChild("SliderText"):SetText(self.config.focus.line.thickness or 6)
+    wndFocusLine:FindChild("ThicknessSetting"):FindChild("SliderText"):SetTooltip(self.L["label.thickness"])
+
+    -- Line Color
+    wndFocusLine:FindChild("ColorSetting"):SetData({"focus","line","color"})
+    wndFocusLine:FindChild("ColorSetting"):FindChild("BG"):SetBGColor(self.config.focus.line.color or "ffb0ff2f")
+
+    self:ToggleSettings(wndFocusIcon, self.config.focus.icon.enable or false)
+    self:ToggleSettings(wndFocusLine, self.config.focus.line.enable or false)
 end
 
 function Settings:BuildSoundDropdown(wnd,setting,value)
@@ -1506,11 +1565,32 @@ function Settings:OnTextChange(wndHandler, wndControl)
         return
     end
 
-    if wndControl:GetName() == "SizeText" then
+    if wndControl:GetName() == "SizeText" or wndControl:GetName() == "SliderText" then
         if tonumber(value) == nil then
             self.core:Print("Please enter a number.")
             return
         end
+    end
+
+    if wndControl:GetName() == "SliderText" then
+        local slider = wndControl:GetParent():FindChild("Slider")
+        local max = slider:GetMax()
+        local min = slider:GetMin()
+
+        if value ~= math.floor(value) then
+            value = self.core:Round(value,2)
+        end
+
+        if value < min then
+            value = min
+        end
+
+        if value > max then
+            value = max
+        end
+
+        wndControl:SetText(value)
+        slider:SetValue(value)
     end
 
     self:SetVar(setting,value)
