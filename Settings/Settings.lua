@@ -910,74 +910,6 @@ function Settings:BuildRightPanel()
     end
 
     -- #########################################################################################################################################
-    -- # ICONS
-    -- #########################################################################################################################################
-
-    if config.icons ~= nil then
-        local wndIcons = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
-        wndIcons:FindChild("Label"):SetText(self.L["header.icons"])
-        wndIcons:FindChild("Settings"):SetStyle("Picture",true)
-
-        local tSortedIcons = {}
-        local nHeight = 84
-
-        for nId,icon in pairs(config.icons) do
-            tSortedIcons[#tSortedIcons+1] = {
-                nId = nId,
-                position = icon.position or 99
-            }
-        end
-
-        table.sort(tSortedIcons, function(a, b)
-            return a.position < b.position
-        end)
-
-        for i=1,#tSortedIcons do
-            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:IconSetting", wndIcons:FindChild("Settings"), self)
-            local icon = config.icons[tSortedIcons[i].nId]
-            local nId = tSortedIcons[i].nId
-
-            -- Sprite
-            wnd:FindChild("SpriteSetting"):FindChild("SpriteText"):SetText(icon.sprite or "")
-            wnd:FindChild("SpriteSetting"):FindChild("SpriteText"):SetData({"icons",nId,"sprite"})
-            wnd:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetAnchorOffsets((Apollo.GetTextWidth("CRB_Button", self.L["button.browse"]) + 90)*-1,-3,0,2)
-            wnd:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetData({{"icons",nId,"sprite"},wnd:FindChild("SpriteText")})
-            wnd:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
-
-            -- Color
-            wnd:FindChild("ColorSetting"):SetData({"icons",nId,"color"})
-            wnd:FindChild("ColorSetting"):FindChild("BG"):SetBGColor(icon.color or self.config.icon.color)
-            wnd:FindChild("ColorSetting"):Show(icon.color ~= false,true)
-            wnd:FindChild("ColorLocked"):Show(icon.color == false,true)
-
-            -- Size
-            wnd:FindChild("SizeText"):SetData({"icons",nId,"size"})
-            wnd:FindChild("SizeText"):SetText(icon.size or self.config.icon.size)
-            wnd:FindChild("SizeText"):SetMaxTextLength(3)
-
-            -- Enable Checkbox
-            wnd:FindChild("EnableCheckbox"):SetText(L[icon.label] or icon.label)
-            wnd:FindChild("EnableCheckbox"):SetData({"icons",nId,"enable"})
-            wnd:FindChild("EnableCheckbox"):SetCheck(icon.enable or false)
-            wnd:SetTooltip(icon.tooltip and (L[icon.tooltip] or icon.tooltip) or "")
-
-            self:ToggleSettings(wnd,icon.enable or false)
-            nHeight = nHeight + wnd:GetHeight()
-        end
-
-        local wndItem = wndIcons:FindChild("Settings"):GetChildren()
-
-        if #wndItem > 0 then
-            wndItem[1]:SetAnchorOffsets(5,0,-5,63)
-            wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
-            wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
-        end
-
-        wndIcons:FindChild("Settings"):ArrangeChildrenVert()
-        wndIcons:SetAnchorOffsets(0,0,0,nHeight)
-    end
-
-    -- #########################################################################################################################################
     -- # AURAS
     -- #########################################################################################################################################
 
@@ -1101,6 +1033,74 @@ function Settings:BuildRightPanel()
 
         wndTexts:FindChild("Settings"):ArrangeChildrenVert()
         wndTexts:SetAnchorOffsets(0,0,0,nHeight)
+    end
+
+    -- #########################################################################################################################################
+    -- # ICONS
+    -- #########################################################################################################################################
+
+    if config.icons ~= nil then
+        local wndIcons = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+        wndIcons:FindChild("Label"):SetText(self.L["header.icons"])
+        wndIcons:FindChild("Settings"):SetStyle("Picture",true)
+
+        local tSortedIcons = {}
+        local nHeight = 84
+
+        for nId,icon in pairs(config.icons) do
+            tSortedIcons[#tSortedIcons+1] = {
+                nId = nId,
+                position = icon.position or 99
+            }
+        end
+
+        table.sort(tSortedIcons, function(a, b)
+            return a.position < b.position
+        end)
+
+        for i=1,#tSortedIcons do
+            local wnd = Apollo.LoadForm(self.xmlDoc, "Items:IconSetting", wndIcons:FindChild("Settings"), self)
+            local icon = config.icons[tSortedIcons[i].nId]
+            local nId = tSortedIcons[i].nId
+
+            -- Sprite
+            wnd:FindChild("SpriteSetting"):FindChild("SpriteText"):SetText(icon.sprite or "")
+            wnd:FindChild("SpriteSetting"):FindChild("SpriteText"):SetData({"icons",nId,"sprite"})
+            wnd:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetAnchorOffsets((Apollo.GetTextWidth("CRB_Button", self.L["button.browse"]) + 90)*-1,-3,0,2)
+            wnd:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetData({{"icons",nId,"sprite"},wnd:FindChild("SpriteText")})
+            wnd:FindChild("SpriteSetting"):FindChild("BrowseBtn"):SetText(self.L["button.browse"])
+
+            -- Color
+            wnd:FindChild("ColorSetting"):SetData({"icons",nId,"color"})
+            wnd:FindChild("ColorSetting"):FindChild("BG"):SetBGColor(icon.color or self.config.icon.color)
+            wnd:FindChild("ColorSetting"):Show(icon.color ~= false,true)
+            wnd:FindChild("ColorLocked"):Show(icon.color == false,true)
+
+            -- Size
+            wnd:FindChild("SizeText"):SetData({"icons",nId,"size"})
+            wnd:FindChild("SizeText"):SetText(icon.size or self.config.icon.size)
+            wnd:FindChild("SizeText"):SetMaxTextLength(3)
+
+            -- Enable Checkbox
+            wnd:FindChild("EnableCheckbox"):SetText(L[icon.label] or icon.label)
+            wnd:FindChild("EnableCheckbox"):SetData({"icons",nId,"enable"})
+            wnd:FindChild("EnableCheckbox"):SetCheck(icon.enable or false)
+            wnd:SetTooltip(icon.tooltip and (L[icon.tooltip] or icon.tooltip) or "")
+
+            self:ToggleSettings(wnd,icon.enable or false)
+            nHeight = nHeight + wnd:GetHeight()
+        end
+
+        local wndItem = wndIcons:FindChild("Settings"):GetChildren()
+
+        if #wndItem > 0 then
+            wndItem[1]:SetAnchorOffsets(5,0,-5,63)
+            wndItem[1]:FindChild("Wrapper"):SetAnchorOffsets(0,7,0,0)
+            wndItem[#wndItem]:FindChild("Divider"):Show(false,true)
+        end
+
+        wndIcons:FindChild("Settings"):ArrangeChildrenVert()
+        wndIcons:SetAnchorOffsets(0,0,0,nHeight)
     end
 
     -- #########################################################################################################################################
