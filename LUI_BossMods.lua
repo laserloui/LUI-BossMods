@@ -2054,6 +2054,33 @@ function LUI_BossMods:DrawIcon(Key, Origin, tConfig, bTop, nOffset, nDuration, f
         wnd:SetUnit(Origin,bTop and 1 or 0)
     end
 
+    if nDuration and nDuration > 0 then
+        if tConfig.overlay then
+            if type(tConfig.overlay) == "table" then
+                wnd:FindChild("Overlay"):SetFullSprite(tConfig.overlay.sprite or (tConfig.sprite or ""))
+                wnd:FindChild("Overlay"):SetBarColor(tConfig.overlay.color or "a0000000")
+                wnd:FindChild("Overlay"):SetBGColor(tConfig.overlay.color or "a0000000")
+                wnd:FindChild("Overlay"):SetMax(100)
+                wnd:FindChild("Overlay"):SetProgress((tConfig.overlay.invert ~= nil and tConfig.overlay.invert or false) and 99.999 or 0.001)
+                wnd:FindChild("Overlay"):SetProgress((tConfig.overlay.invert ~= nil and tConfig.overlay.invert or false) and 0.001 or 99.999,(100/nDuration))
+                wnd:FindChild("Overlay"):SetStyleEx("Clockwise", (tConfig.overlay.invert ~= nil and tConfig.overlay.invert or false))
+                wnd:FindChild("Overlay"):SetStyleEx("RadialBar", (tConfig.overlay.radial ~= nil and tConfig.overlay.radial or true))
+                wnd:FindChild("Overlay"):Show(true,true)
+            else
+                wnd:FindChild("Overlay"):SetFullSprite(tConfig.sprite or "")
+                wnd:FindChild("Overlay"):SetBarColor("a0000000")
+                wnd:FindChild("Overlay"):SetBGColor("a0000000")
+                wnd:FindChild("Overlay"):SetMax(100)
+                wnd:FindChild("Overlay"):SetProgress(0.001)
+                wnd:FindChild("Overlay"):SetProgress(99.999,(100/nDuration))
+                wnd:FindChild("Overlay"):SetStyleEx("Clockwise", false)
+                wnd:FindChild("Overlay"):SetStyleEx("RadialBar", true)
+                wnd:FindChild("Overlay"):Show(true,true)
+            end
+
+        end
+    end
+
     self.tDraws[Key] = {
         nTick = GetTickCount(),
         nDuration = nDuration,

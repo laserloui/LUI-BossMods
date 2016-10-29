@@ -269,15 +269,21 @@ function Mod:new(o)
                 label = "sound.a"       -- Text in Option Panel (Text or Locale Key)
             },
         },
-        icons = {                       -- Icons / Pixies
+        icons = {                           -- Icons / Pixies
             iconA = {
-                enable = true,          -- Enable/Disable icon
-                position = 1,           -- Position in Option Panel (Top to Bottom)
-                tooltip = "",           -- Tooltip in Option Panel
-                sprite = "target2",     -- Icon Sprite
-                size = 20,              -- Icon Size (Default: Global Setting)
-                color = "ff40e0d0",     -- Icon Color (Default: Global Setting)
-                label = "icon.a"        -- Text in Option Panel (Text or Locale Key)
+                enable = true,              -- Enable/Disable icon
+                position = 1,               -- Position in Option Panel (Top to Bottom)
+                tooltip = "",               -- Tooltip in Option Panel
+                sprite = "target",          -- Icon Sprite
+                size = 20,                  -- Icon Size (Default: Global Setting)
+                color = "ff40e0d0",         -- Icon Color (Default: Global Setting)
+                label = "icon.a",           -- Text in Option Panel (Text or Locale Key)
+                overlay = {                 -- Icon Overlay (Boolean or Table!!!)
+                    sprite = "target",      -- Overlay Sprite (Default: Icon Sprite)
+                    color = "a0000000",     -- Overlay Color
+                    invert = false,         -- Invert Overlay
+                    radial = true,          -- Radial/Linear Overlay
+                },
             },
         },
         texts = {                       -- Texts
