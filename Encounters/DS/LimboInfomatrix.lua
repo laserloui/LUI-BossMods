@@ -47,7 +47,7 @@ function Mod:new(o)
             antlion = {
                 enable = true,
                 thickness = 6,
-                max = 250,
+                max = 220,
                 color = "ff00ffff",
                 label = "unit.antlion",
             },
@@ -70,7 +70,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 
     if sName == self.L["unit.antlion"] then
         self.core:DrawLineBetween("Line"..tostring(nId), tUnit, nil, self.config.lines.antlion)
-        self.core:DrawIcon("Icon"..tostring(nId), tUnit, self.config.icons.antlion, true, -100)
+        self.core:DrawIcon("Icon"..tostring(nId), tUnit, self.config.icons.antlion, true)
     end
 end
 
