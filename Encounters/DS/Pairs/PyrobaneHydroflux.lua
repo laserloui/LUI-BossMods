@@ -7,28 +7,71 @@ local Encounter = "PyrobaneHydroflux"
 
 local Locales = {
     ["enUS"] = {
-        -- Unit names
+        -- Units
         ["unit.boss_fire"] = "Pyrobane",
         ["unit.boss_water"] = "Hydroflux",
-        ["unit.ice_tomb"] = "Ice Tomb",
         ["unit.flame_wave"] = "Flame Wave",
+        ["unit.ice_tomb"] = "Ice Tomb",
+        -- Alerts
+        ["alert.bombs"] = "Bombs!",
+        ["alert.ice_tomb"] = "Ice Tombs!",
+        ["alert.stacks"] = "WATCH YOUR DEBUFF STACKS!",
+        -- Labels
+        ["label.bombs"] = "Bombs",
+        ["label.bombs_player"] = "Bomb on player",
+        ["label.fire_bomb"] = "Fire Bomb",
+        ["label.water_bomb"] = "Water Bomb",
+        ["label.stacks"] = "Debuff Stacks Warning",
         -- Texts
         ["text.next_bombs"] = "Next bombs",
         ["text.next_ice_tomb"] = "Next ice tomb",
-        -- Labels
-        ["label.bombs"] = "Bombs",
-        ["label.ice_tomb"] = "Ice Tomb",
-        ["label.flame_waves"] = "Flame Waves",
+        ["text.stacks"] = "/p I hit %d stacks and just failed the challenge!",
     },
-    ["deDE"] = {},
-    ["frFR"] = {},
+    ["deDE"] = {
+        -- Units
+        ["unit.boss_fire"] = "Pyroman",
+        ["unit.boss_water"] = "Hydroflux",
+        ["unit.flame_wave"] = "Flammenwelle",
+        ["unit.ice_tomb"] = "Eisgrab",
+        -- Alerts
+        ["alert.bombs"] = "Bomben!",
+        ["alert.ice_tomb"] = "Eisgräber!",
+        -- Labels
+        ["label.bombs"] = "Bomben",
+        ["label.bombs_player"] = "Bombe auf Spieler",
+        ["label.fire_bomb"] = "Feuer Bombe",
+        ["label.water_bomb"] = "Wasser Bombe",
+        -- Texts
+        ["text.next_bombs"] = "Nächste Bomben",
+        ["text.next_ice_tomb"] = "Nächstes Eisgrab",
+        ["text.stacks"] = "/gr Ich hab %d stacks und somit die Challenge vermasselt!",
+    },
+    ["frFR"] = {
+        -- Units
+        ["unit.boss_fire"] = "Pyromagnus",
+        ["unit.boss_water"] = "Hydroflux",
+        ["unit.flame_wave"] = "Vague de feu",
+        ["unit.ice_tomb"] = "Tombeau de glace",
+        -- Alerts
+        ["alert.bombs"] = "Bombes!",
+        ["alert.ice_tomb"] = "Tombeau de glace!",
+        -- Labels
+        ["label.bombs"] = "Bombes",
+        ["label.bombs_player"] = "Bombes sur le joueur",
+        ["label.fire_bomb"] = "Fire Bomb", -- Missing!
+        ["label.water_bomb"] = "Water Bomb", -- Missing!
+        -- Texts
+        ["text.next_bombs"] = "Prochaine bombes",
+        ["text.next_ice_tomb"] = "Prochain tombeau de glace",
+        ["text.stacks"] = "/éq I hit %d stacks and just failed the challenge!", -- Missing!
+    },
 }
 
-local nLastBombTime = 0
-local nLastIceTombTime = 0
-local DEBUFF_FROSTBOMB = 75058
-local DEBUFF_FIREBOMB = 75059
+local DEBUFF_FROST_BOMB = 75058
+local DEBUFF_FIRE_BOMB = 75059
 local DEBUFF_ICE_TOMB = 74326
+local DEBUFF_DRENCHED = 52874
+local DEBUFF_ENGULFED = 52876
 
 function Mod:new(o)
     o = o or {}
@@ -55,59 +98,129 @@ function Mod:new(o)
         units = {
             boss_fire = {
                 enable = true,
+                position = 1,
                 label = "unit.boss_fire",
-                color = "afff2f2f",
             },
             boss_water = {
                 enable = true,
+                position = 2,
                 label = "unit.boss_water",
-                color = "af1e90ff",
+            },
+        },
+        auras = {
+            fire_bomb = {
+                enable = true,
+                sprite = "LUIBM_meteor3",
+                color = "ffff0000",
+                label = "label.fire_bomb",
+            },
+            water_bomb = {
+                enable = true,
+                sprite = "LUIBM_waterdrop2",
+                color = "ff00bfff",
+                label = "label.water_bomb",
             },
         },
         alerts = {
             bombs = {
                 enable = true,
-                duration = 3,
+                position = 1,
                 label = "label.bombs",
+            },
+            bombs_player = {
+                enable = true,
+                position = 2,
+                label = "label.bombs_player",
             },
             ice_tomb = {
                 enable = true,
-                duration = 3,
-                label = "label.ice_tomb",
+                position = 3,
+                label = "unit.ice_tomb",
+            },
+            stacks = {
+                enable = true,
+                position = 4,
+                label = "label.stacks",
             },
         },
         sounds = {
             bombs = {
                 enable = true,
+                position = 1,
                 file = "info",
                 label = "label.bombs",
             },
-            ice_tomb = {
+            bombs_player = {
                 enable = true,
+                position = 2,
+                file = "burn",
+                label = "label.bombs_player",
+            },
+            ice_tomb = {
+                enable = false,
+                position = 3,
                 file = "alert",
-                label = "label.ice_tomb",
+                label = "unit.ice_tomb",
+            },
+            stacks = {
+                enable = true,
+                position = 4,
+                file = "alert",
+                label = "label.stacks",
             },
         },
         timers = {
             bombs = {
                 enable = true,
-                color = "ade91dfb",
-                text = "text.next_bombs",
+                position = 1,
                 label = "label.bombs",
             },
             ice_tomb = {
                 enable = true,
-                color = "ade91dfb",
-                text = "text.next_ice_tomb",
-                label = "label.ice_tomb",
+                position = 2,
+                label = "unit.ice_tomb",
+            },
+        },
+        icons = {
+            fire_bomb = {
+                enable = true,
+                sprite = "LUIBM_circle_bg",
+                color = "ffff0000",
+                size = 50,
+                label = "label.fire_bomb",
+                overlay = {
+                    sprite = "LUIBM_circle_full",
+                    color = "ffff0000",
+                    invert = true,
+                },
+            },
+            water_bomb = {
+                enable = true,
+                sprite = "LUIBM_circle_bg",
+                color = "ff00bfff",
+                size = 50,
+                label = "label.water_bomb",
+                overlay = {
+                    sprite = "LUIBM_circle_full",
+                    color = "ff00bfff",
+                    invert = true,
+                },
             },
         },
         lines = {
             flame_wave = {
                 enable = true,
-                thickness = 10,
+                position = 1,
+                thickness = 8,
                 color = "ffff0000",
-                label = "label.flame_waves",
+                label = "unit.flame_wave",
+            },
+            ice_tomb = {
+                enable = true,
+                position = 2,
+                thickness = 6,
+                color = "ff00bfff",
+                label = "unit.ice_tomb",
             },
         },
     }
@@ -131,28 +244,94 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     elseif sName == self.L["unit.boss_water"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_water)
     elseif sName == self.L["unit.flame_wave"] then
-        self.core:DrawLine(nId, tUnit, self.config.lines.flame_wave, 20)
+        self.core:DrawLine(nId, tUnit, self.config.lines.flame_wave, 25)
+    elseif sName == self.L["unit.ice_tomb"] then
+        if self.core:GetDistance(tUnit) < 45 then
+            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.ice_tomb)
+        end
     end
 end
 
 function Mod:OnUnitDestroyed(nId, tUnit, sName)
     if sName == self.L["unit.flame_wave"] then
         self.core:RemoveLine(nId)
+    elseif sName == self.L["unit.ice_tomb"] then
+        self.core:RemoveLineBetween(nId)
     end
 end
 
+function Mod:OnBombs()
+    if not self.bPlayerHasBomb then
+        self.core:PlaySound(self.config.sounds.bombs)
+        self.core:ShowAlert("Alert_Bomb", self.L["alert.bombs"], self.config.alerts.bombs)
+    end
+
+    self.bPlayerHasBomb = nil
+end
+
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
-    if nSpellId == DEBUFF_FIREBOMB or nSpellId == DEBUFF_FROSTBOMB then
+    if nSpellId == DEBUFF_FIRE_BOMB or nSpellId == DEBUFF_FROST_BOMB then
         local nCurrentTime = GameLib.GetGameTime()
-        if nCurrentTime - nLastBombTime > 10 then
-            nLastBombTime = nCurrentTime
-            self.core:AddTimer("BOMBS", self.L["message.bombs"], 30, self.config.timers.bombs)
+        if nCurrentTime - self.nLastBombTime > 10 then
+            self.nLastBombTime = nCurrentTime
+            ApolloTimer.Create(1, false, "OnBombs", self)
+            self.core:AddTimer("BOMBS", self.L["text.next_bombs"], 30, self.config.timers.bombs)
+        end
+
+        if tData.tUnit:IsThePlayer() then
+            self.bPlayerHasBomb = true
+            self.core:PlaySound(self.config.sounds.bombs_player)
+            self.core:ShowAlert("Alert_Bomb", self.L["alert.bombs_player"], self.config.alerts.bombs_player)
+
+            if nSpellId == DEBUFF_FIRE_BOMB then
+                self.core:ShowAura("Aura_Bomb", self.config.auras.fire_bomb, nDuration, self.L["alert.bombs_player"])
+            else
+                self.core:ShowAura("Aura_Bomb", self.config.auras.water_bomb, nDuration, self.L["alert.bombs_player"])
+            end
+        end
+
+        if nSpellId == DEBUFF_FIRE_BOMB then
+            self.core:DrawIcon("Icon_Bomb"..tostring(nId), tData.tUnit, self.config.icons.fire_bomb, true, nil, nDuration)
+        else
+            self.core:DrawIcon("Icon_Bomb"..tostring(nId), tData.tUnit, self.config.icons.water_bomb, true, nil, nDuration)
         end
     elseif nSpellId == DEBUFF_ICE_TOMB then
         local nCurrentTime = GameLib.GetGameTime()
-        if nCurrentTime - nLastIceTombTime > 5 then
-            nLastIceTombTime = nCurrentTime
-            self.core:AddTimer("ICE_TOMB", self.L["message.ice_tomb"], 15, self.config.timers.ice_tomb)
+        if nCurrentTime - self.nLastIceTombTime > 5 then
+            self.nLastIceTombTime = nCurrentTime
+            self.core:PlaySound(self.config.sounds.ice_tomb)
+            self.core:ShowAlert("Alert_Tomb", self.L["alert.ice_tomb"], self.config.alerts.ice_tomb)
+            self.core:AddTimer("ICE_TOMB", self.L["text.next_ice_tomb"], 15, self.config.timers.ice_tomb)
+        end
+    end
+end
+
+function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
+    if DEBUFF_DRENCHED == nSpellId or DEBUFF_ENGULFED == nSpellId then
+        if tData.tUnit:IsThePlayer() then
+            if nStack >= 10 and not self.warned then
+                self.core:PlaySound(self.config.sounds.stacks)
+                self.core:ShowAlert("Alert_Stacks", self.L["alert.stacks"], self.config.alerts.stacks)
+                self.warned = true
+            end
+
+            if nStack > 13 then
+                ChatSystemLib.Command(self.L["text.stacks"]:format(nStack))
+            end
+        end
+    end
+end
+
+function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
+    if nSpellId == DEBUFF_FIRE_BOMB or nSpellId == DEBUFF_FROST_BOMB then
+        if tData.tUnit:IsThePlayer() then
+            self.core:HideAura("Aura_Bomb")
+        end
+
+        self.core:RemoveIcon("Icon_Bomb")
+    elseif DEBUFF_DRENCHED == nSpellId or DEBUFF_ENGULFED == nSpellId then
+        if tData.tUnit:IsThePlayer() then
+            self.warned = nil
         end
     end
 end
@@ -167,11 +346,13 @@ end
 
 function Mod:OnEnable()
     self.run = true
-    nLastIceTombTime = 0
-    nLastBombTime = 0
+    self.warned = nil
+    self.bPlayerHasBomb = nil
+    self.nLastIceTombTime = 0
+    self.nLastBombTime = 0
 
-    self.core:AddTimer("BOMBS", self.L["message.bombs"], 30, self.config.timers.bombs)
-    self.core:AddTimer("ICE_TOMB", self.L["message.ice_tomb"], 26, self.config.timers.ice_tomb)
+    self.core:AddTimer("BOMBS", self.L["text.next_bombs"], 30, self.config.timers.bombs)
+    self.core:AddTimer("ICE_TOMB", self.L["text.next_ice_tomb"], 26, self.config.timers.ice_tomb)
 end
 
 function Mod:OnDisable()
