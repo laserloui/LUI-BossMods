@@ -368,6 +368,7 @@ end
 
 function Settings:OnLoad()
     self.wndSettings = Apollo.LoadForm(self.xmlDoc, "Settings", nil, self)
+    self.wndSettings:SetSizingMinimum(1100,800)
     self.wndSettings:Show(false,true)
 
     local nMaxWidth,nMaxHeight = Apollo.GetScreenSize()
@@ -1864,6 +1865,10 @@ function Settings:OnSaveSprite(wndHandler, wndControl)
 
     if wndText then
         wndText:SetText(strIcon)
+    end
+
+    if setting[1] == "icons" then
+        self:SetVar({setting[1],setting[2],"overlay"}, self:GetVar({setting[1],setting[2],"overlay"}) ~= nil)
     end
 
     self:SetVar(setting,strIcon)
