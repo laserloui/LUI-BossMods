@@ -378,15 +378,15 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
             if tFocusedUnit then
                 if tFocusedUnit:IsThePlayer() then
                     self.core:PlaySound(self.config.sounds.incineration)
-                    self.core:ShowAura("Aura_Incineration", self.config.auras.incineration, 10, self.L["alert.incineration_player"])
+                    self.core:ShowAura("Aura_Incineration", self.config.auras.incineration, 12, self.L["alert.incineration_player"])
                     self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration_player"], self.config.alerts.incineration)
                 else
                     self.core:ShowAlert("Alert_Incineration", self.L["alert.incineration"]:format(tFocusedUnit:GetName()), self.config.alerts.incineration)
                 end
 
-                self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration, true, nil, 10)
+                self.core:DrawIcon("Icon_Incineration", tFocusedUnit, self.config.icons.incineration, true, nil, 12)
                 self.core:AddTimer("Timer_Incineration", self.L["message.next_incineration"], 40, self.config.timers.incineration)
-                self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration, 10)
+                self.core:DrawLineBetween("Line_Incineration", tFocusedUnit, self.boss, self.config.lines.incineration, 12)
             end
         end
     end
