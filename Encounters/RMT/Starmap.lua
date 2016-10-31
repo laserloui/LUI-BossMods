@@ -77,7 +77,7 @@ function Mod:new(o)
                 enable = true,
                 thickness = 16,
                 color = "ff00ffff",
-                label = "unit.asteroid",
+                label = "unit.world_ender",
             },
             asteroid = {
                 enable = true,
