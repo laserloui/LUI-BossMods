@@ -13,7 +13,10 @@ local Locales = {
         -- Messages
         ["message.station"] = "Next stations",
         -- Alerts
-        ["alert.station"] = "Weather Stations spawned!"
+        ["alert.station"] = "Weather Stations spawned!",
+        -- Casts
+        ["cast.weather_cycle"] = "Activate Weather Cycle",
+        ["cast.shatter"] = "Shatter",
     },
     ["deDE"] = {
         -- Units
@@ -22,7 +25,10 @@ local Locales = {
         -- Messages
         ["message.station"] = "Nächste Wetterstation",
         -- Alerts
-        ["alert.station"] = "Weather Stations spawned!"
+        ["alert.station"] = "Weather Stations spawned!",
+        -- Casts
+        ["cast.weather_cycle"] = "Wetterzyklus aktivieren",
+        ["cast.shatter"] = "Shatter", -- Missing
     },
     ["frFR"] = {
         -- Units
@@ -31,7 +37,10 @@ local Locales = {
         -- Messages
         ["message.station"] = "Prochaine stations",
         -- Alerts
-        ["alert.station"] = "Weather Stations spawned!"
+        ["alert.station"] = "Weather Stations spawned!",
+        -- Casts
+        ["cast.weather_cycle"] = "Activer cycle climatique",
+        ["cast.shatter"] = "Shatter", -- Missing
     },
 }
 
@@ -124,8 +133,10 @@ end
 
 function Mod:OnCastStart(nId, sCastName, tCast, sName)
     if sName == self.L["Maelstrom Authority"] then
-        if sCastName == self.L["Activate Weather Cycle"] then
+        if sCastName == self.L["cast.weather_cycle"] then
             self.core:AddTimer("Timer_Station", self.L["message.station"], 13, self.config.timers.station)
+        elseif sCastName == self.L["cast.shatter"] then
+            self.core:RemoveTimer("Timer_Station")
         end
     end
 end
