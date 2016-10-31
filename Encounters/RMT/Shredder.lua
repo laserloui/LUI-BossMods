@@ -10,6 +10,7 @@ local Locales = {
         -- Units
         ["unit.boss"] = "Swabbie Ski'Li",
         ["unit.noxious_nabber"] = "Noxious Nabber",
+        ["unit.bilious_brute"] = "Bilious Brute",
         ["unit.regor_the_rancid"] = "Regor the Rancid",
         ["unit.braugh_the_bloodied"] = "Braugh the Bloodied",
         ["unit.sawblade"] = "Sawblade",
@@ -33,6 +34,7 @@ local Locales = {
     ["deDE"] = {
         ["unit.boss"] = "Swabbie Ski'Li",
         ["unit.noxious_nabber"] = "Noxious Nabber",
+        ["unit.bilious_brute"] = "Bilious Brute", -- Missing!
         ["unit.regor_the_rancid"] = "Regor the Rancid",
         ["unit.braugh_the_bloodied"] = "Braugh der Blähbauch",
         ["unit.sawblade"] = "Sägeblatt",
@@ -57,6 +59,7 @@ local Locales = {
         -- Units
         ["unit.boss"] = "Swabbie Ski'Li",
         ["unit.noxious_nabber"] = "Harpond Nocif",
+        ["unit.bilious_brute"] = "Bilious Brute", -- Missing!
         ["unit.regor_the_rancid"] = "Regor le Rancie",
         ["unit.braugh_the_bloodied"] = "Braugh le Sanglant",
         ["unit.sawblade"] = "Scie",
@@ -120,15 +123,20 @@ function Mod:new(o)
                 label = "unit.noxious_nabber",
                 position = 2,
             },
+            bilious_brute = {
+                enable = true,
+                label = "unit.bilious_brute",
+                position = 3,
+            },
             regor_the_rancid = {
                 enable = true,
                 label = "unit.regor_the_rancid",
-                position = 3,
+                position = 4,
             },
             braugh_the_bloodied = {
                 enable = true,
                 label = "unit.braugh_the_bloodied",
-                position = 4,
+                position = 5,
             },
         },
         casts = {
@@ -204,6 +212,22 @@ function Mod:new(o)
                 label = "cast.gravedigger",
             },
         },
+        icons = {
+            noxious_nabber = {
+                enable = true,
+                sprite = "LUIBM_skull",
+                size = 80,
+                color = "ffff00ff",
+                label = "unit.noxious_nabber",
+            },
+            bilious_brute = {
+                enable = true,
+                sprite = "LUIBM_skull2",
+                size = 80,
+                color = "ff00ffff",
+                label = "unit.bilious_brute",
+            },
+        },
         lines = {
             room = {
                 enable = true,
@@ -247,6 +271,10 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.core:DrawLineBetween("EntranceLine", ENTRANCELINE_A, ENTRANCELINE_B, self.config.lines.room)
     elseif sName == self.L["unit.noxious_nabber"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.noxious_nabber)
+        self.core:DrawIcon(nId, tUnit, self.config.icons.noxious_nabber, true)
+    elseif sName == self.L["unit.bilious_brute"] then
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.bilious_brute)
+        self.core:DrawIcon(nId, tUnit, self.config.icons.bilious_brute, true)
     elseif sName == self.L["unit.regor_the_rancid"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.regor_the_rancid)
     elseif sName == self.L["unit.braugh_the_bloodied"] then
@@ -258,16 +286,8 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 end
 
-function Mod:OnUnitDestroyed(nId, tUnit, sName)
-    if sName == self.L["unit.sawblade"] then
-        self.core:RemoveLine(nId)
-    elseif sName == self.L["unit.circle_telegraph"] then
-        self.core:RemovePolygon(nId)
-    end
-end
-
 function Mod:OnHealthChanged(nId, nPercent, sName, tUnit)
-    if sName == self.L["unit.noxious_nabber"] or sName == self.L["unit.regor_the_rancid"] or sName == self.L["unit.braugh_the_bloodied"] then
+    if sName == self.L["unit.noxious_nabber"] or sName == self.L["unit.bilious_brute"] or sName == self.L["unit.regor_the_rancid"] or sName == self.L["unit.braugh_the_bloodied"] then
         if tUnit:IsDead() then
             self.core:RemoveUnit(nId)
         end
