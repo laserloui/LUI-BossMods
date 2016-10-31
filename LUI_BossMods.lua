@@ -1397,7 +1397,11 @@ function LUI_BossMods:UpdateTimer(tTimer)
     end
 
     if tTimer.bAlert and nCountDown >= 0 then
-        self:ShowAlert("COUNTDOWN", nCountDown, 1, self.config.alerts.color)
+        self:ShowAlert("COUNTDOWN", nCountDown > 0 and nCountDown or "NOW!", {
+            enable = true,
+            duration = 1,
+            color = self.config.alerts.color,
+        })
         tTimer.nCountDown = nCountDown
     end
 
