@@ -7,13 +7,32 @@ local Encounter = "MnemesisVisceralus"
 
 local Locales = {
     ["enUS"] = {
-        -- Unit names
+        -- Units
         ["unit.boss_logic"] = "Mnemesis",
         ["unit.boss_life"] = "Visceralus",
+        ["unit.life_orb"] = "Life Force",
+        -- Labels
+        ["label.life_force_shackle"] = "No-Healing Debuff",
     },
-    ["deDE"] = {},
-    ["frFR"] = {},
+    ["deDE"] = {
+        -- Units
+        ["unit.boss_logic"] = "Mnemesis",
+        ["unit.boss_life"] = "Viszeralus",
+        ["unit.life_orb"] = "Lebenskraft",
+        -- Labels
+        ["label.life_force_shackle"] = "Keine-Heilung Debuff",
+    },
+    ["frFR"] = {
+        -- Units
+        ["unit.boss_logic"] = "Mnémésis",
+        ["unit.boss_life"] = "Visceralus",
+        ["unit.life_orb"] = "Force vitale",
+        -- Labels
+        ["label.life_force_shackle"] = "Aucun-Soin Debuff",
+    },
 }
+
+local DEBUFF_LIFE_FORCE_SHACKLE = 74366
 
 function Mod:new(o)
     o = o or {}
@@ -47,6 +66,23 @@ function Mod:new(o)
                 label = "unit.boss_life",
             },
         },
+        icons = {
+            life_force_shackle = {
+                enable = true,
+                sprite = "LUIBM_voodoo",
+                size = 80,
+                color = "ffadff2f",
+                label = "label.life_force_shackle",
+            },
+        },
+        lines = {
+            life_orb = {
+                enable = true,
+                thickness = 6,
+                color = "ffadff2f",
+                label = "unit.life_orb",
+            },
+        },
     }
     return o
 end
@@ -66,7 +102,30 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     if sName == self.L["unit.boss_logic"] and bInCombat == true then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_logic)
     elseif sName == self.L["unit.boss_life"] and bInCombat == true then
+        self.visceralus = tUnit
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_life)
+    elseif sName == self.L["unit.life_orb"] then
+        if self.visceralus then
+            self.core:DrawLineBetween(nId, tUnit, self.visceralus, self.config.lines.life_orb)
+        end
+    end
+end
+
+function Mod:OnUnitDestroyed(nId, tUnit, sName)
+    if sName == self.L["unit.life_orb"] then
+        self.core:RemoveLineBetween(nId)
+    end
+end
+
+function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
+    if DEBUFF_LIFE_FORCE_SHACKLE == nSpellId then
+        self.core:DrawIcon("NoHeal_"..tostring(nId), tData.tUnit, self.config.icons.life_force_shackle, true)
+    end
+end
+
+function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
+    if DEBUFF_LIFE_FORCE_SHACKLE == nSpellId then
+        self.core:RemoveIcon("NoHeal_"..tostring(nId))
     end
 end
 
