@@ -996,15 +996,16 @@ function LUI_BossMods:UpdateUnit(tData)
             tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):SetBGColor(self.config.units.absorbColor)
         end
 
-        if nAbsorbProgress ~= (tData.runtime.shield or 0) then
+        if nAbsorbProgress ~= (tData.runtime.absorb or 0) then
             tData.wnd:FindChild("ShieldBar"):FindChild("Text"):SetText(self:HelperFormatBigNumber(nAbsorb))
             tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, nAbsorbProgress, 1}}), .075)
-            tData.runtime.shield = nAbsorbProgress
+            tData.runtime.absorb = nAbsorbProgress
         end
     else
         if tData.runtime.bShowAbsorb ~= nil then
-            tData.runtime.bShowAbsorb = nil
             tData.wnd:FindChild("ShieldBar"):FindChild("Progress"):SetBGColor(self.config.units.shieldColor)
+            tData.runtime.bShowAbsorb = nil
+            tData.runtime.absorb = nil
         end
 
         -- Shield
@@ -1030,13 +1031,14 @@ function LUI_BossMods:UpdateUnit(tData)
         else
             if tData.wnd:FindChild("ShieldBar"):IsShown() then
                 tData.wnd:FindChild("ShieldBar"):Show(false,true)
+                tData.runtime.shield = nil
             end
         end
     end
 
     -- Cast
     if tData.tCast then
-        if tData.runtime.shield ~= nil and tData.runtime.shield > 0 then
+        if tData.runtime.shield or tData.runtime.absorb then
             if tData.runtime.isMax then
                 tData.wnd:FindChild("CastBar"):SetAnchorPoints(0.05,1,0.65,1)
                 tData.runtime.isMax = nil
@@ -1065,9 +1067,7 @@ function LUI_BossMods:UpdateUnit(tData)
             tData.wnd:FindChild("CastBar"):FindChild("Text"):SetText(tData.tCast.sName)
             tData.wnd:FindChild("CastBar"):FindChild("Progress"):SetAnchorPoints(0, 0, nProgress, 1)
             tData.wnd:FindChild("CastBar"):FindChild("Progress"):TransitionMove(WindowLocation.new({fPoints = {0, 0, fPoint, 1}}), nRemaining)
-
             tData.wnd:FindChild("CastBar"):Show(true,true)
-
             tData.tCast.bIsRunning = true
         end
     else
