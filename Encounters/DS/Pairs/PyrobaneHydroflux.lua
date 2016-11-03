@@ -61,8 +61,8 @@ local Locales = {
         ["label.fire_bomb"] = "Fire Bomb", -- Missing!
         ["label.water_bomb"] = "Water Bomb", -- Missing!
         -- Texts
-        ["text.next_bombs"] = "Prochaine bombes",
-        ["text.next_ice_tomb"] = "Prochain tombeau de glace",
+        ["text.next_bombs"] = "Bombes suivants",
+        ["text.next_ice_tomb"] = "Tombeau de glace suivant",
         ["text.stacks"] = "/éq I hit %d stacks and just failed the challenge!", -- Missing!
     },
 }
