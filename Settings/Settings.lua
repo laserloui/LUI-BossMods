@@ -633,7 +633,7 @@ function Settings:BuildRightPanel()
         wndSounds:FindChild("Settings"):SetStyle("Picture",true)
 
         local tSortedSounds = {}
-        local nHeight = 84
+        local nHeight = 92
 
         for nId,sound in pairs(config.sounds) do
             tSortedSounds[#tSortedSounds+1] = {
