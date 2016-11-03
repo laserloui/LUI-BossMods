@@ -102,22 +102,6 @@ require "Apollo"
         Removes Icon from Screen
         @param Key              - Unique ID
 
-    DrawPixie(Key, Origin, tConfig, nRotation, nDistance, nHeight, nDuration, fHandler, tData)
-        Draw Pixie on top of unit or coordinate
-        @param Key              - Unique ID
-        @param Origin           - Unit Object / UnitId or Coordinates
-        @param tConfig          - Pixie Settings
-        @param nRotation        - Rotation in degrees
-        @param nDistance        - Offset to the front of origin
-        @param nHeight          - Height of Pixie from bottom
-        @param nDuration        - Duration in seconds before getting removed (optional)
-        @param fHandler         - Callback function
-        @param tData            - Data forwarded by callback function
-
-    RemovePixie(Key)
-        Removes Pixie from Screen
-        @param Key              - Unique ID
-
     DrawPolygon(Key, Origin, tConfig, nRadius, nRotation, nSide, nDuration, tVectorOffsets, fHandler, tData)
         Draws a polyon on the ground at unit or position
         @param Key              - Unique ID
