@@ -1902,39 +1902,39 @@ end
 
 function LUI_BossMods:CheckVolume()
     local mute = Apollo.GetConsoleVariable("sound.mute")
-    local volumeUI = Apollo.GetConsoleVariable("sound.volumeUI")
-
-    if mute then
-        Apollo.SetConsoleVariable("sound.mute", false)
-        Apollo.SetConsoleVariable("sound.volumeMaster", 0.5)
-        Apollo.SetConsoleVariable("sound.volumeUI", 0.1)
-        Apollo.SetConsoleVariable("sound.volumeMusic", 0)
-        Apollo.SetConsoleVariable("sound.volumeSfx", 0)
-        Apollo.SetConsoleVariable("sound.volumeAmbient", 0)
-        Apollo.SetConsoleVariable("sound.volumeVoice", 0)
-        ApolloTimer.Create(2, false, "RestoreVolumeUI", self)
-    else
-        if volumeUI <= 0.1 then
-            Apollo.SetConsoleVariable("sound.volumeUI", 0.1)
-            ApolloTimer.Create(2, false, "RestoreVolumeUI", self)
-        end
-    end
 
     if not self.tVolume then
         self.tVolume = {}
     end
 
+    if mute then
+        Apollo.SetConsoleVariable("sound.mute", false)
+        Apollo.SetConsoleVariable("sound.volumeMaster", 0.5)
+        Apollo.SetConsoleVariable("sound.volumeUI", 0)
+        Apollo.SetConsoleVariable("sound.volumeMusic", 0)
+        Apollo.SetConsoleVariable("sound.volumeSfx", 0)
+        Apollo.SetConsoleVariable("sound.volumeAmbient", 0)
+        Apollo.SetConsoleVariable("sound.volumeVoice", 0)
+    end
+    
     self.tVolume.Master = Apollo.GetConsoleVariable("sound.volumeMaster")
     self.tVolume.Music = Apollo.GetConsoleVariable("sound.volumeMusic")
     self.tVolume.Interface = Apollo.GetConsoleVariable("sound.volumeUI")
     self.tVolume.Sfx = Apollo.GetConsoleVariable("sound.volumeSfx")
     self.tVolume.Ambient = Apollo.GetConsoleVariable("sound.volumeAmbient")
     self.tVolume.Voice = Apollo.GetConsoleVariable("sound.volumeVoice")
+
+    if self.tVolume.Interface < 0.1 then
+        self.tVolume.Interface = 0
+        Apollo.SetConsoleVariable("sound.volumeMaster", 0)
+        Apollo.SetConsoleVariable("sound.volumeUI", 1)
+        ApolloTimer.Create(2, false, "RestoreVolumeUI", self)
+    end
 end
 
 function LUI_BossMods:RestoreVolumeUI()
     Apollo.SetConsoleVariable("sound.volumeUI", 0)
-    self.tVolume.Interface = Apollo.GetConsoleVariable("sound.volumeUI")
+    Apollo.SetConsoleVariable("sound.volumeMaster", self.tVolume.Master)
 end
 
 function LUI_BossMods:RestoreVolume()
