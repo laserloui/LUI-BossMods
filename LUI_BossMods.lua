@@ -195,8 +195,9 @@ function LUI_BossMods:OnDocLoaded()
     end
 
     Apollo.LoadSprites("Sprites.xml")
+    Apollo.RegisterSlashCommand("bm", "OnSlashCommand", self)
+    Apollo.RegisterSlashCommand("luibm", "OnSlashCommand", self)
     Apollo.RegisterSlashCommand("bossmod", "OnSlashCommand", self)
-    Apollo.RegisterSlashCommand("bossmods", "OnSlashCommand", self)
 
     self:LoadWindows()
     self:LoadModules()
