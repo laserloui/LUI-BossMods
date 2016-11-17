@@ -1907,15 +1907,15 @@ function LUI_BossMods:CheckVolume()
     if mute then
         Apollo.SetConsoleVariable("sound.mute", false)
         Apollo.SetConsoleVariable("sound.volumeMaster", 0.5)
-        Apollo.SetConsoleVariable("sound.volumeUI", 0.5)
+        Apollo.SetConsoleVariable("sound.volumeUI", 0.1)
         Apollo.SetConsoleVariable("sound.volumeMusic", 0)
         Apollo.SetConsoleVariable("sound.volumeSfx", 0)
         Apollo.SetConsoleVariable("sound.volumeAmbient", 0)
         Apollo.SetConsoleVariable("sound.volumeVoice", 0)
         ApolloTimer.Create(2, false, "RestoreVolumeUI", self)
     else
-        if volumeUI < 0.1 then
-            Apollo.SetConsoleVariable("sound.volumeUI", 0.5)
+        if volumeUI <= 0.1 then
+            Apollo.SetConsoleVariable("sound.volumeUI", 0.1)
             ApolloTimer.Create(2, false, "RestoreVolumeUI", self)
         end
     end
