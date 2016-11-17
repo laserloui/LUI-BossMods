@@ -420,8 +420,14 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:ShowAura("atomic_attraction", self.config.auras.atomic_attraction, 15, self.L["alert.atomic_attraction_player"])
             self.core:ShowAlert("atomic_attraction", self.L["alert.atomic_attraction_player"], self.config.alerts.atomic_attraction)
         else
-            self.core:DrawIcon("atomic_attraction", tData.tUnit, self.config.icons.atomic_attraction, true)
             self.core:ShowAlert("atomic_attraction", self.L["alert.atomic_attraction"]..sUnitName, self.config.alerts.atomic_attraction)
+
+            local sPlatformPlayer = self:GetPlatform(self.unitPlayer)
+            local sPlatformOrb = self:GetPlatform(tData.tUnit)
+
+            if sPlatformPlayer == sPlatformOrb then
+                self.core:DrawIcon("atomic_attraction", tData.tUnit, self.config.icons.atomic_attraction, true)
+            end
         end
     end
 end
