@@ -228,6 +228,7 @@ function Mod:new(o)
         casts = {
             castA = {
                 enable = true,          -- Enable/Disable cast
+                moo = true,             -- This cast is a Moment of Opportunity (needed for option panel)
                 position = 1,           -- Position in Option Panel (Top to Bottom)
                 tooltip = "",           -- Tooltip in Option Panel
                 color = "ffb22222",     -- Color (Default: Global Setting)

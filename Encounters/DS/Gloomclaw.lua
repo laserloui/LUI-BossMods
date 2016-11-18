@@ -153,6 +153,7 @@ function Mod:new(o)
             },
             moo = {
                 enable = true,
+                moo = true,
                 label = "label.moo",
             },
         },

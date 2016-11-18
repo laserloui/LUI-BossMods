@@ -1619,7 +1619,7 @@ function LUI_BossMods:ShowCast(tCast,sName,tConfig,fHandler,tData)
     if tCast.sName == "MOO" then
         fPoint = 0
         nProgress = 1 - nProgress
-        self.wndCastbar:FindChild("Progress"):SetBGColor(self.config.castbar.mooColor)
+        self.wndCastbar:FindChild("Progress"):SetBGColor(tConfig.color or self.config.castbar.mooColor)
         self.wndCastbar:FindChild("Duration"):SetText()
     else
         self.wndCastbar:FindChild("Progress"):SetBGColor(tConfig.color or self.config.castbar.barColor)
@@ -1916,7 +1916,7 @@ function LUI_BossMods:CheckVolume()
         Apollo.SetConsoleVariable("sound.volumeAmbient", 0)
         Apollo.SetConsoleVariable("sound.volumeVoice", 0)
     end
-    
+
     self.tVolume.Master = Apollo.GetConsoleVariable("sound.volumeMaster")
     self.tVolume.Music = Apollo.GetConsoleVariable("sound.volumeMusic")
     self.tVolume.Interface = Apollo.GetConsoleVariable("sound.volumeUI")

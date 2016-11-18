@@ -833,8 +833,8 @@ function Settings:BuildRightPanel()
 
             -- Color
             wnd:FindChild("ColorSetting"):SetData({"casts",nId,"color"})
-            wnd:FindChild("ColorSetting"):FindChild("ColorText"):SetText(cast.color or self.config.castbar.barColor)
-            wnd:FindChild("ColorSetting"):FindChild("BG"):SetBGColor(cast.color or self.config.castbar.barColor)
+            wnd:FindChild("ColorSetting"):FindChild("ColorText"):SetText(cast.color or (cast.moo and self.config.castbar.mooColor or self.config.castbar.barColor))
+            wnd:FindChild("ColorSetting"):FindChild("BG"):SetBGColor(cast.color or (cast.moo and self.config.castbar.mooColor or self.config.castbar.barColor))
             wnd:FindChild("ColorSetting"):Show(cast.color ~= false,true)
             wnd:FindChild("ColorLocked"):Show(cast.color == false,true)
 
