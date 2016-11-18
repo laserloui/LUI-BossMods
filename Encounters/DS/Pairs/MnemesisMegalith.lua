@@ -7,13 +7,80 @@ local Encounter = "MnemesisMegalith"
 
 local Locales = {
     ["enUS"] = {
-        -- Unit names
+        -- Units
         ["unit.boss_logic"] = "Mnemesis",
         ["unit.boss_earth"] = "Megalith",
+        ["unit.pillar"] = "Crystalline Matrix",
+        -- Casts
+        ["cast.defrag"] = "Defragment",
+        -- Alerts
+        ["alert.mario"] = "Mario Phase - JUMP INTO CUBES!",
+        ["alert.superquake"] = "Superquake - JUMP!",
+        ["alert.defrag"] = "Defragment - SPREAD!",
+        ["alert.snake"] = "SNAKE ON %s!",
+        ["alert.snake_player"] = "SNAKE ON YOU!",
+        -- Datachron
+        ["datachron.superquake"] = "The ground shudders beneath Megalith!",
+        ["datachron.mario"] = "Logic creates powerful data caches",
+        -- Labels
+        ["label.mario"] = "Mario Phase",
+        ["label.superquake"] = "Superquake",
+        ["label.next_mario"] = "Next Mario Phase",
+        ["label.next_defrag"] = "Next Defragment",
+        ["label.snake"] = "Snake",
+        ["label.snake_player"] = "Snake on player",
     },
-    ["deDE"] = {},
-    ["frFR"] = {},
+    ["deDE"] = {
+        -- Units
+        ["unit.boss_logic"] = "Mnemesis",
+        ["unit.boss_earth"] = "Megalith",
+        ["unit.pillar"] = "Crystalline Matrix", -- Missing!
+        -- Casts
+        ["cast.defrag"] = "Defragmentieren",
+        -- Alerts
+        ["alert.mario"] = "Mario Phase - SPRING IN WÜRFEL!",
+        ["alert.superquake"] = "Superquake - SPRING!",
+        ["alert.defrag"] = "Defragmentieren - VERTEILEN!",
+        ["alert.snake"] = "SCHLANGE AUF %s!",
+        ["alert.snake_player"] = "SCHLANGE AUF DIR!",
+        -- Datachron
+        ["datachron.superquake"] = "The ground shudders beneath Megalith!", -- Missing!
+        ["datachron.mario"] = "Logic creates powerful data caches", -- Missing!
+        -- Labels
+        ["label.mario"] = "Mario Phase",
+        ["label.superquake"] = "Superquake",
+        ["label.next_mario"] = "Nächste Mario Phase",
+        ["label.next_defrag"] = "Nächste Defragmentierung",
+        ["label.snake"] = "Schlange",
+        ["label.snake_player"] = "Schlange auf Spieler",
+    },
+    ["frFR"] = {
+        -- Units
+        ["unit.boss_logic"] = "Mnémésis",
+        ["unit.boss_earth"] = "Mégalithe",
+        ["unit.pillar"] = "Matrice cristalline",
+        -- Casts
+        ["cast.defrag"] = "Défragmentation",
+        -- Alerts
+        ["alert.mario"] = "Phase de Mario - SAUTE SUR DES CUBES!",
+        ["alert.superquake"] = "Superquake - SAUTE!",
+        ["alert.defrag"] = "Défragmentation - SPREAD!",
+        ["alert.snake"] = "SERPENT SUR %s!",
+        ["alert.snake_player"] = "SERPENT SUR VOUS!",
+        -- Datachron
+        ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
+        ["datachron.mario"] = "La logique crée de puissantes caches de données !",
+        -- Labels
+        ["label.mario"] = "Phase de Mario",
+        ["label.superquake"] = "Superquake",
+        ["label.next_mario"] = "Prochaine phase de Mario",
+        ["label.next_defrag"] = "Défragmentation suivante",
+        ["label.snake"] = "Serpent",
+        ["label.snake_player"] = "Serpent sur le joueur",
+    },
 }
+
+local DEBUFF_SNAKE_SNACK = 74570
 
 function Mod:new(o)
     o = o or {}
@@ -47,6 +114,103 @@ function Mod:new(o)
                 label = "unit.boss_earth",
             },
         },
+        timers = {
+            defrag = {
+                enable = true,
+                position = 1,
+                label = "label.next_defrag",
+            },
+            mario = {
+                enable = true,
+                position = 2,
+                label = "label.next_mario",
+            },
+        },
+        alerts = {
+            defrag = {
+                enable = true,
+                position = 1,
+                label = "cast.defrag",
+            },
+            superquake = {
+                enable = true,
+                position = 2,
+                label = "label.superquake",
+            },
+            snake = {
+                enable = true,
+                position = 3,
+                label = "label.snake",
+            },
+            snake_player = {
+                enable = true,
+                position = 4,
+                label = "label.snake_player",
+            },
+            mario = {
+                enable = true,
+                position = 5,
+                label = "label.mario",
+            },
+        },
+        auras = {
+            snake_player = {
+                enable = true,
+                sprite = "LUIBM_virus",
+                color = "ffadff2f",
+                label = "label.snake_player",
+            },
+        },
+        casts = {
+            superquake = {
+                enable = true,
+                label = "label.superquake",
+            },
+        },
+        sounds = {
+            defrag = {
+                enable = true,
+                position = 1,
+                file = "info",
+                label = "cast.defrag",
+            },
+            superquake = {
+                enable = true,
+                position = 2,
+                file = "alert",
+                label = "label.superquake",
+            },
+            snake_player = {
+                enable = true,
+                position = 3,
+                file = "run-away",
+                label = "label.snake_player",
+            },
+        },
+        icons = {
+            snake_player = {
+                enable = true,
+                sprite = "LUIBM_virus",
+                size = 80,
+                color = "ffadff2f",
+                label = "label.snake_player",
+            },
+        },
+        lines = {
+            defrag = {
+                enable = true,
+                position = 1,
+                thickness = 6,
+                color = "ffff0000",
+                label = "cast.defrag",
+            },
+            antlion = {
+                enable = true,
+                thickness = 6,
+                color = "ffadff2f",
+                label = "unit.pillar",
+            },
+        },
     }
     return o
 end
@@ -67,6 +231,59 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_logic)
     elseif sName == self.L["unit.boss_earth"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_earth)
+    elseif sName == self.L["unit.pillar"] then
+        self.core:DrawLineBetween("Pillar"..tostring(nId), tUnit, nil, self.config.lines.pillar)
+    end
+end
+
+function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
+    if DEBUFF_SNAKE_SNACK == nSpellId then
+        if tData.tUnit:IsThePlayer() then
+            self.core:ShowAura("Aura_Snake", self.config.auras.snake_player, nDuration, self.L["alert.snake_player"])
+            self.core:ShowAlert("Alert_Snake", self.L["alert.snake_player"], self.config.alerts.snake_player)
+            self.core:PlaySound(self.config.sounds.snake_player)
+        else
+            self.core:ShowAlert("Alert_Snake", self.L["alert.snake"]:format(sUnitName), self.config.alerts.snake)
+        end
+
+        self.core:DrawIcon("Snake_"..tostring(nId), tData.tUnit, self.config.icons.snake, true, nil, nDuration)
+    end
+end
+
+function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
+    if DEBUFF_SNAKE_SNACK == nSpellId then
+        self.core:RemoveIcon("Snake_"..tostring(nId))
+    end
+end
+
+function Mod:OnCastStart(nId, sCastName, tCast, sName)
+    if sName == self.L["unit.boss_logic"] and sCastName == self.L["cast.defrag"] then
+        self.core:PlaySound(self.config.sounds.defrag)
+        self.core:ShowAlert("Alert_Defrag", self.L["alert.defrag"], self.config.alerts.defrag)
+        self.core:AddTimer("DEFRAG", self.L["label.next_defrag"], 40, self.config.timers.defrag)
+        self.core:DrawPolygon("DEFRAG", GameLib.GetPlayerUnit(), self.config.lines.defrag, 13, 0, 4)
+    end
+end
+
+function Mod:OnCastEnd(nId, sCastName, tCast, sName)
+    if sName == self.L["unit.boss_logic"] and sCastName == self.L["cast.defrag"] then
+        self.core:RemovePolygon("DEFRAG")
+    end
+end
+
+function Mod:OnDatachron(sMessage, sSender, sHandler)
+    if sMessage:find(self.L["datachron.superquake"]) then
+        self.core:ShowCast({
+            sName = "Superquake",
+            nDuration = 2,
+            nElapsed = 0,
+            nTick = Apollo.GetTickCount()
+        }, self.L["label.superquake"], self.config.casts.superquake)
+        self.core:ShowAlert("Superquake", self.L["alert.jump"], self.config.alerts.superquake)
+        self.core:PlaySound(self.config.sounds.superquake)
+    elseif sMessage:find(self.L["datachron.mario"]) then
+        self.core:AddTimer("MARIO", self.L["label.next_mario"], 60, self.config.timers.mario)
+        self.core:ShowAlert("Mario", self.L["alert.mario"], self.config.alerts.mario)
     end
 end
 
@@ -80,6 +297,9 @@ end
 
 function Mod:OnEnable()
     self.run = true
+
+    self.core:AddTimer("DEFRAG", self.L["label.next_defrag"], 10, self.config.timers.defrag)
+    self.core:AddTimer("MARIO", self.L["label.next_mario"], 60, self.config.timers.mario)
 end
 
 function Mod:OnDisable()
