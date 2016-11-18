@@ -23,7 +23,6 @@ local Locales = {
         ["datachron.superquake"] = "The ground shudders beneath Megalith!",
         ["datachron.mario"] = "Logic creates powerful data caches",
         -- Labels
-        ["label.mario"] = "Mario Phase",
         ["label.superquake"] = "Superquake",
         ["label.next_mario"] = "Next Mario Phase",
         ["label.next_defrag"] = "Next Defragment",
@@ -47,7 +46,6 @@ local Locales = {
         ["datachron.superquake"] = "The ground shudders beneath Megalith!", -- Missing!
         ["datachron.mario"] = "Logic creates powerful data caches", -- Missing!
         -- Labels
-        ["label.mario"] = "Mario Phase",
         ["label.superquake"] = "Superquake",
         ["label.next_mario"] = "Nächste Mario Phase",
         ["label.next_defrag"] = "Nächste Defragmentierung",
@@ -71,7 +69,6 @@ local Locales = {
         ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
         ["datachron.mario"] = "La logique crée de puissantes caches de données !",
         -- Labels
-        ["label.mario"] = "Phase de Mario",
         ["label.superquake"] = "Superquake",
         ["label.next_mario"] = "Prochaine phase de Mario",
         ["label.next_defrag"] = "Défragmentation suivante",
@@ -150,7 +147,7 @@ function Mod:new(o)
             mario = {
                 enable = true,
                 position = 5,
-                label = "label.mario",
+                label = "label.next_mario",
             },
         },
         auras = {
