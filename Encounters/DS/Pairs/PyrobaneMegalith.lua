@@ -183,7 +183,6 @@ function Mod:OnUnitDestroyed(nId, tUnit, sName)
     if sName == self.L["unit.flame_wave"] then
         self.core:RemoveLine(nId)
     elseif sName == self.L["unit.lava_floor"] then
-        self.nObsidianCount = 0
         self.nLavaFloorCount = self.nLavaFloorCount + 1
         if self.nLavaFloorCount <= 2 then
             self.core:AddTimer("NEXT_LAVA_FLOOR", self.L["label.next_lava_floor"], 89, self.config.timers.lava_floor)
