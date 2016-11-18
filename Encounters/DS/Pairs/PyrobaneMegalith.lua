@@ -13,13 +13,14 @@ local Locales = {
         ["unit.flame_wave"] = "Flame Wave",
         ["unit.obsidian"] = "Obsidian Outcropping",
         ["unit.lava_floor"] = "e395- [Datascape] Fire Elemental - Lava Floor (invis unit)",
-        -- Casts
-        ["cast.superquake"] = "Superquake",
+        -- Alerts
+        ["alert.jump"] = "JUMP, JUMP, JUMP!!!",
         -- Datachron
         ["datachron.superquake"] = "The ground shudders beneath Megalith!",
         ["datachron.lava_floor"] = "The lava begins to rise through the floor!",
         ["datachron.enrage"] = "Time to die, sapients!",
         -- Labels
+        ["label.superquake"] = "Superquake",
         ["label.lava_floor"] = "Lava Floor Phase",
         ["label.next_lava_floor"] = "Next Lava Floor",
         ["label.next_obsidian"] = "Next Obsidian",
@@ -33,13 +34,14 @@ local Locales = {
         ["unit.flame_wave"] = "Flammenwelle",
         ["unit.obsidian"] = "Obsidian Outcropping",
         ["unit.lava_floor"] = "e395- [Datascape] Fire Elemental - Lava Floor (invis unit)",
-        -- Casts
-        ["cast.superquake"] = "Superquake",
+        -- Alerts
+        ["alert.jump"] = "SPRING, SPRING, SPRING!!!",
         -- Datachron
         ["datachron.superquake"] = "The ground shudders beneath Megalith!",
         ["datachron.lava_floor"] = "The lava begins to rise through the floor!",
         ["datachron.enrage"] = "Time to die, sapients!",
         -- Labels
+        ["label.superquake"] = "Superquake",
         ["label.lava_floor"] = "Lava Floor Phase",
         ["label.next_lava_floor"] = "Next Lava Floor",
         ["label.next_obsidian"] = "Next Obsidian",
@@ -53,13 +55,14 @@ local Locales = {
         ["unit.flame_wave"] = "Vague de feu",
         ["unit.obsidian"] = "Affleurement d'obsidienne",
         ["unit.lava_floor"] = "e395- [Datascape] Fire Elemental - Lava Floor (invis unit)",
-        -- Casts
-        ["cast.superquake"] = "Superquake", -- Missing!
+        -- Alerts
+        ["alert.jump"] = "SAUTEZ, SAUTEZ, SAUTEZ !!!",
         -- Datachron
-        ["datachron.superquake"] = "The ground shudders beneath Megalith!",
+        ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
         ["datachron.lava_floor"] = "La lave apparaît par les fissures du sol !",
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
+        ["label.superquake"] = "Superquake",
         ["label.lava_floor"] = "Phase de lave",
         ["label.next_lava_floor"] = "Phase de lave suivante",
         ["label.next_obsidian"] = "Obsidienne suivante",
@@ -103,12 +106,12 @@ function Mod:new(o)
             },
         },
         timers = {
-            next_obsidian = {
+            obsidian = {
                 enable = true,
                 position = 1,
                 label = "label.next_obsidian",
             },
-            next_lava_floor = {
+            lava_floor = {
                 enable = true,
                 position = 2,
                 label = "label.next_lava_floor",
@@ -122,20 +125,20 @@ function Mod:new(o)
         alerts = {
             superquake = {
                 enable = true,
-                label = "cast.superquake",
+                label = "label.superquake",
             },
         },
         casts = {
             superquake = {
                 enable = true,
-                label = "cast.superquake",
+                label = "label.superquake",
             },
         },
         sounds = {
             superquake = {
                 enable = true,
                 file = "alert",
-                label = "cast.superquake",
+                label = "label.superquake",
             },
         },
         lines = {
@@ -171,7 +174,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     elseif sName == self.L["unit.obsidian"] then
         self.nObsidianCount = self.nObsidianCount + 1
         if self.nObsidianCount <= 5 then
-            self.core:AddTimer("NEXT_OBSIDIAN", self.L["label.next_obsidian"], 11, self.config.timers.next_obsidian)
+            self.core:AddTimer("NEXT_OBSIDIAN", self.L["label.next_obsidian"], 11, self.config.timers.obsidian)
         end
     end
 end
@@ -183,7 +186,7 @@ function Mod:OnUnitDestroyed(nId, tUnit, sName)
         self.nObsidianCount = 0
         self.nLavaFloorCount = self.nLavaFloorCount + 1
         if self.nLavaFloorCount <= 2 then
-            self.core:AddTimer("NEXT_LAVA_FLOOR", self.L["label.next_lava_floor"], 89, self.config.timers.next_lava_floor)
+            self.core:AddTimer("NEXT_LAVA_FLOOR", self.L["label.next_lava_floor"], 89, self.config.timers.lava_floor)
         end
     elseif sName == self.L["unit.boss_fire"] then
         self.core:RemoveTimer("NEXT_LAVA_FLOOR")
@@ -204,9 +207,9 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
             nDuration = 2,
             nElapsed = 0,
             nTick = Apollo.GetTickCount()
-        }, self.L["cast.superquake"], self.config.casts.noxious_belch)
-        self.core:ShowAlert(self.L["cast.superquake"], self.L["alert.lasers"], self.config.alerts.lasers)
-        self.core:PlaySound(self.config.sounds.cannon_fire)
+        }, self.L["label.superquake"], self.config.casts.superquake)
+        self.core:ShowAlert(self.L["label.superquake"], self.L["alert.jump"], self.config.alerts.superquake)
+        self.core:PlaySound(self.config.sounds.superquake)
     end
 end
 
@@ -223,8 +226,8 @@ function Mod:OnEnable()
     self.nObsidianCount = 0
     self.nLavaFloorCount = 0
 
-    self.core:AddTimer("NEXT_LAVA_FLOOR", self.L["label.next_lava_floor"], 94, self.config.timers.next_lava_floor)
-    self.core:AddTimer("NEXT_OBSIDIAN", self.L["label.next_obsidian"], 11, self.config.timers.next_obsidian)
+    self.core:AddTimer("NEXT_LAVA_FLOOR", self.L["label.next_lava_floor"], 94, self.config.timers.lava_floor)
+    self.core:AddTimer("NEXT_OBSIDIAN", self.L["label.next_obsidian"], 11, self.config.timers.obsidian)
     self.core:AddTimer("AVATUS", self.L["label.avatus"], 425, self.config.timers.enrage)
 end
 
