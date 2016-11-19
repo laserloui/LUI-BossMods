@@ -13,19 +13,22 @@ local Locales = {
         ["unit.tornado"] = "Air Column",
         -- Alerts
         ["alert.tornado"] = "Tornado incoming!",
-        ["alert.supercell"] = "Supercell - LAND ON MEGALITH!",
-        ["alert.superquake"] = "Superquake - JUMP!",
+        ["alert.supercell"] = "LAND ON MEGALITH!",
+        ["alert.superquake"] = "JUMP, JUMP, JUMP!!!",
         -- Casts
         ["cast.supercell"] = "Supercell",
         ["cast.fierce_swipe"] = "Fierce Swipe",
         -- Datachron
         ["datachron.superquake"] = "The ground shudders beneath Megalith!",
+        ["datachron.enrage"] = "Time to die, sapients!",
         -- Labels
         ["label.moo"] = "Moment of Opportunity",
         ["label.superquake"] = "Superquake",
         ["label.next_supercell"] = "Next supercell",
         ["label.next_tornado"] = "Next tornado",
         ["label.next_fierce_swipe"] = "Next fierce swipe",
+        ["label.avatus"] = "Avatus incoming",
+        ["label.enrage"] = "Enrage",
     },
     ["deDE"] = {
         -- Units
@@ -34,19 +37,22 @@ local Locales = {
         ["unit.tornado"] = "Luftsäule",
         -- Alerts
         ["alert.tornado"] = "Tornado incoming!",
-        ["alert.supercell"] = "Superzelle - LANDE AUF MEGALITH!",
-        ["alert.superquake"] = "Superquake - SPRING!",
+        ["alert.supercell"] = "LANDE AUF MEGALITH!",
+        ["alert.superquake"] = "SPRING, SPRING, SPRING!!!",
         -- Casts
         ["cast.supercell"] = "Superzelle",
         ["cast.fierce_swipe"] = "Heftiger Hieb",
         -- Datachron
-        ["datachron.superquake"] = "The ground shudders beneath Megalith!",
+        ["datachron.superquake"] = "Der Boden unter Megalith bebt!",
+        ["datachron.enrage"] = "Zeit, zu sterben, Vernunftbegabte!",
         -- Labels
         ["label.moo"] = "Moment of Opportunity",
-        ["label.superquake"] = "Superquake",
+        ["label.superquake"] = "Superbeben",
         ["label.next_supercell"] = "Nächste Superzelle",
         ["label.next_tornado"] = "Nächster Tornado",
         ["label.next_fierce_swipe"] = "Nächster Heftiger Hieb",
+        ["label.avatus"] = "Avatus incoming",
+        ["label.enrage"] = "Enrage",
     },
     ["frFR"] = {
         -- Units
@@ -55,19 +61,22 @@ local Locales = {
         ["unit.tornado"] = "Colonne d'air",
         -- Alerts
         ["alert.tornado"] = "La tornade est entrante !",
-        ["alert.supercell"] = "Super-cellule - ATTERISSAGE SUR MÉGALITHE !",
-        ["alert.superquake"] = "Superquake - SAUTE!",
+        ["alert.supercell"] = "ATTERISSAGE SUR MÉGALITHE !",
+        ["alert.superquake"] = "SAUTEZ, SAUTEZ, SAUTEZ !!!",
         -- Casts
         ["cast.supercell"] = "Super-cellule",
         ["cast.fierce_swipe"] = "Baffe féroce",
         -- Datachron
         ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
+        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
         ["label.moo"] = "Moment d'opportunité",
         ["label.superquake"] = "Superquake",
         ["label.next_supercell"] = "Prochaine super-cellule",
         ["label.next_tornado"] = "Prochaine baffe féroce",
         ["label.next_fierce_swipe"] = "Prochaine tornade",
+        ["label.avatus"] = "Avatus arrivé",
+        ["label.enrage"] = "Mettre en rage",
     },
 }
 
@@ -118,6 +127,11 @@ function Mod:new(o)
                 enable = true,
                 position = 3,
                 label = "label.next_fierce_swipe",
+            },
+            enrage = {
+                enable = true,
+                position = 4,
+                label = "label.enrage",
             },
         },
         alerts = {
@@ -233,6 +247,9 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
         }, self.L["label.superquake"], self.config.casts.superquake)
         self.core:ShowAlert(self.L["label.superquake"], self.L["alert.jump"], self.config.alerts.superquake)
         self.core:PlaySound(self.config.sounds.superquake)
+    elseif sMessage:find(self.L["datachron.enrage"]) then
+        self.core:RemoveTimer("AVATUS")
+        self.core:AddTimer("ENRAGE", self.L["label.enrage"], 34, self.config.timers.enrage)
     end
 end
 
@@ -252,6 +269,7 @@ function Mod:OnEnable()
     self.core:AddTimer("NEXT_SUPERCELL", self.L["label.next_supercell"], 65, self.config.timers.supercell)
     self.core:AddTimer("NEXT_TORNADO", self.L["label.next_tornado"], 16, self.config.timers.tornado)
     self.core:AddTimer("NEXT_FIERCE_SWIPE", self.L["label.next_fierce_swipe"], 16, self.config.timers.fierce_swipe)
+    self.core:AddTimer("AVATUS", self.L["label.avatus"], 280, self.config.timers.enrage)
 end
 
 function Mod:OnDisable()

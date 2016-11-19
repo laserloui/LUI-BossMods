@@ -22,6 +22,10 @@ local Locales = {
         ["label.fire_bomb"] = "Fire Bomb",
         ["label.water_bomb"] = "Water Bomb",
         ["label.stacks"] = "Debuff Stacks Warning",
+        ["label.avatus"] = "Avatus incoming",
+        ["label.enrage"] = "Enrage",
+        -- Datachron
+        ["datachron.enrage"] = "Time to die, sapients!",
         -- Texts
         ["text.next_bombs"] = "Next bombs",
         ["text.next_ice_tomb"] = "Next ice tomb",
@@ -41,6 +45,10 @@ local Locales = {
         ["label.bombs_player"] = "Bombe auf Spieler",
         ["label.fire_bomb"] = "Feuer Bombe",
         ["label.water_bomb"] = "Wasser Bombe",
+        ["label.avatus"] = "Avatus incoming",
+        ["label.enrage"] = "Enrage",
+        -- Datachron
+        ["datachron.enrage"] = "Zeit, zu sterben, Vernunftbegabte!",
         -- Texts
         ["text.next_bombs"] = "Nächste Bomben",
         ["text.next_ice_tomb"] = "Nächstes Eisgrab",
@@ -60,6 +68,10 @@ local Locales = {
         ["label.bombs_player"] = "Bombes sur le joueur",
         ["label.fire_bomb"] = "Bombe de feu",
         ["label.water_bomb"] = "Bombe d'eau",
+        ["label.avatus"] = "Avatus arrivé",
+        ["label.enrage"] = "Mettre en rage",
+        -- Datachron
+        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Texts
         ["text.next_bombs"] = "Bombes suivants",
         ["text.next_ice_tomb"] = "Tombeau de glace suivant",
@@ -107,18 +119,21 @@ function Mod:new(o)
                 label = "unit.boss_water",
             },
         },
-        auras = {
-            fire_bomb = {
+        timers = {
+            bombs = {
                 enable = true,
-                sprite = "LUIBM_meteor3",
-                color = "ffff0000",
-                label = "label.fire_bomb",
+                position = 1,
+                label = "label.bombs",
             },
-            water_bomb = {
+            ice_tomb = {
                 enable = true,
-                sprite = "LUIBM_waterdrop2",
-                color = "ff00bfff",
-                label = "label.water_bomb",
+                position = 2,
+                label = "unit.ice_tomb",
+            },
+            enrage = {
+                enable = true,
+                position = 3,
+                label = "label.enrage",
             },
         },
         alerts = {
@@ -169,16 +184,18 @@ function Mod:new(o)
                 label = "label.stacks",
             },
         },
-        timers = {
-            bombs = {
+        auras = {
+            fire_bomb = {
                 enable = true,
-                position = 1,
-                label = "label.bombs",
+                sprite = "LUIBM_meteor3",
+                color = "ffff0000",
+                label = "label.fire_bomb",
             },
-            ice_tomb = {
+            water_bomb = {
                 enable = true,
-                position = 2,
-                label = "unit.ice_tomb",
+                sprite = "LUIBM_waterdrop2",
+                color = "ff00bfff",
+                label = "label.water_bomb",
             },
         },
         icons = {
@@ -336,6 +353,13 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
     end
 end
 
+function Mod:OnDatachron(sMessage, sSender, sHandler)
+    if sMessage:find(self.L["datachron.enrage"]) then
+        self.core:RemoveTimer("AVATUS")
+        self.core:AddTimer("ENRAGE", self.L["label.enrage"], 34, self.config.timers.enrage)
+    end
+end
+
 function Mod:IsRunning()
     return self.run
 end
@@ -353,6 +377,7 @@ function Mod:OnEnable()
 
     self.core:AddTimer("BOMBS", self.L["text.next_bombs"], 30, self.config.timers.bombs)
     self.core:AddTimer("ICE_TOMB", self.L["text.next_ice_tomb"], 26, self.config.timers.ice_tomb)
+    self.core:AddTimer("AVATUS", self.L["label.avatus"], 380, self.config.timers.enrage)
 end
 
 function Mod:OnDisable()

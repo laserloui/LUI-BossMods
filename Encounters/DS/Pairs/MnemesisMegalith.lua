@@ -14,18 +14,21 @@ local Locales = {
         -- Casts
         ["cast.defrag"] = "Defragment",
         -- Alerts
-        ["alert.mario"] = "Mario Phase - JUMP INTO CUBES!",
-        ["alert.superquake"] = "Superquake - JUMP!",
+        ["alert.mario"] = "JUMP INTO CUBES!",
+        ["alert.superquake"] = "JUMP, JUMP, JUMP!!!",
         ["alert.defrag"] = "Defragment - SPREAD!",
         ["alert.snake"] = "SNAKE ON %s!",
         ["alert.snake_player"] = "SNAKE ON YOU!",
         -- Datachron
         ["datachron.superquake"] = "The ground shudders beneath Megalith!",
         ["datachron.mario"] = "Logic creates powerful data caches",
+        ["datachron.enrage"] = "Time to die, sapients!",
         -- Labels
         ["label.superquake"] = "Superquake",
         ["label.next_mario"] = "Next Mario Phase",
         ["label.next_defrag"] = "Next Defragment",
+        ["label.avatus"] = "Avatus incoming",
+        ["label.enrage"] = "Enrage",
         ["label.snake"] = "Snake",
         ["label.snake_player"] = "Snake on player",
     },
@@ -33,22 +36,25 @@ local Locales = {
         -- Units
         ["unit.boss_logic"] = "Mnemesis",
         ["unit.boss_earth"] = "Megalith",
-        ["unit.pillar"] = "Crystalline Matrix", -- Missing!
+        ["unit.pillar"] = "Kristallmatrix",
         -- Casts
         ["cast.defrag"] = "Defragmentieren",
         -- Alerts
-        ["alert.mario"] = "Mario Phase - SPRING IN WÜRFEL!",
-        ["alert.superquake"] = "Superquake - SPRING!",
+        ["alert.mario"] = "SPRING IN WÜRFEL!",
+        ["alert.superquake"] = "SPRING, SPRING, SPRING!!!",
         ["alert.defrag"] = "Defragmentieren - VERTEILEN!",
         ["alert.snake"] = "SCHLANGE AUF %s!",
         ["alert.snake_player"] = "SCHLANGE AUF DIR!",
         -- Datachron
-        ["datachron.superquake"] = "The ground shudders beneath Megalith!", -- Missing!
-        ["datachron.mario"] = "Logic creates powerful data caches", -- Missing!
+        ["datachron.superquake"] = "Der Boden unter Megalith bebt!",
+        ["datachron.mario"] = "Logik erschafft mächtige Datenspeicher!",
+        ["datachron.enrage"] = "Zeit, zu sterben, Vernunftbegabte!",
         -- Labels
-        ["label.superquake"] = "Superquake",
+        ["label.superquake"] = "Superbeben",
         ["label.next_mario"] = "Nächste Mario Phase",
         ["label.next_defrag"] = "Nächste Defragmentierung",
+        ["label.avatus"] = "Avatus incoming",
+        ["label.enrage"] = "Enrage",
         ["label.snake"] = "Schlange",
         ["label.snake_player"] = "Schlange auf Spieler",
     },
@@ -60,18 +66,21 @@ local Locales = {
         -- Casts
         ["cast.defrag"] = "Défragmentation",
         -- Alerts
-        ["alert.mario"] = "Phase de Mario - SAUTE SUR DES CUBES!",
-        ["alert.superquake"] = "Superquake - SAUTE!",
+        ["alert.mario"] = "SAUTE SUR DES CUBES!",
+        ["alert.superquake"] = "SAUTEZ, SAUTEZ, SAUTEZ !!!",
         ["alert.defrag"] = "Défragmentation - SPREAD!",
         ["alert.snake"] = "SERPENT SUR %s!",
         ["alert.snake_player"] = "SERPENT SUR VOUS!",
         -- Datachron
         ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
         ["datachron.mario"] = "La logique crée de puissantes caches de données !",
+        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
         ["label.superquake"] = "Superquake",
         ["label.next_mario"] = "Prochaine phase de Mario",
         ["label.next_defrag"] = "Défragmentation suivante",
+        ["label.avatus"] = "Avatus arrivé",
+        ["label.enrage"] = "Mettre en rage",
         ["label.snake"] = "Serpent",
         ["label.snake_player"] = "Serpent sur le joueur",
     },
@@ -104,11 +113,18 @@ function Mod:new(o)
         units = {
             boss_logic = {
                 enable = true,
+                position = 1,
                 label = "unit.boss_logic",
             },
             boss_earth = {
                 enable = true,
+                position = 2,
                 label = "unit.boss_earth",
+            },
+            pillar = {
+                enable = true,
+                position = 3,
+                label = "unit.pillar",
             },
         },
         timers = {
@@ -121,6 +137,11 @@ function Mod:new(o)
                 enable = true,
                 position = 2,
                 label = "label.next_mario",
+            },
+            enrage = {
+                enable = true,
+                position = 3,
+                label = "label.enrage",
             },
         },
         alerts = {
@@ -229,6 +250,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     elseif sName == self.L["unit.boss_earth"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_earth)
     elseif sName == self.L["unit.pillar"] then
+        self.core:AddUnit(nId,sName,tUnit,self.config.units.pillar)
         self.core:DrawLineBetween("Pillar"..tostring(nId), tUnit, nil, self.config.lines.pillar)
     end
 end
@@ -258,13 +280,7 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
         self.core:PlaySound(self.config.sounds.defrag)
         self.core:ShowAlert("Alert_Defrag", self.L["alert.defrag"], self.config.alerts.defrag)
         self.core:AddTimer("DEFRAG", self.L["label.next_defrag"], 40, self.config.timers.defrag)
-        self.core:DrawPolygon("DEFRAG", GameLib.GetPlayerUnit(), self.config.lines.defrag, 13, 0, 4)
-    end
-end
-
-function Mod:OnCastEnd(nId, sCastName, tCast, sName)
-    if sName == self.L["unit.boss_logic"] and sCastName == self.L["cast.defrag"] then
-        self.core:RemovePolygon("DEFRAG")
+        self.core:DrawPolygon("DEFRAG", GameLib.GetPlayerUnit(), self.config.lines.defrag, 13, 0, 4, 10)
     end
 end
 
@@ -281,6 +297,9 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
     elseif sMessage:find(self.L["datachron.mario"]) then
         self.core:AddTimer("MARIO", self.L["label.next_mario"], 60, self.config.timers.mario)
         self.core:ShowAlert("Mario", self.L["alert.mario"], self.config.alerts.mario)
+    elseif sMessage:match(self.L["datachron.enrage"]) then
+        self.core:RemoveTimer("AVATUS")
+        self.core:AddTimer("ENRAGE", self.L["label.enrage"], 34, self.config.timers.enrage)
     end
 end
 
@@ -297,6 +316,7 @@ function Mod:OnEnable()
 
     self.core:AddTimer("DEFRAG", self.L["label.next_defrag"], 10, self.config.timers.defrag)
     self.core:AddTimer("MARIO", self.L["label.next_mario"], 60, self.config.timers.mario)
+    self.core:AddTimer("AVATUS", self.L["label.avatus"], 310, self.config.timers.enrage)
 end
 
 function Mod:OnDisable()

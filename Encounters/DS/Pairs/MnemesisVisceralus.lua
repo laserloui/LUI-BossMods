@@ -49,7 +49,7 @@ local Locales = {
         ["alert.snake"] = "SCHLANGE AUF %s!",
         ["alert.snake_player"] = "SCHLANGE AUF DIR!",
         -- Datachron
-        ["datachron.enrage"] = "Time to die, sapients!",
+        ["datachron.enrage"] = "Zeit, zu sterben, Vernunftbegabte!",
         -- Labels
         ["label.next_thorns"] = "Nächste Dornen",
         ["label.next_defrag"] = "Nächste Defragmentierung",
@@ -308,13 +308,7 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
         self.core:PlaySound(self.config.sounds.defrag)
         self.core:ShowAlert("Alert_Defrag", self.L["alert.defrag"], self.config.alerts.defrag)
         self.core:AddTimer("DEFRAG", self.L["label.next_defrag"], 50, self.config.timers.defrag)
-        self.core:DrawPolygon("DEFRAG", GameLib.GetPlayerUnit(), self.config.lines.defrag, 13, 0, 4)
-    end
-end
-
-function Mod:OnCastEnd(nId, sCastName, tCast, sName)
-    if sName == self.L["unit.boss_logic"] and sCastName == self.L["cast.defrag"] then
-        self.core:RemovePolygon("DEFRAG")
+        self.core:DrawPolygon("DEFRAG", GameLib.GetPlayerUnit(), self.config.lines.defrag, 13, 0, 4, 10)
     end
 end
 
