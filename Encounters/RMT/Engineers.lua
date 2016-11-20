@@ -55,24 +55,24 @@ local Locales = {
         ["unit.circle_telegraph"] = "Unité de Champs Hostile Invisible (rayon d'action : 1,2)",
         -- Debuffs
         ["debuff.atomic_attraction"] = "Attraction Atomique",
-        ["debuff.electroshock_vulnerability"] = "Vulnérable aux Electrochocs",
+        ["debuff.electroshock_vulnerability"] = "Vulnérable aux Électrochocs",
         -- Casts
-        ["cast.electroshock"] = "Electrochoc",
+        ["cast.electroshock"] = "Électrochoc",
         ["cast.liquidate"] = "Liquider",
         ["cast.rocket_jump"] = "Saut Roquette",
         -- Alerts
         ["alert.liquidate"] = "Liquidation !",
-        ["alert.electroshock"] = "Electrochoc !",
+        ["alert.electroshock"] = "Électrochoc !",
         ["alert.atomic_attraction"] = "Attraction Atomique sur ",
         ["alert.atomic_attraction_player"] = "Tu dois kitter l'orbe !",
-        ["alert.vulnerability"] = " va sur l'EPEE !",
-        ["alert.vulnerability_player"] = "GO SUR L'EPEE !",
-        ["alert.sword_jump"] = "Epée quitte ",
+        ["alert.vulnerability"] = " va sur l'ÉPÉE !",
+        ["alert.vulnerability_player"] = "GO SUR L'ÉPÉE !",
+        ["alert.sword_jump"] = "Épée quitte ",
         ["alert.gun_jump"] = "Fusil quitte ",
         ["alert.gun_return"] = "RETOURNE SUR LE FUSIL !",
         ["alert.pillar"] = " à 20% !",
         -- Datachron
-        ["datachron.electroshock"] = "(.*) souffre d'Electrochoc",
+        ["datachron.electroshock"] = "(.*) souffre d'Électrochoc",
         -- Labels
         ["label.pillar"] = "Attention, vie à 20%",
         ["label.pillar_health"] = "Vie du Pilier",

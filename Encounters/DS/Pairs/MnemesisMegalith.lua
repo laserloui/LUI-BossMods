@@ -66,9 +66,9 @@ local Locales = {
         -- Casts
         ["cast.defrag"] = "Défragmentation",
         -- Alerts
-        ["alert.mario"] = "SAUTE SUR DES CUBES!",
-        ["alert.superquake"] = "SAUTEZ, SAUTEZ, SAUTEZ !!!",
-        ["alert.defrag"] = "Défragmentation - SPREAD!",
+        ["alert.mario"] = "SAUTE SUR DES CUBES !",
+        ["alert.superquake"] = "SAUTE, SAUTE, SAUTE !!!",
+        ["alert.defrag"] = "Défragmentation - SÉPAREZ-VOUS!",
         ["alert.snake"] = "SERPENT SUR %s!",
         ["alert.snake_player"] = "SERPENT SUR VOUS!",
         -- Datachron
@@ -76,11 +76,11 @@ local Locales = {
         ["datachron.mario"] = "La logique crée de puissantes caches de données !",
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
-        ["label.superquake"] = "Superquake",
+        ["label.superquake"] = "Super-tremblement",
         ["label.next_mario"] = "Prochaine phase de Mario",
         ["label.next_defrag"] = "Défragmentation suivante",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
         ["label.snake"] = "Serpent",
         ["label.snake_player"] = "Serpent sur le joueur",
     },

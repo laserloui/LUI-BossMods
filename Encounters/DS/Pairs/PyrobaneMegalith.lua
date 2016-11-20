@@ -56,18 +56,18 @@ local Locales = {
         ["unit.obsidian"] = "Affleurement d'obsidienne",
         ["unit.lava_floor"] = "e395- [Datascape] Fire Elemental - Lava Floor (invis unit)",
         -- Alerts
-        ["alert.jump"] = "SAUTEZ, SAUTEZ, SAUTEZ !!!",
+        ["alert.jump"] = "SAUTE, SAUTE, SAUTE !!!",
         -- Datachron
         ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
         ["datachron.lava_floor"] = "La lave apparaît par les fissures du sol !",
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
-        ["label.superquake"] = "Superquake",
+        ["label.superquake"] = "Super-tremblement",
         ["label.lava_floor"] = "Phase de lave",
         ["label.next_lava_floor"] = "Phase de lave suivante",
-        ["label.next_obsidian"] = "Obsidienne suivante",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.next_obsidian"] = "Rocher suivant",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
     },
 }
 

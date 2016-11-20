@@ -21,11 +21,11 @@ local Locales = {
     ["frFR"] = {
         -- Units
         ["unit.boss"] = "Chef Ingénieur Lave-Pont Thrag",
-        ["unit.bomb"] = "Jumpstart Charge",
+        ["unit.bomb"] = "Jumpstart Charge", -- I can't translate this
         -- Casts
-        ["cast.gigavolt"] = "Gigavolt", -- Translation needed!
+        ["cast.gigavolt"] = "Gigavolt",
         -- Alerts
-        ["alert.gigavolt"] = "", -- Translation needed!
+        ["alert.gigavolt"] = "Gigavolt - SÉPARER-VOUS !",
         -- Labels
         ["label.bomb"] = "Bombes",
     },

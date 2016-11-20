@@ -48,20 +48,20 @@ local Locales = {
         -- Units
         ["unit.boss"] = "Serrenox",
         ["unit.essence"] = "Essence de logique",
-        ["unit.add1"] = "Parasite de la Souilluree",
-        ["unit.add2"] = "Skurge serrenox",
+        ["unit.add1"] = "Parasite de la Souillure",
+        ["unit.add2"] = "Skurge Serrenox",
         ["unit.add3"] = "Friz corrompu",
         -- Casts
         ["cast.rupture"] = "Rupture",
         ["cast.burrow"] = "Burrow", --NEED TRANSLATION! /eval Print(GameLib.GetTargetUnit():GetCastName()) while he is underground.
         -- Alerts
-        ["alert.interrupt_rupture"] = "Interrompre Rupture!",
+        ["alert.interrupt_rupture"] = "Interrompre Rupture !",
         -- Labels
         ["label.moo"] = "Moment d'opportunité",
-        ["label.essence_left"] = "Left Essence",
-        ["label.essence_right"] = "Right Essence",
+        ["label.essence_left"] = "Essence de gauche",
+        ["label.essence_right"] = "Essence de droite",
         ["label.next_rupture"] = "Prochaine rupture",
-        ["label.next_adds"] = "Prochaine wave",
+        ["label.next_adds"] = "Prochaine vague",
     },
 }
 

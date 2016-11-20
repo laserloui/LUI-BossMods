@@ -35,12 +35,12 @@ local Locales = {
         ["unit.boss"] = "Contrôleur du Maelstrom",
         ["unit.station"] = "Station météorologique",
         -- Messages
-        ["message.station"] = "Prochaine stations",
+        ["message.station"] = "Prochaines stations",
         -- Alerts
-        ["alert.station"] = "Weather Stations spawned!",
+        ["alert.station"] = "Spawn des Stations !",
         -- Casts
         ["cast.weather_cycle"] = "Activer cycle climatique",
-        ["cast.shatter"] = "Shatter", -- Missing
+        ["cast.shatter"] = "Fracasser", -- Vérifier /eval Print(GameLib.GetTargetUnit():GetCastName())
     },
 }
 

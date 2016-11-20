@@ -63,27 +63,27 @@ local Locales = {
     ["frFR"] = {
         -- Units
         ["unit.boss_logic"] = "Mnémésis",
-        ["unit.boss_life"] = "Visceralus",
+        ["unit.boss_life"] = "Viscéralus",
         ["unit.life_orb"] = "Force vitale",
         ["unit.essence_life"] = "Essence de vie",
         ["unit.essence_logic"] = "Essence de logique",
-        ["unit.tetris"] = "Alphanumeric Hash",
+        ["unit.tetris"] = "Alphanumeric Hash", -- Vérifier /eval Print(GameLib.GetTargetUnit():GetCastName())
         ["unit.thorns"] = "Ronces sauvages",
         -- Casts
         ["cast.defrag"] = "Défragmentation",
         -- Alerts
-        ["alert.defrag"] = "DEFRAGMENTATION - SPREAD!",
-        ["alert.snake"] = "SERPENT SUR %s!",
-        ["alert.snake_player"] = "SERPENT SUR VOUS!",
+        ["alert.defrag"] = "DEFRAGMENTATION - SÉPARER-VOUS !",
+        ["alert.snake"] = "SERPENT SUR %s !",
+        ["alert.snake_player"] = "SERPENT SUR VOUS !",
         -- Datachron
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
-        ["label.next_thorns"] = "Epines suivants",
+        ["label.next_thorns"] = "Epines suivantes",
         ["label.next_defrag"] = "Défragmentation suivante",
-        ["label.life_force_shackle"] = "Aucun-Soin Debuff",
-        ["label.thorns"] = "Epines Debuff",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.life_force_shackle"] = "Debuff : Aucun-Soin",
+        ["label.thorns"] = "Debuff : Epines",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
         ["label.snake"] = "Serpent",
         ["label.snake_player"] = "Serpent sur le joueur",
     },

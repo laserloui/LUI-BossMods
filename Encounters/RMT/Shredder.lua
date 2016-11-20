@@ -58,10 +58,10 @@ local Locales = {
     ["frFR"] = {
         -- Units
         ["unit.boss"] = "Swabbie Ski'Li",
-        ["unit.noxious_nabber"] = "Harpond Nocif",
-        ["unit.bilious_brute"] = "Bilious Brute", -- Missing!
-        ["unit.regor_the_rancid"] = "Regor le Rancie",
-        ["unit.braugh_the_bloodied"] = "Braugh le Sanglant",
+        ["unit.noxious_nabber"] = "Harpond Nocif", -- Vérifier
+        ["unit.bilious_brute"] = "Brute Billeuse", -- Vérifier
+        ["unit.regor_the_rancid"] = "Regor le Rancie", -- Vérifier
+        ["unit.braugh_the_bloodied"] = "Braugh le Sanglant", -- Vérifier
         ["unit.sawblade"] = "Scie",
         ["unit.circle_telegraph"] = "Unité de Champs Hostile Invisible (rayon d'action : 1,2)",
         -- Casts

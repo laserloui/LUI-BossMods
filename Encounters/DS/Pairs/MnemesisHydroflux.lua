@@ -66,27 +66,27 @@ local Locales = {
         -- Units
         ["unit.boss_logic"] = "Mnémésis",
         ["unit.boss_water"] = "Hydroflux",
-        ["unit.tetris"] = "Alphanumeric Hash",
-        ["unit.orb"] = "Hydro-disrupteur - DNT",
+        ["unit.tetris"] = "Alphanumeric Hash", -- Vérifier /eval Print(GameLib.GetTargetUnit():GetCastName())
+        ["unit.orb"] = "Hydro-disrupteur - DNT", -- Vérifier /eval Print(GameLib.GetTargetUnit():GetCastName())
         -- Casts
         ["cast.circuit_breaker"] = "Coupe-circuit",
         ["cast.imprison"] = "Emprisonner",
         ["cast.defrag"] = "Défragmentation",
         -- Alerts
         ["alert.midphase"] = "PHASE MILIEU !",
-        ["alert.defrag"] = "Défragmentation - SPREAD!",
-        ["alert.imprison"] = "%s A OBTENU EMPRISONNÉ !",
-        ["alert.imprison_player"] = "TU AS EMPRISONNÉ !",
+        ["alert.defrag"] = "Défragmentation - SÉPARER-VOUS !",
+        ["alert.imprison"] = "%s A OBTENU EMPRISONNER !",
+        ["alert.imprison_player"] = "TU AS EMPRISONNER !",
         -- Datachron
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
-        ["label.orb"] = "Orb",
+        ["label.orb"] = "Orbe",
         ["label.midphase"] = "Phase milieu",
         ["label.next_midphase"] = "Prochaine phase milieu",
         ["label.next_defrag"] = "Défragmentation suivante",
         ["label.next_imprison"] = "Prochain emprisonner",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
         ["label.imprison"] = "Emprisonner",
         ["label.imprison_player"] = "Emprisonner sur le joueur",
     },

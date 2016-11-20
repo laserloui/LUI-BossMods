@@ -12,7 +12,11 @@ local Locales = {
         ["unit.boss_water"] = "Hydroflux",
     },
     ["deDE"] = {},
-    ["frFR"] = {},
+    ["frFR"] = {
+        -- Unit names
+        ["unit.boss_air"] = "Ventemort",
+        ["unit.boss_water"] = "Hydroflux",
+    },
 }
 
 function Mod:new(o)

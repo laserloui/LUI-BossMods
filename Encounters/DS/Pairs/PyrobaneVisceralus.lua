@@ -35,15 +35,15 @@ local Locales = {
     ["frFR"] = {
         -- Units
         ["unit.boss_fire"] = "Pyromagnus",
-        ["unit.boss_life"] = "Visceralus",
+        ["unit.boss_life"] = "Viscéralus",
         ["unit.flame_wave"] = "Vague de feu",
         ["unit.life_orb"] = "Force vitale",
         ["unit.life_essence"] = "Essence de vie",
         -- Messages
-        ["message.next_midphase"] = "Prochaine Phase du Milieu",
+        ["message.next_midphase"] = "Prochaine Phase Milieu",
         -- Labels
-        ["label.life_force_shackle"] = "Aucun-Soin Debuff",
-        ["label.midphase"] = "Phase du Milieu",
+        ["label.life_force_shackle"] = "Debuff : Aucun-Soin",
+        ["label.midphase"] = "Phase Milieu",
     },
 }
 
