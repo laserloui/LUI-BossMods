@@ -17,18 +17,6 @@
 	<Script Name="Encounters\GA\PhageCouncil.lua"/>
 	<Script Name="Encounters\GA\Ohmna.lua"/>
 	<!-- Encounters: Datascape -->
-	<Script Name="Encounters\DS\Miniboss\Earth_BioEnhancedBroodmother.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Earth_FullyOptimizedCanimid.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Earth_LogicGuidedRockslide.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Fire_GrandWarmongerTargresh.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Fire_WarmongerAgratha.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Fire_WarmongerChuna.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Fire_WarmongerTalarii.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Frost_FrostBoulderAvalanche.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Frost_FrostbringerWarlock.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Logic_AbstractAugmentationAlgorithm.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Logic_HyperAcceleratedSkeledroid.lua"/>
-	<Script Name="Encounters\DS\Miniboss\Logic_AugmentedHeraldOfAvatus.lua"/>
 	<Script Name="Encounters\DS\Pairs\AileronHydroflux.lua"/>
 	<Script Name="Encounters\DS\Pairs\AileronMegalith.lua"/>
 	<Script Name="Encounters\DS\Pairs\AileronVisceralus.lua"/>
