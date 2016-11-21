@@ -97,8 +97,8 @@ function LUI_BossMods:new(o)
             volumeVoice = 0,
         },
         castbar = {
-            mooColor = "969400d3",
-            barColor = "9600ffff",
+            mooColor = "c89400d3",
+            barColor = "c800ffff",
             textColor = "ffebebeb",
             offsets = {
                 left = -275,
@@ -109,7 +109,7 @@ function LUI_BossMods:new(o)
         },
         timer = {
             barHeight = 32,
-            barColor = "9600ffff",
+            barColor = "c800ffff",
             textColor = "ffebebeb",
             soundPack = "male",
             countdown = "long1",
@@ -125,11 +125,11 @@ function LUI_BossMods:new(o)
             showText = false,
             healthHeight = 32,
             shieldHeight = 10,
-            castColor = "96ff00ff",
+            castColor = "c8778899",
             mooColor = "ff9400d3",
-            healthColor = "96adff2f",
-            shieldColor = "9600ffff",
-            absorbColor = "96ffd700",
+            healthColor = "c8adff2f",
+            shieldColor = "c800ffff",
+            absorbColor = "c8ffd700",
             textColor = "ffebebeb",
             offsets = {
                 left = 390,
