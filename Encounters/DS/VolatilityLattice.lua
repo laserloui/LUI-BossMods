@@ -41,11 +41,11 @@ local Locales = {
         ["alert.laser_player"] = "LASER SUR TOI!",
         -- Messages
         ["message.laser"] = "Prochain Laser",
-        ["message.pillar"] = "Prochain Pillier",
+        ["message.pillar"] = "Prochain Pilier",
         ["message.devourer"] = "Prochain Dévoreur",
         -- Labels
         ["label.laser"] = "Laser",
-        ["label.pillar"] = "Pillier",
+        ["label.pillar"] = "Pilier",
     },
 }
 

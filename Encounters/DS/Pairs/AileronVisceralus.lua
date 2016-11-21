@@ -25,10 +25,10 @@ local Locales = {
     ["frFR"] = {
         -- Units
         ["unit.boss_air"] = "Ventemort",
-        ["unit.boss_life"] = "Visceralus",
+        ["unit.boss_life"] = "Viscéralus",
         ["unit.life_orb"] = "Force vitale",
         -- Labels
-        ["label.life_force_shackle"] = "Aucun-Soin Debuff",
+        ["label.life_force_shackle"] = "Debuff : Aucun-Soin",
     },
 }
 

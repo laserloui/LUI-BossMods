@@ -21,7 +21,16 @@ local Locales = {
         ["unit.boss"] = "Starmap",
     },
     ["frFR"] = {
-        ["unit.boss"] = "Starmap",
+        ["unit.boss"] = "Starmap", -- Vérifier
+        ["unit.world_ender"] = "Planète Ender", -- Vérifier
+        ["unit.asteroid"] = "Astéroïde Inconnu", -- Vérifier
+        ["unit.debris"] = "Débris Cosmiques",
+        -- Messages
+        ["message.next_world_ender"] = "Prochaine Planète Ender",
+        -- Alerts
+        ["alert.solar_wind"] = "Reset tes stacks !",
+        -- Labels
+        ["label.solar_wind"] = "Stacks de Vents Solaires",
     },
 }
 

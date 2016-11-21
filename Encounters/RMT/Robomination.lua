@@ -53,13 +53,13 @@ local Locales = {
         ["alert.interrupt"] = "Interromps !",
         ["alert.lasers"] = "Lasers en approche !",
         ["alert.midphase"] = "Midphase bientôt !",
-        ["alert.crush"] = "ECRASER SUR %s !",
-        ["alert.crush_player"] = "ECRASER SUR TOI !",
-        ["alert.incineration"] = "INCINERATION SUR %s !",
-        ["alert.incineration_player"] = "INCINERATION SUR TOI !",
+        ["alert.crush"] = "ÉCRASER SUR %s !",
+        ["alert.crush_player"] = "ÉCRASER SUR TOI !",
+        ["alert.incineration"] = "INCINÉRATION SUR %s !",
+        ["alert.incineration_player"] = "INCINÉRATION SUR TOI !",
         -- Messages
         ["message.next_arms"] = "Bras suivants",
-        ["message.next_crush"] = "Ecraser suivant",
+        ["message.next_crush"] = "Écraser suivant",
         ["message.next_belch"] = "Lasers suivants",
         ["message.next_incineration"] = "Incineration suivante",
         -- Datachron messages
@@ -68,8 +68,8 @@ local Locales = {
         ["datachron.incineration"] = "Robomination tente d'incinérer (.*)",
         -- Labels
         ["label.arms"] = "Bras",
-        ["label.crush"] = "Ecraser",
-        ["label.crush_player"] = "Ecraser sur le joueur",
+        ["label.crush"] = "Écraser",
+        ["label.crush_player"] = "Écraser sur le joueur",
     },
 }
 

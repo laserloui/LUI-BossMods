@@ -58,9 +58,9 @@ local Locales = {
         -- Units
         ["unit.boss_air"] = "Ventemort",
         ["unit.boss_earth"] = "Mégalithe",
-        ["unit.tornado"] = "Colonne d'air",
+        ["unit.tornado"] = "Tornade",
         -- Alerts
-        ["alert.tornado"] = "La tornade est entrante !",
+        ["alert.tornado"] = "Arrivée de la tornade !",
         ["alert.supercell"] = "ATTERISSAGE SUR MÉGALITHE !",
         ["alert.superquake"] = "SAUTEZ, SAUTEZ, SAUTEZ !!!",
         -- Casts
@@ -71,12 +71,12 @@ local Locales = {
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
         ["label.moo"] = "Moment d'opportunité",
-        ["label.superquake"] = "Superquake",
+        ["label.superquake"] = "Super-tremblement",
         ["label.next_supercell"] = "Prochaine super-cellule",
-        ["label.next_tornado"] = "Prochaine baffe féroce",
-        ["label.next_fierce_swipe"] = "Prochaine tornade",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.next_tornado"] = "Prochaine tornade",
+        ["label.next_fierce_swipe"] = "Prochaine baffe féroce",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
     },
 }
 
