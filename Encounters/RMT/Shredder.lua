@@ -20,14 +20,18 @@ local Locales = {
         ["cast.deathwail"] = "Deathwail",
         ["cast.gravedigger"] = "Gravedigger",
         -- Alerts
-        ["alert.oozing_bile"] = "Oozing Bile - Stop Damage!",
-        ["alert.oozing_bile_short"] = "Stop Damage!",
-        ["alert.interrupt"] = "Interrupt!",
+        ["alert.oozing_bile"] = "STOP DAMAGE!",
+        ["alert.interrupt"] = "INTERRUPT!",
         -- Debuffs
         ["debuff.oozing_bile"] = "Oozing Bile",
+        -- Datachron
+        ["datachron.shredder_jammed"] = "Ye've jammed me shredder, ye have! Blast ye filthy bilge slanks!",
         -- Labels
         ["label.lines_room"] = "Room Dividers",
         ["label.circle_telegraph"] = "Circle Telegraphs",
+        ["label.wave_1"] = "Add Wave #1",
+        ["label.wave_2"] = "Add Wave #2",
+        ["label.wave_3"] = "Add Wave #3",
         -- Texts
         ["text.stackmoron"] = "/p I hit %d stacks because I'm a complete moron.",
     },
@@ -44,14 +48,18 @@ local Locales = {
         ["cast.deathwail"] = "Totenklage",
         ["cast.gravedigger"] = "Gravedigger",
         -- Alerts
-        ["alert.oozing_bile"] = "Triefende Galle - Stop Damage!",
-        ["alert.oozing_bile_short"] = "Stop Damage!",
-        ["alert.interrupt"] = "Unterbrechen!",
+        ["alert.oozing_bile"] = "STOP DAMAGE!",
+        ["alert.interrupt"] = "UNTERBRECHEN!",
         -- Debuffs
         ["debuff.oozing_bile"] = "Triefende Galle",
+        -- Datachron
+        ["datachron.shredder_jammed"] = "Ye've jammed me shredder, ye have! Blast ye filthy bilge slanks!", -- Missing!
         -- Labels
         ["label.lines_room"] = "Raum Einteilungen",
         ["label.circle_telegraph"] = "Kreis Telegraphen",
+        ["label.wave_1"] = "Add Wave #1",
+        ["label.wave_2"] = "Add Wave #2",
+        ["label.wave_3"] = "Add Wave #3",
         -- Texts
         ["text.stackmoron"] = "/gr Ich Vollidiot habe %d Stacks erreicht!",
     },
@@ -69,14 +77,18 @@ local Locales = {
         ["cast.deathwail"] = "Hulement Mortel",
         ["cast.gravedigger"] = "Fossoyer",
         -- Alerts
-        ["alert.oozing_bile"] = "Bile Suintante - Stop DPS !",
-        ["alert.oozing_bile_short"] = "Stop DPS !",
-        ["alert.interrupt"] = "Interromps !",
+        ["alert.oozing_bile"] = "STOP DPS !",
+        ["alert.interrupt"] = "INTERROMPS !",
         -- Debuffs
         ["debuff.oozing_bile"] = "Bile Suintante",
+        -- Datachron
+        ["datachron.shredder_jammed"] = "Ye've jammed me shredder, ye have! Blast ye filthy bilge slanks !", -- Missing!
         -- Labels
         ["label.lines_room"] = "Ligne d'ancres",
         ["label.circle_telegraph"] = "Télégraphes Circulaire",
+        ["label.wave_1"] = "Add Wave #1",
+        ["label.wave_2"] = "Add Wave #2",
+        ["label.wave_3"] = "Add Wave #3",
         -- Texts
         ["text.stackmoron"] = "/éq J'ai atteint %d stacks parce que je suis un crétin fini.",
     },
@@ -137,6 +149,26 @@ function Mod:new(o)
                 enable = true,
                 label = "unit.braugh_the_bloodied",
                 position = 5,
+            },
+        },
+        timers = {
+            wave_1 = {
+                enable = true,
+                position = 1,
+                color = "c87cfc00",
+                label = "label.wave_1",
+            },
+            wave_2 = {
+                enable = true,
+                position = 2,
+                color = "c8ffd700",
+                label = "label.wave_2",
+            },
+            wave_3 = {
+                enable = true,
+                position = 3,
+                color = "c8ff4500",
+                label = "label.wave_3",
             },
         },
         casts = {
@@ -248,6 +280,14 @@ function Mod:new(o)
                 label = "label.circle_telegraph",
             },
         },
+        texts = {
+            necrotic_lash = {
+                enable = true,
+                color = "ffff00ff",
+                timer = true,
+                label = "cast.necrotic_lash",
+            },
+        },
     }
     return o
 end
@@ -272,6 +312,10 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     elseif sName == self.L["unit.noxious_nabber"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.noxious_nabber)
         self.core:DrawIcon(nId, tUnit, self.config.icons.noxious_nabber, true)
+
+        if self.core:GetDistance(tUnit) < 30 then
+            self.core:DrawText("necrotic_lash"..tostring(nId), tUnit, self.config.texts.necrotic_lash, "", false, nil, 12)
+        end
     elseif sName == self.L["unit.bilious_brute"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.bilious_brute)
         self.core:DrawIcon(nId, tUnit, self.config.icons.bilious_brute, true)
@@ -298,7 +342,7 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
     if DEBUFF_OOZING_BILE == nSpellId then
         if tData.tUnit:IsThePlayer() then
             if nStack >= 8 then
-                self.core:ShowAura("OOZE", self.config.auras.oozing_bile, nDuration, self.L["alert.oozing_bile_short"])
+                self.core:ShowAura("OOZE", self.config.auras.oozing_bile, nDuration, self.L["alert.oozing_bile"])
 
                 if not self.warned then
                     self.core:PlaySound(self.config.sounds.oozing_bile)
@@ -345,6 +389,14 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     end
 end
 
+function Mod:OnDatachron(sMessage, sSender, sHandler)
+    if sMessage:find(self.L["datachron.shredder_jammed"]) then
+        self.core:AddTimer("WAVE1", self.L["label.wave_1"], 15, self.config.timers.wave_1)
+        self.core:AddTimer("WAVE2", self.L["label.wave_2"], 53, self.config.timers.wave_2)
+        self.core:AddTimer("WAVE3", self.L["label.wave_3"], 78, self.config.timers.wave_3)
+    end
+end
+
 function Mod:IsRunning()
     return self.run
 end
@@ -356,6 +408,10 @@ end
 function Mod:OnEnable()
     self.run = true
     self.warned = nil
+
+    self.core:AddTimer("WAVE1", self.L["label.wave_1"], 15, self.config.timers.wave_1)
+    self.core:AddTimer("WAVE2", self.L["label.wave_2"], 53, self.config.timers.wave_2)
+    self.core:AddTimer("WAVE3", self.L["label.wave_3"], 78, self.config.timers.wave_3)
 end
 
 function Mod:OnDisable()
