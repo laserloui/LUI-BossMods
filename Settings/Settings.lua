@@ -22,6 +22,7 @@ local Locales = {
         ["header.sprites"] = "Sprites",
         ["header.fonts"] = "Fonts",
         ["header.focus"] = "Focus Target",
+        ["header.telegraph"] = "Telegraphs",
         -- Labels
         ["label.enable_module"] = "Enable Boss Module",
         ["label.enable"] = "Enable",
@@ -94,6 +95,7 @@ local Locales = {
         ["header.sprites"] = "Texturen",
         ["header.fonts"] = "Schriftarten",
         ["header.focus"] = "Focus Target",
+        ["header.telegraph"] = "Telegraphs",
         -- Labels
         ["label.enable_module"] = "Boss Modul einschalten",
         ["label.enable"] = "Einschalten",
@@ -166,6 +168,7 @@ local Locales = {
         ["header.sprites"] = "Visuels",
         ["header.fonts"] = "Police",
         ["header.focus"] = "Focus Target",
+        ["header.telegraph"] = "Telegraphs",
         -- Labels
         ["label.enable_module"] = "Activer le module du boss",
         ["label.enable"] = "Activer",
@@ -622,6 +625,39 @@ function Settings:BuildRightPanel()
         wndGeneral:FindChild("Settings"):ArrangeChildrenVert()
         wndGeneral:SetAnchorOffsets(0,0,0,nHeight)
     end
+
+    -- #########################################################################################################################################
+    -- # TELEGRAPH COLOR
+    -- #########################################################################################################################################
+
+    local wndTelegraph = Apollo.LoadForm(self.xmlDoc, "Container", self.wndRight, self)
+    wndTelegraph:FindChild("Label"):SetText(self.L["header.telegraph"])
+
+    Apollo.LoadForm(self.xmlDoc, "Items:TelegraphSetting", wndTelegraph:FindChild("Settings"), self)
+    wndTelegraph:SetAnchorOffsets(0,0,0,(wndTelegraph:FindChild("TelegraphSetting"):GetHeight()+65))
+
+    -- Color
+    wndTelegraph:FindChild("ColorSetting"):SetData({"telegraph","color"})
+    wndTelegraph:FindChild("ColorSetting"):FindChild("ColorBtn"):SetData("RGB")
+    wndTelegraph:FindChild("ColorSetting"):FindChild("ColorText"):SetText(config.telegraph and config.telegraph.color or self.config.telegraph.color)
+    wndTelegraph:FindChild("ColorSetting"):FindChild("BG"):SetBGColor(config.telegraph and config.telegraph.color or self.config.telegraph.color)
+
+    -- Fill Opacity
+    wndTelegraph:FindChild("FillSetting"):FindChild("Slider"):SetData({"telegraph","fill"})
+    wndTelegraph:FindChild("FillSetting"):FindChild("Slider"):SetValue(config.telegraph and config.telegraph.fill or self.config.telegraph.fill)
+    wndTelegraph:FindChild("FillSetting"):FindChild("SliderText"):SetData({"telegraph","fill"})
+    wndTelegraph:FindChild("FillSetting"):FindChild("SliderText"):SetText(config.telegraph and config.telegraph.fill or self.config.telegraph.fill)
+
+    -- Outline Opacity
+    wndTelegraph:FindChild("OutlineSetting"):FindChild("Slider"):SetData({"telegraph","outline"})
+    wndTelegraph:FindChild("OutlineSetting"):FindChild("Slider"):SetValue(config.telegraph and config.telegraph.outline or self.config.telegraph.outline)
+    wndTelegraph:FindChild("OutlineSetting"):FindChild("SliderText"):SetData({"telegraph","outline"})
+    wndTelegraph:FindChild("OutlineSetting"):FindChild("SliderText"):SetText(config.telegraph and config.telegraph.outline or self.config.telegraph.outline)
+
+    -- Enable Checkbox
+    wndTelegraph:FindChild("EnableCheckbox"):SetData({"telegraph","enable"})
+    wndTelegraph:FindChild("EnableCheckbox"):SetCheck(config.telegraph and config.telegraph.enable or false)
+    self:ToggleSettings(wndTelegraph:FindChild("TelegraphSetting"),config.telegraph and config.telegraph.enable or false)
 
     -- #########################################################################################################################################
     -- # SOUNDS
@@ -2199,13 +2235,21 @@ function Settings:SetVar(setting,value)
             self.config[setting] = value
         elseif type(setting) == "table" then
             if #setting == 3 then
-                if self.config[setting[1]] and self.config[setting[1]][setting[2]] then
-                    self.config[setting[1]][setting[2]][setting[3]] = value
+                if not self.config[setting[1]] then
+                    self.config[setting[1]] = {}
                 end
-            else
-                if self.config[setting[1]] then
-                    self.config[setting[1]][setting[2]] = value
+
+                if not self.config[setting[1]][setting[2]] then
+                    self.config[setting[1]][setting[2]] = {}
                 end
+
+                self.config[setting[1]][setting[2]][setting[3]] = value
+            elseif #setting == 2 then
+                if not self.config[setting[1]] then
+                    self.config[setting[1]] = {}
+                end
+
+                self.config[setting[1]][setting[2]] = value
             end
         end
     else
@@ -2223,13 +2267,21 @@ function Settings:SetVar(setting,value)
             config[setting] = value
         elseif type(setting) == "table" then
             if #setting == 3 then
-                if config[setting[1]] and config[setting[1]][setting[2]] then
-                    config[setting[1]][setting[2]][setting[3]] = value
+                if not config[setting[1]] then
+                    config[setting[1]] = {}
                 end
-            else
-                if config[setting[1]] then
-                    config[setting[1]][setting[2]] = value
+
+                if not config[setting[1]][setting[2]] then
+                    config[setting[1]][setting[2]] = {}
                 end
+
+                config[setting[1]][setting[2]][setting[3]] = value
+            elseif #setting == 2 then
+                if not config[setting[1]] then
+                    config[setting[1]] = {}
+                end
+
+                config[setting[1]][setting[2]] = value
             end
         end
     end

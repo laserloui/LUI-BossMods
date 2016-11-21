@@ -8,6 +8,7 @@ require "Vector3"
 
 local LUI_BossMods = {}
 local TemplateDraw = {}
+local GeminiColor = Apollo.GetPackage("GeminiColor").tPackage
 local GeminiLocale = Apollo.GetPackage("Gemini:Locale-1.0").tPackage
 local JSON = Apollo.GetPackage("Lib:dkJSON-2.5").tPackage
 
@@ -95,6 +96,12 @@ function LUI_BossMods:new(o)
             volumeSFX = 0,
             volumeAmbient = 0,
             volumeVoice = 0,
+        },
+        telegraph = {
+            enable = false,
+            color = "9affffff",
+            fill = 1,
+            outline = 1,
         },
         castbar = {
             mooColor = "c89400d3",
@@ -203,6 +210,7 @@ function LUI_BossMods:OnDocLoaded()
     self:LoadModules()
     self:LoadSettings()
 
+    self.SaveTelegraphTimer = ApolloTimer.Create(3, false, "SaveTelegraphColor", self)
     self.CheckVolumeTimer = ApolloTimer.Create(3, false, "CheckVolume", self)
     self.CheckConnectionTimer = ApolloTimer.Create(1, false, "Connect", self)
 
@@ -493,6 +501,7 @@ function LUI_BossMods:StartFight()
     self.bIsRunning = true
     self.tCurrentEncounter:OnEnable()
     self:ProcessSavedUnits()
+    self:SetTelegraphColor(self.tCurrentEncounter.config.telegraph)
 
     Apollo.RemoveEventHandler("FrameCount",self)
     Apollo.RegisterEventHandler("FrameCount", "OnUpdate", self)
@@ -528,6 +537,7 @@ function LUI_BossMods:ResetFight()
     end
 
     if self.tCurrentEncounter then
+        self:RestoreTelegraphColor(self.tCurrentEncounter.config.telegraph)
         self.tCurrentEncounter:OnDisable()
         self.tCurrentEncounter = nil
     end
@@ -1962,6 +1972,55 @@ end
 -- #########################################################################################################################################
 -- #########################################################################################################################################
 -- #
+-- # TELEGRAPH COLORS
+-- #
+-- #########################################################################################################################################
+-- #########################################################################################################################################
+
+function LUI_BossMods:SaveTelegraphColor()
+    self.nTelegraphColorSet = Apollo.GetConsoleVariable("spell.telegraphColorSet")
+	self.tTelegraphColor = {
+		Apollo.GetConsoleVariable("spell.custom1EnemyNPCDetrimentalTelegraphColorR"),
+		Apollo.GetConsoleVariable("spell.custom1EnemyNPCDetrimentalTelegraphColorG"),
+		Apollo.GetConsoleVariable("spell.custom1EnemyNPCDetrimentalTelegraphColorB"),
+		Apollo.GetConsoleVariable("spell.fillOpacityCustom1_34"),
+		Apollo.GetConsoleVariable("spell.outlineOpacityCustom1_34"),
+	}
+end
+
+function LUI_BossMods:SetTelegraphColor(tTelegraphColor)
+    if not tTelegraphColor or not tTelegraphColor.enable then
+        return
+    end
+
+    local r,g,b = GeminiColor:HexToRGBA(tTelegraphColor.color or self.config.telegraph.color)
+
+    Apollo.SetConsoleVariable("spell.telegraphColorSet", 4)
+	Apollo.SetConsoleVariable("spell.custom1EnemyNPCDetrimentalTelegraphColorR", r)
+	Apollo.SetConsoleVariable("spell.custom1EnemyNPCDetrimentalTelegraphColorG", g)
+	Apollo.SetConsoleVariable("spell.custom1EnemyNPCDetrimentalTelegraphColorB", b)
+	Apollo.SetConsoleVariable("spell.fillOpacityCustom1_34", (tTelegraphColor.fill or self.config.telegraph.fill) * 255)
+	Apollo.SetConsoleVariable("spell.outlineOpacityCustom1_34", (tTelegraphColor.outline or self.config.telegraph.outline) * 255)
+    GameLib.RefreshCustomTelegraphColors()
+end
+
+function LUI_BossMods:RestoreTelegraphColor(tTelegraph)
+    if not tTelegraph or not tTelegraph.enable then
+        return
+    end
+
+    Apollo.SetConsoleVariable("spell.telegraphColorSet", self.nTelegraphColorSet)
+	Apollo.SetConsoleVariable("spell.custom1EnemyNPCDetrimentalTelegraphColorR", self.tTelegraphColor[1])
+	Apollo.SetConsoleVariable("spell.custom1EnemyNPCDetrimentalTelegraphColorG", self.tTelegraphColor[2])
+	Apollo.SetConsoleVariable("spell.custom1EnemyNPCDetrimentalTelegraphColorB", self.tTelegraphColor[3])
+	Apollo.SetConsoleVariable("spell.fillOpacityCustom1_34", self.tTelegraphColor[4])
+	Apollo.SetConsoleVariable("spell.outlineOpacityCustom1_34", self.tTelegraphColor[5])
+    GameLib.RefreshCustomTelegraphColors()
+end
+
+-- #########################################################################################################################################
+-- #########################################################################################################################################
+-- #
 -- # ONSCREEN DRAWINGS (Where the magic happens!) - Thanks to author(s) of RaidCore
 -- #
 -- #########################################################################################################################################
@@ -3314,7 +3373,7 @@ end
 
 function LUI_BossMods:CheckSavedData(tSavedData,tConfig)
     for k,v in pairs(tSavedData) do
-        if k ~= "modules" and type(v) == "table" then
+        if k ~= "modules" and k ~= "telegraph" and type(v) == "table" then
             if tConfig[k] == nil then
                 tSavedData[k] = nil
             else
