@@ -53,7 +53,7 @@ local Locales = {
         ["unit.add3"] = "Friz corrompu",
         -- Casts
         ["cast.rupture"] = "Rupture",
-        ["cast.burrow"] = "Burrow", --NEED TRANSLATION! /eval Print(GameLib.GetTargetUnit():GetCastName()) while he is underground.
+        ["cast.burrow"] = "Terrier",
         -- Alerts
         ["alert.interrupt_rupture"] = "Interrompre Rupture !",
         -- Labels
