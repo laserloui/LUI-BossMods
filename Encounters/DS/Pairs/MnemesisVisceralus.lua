@@ -72,18 +72,18 @@ local Locales = {
         -- Casts
         ["cast.defrag"] = "Défragmentation",
         -- Alerts
-        ["alert.defrag"] = "DEFRAGMENTATION - SPREAD!",
-        ["alert.snake"] = "SERPENT SUR %s!",
-        ["alert.snake_player"] = "SERPENT SUR VOUS!",
+        ["alert.defrag"] = "DÉFRAGMENTATION - SÉPARER-VOUS !",
+        ["alert.snake"] = "SERPENT SUR %s !",
+        ["alert.snake_player"] = "SERPENT SUR VOUS !",
         -- Datachron
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
-        ["label.next_thorns"] = "Epines suivants",
+        ["label.next_thorns"] = "Epines suivantes",
         ["label.next_defrag"] = "Défragmentation suivante",
-        ["label.life_force_shackle"] = "Aucun-Soin Debuff",
-        ["label.thorns"] = "Epines Debuff",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.life_force_shackle"] = "Debuff: Aucun-Soin",
+        ["label.thorns"] = "Debuff: Epines",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
         ["label.snake"] = "Serpent",
         ["label.snake_player"] = "Serpent sur le joueur",
     },
@@ -129,11 +129,13 @@ function Mod:new(o)
             defrag = {
                 enable = true,
                 position = 1,
+                color = "c800bfff",
                 label = "label.next_defrag",
             },
             thorns = {
                 enable = true,
                 position = 2,
+                color = "c8ffa500",
                 label = "label.next_thorns",
             },
             enrage = {

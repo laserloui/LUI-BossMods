@@ -60,9 +60,9 @@ local Locales = {
         ["unit.boss_earth"] = "Mégalithe",
         ["unit.tornado"] = "Colonne d'air",
         -- Alerts
-        ["alert.tornado"] = "La tornade est entrante !",
+        ["alert.tornado"] = "Arrivée de la tornade !",
         ["alert.supercell"] = "ATTERISSAGE SUR MÉGALITHE !",
-        ["alert.superquake"] = "SAUTEZ, SAUTEZ, SAUTEZ !!!",
+        ["alert.superquake"] = "SAUTE, SAUTE, SAUTE !!!",
         -- Casts
         ["cast.supercell"] = "Super-cellule",
         ["cast.fierce_swipe"] = "Baffe féroce",
@@ -71,12 +71,12 @@ local Locales = {
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
         ["label.moo"] = "Moment d'opportunité",
-        ["label.superquake"] = "Superquake",
+        ["label.superquake"] = "Super séisme",
         ["label.next_supercell"] = "Prochaine super-cellule",
-        ["label.next_tornado"] = "Prochaine baffe féroce",
-        ["label.next_fierce_swipe"] = "Prochaine tornade",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.next_tornado"] = "Prochaine tornade",
+        ["label.next_fierce_swipe"] = "Prochaine baffe féroce",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
     },
 }
 
@@ -121,11 +121,13 @@ function Mod:new(o)
             tornado = {
                 enable = true,
                 position = 2,
+                color = "c800bfff",
                 label = "label.next_tornado",
             },
             fierce_swipe = {
                 enable = true,
                 position = 3,
+                color = "c8ffa500",
                 label = "label.next_fierce_swipe",
             },
             enrage = {

@@ -27,7 +27,7 @@ local Locales = {
         -- Messages
         ["message.next_arms"] = "Next arms",
         ["message.next_crush"] = "Next crush",
-        ["message.next_belch"] = "Next lasers",
+        ["message.next_belch"] = "Next belch",
         ["message.next_incineration"] = "Next incineration",
         -- Datachron messages
         ["datachron.midphase_start"] = "The Robomination sinks",
@@ -53,13 +53,13 @@ local Locales = {
         ["alert.interrupt"] = "Interromps !",
         ["alert.lasers"] = "Lasers en approche !",
         ["alert.midphase"] = "Midphase bientôt !",
-        ["alert.crush"] = "ECRASER SUR %s !",
-        ["alert.crush_player"] = "ECRASER SUR TOI !",
-        ["alert.incineration"] = "INCINERATION SUR %s !",
-        ["alert.incineration_player"] = "INCINERATION SUR TOI !",
+        ["alert.crush"] = "ÉCRASER SUR %s !",
+        ["alert.crush_player"] = "ÉCRASER SUR TOI !",
+        ["alert.incineration"] = "INCINÉRATION SUR %s !",
+        ["alert.incineration_player"] = "INCINÉRATION SUR TOI !",
         -- Messages
         ["message.next_arms"] = "Bras suivants",
-        ["message.next_crush"] = "Ecraser suivant",
+        ["message.next_crush"] = "Écraser suivant",
         ["message.next_belch"] = "Lasers suivants",
         ["message.next_incineration"] = "Incineration suivante",
         -- Datachron messages
@@ -68,8 +68,8 @@ local Locales = {
         ["datachron.incineration"] = "Robomination tente d'incinérer (.*)",
         -- Labels
         ["label.arms"] = "Bras",
-        ["label.crush"] = "Ecraser",
-        ["label.crush_player"] = "Ecraser sur le joueur",
+        ["label.crush"] = "Écraser",
+        ["label.crush_player"] = "Écraser sur le joueur",
     },
 }
 
@@ -123,21 +123,25 @@ function Mod:new(o)
             arms = {
                 enable = true,
                 position = 1,
+                color = "c800ffff",
                 label = "label.arms",
             },
             crush = {
                 enable = true,
                 position = 2,
+                color = "c8ffd700",
                 label = "label.crush",
             },
             noxious_belch = {
                 enable = true,
                 position = 3,
+                color = "c87cfc00",
                 label = "cast.noxious_belch",
             },
             incineration = {
                 enable = true,
                 position = 4,
+                color = "c8ff0000",
                 label = "cast.incineration_laser",
             },
         },

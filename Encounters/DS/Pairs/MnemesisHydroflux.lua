@@ -18,7 +18,7 @@ local Locales = {
         ["cast.defrag"] = "Defragment",
         -- Alerts
         ["alert.midphase"] = "MIDPHASE!",
-        ["alert.defrag"] = "Defragment - SPREAD!",
+        ["alert.defrag"] = "DEFRAGMENT - SPREAD!",
         ["alert.imprison"] = "%s GOT IMPRISONED!",
         ["alert.imprison_player"] = "YOU GOT IMPRISONED! - MOVE!",
         -- Datachron
@@ -46,7 +46,7 @@ local Locales = {
         ["cast.defrag"] = "Defragmentieren",
         -- Alerts
         ["alert.midphase"] = "MITTE PHASE!",
-        ["alert.defrag"] = "Defragmentieren - VERTEILEN!",
+        ["alert.defrag"] = "DEFRAGMENTIEREN - VERTEILEN!",
         ["alert.imprison"] = "%s WURDE EINGESPERRT!",
         ["alert.imprison_player"] = "DU WURDEST EINGESPERRT - LAUF!",
         -- Datachron
@@ -74,19 +74,19 @@ local Locales = {
         ["cast.defrag"] = "Défragmentation",
         -- Alerts
         ["alert.midphase"] = "PHASE MILIEU !",
-        ["alert.defrag"] = "Défragmentation - SPREAD!",
-        ["alert.imprison"] = "%s A OBTENU EMPRISONNÉ !",
-        ["alert.imprison_player"] = "TU AS EMPRISONNÉ !",
+        ["alert.defrag"] = "DÉFRAGMENTATION - SÉPARER-VOUS !",
+        ["alert.imprison"] = "%s A OBTENU EMPRISONNER !",
+        ["alert.imprison_player"] = "TU AS EMPRISONNER !",
         -- Datachron
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
-        ["label.orb"] = "Orb",
+        ["label.orb"] = "Orbe",
         ["label.midphase"] = "Phase milieu",
         ["label.next_midphase"] = "Prochaine phase milieu",
         ["label.next_defrag"] = "Défragmentation suivante",
         ["label.next_imprison"] = "Prochain emprisonner",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
         ["label.imprison"] = "Emprisonner",
         ["label.imprison_player"] = "Emprisonner sur le joueur",
     },
@@ -128,11 +128,13 @@ function Mod:new(o)
             defrag = {
                 enable = true,
                 position = 1,
+                color = "c800bfff",
                 label = "label.next_defrag",
             },
             imprison = {
                 enable = true,
                 position = 2,
+                color = "c87cfc00",
                 label = "label.next_imprison",
             },
             midphase = {
@@ -237,7 +239,9 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     elseif sName == self.L["unit.tetris"] then
         self.core:DrawLine(nId, tUnit, self.config.lines.tetris, 30)
     elseif sName == self.L["unit.orb"] then
-        self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.orb)
+        if not self.bMidphase then
+            self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.orb)
+        end
     end
 end
 

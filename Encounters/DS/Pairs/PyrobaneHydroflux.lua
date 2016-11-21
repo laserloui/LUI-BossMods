@@ -61,21 +61,21 @@ local Locales = {
         ["unit.flame_wave"] = "Vague de feu",
         ["unit.ice_tomb"] = "Tombeau de glace",
         -- Alerts
-        ["alert.bombs"] = "Bombes!",
-        ["alert.ice_tomb"] = "Tombeau de glace!",
+        ["alert.bombs"] = "Bombes !",
+        ["alert.ice_tomb"] = "Tombeau de glace !",
         -- Labels
         ["label.bombs"] = "Bombes",
-        ["label.bombs_player"] = "Bombes sur le joueur",
+        ["label.bombs_player"] = "Bombe sur le joueur",
         ["label.fire_bomb"] = "Bombe de feu",
         ["label.water_bomb"] = "Bombe d'eau",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
         -- Datachron
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Texts
-        ["text.next_bombs"] = "Bombes suivants",
+        ["text.next_bombs"] = "Bombes suivantes",
         ["text.next_ice_tomb"] = "Tombeau de glace suivant",
-        ["text.stacks"] = "/éq J'ai tapé %d fois et j'ai perdu le défi !",
+        ["text.stacks"] = "/éq J'ai atteint %d stacks et j'ai perdu le défi !",
     },
 }
 
@@ -123,11 +123,13 @@ function Mod:new(o)
             bombs = {
                 enable = true,
                 position = 1,
+                color = "c8ff0000",
                 label = "label.bombs",
             },
             ice_tomb = {
                 enable = true,
                 position = 2,
+                color = "c800bfff",
                 label = "unit.ice_tomb",
             },
             enrage = {

@@ -56,12 +56,12 @@ local Locales = {
         ["cast.spew"] = "Crachat répugnant",
         ["cast.knockback"] = "Hurlement retentissant",
         -- Alerts
-        ["alert.small_bomb"] = "Petite bombe sur %s!",
-        ["alert.small_bomb_player"] = "Petite bombe sur toi ! - Eloigne toi!",
-        ["alert.big_bomb"] = "Grosse bombe sur %s!",
-        ["alert.big_bomb_player"] = "Grosse Bombe sur toi! - Saute dans le vide!",
-        ["alert.knockback"] = "Repoussement!",
-        ["alert.spew"] = "CRACHAT!",
+        ["alert.small_bomb"] = "Petite bombe sur %s !",
+        ["alert.small_bomb_player"] = "Petite bombe sur toi ! - Eloigne toi !",
+        ["alert.big_bomb"] = "Grosse bombe sur %s !",
+        ["alert.big_bomb_player"] = "Grosse Bombe sur toi ! - Saute dans le vide !",
+        ["alert.knockback"] = "Repoussement !",
+        ["alert.spew"] = "CRACHAT !",
         -- Labels
         ["label.small_bomb"] = "Petite bombe",
         ["label.big_bomb"] = "Grosse bombe",

@@ -62,17 +62,17 @@ local Locales = {
         ["cast.rocket_jump"] = "Saut Roquette",
         -- Alerts
         ["alert.liquidate"] = "Liquidation !",
-        ["alert.electroshock"] = "Electrochoc !",
+        ["alert.electroshock"] = "Électrochoc !",
         ["alert.atomic_attraction"] = "Attraction Atomique sur ",
         ["alert.atomic_attraction_player"] = "Tu dois kitter l'orbe !",
-        ["alert.vulnerability"] = " va sur l'EPEE !",
-        ["alert.vulnerability_player"] = "GO SUR L'EPEE !",
-        ["alert.sword_jump"] = "Epée quitte ",
+        ["alert.vulnerability"] = " va sur l'ÉPÉE !",
+        ["alert.vulnerability_player"] = "GO SUR L'ÉPÉE !",
+        ["alert.sword_jump"] = "Épée quitte ",
         ["alert.gun_jump"] = "Fusil quitte ",
         ["alert.gun_return"] = "RETOURNE SUR LE FUSIL !",
         ["alert.pillar"] = " à 20% !",
         -- Datachron
-        ["datachron.electroshock"] = "(.*) souffre d'Electrochoc",
+        ["datachron.electroshock"] = "(.*) souffre d'Électrochoc",
         -- Labels
         ["label.pillar"] = "Attention, vie à 20%",
         ["label.pillar_health"] = "Vie du Pilier",
@@ -152,19 +152,19 @@ function Mod:new(o)
             electroshock = {
                 enable = true,
                 position = 1,
-                color = "ade91dfb",
+                color = "c800bfff",
                 label = "cast.electroshock",
             },
             liquidate = {
                 enable = true,
                 position = 2,
-                color = "afb0ff2f",
+                color = "c8ffa500",
                 label = "cast.liquidate",
             },
             atomic_attraction = {
                 enable = true,
                 position = 3,
-                color = "afff0000",
+                color = "c8ff0000",
                 label = "debuff.atomic_attraction",
             },
             vulnerability = {
@@ -322,14 +322,6 @@ function Mod:Init(parent)
 
     self.core = parent
     self.L = parent:GetLocale(Encounter,Locales)
-end
-
-function Mod:OnDatachron(sMessage, sSender, sHandler)
-    local strPlayer = sMessage:match(self.L["datachron.electroshock"])
-
-    if strPlayer then
-        self.core:AddTimer("ElectroshockTimer_"..strPlayer, strPlayer, 60, self.config.timers.vulnerability)
-    end
 end
 
 function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
@@ -497,6 +489,14 @@ function Mod:OnCastEnd(nId, sCastName, tCast, sName)
     elseif sName == self.L["unit.boss_sword"] and sCastName == self.L["cast.liquidate"] then
         self.core:AddTimer("cast.liquidate", sCastName, 21.5, self.config.timers.liquidate)
         self.liquidate = Apollo.GetTickCount()
+    end
+end
+
+function Mod:OnDatachron(sMessage, sSender, sHandler)
+    local strPlayer = sMessage:match(self.L["datachron.electroshock"])
+
+    if strPlayer then
+        self.core:AddTimer("ElectroshockTimer_"..strPlayer, strPlayer, 60, self.config.timers.vulnerability)
     end
 end
 

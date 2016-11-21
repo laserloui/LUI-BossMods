@@ -25,7 +25,7 @@ local Locales = {
         -- Casts
         ["cast.gigavolt"] = "Gigavolt", -- Translation needed!
         -- Alerts
-        ["alert.gigavolt"] = "", -- Translation needed!
+        ["alert.gigavolt"] = "GIGAVOLT - SÉPARER-VOUS !",
         -- Labels
         ["label.bomb"] = "Bombes",
     },

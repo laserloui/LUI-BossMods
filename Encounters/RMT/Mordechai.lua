@@ -134,18 +134,20 @@ function Mod:new(o)
             orb = {
                 enable = true,
                 position = 1,
+                color = "c8ffa500",
                 label = "label.orb_next",
             },
             orb_active = {
                 enable = true,
                 position = 2,
-                color = "afff0000",
+                color = "c8ff0000",
                 label = "label.orb_active",
             },
             shuriken = {
                 enable = true,
                 position = 3,
                 sound = true,
+                color = "c8b0ff2f",
                 label = "label.shuriken",
             },
             airlock = {
@@ -156,7 +158,7 @@ function Mod:new(o)
             barrage = {
                 enable = true,
                 position = 5,
-                color = "afff0000",
+                color = "c8ff0000",
                 label = "cast.vicious_barrage",
             },
         },

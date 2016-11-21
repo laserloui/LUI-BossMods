@@ -16,7 +16,7 @@ local Locales = {
         -- Alerts
         ["alert.mario"] = "JUMP INTO CUBES!",
         ["alert.superquake"] = "JUMP, JUMP, JUMP!!!",
-        ["alert.defrag"] = "Defragment - SPREAD!",
+        ["alert.defrag"] = "DEFRAGMENT - SPREAD!",
         ["alert.snake"] = "SNAKE ON %s!",
         ["alert.snake_player"] = "SNAKE ON YOU!",
         -- Datachron
@@ -42,7 +42,7 @@ local Locales = {
         -- Alerts
         ["alert.mario"] = "SPRING IN WÜRFEL!",
         ["alert.superquake"] = "SPRING, SPRING, SPRING!!!",
-        ["alert.defrag"] = "Defragmentieren - VERTEILEN!",
+        ["alert.defrag"] = "DEFRAGMENTIEREN - VERTEILEN!",
         ["alert.snake"] = "SCHLANGE AUF %s!",
         ["alert.snake_player"] = "SCHLANGE AUF DIR!",
         -- Datachron
@@ -66,21 +66,21 @@ local Locales = {
         -- Casts
         ["cast.defrag"] = "Défragmentation",
         -- Alerts
-        ["alert.mario"] = "SAUTE SUR DES CUBES!",
-        ["alert.superquake"] = "SAUTEZ, SAUTEZ, SAUTEZ !!!",
-        ["alert.defrag"] = "Défragmentation - SPREAD!",
-        ["alert.snake"] = "SERPENT SUR %s!",
-        ["alert.snake_player"] = "SERPENT SUR VOUS!",
+        ["alert.mario"] = "SAUTE SUR DES CUBES !",
+        ["alert.superquake"] = "SAUTE, SAUTE, SAUTE !!!",
+        ["alert.defrag"] = "DÉFRAGMENTATION - SÉPARER-VOUS !",
+        ["alert.snake"] = "SERPENT SUR %s !",
+        ["alert.snake_player"] = "SERPENT SUR VOUS !",
         -- Datachron
         ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
         ["datachron.mario"] = "La logique crée de puissantes caches de données !",
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
-        ["label.superquake"] = "Superquake",
+        ["label.superquake"] = "Super séisme",
         ["label.next_mario"] = "Prochaine phase de Mario",
         ["label.next_defrag"] = "Défragmentation suivante",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
         ["label.snake"] = "Serpent",
         ["label.snake_player"] = "Serpent sur le joueur",
     },
@@ -131,11 +131,13 @@ function Mod:new(o)
             defrag = {
                 enable = true,
                 position = 1,
+                color = "c800bfff",
                 label = "label.next_defrag",
             },
             mario = {
                 enable = true,
                 position = 2,
+                color = "c8ffa500",
                 label = "label.next_mario",
             },
             enrage = {

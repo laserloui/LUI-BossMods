@@ -14,7 +14,7 @@ local Locales = {
         ["unit.obsidian"] = "Obsidian Outcropping",
         ["unit.lava_floor"] = "e395- [Datascape] Fire Elemental - Lava Floor (invis unit)",
         -- Alerts
-        ["alert.jump"] = "JUMP, JUMP, JUMP!!!",
+        ["alert.superquake"] = "JUMP, JUMP, JUMP!!!",
         -- Datachron
         ["datachron.superquake"] = "The ground shudders beneath Megalith!",
         ["datachron.lava_floor"] = "The lava begins to rise through the floor!",
@@ -35,16 +35,16 @@ local Locales = {
         ["unit.obsidian"] = "Obsidian Outcropping",
         ["unit.lava_floor"] = "e395- [Datascape] Fire Elemental - Lava Floor (invis unit)",
         -- Alerts
-        ["alert.jump"] = "SPRING, SPRING, SPRING!!!",
+        ["alert.superquake"] = "SPRING, SPRING, SPRING!!!",
         -- Datachron
-        ["datachron.superquake"] = "The ground shudders beneath Megalith!",
-        ["datachron.lava_floor"] = "The lava begins to rise through the floor!",
-        ["datachron.enrage"] = "Time to die, sapients!",
+        ["datachron.superquake"] = "Der Boden unter Megalith bebt!",
+        ["datachron.lava_floor"] = "Die Lava beginnt durch den Boden nach oben aufzusteigen!",
+        ["datachron.enrage"] = "Zeit, zu sterben, Vernunftbegabte!",
         -- Labels
-        ["label.superquake"] = "Superquake",
-        ["label.lava_floor"] = "Lava Floor Phase",
-        ["label.next_lava_floor"] = "Next Lava Floor",
-        ["label.next_obsidian"] = "Next Obsidian",
+        ["label.superquake"] = "Superbeben",
+        ["label.lava_floor"] = "Lava Boden Phase",
+        ["label.next_lava_floor"] = "Nächster Lava Boden",
+        ["label.next_obsidian"] = "Nächster Obsidian",
         ["label.avatus"] = "Avatus incoming",
         ["label.enrage"] = "Enrage",
     },
@@ -56,18 +56,18 @@ local Locales = {
         ["unit.obsidian"] = "Affleurement d'obsidienne",
         ["unit.lava_floor"] = "e395- [Datascape] Fire Elemental - Lava Floor (invis unit)",
         -- Alerts
-        ["alert.jump"] = "SAUTEZ, SAUTEZ, SAUTEZ !!!",
+        ["alert.superquake"] = "SAUTE, SAUTE, SAUTE !!!",
         -- Datachron
         ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
         ["datachron.lava_floor"] = "La lave apparaît par les fissures du sol !",
         ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
         -- Labels
-        ["label.superquake"] = "Superquake",
+        ["label.superquake"] = "Super séisme",
         ["label.lava_floor"] = "Phase de lave",
         ["label.next_lava_floor"] = "Phase de lave suivante",
-        ["label.next_obsidian"] = "Obsidienne suivante",
-        ["label.avatus"] = "Avatus arrivé",
-        ["label.enrage"] = "Mettre en rage",
+        ["label.next_obsidian"] = "Rocher suivante",
+        ["label.avatus"] = "Avatus est arrivé",
+        ["label.enrage"] = "Enrager",
     },
 }
 
@@ -109,6 +109,7 @@ function Mod:new(o)
             obsidian = {
                 enable = true,
                 position = 1,
+                color = "c8ffa500",
                 label = "label.next_obsidian",
             },
             lava_floor = {
@@ -207,8 +208,14 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
             nElapsed = 0,
             nTick = Apollo.GetTickCount()
         }, self.L["label.superquake"], self.config.casts.superquake)
-        self.core:ShowAlert(self.L["label.superquake"], self.L["alert.jump"], self.config.alerts.superquake)
+        self.core:ShowAlert(self.L["label.superquake"], self.L["alert.superquake"], self.config.alerts.superquake)
         self.core:PlaySound(self.config.sounds.superquake)
+    end
+end
+
+function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
+    if tData.tUnit:IsInYourGroup() or tData.tUnit:IsThePlayer() then
+        Print(sUnitName.." got debuff "..sName.." - Duration: "..tostring(nDuration).." Seconds - SpellID: "..tostring(nSpellId))
     end
 end
 

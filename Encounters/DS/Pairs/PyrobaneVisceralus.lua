@@ -42,7 +42,7 @@ local Locales = {
         -- Messages
         ["message.next_midphase"] = "Prochaine Phase du Milieu",
         -- Labels
-        ["label.life_force_shackle"] = "Aucun-Soin Debuff",
+        ["label.life_force_shackle"] = "Debuff: Aucun-Soin",
         ["label.midphase"] = "Phase du Milieu",
     },
 }

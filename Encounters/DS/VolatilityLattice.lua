@@ -37,15 +37,15 @@ local Locales = {
         ["datachron.secure_sector"] = "Les ports d'amélioration de secteur sécurisé ont été activés !",
         ["datachron.locomotion"] = "Les ports d'amélioration de locomotion verticale ont été activés !",
         -- Alerts
-        ["alert.laser"] = "LASER SUR %s!",
-        ["alert.laser_player"] = "LASER SUR TOI!",
+        ["alert.laser"] = "LASER SUR %s !",
+        ["alert.laser_player"] = "LASER SUR TOI !",
         -- Messages
         ["message.laser"] = "Prochain Laser",
-        ["message.pillar"] = "Prochain Pillier",
+        ["message.pillar"] = "Prochain Pilier",
         ["message.devourer"] = "Prochain Dévoreur",
         -- Labels
         ["label.laser"] = "Laser",
-        ["label.pillar"] = "Pillier",
+        ["label.pillar"] = "Pilier",
     },
 }
 
@@ -74,6 +74,7 @@ function Mod:new(o)
             devourer = {
                 enable = true,
                 position = 1,
+                color = "c8ffa500",
                 label = "unit.devourer",
             },
             pillar = {
