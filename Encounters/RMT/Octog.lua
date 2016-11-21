@@ -133,7 +133,6 @@ function Mod:new(o)
             shards = {
                 enable = true,
                 thickness = 6,
-                max = 35,
                 color = "ffff0000",
                 label = "unit.shard",
             },
@@ -179,7 +178,7 @@ function Mod:CheckShardsTimer()
         if unit then
             local shardPosition = Vector3.New(unit:GetPosition())
             local horizontalDistance = self:HorizontalDistance(playerPosition, shardPosition)
-            local isClose = horizontalDistance < 18
+            local isClose = horizontalDistance < 20
             if shardPosition.y + 5 < playerPosition.y then
                 -- Don't draw lines to shards far below than player
                 self.core:RemoveLineBetween(nId)
@@ -188,11 +187,11 @@ function Mod:CheckShardsTimer()
                 -- Draw lines to shards player can reach with rocket boost
                 if not hasLine then
                     if shardPosition.y <= ROOM_FLOOR_Y + 40 then
-                        self.core:DrawLineBetween(nId, shardPosition, nil, self.config.lines.shards)
-                    else
                         local belowShardPos = Vector3.New(shardPosition)
                         belowShardPos.y = belowShardPos.y - 42
                         self.core:DrawLineBetween(nId, shardPosition, belowShardPos, self.config.lines.shards)
+                    else
+                        self.core:DrawLineBetween(nId, shardPosition, nil, self.config.lines.shards)
                     end
                     self.tShardIds[nId] = true
                 end
