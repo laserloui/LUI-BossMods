@@ -241,28 +241,28 @@ function Mod:new(o)
         lines = {
             cannon_arm = {
                 enable = true,
-                priority = 1,
+                position = 1,
                 thickness = 8,
                 color = "afff0000",
                 label = "unit.cannon_arm",
             },
             flailing_arm = {
                 enable = true,
-                priority = 2,
+                position = 2,
                 thickness = 8,
                 color = "af0084ff",
                 label = "unit.flailing_arm",
             },
             scanning_eye = {
                 enable = true,
-                priority = 3,
+                position = 3,
                 thickness = 8,
                 color = "af7fff00",
                 label = "unit.scanning_eye",
             },
             incineration = {
                 enable = true,
-                priority = 4,
+                position = 4,
                 thickness = 12,
                 color = "ffff0000",
                 label = "cast.incineration_laser",

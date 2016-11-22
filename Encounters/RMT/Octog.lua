@@ -21,10 +21,12 @@ local Locales = {
         -- Alerts
         ["alert.hookshot"] = "HOOKSHOT!",
         ["alert.flamethrower"] = "FLAMETHROWER!",
+        ["alert.chaos_tether"] = "STAY INSIDE CHAOS ORB!!!",
         -- Labels
         ["label.next_hookshot"] = "Next Hookshot",
         ["label.next_flamethrower"] = "Next Flamethrower",
         ["label.next_orbs"] = "Next Orbs",
+        ["label.chaos_tether"] = "Chaos Tether",
     },
     ["deDE"] = {
         ["unit.boss"] = "Star-Eater the Voracious",
@@ -34,17 +36,8 @@ local Locales = {
     },
 }
 
-local DEBUFF_NOXIOUS_INK = 85533 -- DoT for standing in circles
-local DEBUFF_SQUINGLING_SMASHER = 86804 -- +5% DPS/heals, -10% incoming heals; per stack
-local DEBUFF_CHAOS_TETHER = 85583 -- kills you if you leave orb area
-local DEBUFF_CHAOS_ORB = 85582 -- 10% more damage taken per stack
-local DEBUFF_REND = 85443 -- main tank stacking debuff, 2.5% less mitigation per stack
-local DEBUFF_SPACE_FIRE = 87159 -- 12k dot from flame, lasts 45 seconds
-local BUFF_CHAOS_ORB = 86876 -- Countdown to something, probably the orb wipe
-local BUFF_CHAOS_AMPLIFIER = 86876 -- Bosun Buff that increases orb count?
-local BUFF_FLAMETHROWER = 87059 -- Flamethrower countdown buff -- DOESN'T EXIST ANYMORE, used to be 15s countdown to flame cast
-local BUFF_ASTRAL_SHIELD = 85643 -- Shard phase shield, 20 stacks
-local BUFF_ASTRAL_SHARD = 85611 --Buff shards get right before they die, probably meaningless
+local DEBUFF_CHAOS_TETHER = 85583
+local BUFF_CHAOS_AMPLIFIER = 86876
 
 local ROCKET_HEIGHT = 20
 local ROOM_FLOOR_Y = 378
@@ -114,12 +107,17 @@ function Mod:new(o)
                 position = 2,
                 label = "cast.flamethrower",
             },
+            chaos_tether = {
+                enable = true,
+                position = 3,
+                label = "label.chaos_tether",
+            },
         },
         sounds = {
             hookshot = {
                 enable = true,
                 position = 1,
-                file = "beware",
+                file = "burn",
                 label = "cast.hookshot",
             },
             flamethrower = {
@@ -128,13 +126,42 @@ function Mod:new(o)
                 file = "inferno",
                 label = "cast.flamethrower",
             },
+            chaos_tether = {
+                enable = true,
+                position = 3,
+                file = "beware",
+                label = "label.chaos_tether",
+            },
+        },
+        auras = {
+            chaos_tether = {
+                enable = true,
+                sprite = "LUIBM_position",
+                color = "ff9932cc",
+                label = "label.chaos_tether",
+            },
         },
         lines = {
-            shards = {
+            hookshot = {
                 enable = true,
+                position = 1,
                 thickness = 6,
                 color = "ffff0000",
+                label = "cast.hookshot",
+            },
+            shards = {
+                enable = true,
+                position = 2,
+                thickness = 6,
+                color = "ff00ffff",
                 label = "unit.shard",
+            },
+            squirgling = {
+                enable = true,
+                position = 3,
+                thickness = 6,
+                color = "ff00ffff",
+                label = "unit.squirgling",
             },
         },
     }
@@ -155,6 +182,10 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 
     if sName == self.L["unit.boss"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss)
+        self.core:DrawPolygon("HOOSHOT1", tUnit, self.config.lines.hookshot, 10.5, 0, 20, nil, Vector3.New(3,0,9.25))
+        self.core:DrawPolygon("HOOSHOT2", tUnit, self.config.lines.hookshot, 10.5, 0, 20, nil, Vector3.New(-3,0,9.25))
+    elseif sName == self.L["unit.squirgling"] then
+        self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.squirgling)
     elseif sName == self.L["unit.shard"] and self.config.lines.shards.enable then
         if not self.tShardTimer then
             self.tShardTimer = ApolloTimer.Create(.1, true, "CheckShardsTimer", self)
@@ -214,6 +245,12 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
     if BUFF_CHAOS_AMPLIFIER == nSpellId then
         self.core:AddTimer("ORBS", self.L["label.next_orbs"], 80, self.config.timers.orbs)
         self.nNextOrbs = GameLib.GetGameTime() + 80
+    elseif DEBUFF_CHAOS_TETHER == nSpellId then
+        if tData.tUnit:IsThePlayer() then
+            self.core:ShowAura("Aura_Tether", self.config.auras.chaos_tether, nDuration, self.L["alert.chaos_tether"])
+            self.core:ShowAlert("Alert_Tether", self.L["alert.chaos_tether"], self.config.alerts.chaos_tether)
+            self.core:PlaySound(self.config.sounds.chaos_tether)
+        end
     end
 end
 

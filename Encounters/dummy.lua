@@ -111,7 +111,7 @@ require "Apollo"
         @param nRotation        - Rotation of Polygon
         @param nSides           - Amount of Sides of the Polygon
         @param nDuration        - Duration in seconds before getting removed (optional)
-        @param tVectorOffsets    - Offset to Origin (table or vector3)
+        @param tVectorOffsets   - Offset to Origin (table or vector3)
         @param fHandler         - Callback function
         @param tData            - Data forwarded by callback function
 
