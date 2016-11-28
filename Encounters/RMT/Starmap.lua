@@ -43,7 +43,7 @@ local Locales = {
 	["label.cardinal"] = "Cardinal directions",
 	["label.solar_winds"] = "Solar Winds warning at 7 stacks",
 	["label.sun_stack_cast"] = "Every other Solar Flare (Tanks/Collectors)",
-	["label.irradiated_armor"] = "Sound when someone get Irradiated Armor stack (Tanks/Collectors)",
+	["label.irradiated_armor"] = "Irradiated Armor stack (Tanks/Collectors)",
 	["label.midphase"] = "Midphase warning",
 	["label.solar_winds_timer"] = "Sola Wind debuff timer",
 	["label.world_ender1"] = "Ender 1",
@@ -54,6 +54,8 @@ local Locales = {
 	["label.world_ender6"] = "IGNORE Ender 6",
 	["label.asteroids_important"] = "Important Fast Asteroids",
 	["label.asteroids"] = "Asteroids",
+    ["label.cosmic_debris_line"] = "Cosmic Debris Line",
+    ["label.cosmic_debris_polygon"] = "Cosmic Debris Outline",
 },
 	["deDE"] = {},
 	["frFR"] = {},
@@ -278,20 +280,27 @@ function Mod:new(o)
 				label = "label.sun_stack_cast",
 				position = 11,
 			},
-			cosmic_debris = {
-				enable = false,
-				thickness = 5,
-				color = "ffff8c00",
-				label = "unit.cosmic_debris",
-				position = 12,
-			},
 			debris_field = {
 				enable = false,
 				thickness = 5,
 				color = "ffff0000",
 				label = "unit.debris_field",
+				position = 12,
+			},
+            cosmic_debris_line = {
+				enable = false,
+				thickness = 5,
+				color = "ffff8c00",
+				label = "label.cosmic_debris_line",
 				position = 13,
 			},
+            cosmic_debris_polygon = {
+                enable = true,
+				thickness = 5,
+				color = "ffff8c00",
+				label = "label.cosmic_debris_polygon",
+				position = 13,
+            }
 		},
 		icons = {
 			debris_field = {
@@ -457,8 +466,8 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 		self.core:DrawLineBetween(("DEBRIS_FIELD_LINE_%d"):format(nId), nId, nil, self.config.lines.debris_field)
 
 	elseif sName == self.L["unit.cosmic_debris"] then
-		self.core:DrawLineBetween(("COSMIC_DEBRIS_%d"):format(nId), nId, nil, self.config.lines.cosmic_debris)
-
+		self.core:DrawLineBetween(("COSMIC_DEBRIS_LINE_%d"):format(nId), nId, nil, self.config.lines.cosmic_debris_line)
+        self.core:DrawPolygon(("COSMIC_DEBRIS_POLYGON_%d"):format(nId), nId, self.config.lines.cosmic_debris_polygon, 3, 0, 6)
 	elseif sName == self.L["unit.black_hole"] then
 		self.core:AddUnit(nId,sName,tUnit,self.config.units.black_hole)
 
@@ -471,7 +480,8 @@ function Mod:OnUnitDestroyed(nId, tUnit, sName)
 	elseif sName == self.L["unit.rogue_asteroid"] then
 		self.core:RemoveLineBetween(("ROGUE_ASTEROID_%d"):format(nId))
 	elseif sName == self.L["unit.cosmic_debris"] then
-		self.core:RemoveLineBetween(("COSMIC_DEBRIS_%d"):format(nId))
+		self.core:RemoveLineBetween(("COSMIC_DEBRIS_LINE_%d"):format(nId))
+        self.core:RemovePolygon(("COSMIC_DEBRIS_POLYGON_%d"):format(nId))
 	end
 end
 
