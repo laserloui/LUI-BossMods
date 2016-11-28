@@ -198,6 +198,8 @@ function Mod:OnUnitDestroyed(nId, tUnit, sName)
     if sName == self.L["unit.shard"] then
         self.tShardIds[nId] = nil
         self.core:RemoveLineBetween(nId)
+    elseif sName == self.L["unit.squirgling"] then
+        self.core:RemoveLineBetween(nId)
     end
 end
 
@@ -247,7 +249,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
         self.nNextOrbs = GameLib.GetGameTime() + 80
     elseif DEBUFF_CHAOS_TETHER == nSpellId then
         if tData.tUnit:IsThePlayer() then
-            self.core:ShowAura("Aura_Tether", self.config.auras.chaos_tether, nDuration, self.L["alert.chaos_tether"])
+            self.core:ShowAura("Aura_Tether", self.config.auras.chaos_tether, nil, self.L["alert.chaos_tether"])
             self.core:ShowAlert("Alert_Tether", self.L["alert.chaos_tether"], self.config.alerts.chaos_tether)
             self.core:PlaySound(self.config.sounds.chaos_tether)
         end
@@ -258,6 +260,14 @@ function Mod:OnBuffUpdated(nId, nSpellId, sName, tData, sUnitName, nStack, nDura
     if BUFF_CHAOS_AMPLIFIER == nSpellId then
         self.core:AddTimer("ORBS", self.L["label.next_orbs"], 85, self.config.timers.orbs)
         self.nNextOrbs = GameLib.GetGameTime() + 85
+    end
+end
+
+function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
+    if DEBUFF_CHAOS_TETHER == nSpellId then
+        if tData.tUnit:IsThePlayer() then
+            self.core:HideAura("Aura_Tether")
+        end
     end
 end
 
