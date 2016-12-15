@@ -2506,7 +2506,7 @@ end
 -- # LINES
 -- #########################################################################################################################################
 
-function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffsets, nDuration, nNumberOfDot, fHandler, tData)
+function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffsets, tVectorFacing, nDuration, nNumberOfDot, fHandler, tData)
     if not Key or not Origin or not tConfig or not tConfig.enable then
         return
     end
@@ -2541,6 +2541,7 @@ function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset
     tDraw.nNumberOfDot = nNumberOfDot or 1
     tDraw.nPixieIdDot = tDraw.nPixieIdDot or {}
     tDraw.tVectorOffsets = tVectorOffsets or nil
+    tDraw.tVectorFacing = tVectorFacing or DEFAULT_NORTH_FACING
     tDraw.fHandler = fHandler or nil
     tDraw.tData = tData or nil
 
@@ -2560,7 +2561,7 @@ function LUI_BossMods:DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset
         tDraw.tVectorTo = nil
     elseif OriginType == "table" or Vector3.Is(Origin) then
         local tOriginVector = NewVector3(Origin)
-        local tFacingVector = NewVector3(DEFAULT_NORTH_FACING)
+        local tFacingVector = NewVector3(tDraw.tVectorFacing)
         local tVectorA = tFacingVector * (tDraw.nOffset)
         local tVectorB = tFacingVector * (tDraw.nLength + tDraw.nOffset)
 
