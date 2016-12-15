@@ -119,7 +119,7 @@ require "Apollo"
         Removes Polygon from Screen
         @param Key              - Unique ID
 
-    DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffsets, nDuration, nNumberOfDot, fHandler, tData)
+    DrawLine(Key, Origin, tConfig, nLength, nRotation, nOffset, tVectorOffsets, tVectorFacing, nDuration, nNumberOfDot, fHandler, tData)
         Draws a line from unit/coordinate into certain direction (unit facing/north by default)
         @param Key              - Unique ID
         @param Origin           - Unit Object / UnitId or Coordinates
@@ -127,7 +127,8 @@ require "Apollo"
         @param nLength          - Length
         @param nRotation        - Rotation in degrees
         @param nOffset          - Offset to Origin
-        @param tVectorOffsets    - Offset to Origin (table or vector3)
+        @param tVectorOffsets   - Offset to Origin (table or vector3)
+        @param tVectorFacing    - Facing of Line (table or vector3) - Default: Unit Facing, North when no unit.
         @param nDuration        - Duration in seconds before getting removed (optional)
         @param nNumberOfDot     - Amount of dots (1 = default)
         @param fHandler         - Callback function
