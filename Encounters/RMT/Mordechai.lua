@@ -46,19 +46,19 @@ local Locales = {
     ["deDE"] = {},
     ["frFR"] = {
         -- Units
-        ["unit.boss"] = "Mordechai Rougelune",
-        ["unit.kinetic_orb"] = "Orbe Cinétique",
-        ["unit.airlock_anchor"] = "Bride de sas",
+        ["unit.boss"] = "Mordechai Redmoon",--V (Verified)
+        ["unit.kinetic_orb"] = "Kinetic Orb",--V
+        ["unit.airlock_anchor"] = "Airlock Anchor",--V
         -- Debuffs
-        ["debuff.kinetic_link"] = "Lien Cinétique",
-        ["debuff.kinetic_fixation"] = "Fixation Cinétique",
-        ["debuff.shocking_attraction"] = "Attraction Choquante",
+        ["debuff.kinetic_link"] = "Kinetic Link",--V
+        ["debuff.kinetic_fixation"] = "Kinetic Fixation",--V
+        ["debuff.shocking_attraction"] = "Shocking Attraction",--V
         -- Datachron
-        ["datachron.airlock_opened"] = "Le sas a été ouvert !",
-        ["datachron.airlock_closed"] = "Le sas a été fermé !",
+        ["datachron.airlock_opened"] = "The airlock has been opened!",--V
+        ["datachron.airlock_closed"] = "The airlock has been closed!",--V
         -- Casts
-        ["cast.shatter_shock"] = "Choc Fracassant",
-        ["cast.vicious_barrage"] = "Barrage Vicieux",
+        ["cast.shatter_shock"] = "Shatter Shock",--V
+        ["cast.vicious_barrage"] = "Vicious Barrage",--V
         -- Alerts
         ["alert.orb_spawned"] = "Une orbe est apparue !",
         ["alert.kinetic_link"] = "TAPE L'ORBE !",

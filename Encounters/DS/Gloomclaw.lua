@@ -46,14 +46,14 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss"] = "Serrenox",
+        ["unit.boss"] = "Serrenox", --V (Verified)
         ["unit.essence"] = "Essence de logique",
         ["unit.add1"] = "Parasite de la Souillure",
         ["unit.add2"] = "Skurge serrenox",
         ["unit.add3"] = "Friz corrompu",
         -- Casts
-        ["cast.rupture"] = "Rupture",
-        ["cast.burrow"] = "Terrier",
+        ["cast.rupture"] = "Rupture", --V
+        ["cast.burrow"] = "Terrier", --V
         -- Alerts
         ["alert.interrupt_rupture"] = "Interrompre Rupture !",
         -- Labels
