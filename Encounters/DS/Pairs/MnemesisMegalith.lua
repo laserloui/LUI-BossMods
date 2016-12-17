@@ -60,21 +60,21 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss_logic"] = "Mnémésis",
-        ["unit.boss_earth"] = "Mégalithe",
-        ["unit.pillar"] = "Matrice cristalline",
+        ["unit.boss_logic"] = "Mnémésis", --V (Verified)
+        ["unit.boss_earth"] = "Mégalithe", --V
+        ["unit.pillar"] = "Matrice cristalline", --V
         -- Casts
-        ["cast.defrag"] = "Défragmentation",
+        ["cast.defrag"] = "Défragmentation", --V
         -- Alerts
-        ["alert.mario"] = "SAUTE SUR DES CUBES !",
+        ["alert.mario"] = "ATTRAPE LES CUBES !",
         ["alert.superquake"] = "SAUTE, SAUTE, SAUTE !!!",
         ["alert.defrag"] = "DÉFRAGMENTATION - SÉPARER-VOUS !",
         ["alert.snake"] = "SERPENT SUR %s !",
         ["alert.snake_player"] = "SERPENT SUR VOUS !",
         -- Datachron
-        ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
-        ["datachron.mario"] = "La logique crée de puissantes caches de données !",
-        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
+        ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !", --V
+        ["datachron.mario"] = "La logique crée de puissantes caches de données !", --V
+        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !", --V
         -- Labels
         ["label.superquake"] = "Super séisme",
         ["label.next_mario"] = "Prochaine phase de Mario",

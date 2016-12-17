@@ -32,15 +32,15 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss"] = "Contrôleur du Maelstrom",
-        ["unit.station"] = "Station météorologique",
+        ["unit.boss"] = "Contrôleur du Maelstrom", --V (Verified)
+        ["unit.station"] = "Station météorologique", --V
         -- Messages
         ["message.station"] = "Prochaines stations",
         -- Alerts
         ["alert.station"] = "Spawn des Stations !",
         -- Casts
-        ["cast.weather_cycle"] = "Activer cycle climatique",
-        ["cast.shatter"] = "Fracasser",
+        ["cast.weather_cycle"] = "Activer cycle climatique", --V
+        ["cast.shatter"] = "Fracasser", --V
     },
 }
 

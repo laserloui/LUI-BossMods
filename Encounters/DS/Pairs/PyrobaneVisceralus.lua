@@ -34,11 +34,11 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss_fire"] = "Pyromagnus",
-        ["unit.boss_life"] = "Visceralus",
-        ["unit.flame_wave"] = "Vague de feu",
-        ["unit.life_orb"] = "Force vitale",
-        ["unit.life_essence"] = "Essence de vie",
+        ["unit.boss_fire"] = "Pyromagnus", --V (Verified)
+        ["unit.boss_life"] = "Visceralus", --V
+        ["unit.flame_wave"] = "Vague de feu", --V
+        ["unit.life_orb"] = "Force vitale", --V
+        ["unit.life_essence"] = "Essence de vie", --not sure, maybe "Essence de la vie"
         -- Messages
         ["message.next_midphase"] = "Prochaine Phase du Milieu",
         -- Labels
