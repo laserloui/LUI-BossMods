@@ -73,7 +73,7 @@ local Locales = {
         ["unit.sawblade"] = "Lamescie", --V
         ["unit.circle_telegraph"] = "Hostile Invisible Unit for Fields (1.2 hit radius)",
         -- Casts
-        ["cast.necrotic_lash"] = "Necrotic Lash",
+        ["cast.necrotic_lash"] = "Fouet nécrotique", --V
         ["cast.deathwail"] = "Deathwail",
         ["cast.gravedigger"] = "Gravedigger",
         -- Alerts
