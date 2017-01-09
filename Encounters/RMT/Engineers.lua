@@ -46,20 +46,20 @@ local Locales = {
     ["deDE"] = {},
     ["frFR"] = {
         -- Units
-        ["unit.boss_gun"] = "Chef Ingénieur Orvulgh",
-        ["unit.boss_sword"] = "Chef Ingénieur Wilbargh",
-        ["unit.fusion_core"] = "Coeur de Fusion",
-        ["unit.lubricant_nozzle"] = "Buse de Lubrifiant",
-        ["unit.spark_plug"] = "Bougie d'Allumage",
-        ["unit.cooling_turbine"] = "Turbine de Refroidissement",
-        ["unit.circle_telegraph"] = "Unité de Champs Hostile Invisible (rayon d'action : 1,2)",
+        ["unit.boss_gun"] = "Head Engineer Orvulgh", --V (Verified)
+        ["unit.boss_sword"] = "Chief Engineer Wilbargh", --V
+        ["unit.fusion_core"] = "Fusion Core", --V
+        ["unit.lubricant_nozzle"] = "Lubricant Nozzle", --V
+        ["unit.spark_plug"] = "Spark Plug", --V
+        ["unit.cooling_turbine"] = "Cooling Turbine", --V
+        ["unit.circle_telegraph"] = "Hostile Invisible Unit for Fields (1.2 hit radius)",
         -- Debuffs
-        ["debuff.atomic_attraction"] = "Attraction Atomique",
-        ["debuff.electroshock_vulnerability"] = "Vulnérable aux Electrochocs",
+        ["debuff.atomic_attraction"] = "Atomic Attraction", --V
+        ["debuff.electroshock_vulnerability"] = "Electroshock Vulnerability",
         -- Casts
-        ["cast.electroshock"] = "Electrochoc",
-        ["cast.liquidate"] = "Liquider",
-        ["cast.rocket_jump"] = "Saut Roquette",
+        ["cast.electroshock"] = "Electroshock", --V
+        ["cast.liquidate"] = "Liquidate", --V
+        ["cast.rocket_jump"] = "Rocket Jump", --V
         -- Alerts
         ["alert.liquidate"] = "Liquidation !",
         ["alert.electroshock"] = "Électrochoc !",
@@ -72,7 +72,7 @@ local Locales = {
         ["alert.gun_return"] = "RETOURNE SUR LE FUSIL !",
         ["alert.pillar"] = " à 20% !",
         -- Datachron
-        ["datachron.electroshock"] = "(.*) souffre d'Électrochoc",
+        ["datachron.electroshock"] = "(.*) souffre de Electroshock", --V
         -- Labels
         ["label.pillar"] = "Attention, vie à 20%",
         ["label.pillar_health"] = "Vie du Pilier",

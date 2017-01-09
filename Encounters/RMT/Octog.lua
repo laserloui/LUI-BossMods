@@ -32,7 +32,26 @@ local Locales = {
         ["unit.boss"] = "Star-Eater the Voracious",
     },
     ["frFR"] = {
-        ["unit.boss"] = "Star-Eater the Voracious",
+        -- Units
+        ["unit.boss"] = "Dévore-Astre le Vorace", --V (Verified)
+    	["unit.shard"] = "Astral Shard", --V
+        ["unit.squirgling"] = "Squirgling", --V
+        ["unit.chaos_orb"] = "Chaos Orb", --V
+        ["unit.noxious_ink_pool"] = "Noxious Ink Pool",
+        -- Casts
+        ["cast.hookshot"] = "Hookshot", --V
+        ["cast.summon_squirglings"] = "Summon Squirglings", --V
+        ["cast.flamethrower"] = "Flamethrower", --V
+        ["cast.supernova"] = "Supernova", --V
+        -- Alerts
+        ["alert.hookshot"] = "CROCHET !",
+        ["alert.flamethrower"] = "LANCE-FLAMMES !",
+        ["alert.chaos_tether"] = "RESTE DANS L'ORBE DU CHAOS !!!",
+        -- Labels
+        ["label.next_hookshot"] = "Prochain Crochet",
+        ["label.next_flamethrower"] = "Prochain Lance-Flammes",
+        ["label.next_orbs"] = "Prochaine Orbe",
+        ["label.chaos_tether"] = "Ancre du Chaos",
     },
 }
 

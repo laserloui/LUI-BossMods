@@ -24,9 +24,9 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss_air"] = "Ventemort",
-        ["unit.boss_life"] = "Visceralus",
-        ["unit.life_orb"] = "Force vitale",
+        ["unit.boss_air"] = "Ventemort", --V (Verified)
+        ["unit.boss_life"] = "Visceralus", --V
+        ["unit.life_orb"] = "Force vitale", --V
         -- Labels
         ["label.life_force_shackle"] = "Aucun-Soin Debuff",
     },

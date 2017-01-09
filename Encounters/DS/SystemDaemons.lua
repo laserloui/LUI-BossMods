@@ -88,31 +88,31 @@ local Locales = {
     },
     ["frFR"] = {
         -- Bosses
-        ["unit.boss_north"] = "Daemon 2.0",
-        ["unit.boss_south"] = "Daemon 1.0",
+        ["unit.boss_north"] = "Daemon 2.0", --V
+        ["unit.boss_south"] = "Daemon 1.0", --V
         -- Probes
-        ["unit.prope_1"] = "Unité de conductivité v1",
-        ["unit.prope_2"] = "Unité de conductivité v2",
-        ["unit.prope_3"] = "Unité de conductivité v3",
+        ["unit.prope_1"] = "Unité de conductivité v1", --V
+        ["unit.prope_2"] = "Unité de conductivité v2", --V
+        ["unit.prope_3"] = "Unité de conductivité v3", --V
         -- Adds
-        ["unit.brute_force_algorithm"] = "Algorithme de force brute",
-        ["unit.encryption_program"] = "Programme de cryptage",
-        ["unit.radiation_dispersion_unit"] = "Unité de dispersion de radiations",
-        ["unit.defragmentation_unit"] = "Unité de défragmentation",
-        ["unit.extermination_sequence"] = "Séquence d'extermination",
-        ["unit.data_compiler"] = "Compilateur de données",
-        ["unit.viral_diffusion_inhibitor"] = "Inhibiteur de diffusion virale",
+        ["unit.brute_force_algorithm"] = "Algorithme de force brute", --V
+        ["unit.encryption_program"] = "Programme de cryptage", --not found
+        ["unit.radiation_dispersion_unit"] = "Unité de dispersion de radiations", --V
+        ["unit.defragmentation_unit"] = "Unité de défragmentation", --V
+        ["unit.extermination_sequence"] = "Séquence d'extermination", --V
+        ["unit.data_compiler"] = "Compilateur de données", --not found
+        ["unit.viral_diffusion_inhibitor"] = "Inhibiteur de diffusion virale", --V
         -- Casts
-        ["cast.disconnect"] = "Déconnexion",
-        ["cast.power_surge"] = "Afflux d'énergie",
+        ["cast.disconnect"] = "Déconnexion", --V
+        ["cast.power_surge"] = "Surcharge d'énergie", --V
         -- Alerts
         ["alert.disconnect_north"] = "Déconnexion Nord !",
         ["alert.disconnect_south"] = "Déconnexion Sud !",
         ["alert.purge_player"] = "Purge sur toi !",
         ["alert.interrupt"] = "Interrompre !",
         -- Datachron
-        ["datachron.disconnect"] = "SIGNAL INCORRECT. DECONNECTION",
-        ["datachron.enhancement"] = "ACTIVATION DE LA SÉQUENCE D'AMÉLIORATION",
+        ["datachron.disconnect"] = "SIGNAL INCORRECT. DÉCONNEXION", --V
+        ["datachron.enhancement"] = "ACTIVATION DE LA SÉQUENCE D'AMÉLIORATION", --V
         -- Messages
         ["message.next_wave_mobs"] = "Vague suivante : Mobs",
         ["message.next_wave_boss"] = "Vague suivante : Miniboss",

@@ -11,7 +11,7 @@ local Locales = {
     },
     ["deDE"] = {},
     ["frFR"] = {
-        ["unit.antlion"] = "Fourmilion de l'Infomatrice",
+        ["unit.antlion"] = "Fourmilion de l'Infomatrice", --V (Verified)
     },
 }
 

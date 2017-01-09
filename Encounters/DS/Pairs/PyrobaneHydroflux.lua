@@ -56,10 +56,10 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss_fire"] = "Pyromagnus",
-        ["unit.boss_water"] = "Hydroflux",
-        ["unit.flame_wave"] = "Vague de feu",
-        ["unit.ice_tomb"] = "Tombeau de glace",
+        ["unit.boss_fire"] = "Pyromagnus", --V (Verified)
+        ["unit.boss_water"] = "Hydroflux", --V
+        ["unit.flame_wave"] = "Vague de feu", --V
+        ["unit.ice_tomb"] = "Tombeau de glace", --V
         -- Alerts
         ["alert.bombs"] = "Bombes !",
         ["alert.ice_tomb"] = "Tombeau de glace !",
@@ -71,7 +71,7 @@ local Locales = {
         ["label.avatus"] = "Avatus est arrivé",
         ["label.enrage"] = "Enrager",
         -- Datachron
-        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
+        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !", --V
         -- Texts
         ["text.next_bombs"] = "Bombes suivantes",
         ["text.next_ice_tomb"] = "Tombeau de glace suivant",

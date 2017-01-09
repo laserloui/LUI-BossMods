@@ -50,17 +50,17 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss_fire"] = "Pyromagnus",
-        ["unit.boss_earth"] = "Mégalithe",
-        ["unit.flame_wave"] = "Vague de feu",
-        ["unit.obsidian"] = "Affleurement d'obsidienne",
-        ["unit.lava_floor"] = "e395- [Datascape] Fire Elemental - Lava Floor (invis unit)",
+        ["unit.boss_fire"] = "Pyromagnus", --V (Verified)
+        ["unit.boss_earth"] = "Mégalithe", --V
+        ["unit.flame_wave"] = "Vague de feu", --V
+        ["unit.obsidian"] = "Affleurement d'obsidienne", --V
+        ["unit.lava_floor"] = "e395- [Datascape] Fire Elemental - Lava Floor (invis unit)", --V
         -- Alerts
         ["alert.superquake"] = "SAUTE, SAUTE, SAUTE !!!",
         -- Datachron
-        ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
-        ["datachron.lava_floor"] = "La lave apparaît par les fissures du sol !",
-        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
+        ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !", --V
+        ["datachron.lava_floor"] = "La lave apparaît par les fissures du sol !", --V
+        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !", --V
         -- Labels
         ["label.superquake"] = "Super séisme",
         ["label.lava_floor"] = "Phase de lave",

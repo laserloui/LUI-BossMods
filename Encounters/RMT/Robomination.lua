@@ -41,14 +41,14 @@ local Locales = {
     ["deDE"] = {},
     ["frFR"] = {
         -- Units
-        ["unit.boss"] = "Robominator",
-        ["unit.cannon_arm"] = "Bras Cannon",
-        ["unit.flailing_arm"] = "Bras Fléau",
-        ["unit.scanning_eye"] = "Oeil Scanneur",
+        ["unit.boss"] = "Robomination", --V (Verified)
+        ["unit.cannon_arm"] = "Cannon Arm", --V
+        ["unit.flailing_arm"] = "Bras agité", --V
+        ["unit.scanning_eye"] = "Scanning Eye", --V
         -- Casts
-        ["cast.noxious_belch"] = "Rot Nocif",
-        ["cast.incineration_laser"] = "Incinération Laser",
-        ["cast.cannon_fire"] = "Tir de Canon",
+        ["cast.noxious_belch"] = "Noxious Belch", --V
+        ["cast.incineration_laser"] = "Incineration Laser", --V
+        ["cast.cannon_fire"] = "Cannon Fire", --V
         -- Alerts
         ["alert.interrupt"] = "Interromps !",
         ["alert.lasers"] = "Lasers en approche !",
@@ -63,9 +63,9 @@ local Locales = {
         ["message.next_belch"] = "Lasers suivants",
         ["message.next_incineration"] = "Incineration suivante",
         -- Datachron messages
-        ["datachron.midphase_start"] = "Robomination s'enfonce",
-        ["datachron.midphase_end"] = "Robomination revient dans la bataille !",
-        ["datachron.incineration"] = "Robomination tente d'incinérer (.*)",
+        ["datachron.midphase_start"] = "Robomination s'enfonce dans les ordures.", --V
+        ["datachron.midphase_end"] = "Robomination refait irruption dans le combat !", --V
+        ["datachron.incineration"] = "Robomination essaie d'incinérer (.*)", --V
         -- Labels
         ["label.arms"] = "Bras",
         ["label.crush"] = "Écraser",

@@ -64,21 +64,21 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss_logic"] = "Mnémésis",
-        ["unit.boss_water"] = "Hydroflux",
-        ["unit.tetris"] = "Alphanumeric Hash",
-        ["unit.orb"] = "Hydro-disrupteur - DNT",
+        ["unit.boss_logic"] = "Mnémésis", --V (Verified)
+        ["unit.boss_water"] = "Hydroflux", --V
+        ["unit.tetris"] = "Alphanumeric Hash", --V
+        ["unit.orb"] = "Hydro-disrupteur - DNT", --V
         -- Casts
-        ["cast.circuit_breaker"] = "Coupe-circuit",
-        ["cast.imprison"] = "Emprisonner",
-        ["cast.defrag"] = "Défragmentation",
+        ["cast.circuit_breaker"] = "Coupe-circuit", --V
+        ["cast.imprison"] = "Emprisonner", --V
+        ["cast.defrag"] = "Défragmentation", --V
         -- Alerts
         ["alert.midphase"] = "PHASE MILIEU !",
         ["alert.defrag"] = "DÉFRAGMENTATION - SÉPARER-VOUS !",
         ["alert.imprison"] = "%s A OBTENU EMPRISONNER !",
         ["alert.imprison_player"] = "TU AS EMPRISONNER !",
         -- Datachron
-        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
+        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !", --V 
         -- Labels
         ["label.orb"] = "Orbe",
         ["label.midphase"] = "Phase milieu",
