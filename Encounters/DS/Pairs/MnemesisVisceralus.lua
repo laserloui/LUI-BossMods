@@ -62,21 +62,21 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss_logic"] = "Mnémésis",
-        ["unit.boss_life"] = "Visceralus",
-        ["unit.life_orb"] = "Force vitale",
-        ["unit.essence_life"] = "Essence de vie",
-        ["unit.essence_logic"] = "Essence de logique",
-        ["unit.tetris"] = "Alphanumeric Hash",
-        ["unit.thorns"] = "Ronces sauvages",
+        ["unit.boss_logic"] = "Mnémésis", --V (Verified)
+        ["unit.boss_life"] = "Visceralus", --V
+        ["unit.life_orb"] = "Force vitale", --V
+        ["unit.essence_life"] = "Essence de vie", --V
+        ["unit.essence_logic"] = "Essence de logique", --V
+        ["unit.tetris"] = "Alphanumeric Hash", --V
+        ["unit.thorns"] = "Ronces sauvages", --V
         -- Casts
-        ["cast.defrag"] = "Défragmentation",
+        ["cast.defrag"] = "Défragmentation", --V
         -- Alerts
         ["alert.defrag"] = "DÉFRAGMENTATION - SÉPARER-VOUS !",
         ["alert.snake"] = "SERPENT SUR %s !",
         ["alert.snake_player"] = "SERPENT SUR VOUS !",
         -- Datachron
-        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
+        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !", --V
         -- Labels
         ["label.next_thorns"] = "Epines suivantes",
         ["label.next_defrag"] = "Défragmentation suivante",

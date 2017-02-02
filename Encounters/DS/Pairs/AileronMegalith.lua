@@ -56,19 +56,19 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss_air"] = "Ventemort",
-        ["unit.boss_earth"] = "Mégalithe",
-        ["unit.tornado"] = "Colonne d'air",
+        ["unit.boss_air"] = "Ventemort", --V (Verified)
+        ["unit.boss_earth"] = "Mégalithe", --V
+        ["unit.tornado"] = "Colonne d'air", --V
         -- Alerts
         ["alert.tornado"] = "Arrivée de la tornade !",
         ["alert.supercell"] = "ATTERISSAGE SUR MÉGALITHE !",
         ["alert.superquake"] = "SAUTE, SAUTE, SAUTE !!!",
         -- Casts
-        ["cast.supercell"] = "Super-cellule",
-        ["cast.fierce_swipe"] = "Baffe féroce",
+        ["cast.supercell"] = "Super-cellule", --V
+        ["cast.fierce_swipe"] = "Baffe féroce", --V
         -- Datachron
-        ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !",
-        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !",
+        ["datachron.superquake"] = "Le sol tremble sous les pieds de Mégalithe !", --V
+        ["datachron.enrage"] = "Maintenant c'est l'heure de mourir, misérables !", --V
         -- Labels
         ["label.moo"] = "Moment d'opportunité",
         ["label.superquake"] = "Super séisme",

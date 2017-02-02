@@ -18,10 +18,10 @@ local Locales = {
     ["deDE"] = {},
     ["frFR"] = {
         -- Units
-        ["unit.boss"] = "Chef Directeur Tétanos",
-        ["unit.circle_telegraph"] = "Unité de Champs Hostile Invisible (rayon d'action : 0)",
+        ["unit.boss"] = "Gardien en chef Tétanos", --V (Verified)
+        ["unit.circle_telegraph"] = "Hostile Invisible Unit for Fields (0 hit radius)",
         -- Casts
-        ["cast.blaze_shackles"] = "Entrave de Feu",
+        ["cast.blaze_shackles"] = "Blaze Shackles",
         -- Labels
         ["label.circle_telegraph"] = "Télégraphes Circulaire",
     },

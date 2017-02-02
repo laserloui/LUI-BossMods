@@ -65,30 +65,30 @@ local Locales = {
     },
     ["frFR"] = {
         -- Units
-        ["unit.boss"] = "Swabbie Ski'Li",
-        ["unit.noxious_nabber"] = "Harpond Nocif",
-        ["unit.bilious_brute"] = "Bilious Brute", -- Missing!
-        ["unit.regor_the_rancid"] = "Regor le Rancie",
-        ["unit.braugh_the_bloodied"] = "Braugh le Sanglant",
-        ["unit.sawblade"] = "Scie",
-        ["unit.circle_telegraph"] = "Unité de Champs Hostile Invisible (rayon d'action : 1,2)",
+        ["unit.boss"] = "Swabbie Ski'Li", --V (Verified)
+        ["unit.noxious_nabber"] = "Noxious Nabber", --V
+        ["unit.bilious_brute"] = "Bilious Brute", --V
+        ["unit.regor_the_rancid"] = "Regor the Rancid", --V
+        ["unit.braugh_the_bloodied"] = "Braugh the Bloodied",
+        ["unit.sawblade"] = "Lamescie", --V
+        ["unit.circle_telegraph"] = "Hostile Invisible Unit for Fields (1.2 hit radius)",
         -- Casts
-        ["cast.necrotic_lash"] = "Coup de Fouet Nécrotique",
-        ["cast.deathwail"] = "Hulement Mortel",
-        ["cast.gravedigger"] = "Fossoyer",
+        ["cast.necrotic_lash"] = "Necrotic Lash",
+        ["cast.deathwail"] = "Deathwail",
+        ["cast.gravedigger"] = "Gravedigger",
         -- Alerts
         ["alert.oozing_bile"] = "STOP DPS !",
         ["alert.interrupt"] = "INTERROMPS !",
         -- Debuffs
-        ["debuff.oozing_bile"] = "Bile Suintante",
+        ["debuff.oozing_bile"] = "Oozing Bile", --maybe Coup de bile
         -- Datachron
-        ["datachron.shredder_jammed"] = "Ye've jammed me shredder, ye have! Blast ye filthy bilge slanks !", -- Missing!
+        ["datachron.shredder_jammed"] = "Z'avez bloqué mon broyeur ! Je vous déteste, sales Slanks de cale !", -- V
         -- Labels
         ["label.lines_room"] = "Ligne d'ancres",
         ["label.circle_telegraph"] = "Télégraphes Circulaire",
-        ["label.wave_1"] = "Add Wave #1",
-        ["label.wave_2"] = "Add Wave #2",
-        ["label.wave_3"] = "Add Wave #3",
+        ["label.wave_1"] = "Vague d'adds #1",
+        ["label.wave_2"] = "Vague d'adds #2",
+        ["label.wave_3"] = "Vague d'adds #3",
         -- Texts
         ["text.stackmoron"] = "/éq J'ai atteint %d stacks parce que je suis un crétin fini.",
     },

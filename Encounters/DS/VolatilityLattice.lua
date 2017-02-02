@@ -29,13 +29,13 @@ local Locales = {
     ["deDE"] = {},
     ["frFR"] = {
         -- Units
-        ["unit.boss"] = "Avatus",
-        ["unit.devourer"] = "Dévoreur de données",
+        ["unit.boss"] = "Avatus", --V (Verified)
+        ["unit.devourer"] = "Dévoreur de données", --V
         -- Datachron
-        ["datachron.laser"] = "Avatus porte son attention sur (.*) !",
-        ["datachron.delete_all"] = "Avatus se prépare à effacer toutes les données !",
-        ["datachron.secure_sector"] = "Les ports d'amélioration de secteur sécurisé ont été activés !",
-        ["datachron.locomotion"] = "Les ports d'amélioration de locomotion verticale ont été activés !",
+        ["datachron.laser"] = "Avatus se concentre sur (.*) !", --V
+        ["datachron.delete_all"] = "Avatus se prépare à effacer toutes les données !", --V
+        ["datachron.secure_sector"] = "Les ports d'amélioration de secteur sécurisé ont été activés !", --V
+        ["datachron.locomotion"] = "Les ports d'amélioration de locomotion verticale ont été activés !", --V
         -- Alerts
         ["alert.laser"] = "LASER SUR %s !",
         ["alert.laser_player"] = "LASER SUR TOI !",
