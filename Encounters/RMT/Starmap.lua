@@ -499,10 +499,6 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
             self.core:DrawLineBetween("WORLD_ENDER", nId, nil, self.config.lines.world_ender_player)
             self.core:DrawLine("WORLD_ENDER_DIR", nId, self.config.lines.world_ender_direction, 10)
 
-            Print("WORLD ENDER #"..tostring(self.nEnderCount))
-            Print("Location: x="..tostring(tUnit:GetPosition().x).." y="..tostring(tUnit:GetPosition().y).." z="..tostring(tUnit:GetPosition().z))
-            Print("Facing: x="..tostring(tUnit:GetFacing().x).." y="..tostring(tUnit:GetFacing().y).." z="..tostring(tUnit:GetFacing().z))
-
             self.nEnderCount = self.nEnderCount + 1
             self.tIds[nId] = true
         end
