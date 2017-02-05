@@ -38,7 +38,38 @@ local Locales = {
         ["label.crush"] = "Crush",
         ["label.crush_player"] = "Crush on player",
     },
-    ["deDE"] = {},
+    ["deDE"] = {
+		-- Units
+        ["unit.boss"] = "Robomination", --little note: Almost nothing is actually german in the german client... (in Redmoon)
+        ["unit.cannon_arm"] = "Cannon Arm",
+        ["unit.flailing_arm"] = "Fuchtelnder Arm",
+        ["unit.scanning_eye"] = "Scanning Eye",
+        -- Casts
+        ["cast.noxious_belch"] = "Noxious Belch",
+        ["cast.incineration_laser"] = "Incineration Laser",
+        ["cast.cannon_fire"] = "Cannon Fire",
+        -- Alerts
+        ["alert.interrupt"] = "Unterbrechen!",
+        ["alert.lasers"] = "Achtung Kotzen!",
+        ["alert.midphase"] = "Mittelphase bald!",
+        ["alert.crush"] = "STAMPFER AUF %s!",
+        ["alert.crush_player"] = "STAMPFER AUF DIR!",
+        ["alert.incineration"] = "FLAMMEN AUF %s!",
+        ["alert.incineration_player"] = "FLAMMEN AUF DIR!",
+        -- Messages
+        ["message.next_arms"] = "Nächste Arme",
+        ["message.next_crush"] = "Nächste Stampfer",
+        ["message.next_belch"] = "Nächstes Kotzen",
+        ["message.next_incineration"] = "Nächste Flammen",
+        -- Datachron messages
+        ["datachron.midphase_start"] = "Die Robomination sinkt in den Müll hinab.",
+        ["datachron.midphase_end"] = "Die Robomination stürzt sich erneut ins Gefecht!",
+        ["datachron.incineration"] = "Die Robomination versucht, (.*) zu verbrennen.",
+        -- Labels
+        ["label.arms"] = "Arme",
+        ["label.crush"] = "Stampfer",
+        ["label.crush_player"] = "Stampfer auf Spieler",
+	},
     ["frFR"] = {
         -- Units
         ["unit.boss"] = "Robomination", --V (Verified)
