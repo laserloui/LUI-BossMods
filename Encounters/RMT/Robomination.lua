@@ -298,10 +298,21 @@ function Mod:new(o)
                 color = "ffff0000",
                 label = "cast.incineration_laser",
             },
-        }
-    }
+        },
+		texts = {
+			cannon_fire = {
+                enable = true,
+                color = "ff000000",
+                timer = false,
+                label = "cast.cannon_fire",
+				font = "CRB_FloaterGigantic_O",
+            },
+		}
+	}
     return o
 end
+
+local tCannonArmCastsCount = {} --[nUnitId] = number of cast to come
 
 function Mod:Init(parent)
     Apollo.LinkAddon(parent, self)
@@ -317,7 +328,10 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     elseif sName == self.L["unit.cannon_arm"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.cannon_arm)
         self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.cannon_arm)
-
+		
+		tCannonArmCastsCount[nId] = 1
+		self.core:DrawText("cannon_fire"..tostring(nId), tUnit, self.config.texts.cannon_fire, tostring(tCannonArmCastsCount[nId]), false)
+		
         if not self.bIsMidPhase then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms)
         end
@@ -332,10 +346,13 @@ end
 function Mod:OnUnitDestroyed(nId, tUnit, sName)
     if sName == self.L["unit.scanning_eye"] then
         self.core:RemoveLineBetween(nId)
-    elseif sName == self.L["unit.cannon_arm"] then
+    elseif sName == self.L["unit.cannon_arm"] then print("removed cannon arm")
         self.core:RemoveLineBetween(nId)
+		self.core:RemoveUnit(nId)
+		self.core:RemoveText("cannon_fire"..tostring(nId))
     elseif sName == self.L["unit.flailing_arm"] then
         self.core:RemoveLineBetween(nId)
+		self.core:RemoveUnit(nId)
     end
 end
 
@@ -362,6 +379,13 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
     end
 end
 
+function Mod:OnCastEnd(nId, sCastName, tCast, sName)
+	if self.L["unit.cannon_arm"] == sName and self.L["cast.cannon_fire"] == sCastName then
+		tCannonArmCastsCount[nId] = (tCannonArmCastsCount[nId] or 1)+1
+		self.core:DrawText("cannon_fire"..tostring(nId), tCast.tUnit, self.config.texts.cannon_fire, tostring(tCannonArmCastsCount[nId]), true)
+    end
+end
+
 function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDuration)
     if DEBUFF_THE_SKY_IS_FALLING == nSpellId then
         self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 17, self.config.timers.crush)
@@ -374,7 +398,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:ShowAlert("Alert_Crush", self.L["alert.crush"]:format(sUnitName), self.config.alerts.crush)
             self.core:PlaySound(self.config.sounds.crush)
         end
-
+		
         self.core:DrawIcon("Icon_Crush", tData.tUnit, self.config.icons.crush, true, nil, nDuration)
     end
 end
@@ -440,7 +464,8 @@ function Mod:OnEnable()
     self.boss = nil
     self.bIsMidPhase = nil
     self.nMidphaseWarnings = 0
-
+	tCannonArmCastsCount = {}
+	
     self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms)
     self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush)
     self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 16, self.config.timers.noxious_belch)
