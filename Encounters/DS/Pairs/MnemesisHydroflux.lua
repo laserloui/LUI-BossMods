@@ -233,6 +233,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss_logic"] then
+		if not tUnit:GetHealth() then return end
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_logic)
     elseif sName == self.L["unit.boss_water"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_water)
