@@ -39,7 +39,7 @@ local Locales = {
         ["label.crush_player"] = "Crush on player",
     },
     ["deDE"] = {
-		-- Units
+        -- Units
         ["unit.boss"] = "Robomination", --little note: Almost nothing is actually german in the german client... (in Redmoon)
         ["unit.cannon_arm"] = "Cannon Arm",
         ["unit.flailing_arm"] = "Fuchtelnder Arm",
@@ -69,7 +69,7 @@ local Locales = {
         ["label.arms"] = "Arme",
         ["label.crush"] = "Stampfer",
         ["label.crush_player"] = "Stampfer auf Spieler",
-	},
+    },
     ["frFR"] = {
         -- Units
         ["unit.boss"] = "Robomination", --V (Verified)
@@ -299,16 +299,16 @@ function Mod:new(o)
                 label = "cast.incineration_laser",
             },
         },
-		texts = {
-			cannon_fire = {
+        texts = {
+            cannon_fire = {
                 enable = true,
                 color = "ff000000",
                 timer = false,
                 label = "cast.cannon_fire",
-				font = "CRB_FloaterGigantic_O",
+                font = "CRB_FloaterGigantic_O",
             },
-		}
-	}
+        }
+    }
     return o
 end
 
@@ -328,10 +328,10 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     elseif sName == self.L["unit.cannon_arm"] then
         self.core:AddUnit(nId,sName,tUnit,self.config.units.cannon_arm)
         self.core:DrawLineBetween(nId, tUnit, nil, self.config.lines.cannon_arm)
-		
-		tCannonArmCastsCount[nId] = 1
-		self.core:DrawText("cannon_fire"..tostring(nId), tUnit, self.config.texts.cannon_fire, tostring(tCannonArmCastsCount[nId]), false)
-		
+        
+        tCannonArmCastsCount[nId] = 1
+        self.core:DrawText("cannon_fire"..tostring(nId), tUnit, self.config.texts.cannon_fire, tostring(tCannonArmCastsCount[nId]), false)
+        
         if not self.bIsMidPhase then
             self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms)
         end
@@ -346,13 +346,13 @@ end
 function Mod:OnUnitDestroyed(nId, tUnit, sName)
     if sName == self.L["unit.scanning_eye"] then
         self.core:RemoveLineBetween(nId)
-    elseif sName == self.L["unit.cannon_arm"] then print("removed cannon arm")
+    elseif sName == self.L["unit.cannon_arm"] then
         self.core:RemoveLineBetween(nId)
-		self.core:RemoveUnit(nId)
-		self.core:RemoveText("cannon_fire"..tostring(nId))
+        self.core:RemoveUnit(nId)
+        self.core:RemoveText("cannon_fire"..tostring(nId))
     elseif sName == self.L["unit.flailing_arm"] then
         self.core:RemoveLineBetween(nId)
-		self.core:RemoveUnit(nId)
+        self.core:RemoveUnit(nId)
     end
 end
 
@@ -380,9 +380,9 @@ function Mod:OnCastStart(nId, sCastName, tCast, sName)
 end
 
 function Mod:OnCastEnd(nId, sCastName, tCast, sName)
-	if self.L["unit.cannon_arm"] == sName and self.L["cast.cannon_fire"] == sCastName then
-		tCannonArmCastsCount[nId] = (tCannonArmCastsCount[nId] or 1)+1
-		self.core:DrawText("cannon_fire"..tostring(nId), tCast.tUnit, self.config.texts.cannon_fire, tostring(tCannonArmCastsCount[nId]), true)
+    if self.L["unit.cannon_arm"] == sName and self.L["cast.cannon_fire"] == sCastName then
+        tCannonArmCastsCount[nId] = (tCannonArmCastsCount[nId] or 1)+1
+        self.core:DrawText("cannon_fire"..tostring(nId), tCast.tUnit, self.config.texts.cannon_fire, tostring(tCannonArmCastsCount[nId]), true)
     end
 end
 
@@ -398,7 +398,7 @@ function Mod:OnBuffAdded(nId, nSpellId, sName, tData, sUnitName, nStack, nDurati
             self.core:ShowAlert("Alert_Crush", self.L["alert.crush"]:format(sUnitName), self.config.alerts.crush)
             self.core:PlaySound(self.config.sounds.crush)
         end
-		
+
         self.core:DrawIcon("Icon_Crush", tData.tUnit, self.config.icons.crush, true, nil, nDuration)
     end
 end
@@ -464,8 +464,8 @@ function Mod:OnEnable()
     self.boss = nil
     self.bIsMidPhase = nil
     self.nMidphaseWarnings = 0
-	tCannonArmCastsCount = {}
-	
+    tCannonArmCastsCount = {}
+
     self.core:AddTimer("Timer_Arms", self.L["message.next_arms"], 45, self.config.timers.arms)
     self.core:AddTimer("Timer_Crush", self.L["message.next_crush"], 8, self.config.timers.crush)
     self.core:AddTimer("Timer_Belch", self.L["message.next_belch"], 16, self.config.timers.noxious_belch)
