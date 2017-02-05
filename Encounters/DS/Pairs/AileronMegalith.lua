@@ -247,7 +247,7 @@ function Mod:OnDatachron(sMessage, sSender, sHandler)
             nElapsed = 0,
             nTick = Apollo.GetTickCount()
         }, self.L["label.superquake"], self.config.casts.superquake)
-        self.core:ShowAlert(self.L["label.superquake"], self.L["alert.jump"], self.config.alerts.superquake)
+        self.core:ShowAlert(self.L["label.superquake"], self.L["alert.superquake"], self.config.alerts.superquake)
         self.core:PlaySound(self.config.sounds.superquake)
     elseif sMessage:find(self.L["datachron.enrage"]) then
         self.core:RemoveTimer("AVATUS")
