@@ -71,7 +71,7 @@ local nRoomSouth = -16612   -- The Z coordinate we use as the southmost point of
 local nRoomStep = 84        -- The distance between two seperators (seperating two sections)
 local tFirstRuptureTimers = {[0]=30, [1]=32, [2]=28, [3]=26, [5]=30}    -- The timers for first rupture of each section. No value for section 4.
 local tAddSpawnTimers = { [0]=25, [1]=26, [2]=33, [3]=25}               -- Static times for add-timers for each section. 4 not needed, 5 handled seperatly.
-local tAddSpawnTotal = {[0]=4,[1]=4, [2]=3, [3]=4}                      -- The amount of add-spawns of each section. 4 not needed, 5 handled seperatly.
+local tAddSpawnTotal = {[0]=4,[1]=4, [2]=3, [3]=4, [4]=0}                      -- The amount of add-spawns of each section. 4 not needed, 5 handled seperatly.
 
 -- Variables
 local tEssences = {}        -- [0-5]["L"/"R"] = tUnit e.g. tEssences[2].L is the left Essence in the 2nd Row
