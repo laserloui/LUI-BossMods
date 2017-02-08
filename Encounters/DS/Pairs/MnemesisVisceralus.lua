@@ -244,6 +244,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
     end
 
     if sName == self.L["unit.boss_logic"] and bInCombat == true then
+		if not tUnit:GetHealth() then return end
         self.core:AddUnit(nId,sName,tUnit,self.config.units.boss_logic)
     elseif sName == self.L["unit.boss_life"] and bInCombat == true then
         self.visceralus = tUnit
