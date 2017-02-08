@@ -241,13 +241,20 @@ end
 
 function Mod:OnDatachron(sMessage, sSender, sHandler)
     if sMessage:match(self.L["datachron.superquake"]) then
-        self.core:ShowCast({
-            sName = "Superquake",
-            nDuration = 2,
-            nElapsed = 0,
-            nTick = Apollo.GetTickCount()
-        }, self.L["label.superquake"], self.config.casts.superquake)
-        self.core:ShowAlert(self.L["label.superquake"], self.L["alert.jump"], self.config.alerts.superquake)
+		local GetTickCount = Apollo.GetTickCount
+        local fakeCast = setmetatable({
+				sName = "Superquake",
+				nDuration = 2,
+				nElapsed = nil, --done by metatable.
+				nTick = GetTickCount()
+			}, {__index = function(t,k) 
+				if k == "nElapsed" then
+					return (GetTickCount()-t.nTick)/1000
+				end
+			end}
+		)
+		self.core:ShowCast(fakeCast , self.L["label.superquake"], self.config.casts.superquake)
+        self.core:ShowAlert(self.L["label.superquake"], self.L["alert.superquake"], self.config.alerts.superquake)
         self.core:PlaySound(self.config.sounds.superquake)
     elseif sMessage:find(self.L["datachron.enrage"]) then
         self.core:RemoveTimer("AVATUS")
