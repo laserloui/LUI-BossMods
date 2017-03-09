@@ -374,7 +374,7 @@ local WORMHOLE_SPAWN = {
 
 local ENDER_SPAWN = {
     ["W1"] = {
-        ["POSITION"] = Vector3.New(-196, -95, 343),
+        ["POSITION"] = Vector3.New(-156.30, -96.21, 349.35),
         ["FACING"] = Vector3.New(0.9945, 0, 0.1045),
     },
     ["W2"] = {
@@ -382,7 +382,7 @@ local ENDER_SPAWN = {
         ["FACING"] = Vector3.New(0.8386, 0, 0.5446),
     },
     ["W3"] = {
-        ["POSITION"] = Vector3.New(-27, -95, 247.5),
+        ["POSITION"] = Vector3.New(-42.67, -95.79, 281.21),
         ["FACING"] = Vector3.New(-0.4067, 0, 0.9135),
     },
     ["W4"] = {
@@ -390,7 +390,7 @@ local ENDER_SPAWN = {
         ["FACING"] = Vector3.New(0.9902, 0, 0.1391),
     },
     ["W5"] = {
-        ["POSITION"] = Vector3.New(-19.37, -96, 414.22),
+        ["POSITION"] = Vector3.New(-13.66, -96, 411),
         ["FACING"] = Vector3.New(0.9902, 0, 0.1391),
     },
 }
