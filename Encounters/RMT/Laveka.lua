@@ -403,10 +403,10 @@ function Mod:new(o)
 			},
 			middle_point_mark = {
 				enable = true,
-				color = "ffff0000"
+				color = "ffff0000",
 				timer = false,
 				label = "label.middle_point_mark",
-				position = 8
+				position = 8,
 			},
 		},
 	}
