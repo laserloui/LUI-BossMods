@@ -60,6 +60,7 @@ local Locales = {
 		["label.clone_spawn"] = "Lost soul - Teleport spawn",
 		["label.orbs_lines"] = "Orb paths",
 		["label.orb_spawn_text"] = "Orb location marks",
+		["label.middle_point_mark"] = "Mark for Middle of Room",
 		["label.essence_int_1"] = "Essence interrupt 1",
 		["label.essence_int_2"] = "Essence interrupt 2",
 		["label.essence_int_3"] = "Essence interrupt 3",
@@ -400,6 +401,13 @@ function Mod:new(o)
 				label = "label.essence_int_5",
 				position = 7,
 			},
+			middle_point_mark = {
+				enable = true,
+				color = "ffff0000",
+				timer = false,
+				label = "label.middle_point_mark",
+				position = 8,
+			},
 		},
 	}
 	return o
@@ -433,6 +441,7 @@ local BOSSBUFF_BARRIER_OF_SOULS = 87774  -- Immune to attacks (Midphase)
 local CARDINAL_BAIT_SE = Vector3.New(-702.25, 187.17, -247.74)
 local CARDINAL_BAIT_SW = Vector3.New(-745.59, 187.16, -247.69)
 local CARDINAL_BAIT_NW = Vector3.New(-744.18, 187.15, -283.25)
+local MIDDLE_POINT = Vector3.New(-723.71778, 186.8349, -265.1872)
 local CARDINAL_BAIT_NE = Vector3.New(-703.35, 187.16, -283.39)
 local CARDINAL_LINE_N = Vector3.New(-723.84, 187.02, -252.58)
 local CARDINAL_LINE_S = Vector3.New(-723.84, 187.17, -206.61)
@@ -452,6 +461,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 		self.core:DrawText("CARDINAL_BAIT_SW", CARDINAL_BAIT_SW, self.config.texts.cardinal_baitmarks, "SW")
 		self.core:DrawText("CARDINAL_BAIT_NE", CARDINAL_BAIT_NE, self.config.texts.cardinal_baitmarks, "NE")
 		self.core:DrawText("CARDINAL_BAIT_NW", CARDINAL_BAIT_NW, self.config.texts.cardinal_baitmarks, "NW")
+		self.core:DrawText("MIDDLE_POINT", MIDDLE_POINT, self.config.texts.middle_point_mark, ".")
 
 		self.core:DrawLineBetween("CARDINAL_LINE", CARDINAL_LINE_S, CARDINAL_LINE_N, self.config.lines.ringo_line)
 
@@ -473,7 +483,7 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 		if not ids[nId] then -- To avoid the stupid event if you target it so they don't become desynced.
 			self.nEssenceInt = self.nEssenceInt + 1
 			self.core:AddUnit(nId,sName .. " " .. self.nEssenceInt,tUnit,self.config.units.essence_void)
-				
+
 			if self.nEssenceInt == 1 then
 				self.core:DrawLineBetween(("ESSENCE_LINE_%d"):format(nId), tUnit, nil, self.config.lines.essence_int_line_1)
 				self.core:DrawText(("ESSENCE_TEXT_%d"):format(nId), tUnit, self.config.texts.essence_int_text_1, "1")
@@ -481,15 +491,15 @@ function Mod:OnUnitCreated(nId, tUnit, sName, bInCombat)
 			elseif self.nEssenceInt == 2 then
 				self.core:DrawLineBetween(("ESSENCE_LINE_%d"):format(nId), tUnit, nil, self.config.lines.essence_int_line_2)
 				self.core:DrawText(("ESSENCE_TEXT_%d"):format(nId), tUnit, self.config.texts.essence_int_text_2, "2")
-				
+
 			elseif self.nEssenceInt == 3 then
 				self.core:DrawLineBetween(("ESSENCE_LINE_%d"):format(nId), tUnit, nil, self.config.lines.essence_int_line_3)
 				self.core:DrawText(("ESSENCE_TEXT_%d"):format(nId), tUnit, self.config.texts.essence_int_text_3, "3")
-				
+
 			elseif self.nEssenceInt == 4 then
 				self.core:DrawLineBetween(("ESSENCE_LINE_%d"):format(nId), tUnit, nil, self.config.lines.essence_int_line_4)
 				self.core:DrawText(("ESSENCE_TEXT_%d"):format(nId), tUnit, self.config.texts.essence_int_text_4, "4")
-				
+
 			elseif self.nEssenceInt == 5 then
 				self.core:DrawLineBetween(("ESSENCE_LINE_%d"):format(nId), tUnit, nil, self.config.lines.essence_int_line_5)
 				self.core:DrawText(("ESSENCE_TEXT_%d"):format(nId), tUnit, self.config.texts.essence_int_text_5, "5")
@@ -623,7 +633,7 @@ function Mod:OnBuffRemoved(nId, nSpellId, sName, tData, sUnitName)
 		self.core:RemoveLineBetween(("DEBUFF_SOULFIRE_LINE_%d"):format(nId))
 	elseif nSpellId == BOSSBUFF_BARRIER_OF_SOULS then
 		self.core:AddTimer("Timer_Adds", self.L["timer.add_spawn"], 16, self.config.timers.adds)
-		self.core:AddTimer("Timer_Orbs", self.L["timer.orb_spawn"], 63, self.config.timers.orbs)	
+		self.core:AddTimer("Timer_Orbs", self.L["timer.orb_spawn"], 63, self.config.timers.orbs)
 	end
 end
 
