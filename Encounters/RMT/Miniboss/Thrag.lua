@@ -8,7 +8,7 @@ local Encounter = "Thrag"
 local Locales = {
     ["enUS"] = {
         -- Units
-        ["unit.boss"] = "Chief Enginer Scrubber Thrag",
+        ["unit.boss"] = "Chief Engine Scrubber Thrag",
         ["unit.bomb"] = "Jumpstart Charge",
         -- Casts
         ["cast.gigavolt"] = "Gigavolt",
